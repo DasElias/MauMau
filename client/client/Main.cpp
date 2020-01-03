@@ -10,6 +10,7 @@
 #include "state/MainMenuState.h"
 #include "state/JoinRoomState.h"
 #include "state/CreateRoomState.h"
+#include "state/CreateLocalRoomState.h"
 #include "state/ParticipantsOverviewState.h"
 
 #include "system/GlfwCursorHandler.h"
@@ -196,31 +197,17 @@ namespace card {
 		MainMenuState mainMenuState(stateManager, nvgRenderer);
 		JoinRoomState joinRoomState(stateManager, nvgRenderer, errorHandler);
 		CreateRoomState createRoomState(stateManager, nvgRenderer, errorHandler);
+		CreateLocalRoomState createLocalRoomState(stateManager, nvgRenderer);
 		ParticipantsOverviewState participantsOverviewState(stateManager, nvgRenderer);
-
+		
 		stateManager.addState("IngameState", &ingameState);
 		stateManager.addState("MainMenuState", &mainMenuState);
 		stateManager.addState("JoinRoomState", &joinRoomState);
 		stateManager.addState("CreateRoomState", &createRoomState);
+		stateManager.addState("CreateLocalRoomState", &createLocalRoomState);
 		stateManager.addState("ParticipantsOverviewState", &participantsOverviewState);
 		stateManager.changeState("MainMenuState");
-/*
 
-		//TODO remove
-#define LOCAL
-#ifdef CREATE
-		auto gameFacade = std::make_shared<CreateRoomNetworkGameFacade>(errorHandler, "c");
-#endif // CREATE
-#ifdef JOIN
-		auto gameFacade = std::make_shared<JoinRoomNetworkGameFacade>(errorHandler, "j", 0);
-#endif
-#ifdef LOCAL
-		auto gameFacade = std::make_shared<LocalGameFacade>("a");
-		gameFacade->getRoom().requestGameStart();
-#endif
-
-		stateManager.setGameFacade(gameFacade);
-	*/	
 		loop();
 
 	}
@@ -298,7 +285,13 @@ namespace card {
 
 			stateManager.updateAndRender(deltaSeconds);
 
-			glfwSwapInterval((CardAnimator::arePendingAnimations()) ? VSYNC : VSYNC_NO_ANIMATION_PENDING);
+			if(CardAnimator::arePendingAnimations()) {
+				std::cout << fps << std::endl;
+				glfwSwapInterval(VSYNC);
+			} else {
+				glfwSwapInterval(VSYNC_NO_ANIMATION_PENDING);
+			}
+			//glfwSwapInterval((CardAnimator::arePendingAnimations()) ? VSYNC : VSYNC_NO_ANIMATION_PENDING);
 			glfwSwapBuffers(p_window);
 			glfwPollEvents();
 		}

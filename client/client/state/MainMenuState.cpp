@@ -6,7 +6,10 @@ namespace card {
 			element(std::make_shared<MainMenuElement>()),
 			scene(element),
 			renderer(renderer) {
-
+		
+		element->addOnSinglePlayerBtnHandler({[this](egui::ActionEvent&) {
+			getStateMananger().changeState("CreateLocalRoomState");
+		}});
 		element->addOnJoinOnlineRoomHandler({[this](egui::ActionEvent&) {
 			getStateMananger().changeState("JoinRoomState");
 		}});
