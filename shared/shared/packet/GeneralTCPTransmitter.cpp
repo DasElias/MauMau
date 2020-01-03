@@ -1,0 +1,73 @@
+#include "GeneralTCPTransmitter.h"
+#include <thread>
+#include <stdexcept>
+#include <iostream>
+
+namespace ba = boost::asio;
+using ba::ip::tcp;
+using boost::system::error_code;
+using namespace std::chrono_literals;
+using namespace std::string_literals;
+
+namespace card {
+	std::string const GeneralTCPTransmitter::DELIMITER = "\n";
+
+	GeneralTCPTransmitter::GeneralTCPTransmitter(receiveFunc onReceiveFunc) :
+			onReceiveFunc(onReceiveFunc),
+			onErrorFunc([](error_code ec) {
+				throw boost::system::system_error(ec);
+			}) {
+	}
+
+	void GeneralTCPTransmitter::start() {
+		readLoop();
+	}
+	void GeneralTCPTransmitter::send(std::string msg, bool atFront) {
+		ba::post(getIoContext(), [=] {
+			if(enqueue(msg + DELIMITER, atFront)) {
+				writeLoop();
+			}
+		});
+	}
+	void GeneralTCPTransmitter::setOnReceiveFunc(receiveFunc callback) {
+		this->onReceiveFunc = callback;
+	}
+	void GeneralTCPTransmitter::setOnErrorFunc(errorHandlingFunc callback) {
+		this->onErrorFunc = callback;
+	}
+	bool GeneralTCPTransmitter::enqueue(std::string message, bool atFront) {
+		atFront &= !tx.empty();
+		if(atFront) {
+			tx.insert(std::next(std::begin(tx)), std::move(message));
+		} else {
+			tx.push_back(std::move(message));
+		}
+		return tx.size() == 1;
+	}
+	bool GeneralTCPTransmitter::dequeue() {
+		assert(!tx.empty());
+		tx.pop_front();
+		return !tx.empty();
+	}
+	void GeneralTCPTransmitter::writeLoop() {
+		ba::async_write(getSocket(), ba::buffer(tx.front()), [this, self = shared_from_this()](error_code ec, std::size_t n) {
+			if(dequeue() && !ec) writeLoop();
+		});
+	}
+	void GeneralTCPTransmitter::readLoop() {
+		ba::async_read_until(getSocket(), rx, DELIMITER, [this, self = shared_from_this()](error_code ec, std::size_t bytesTransferred) {
+			if(! ec) {
+				std::string json{
+					boost::asio::buffers_begin(rx.data()),
+					boost::asio::buffers_begin(rx.data()) + bytesTransferred - DELIMITER.size()
+				};
+				rx.consume(bytesTransferred);
+
+				onReceiveFunc(json);
+				readLoop();
+			} else {
+				onErrorFunc(ec);
+			}
+		});
+	}
+}

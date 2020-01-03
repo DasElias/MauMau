@@ -1,0 +1,82 @@
+#pragma once
+#include <shared/model/Card.h>
+#include <vector>
+#include <glm/glm.hpp>
+#include "Renderer3D.h"
+#include "shaderPrograms/VertexFragmentShaderProgram.h"
+#include "../renderingModel/CardTextures.h"
+#include "../renderingModel/PositionedCard.h"
+
+namespace card {
+	#pragma pack(push, 1)
+	struct InstancedCardData {
+		glm::vec4 modelViewProjection_col1;
+		glm::vec4 modelViewProjection_col2;
+		glm::vec4 modelViewProjection_col3;
+		glm::vec4 modelViewProjection_col4;
+		int textureId;
+	};
+	#pragma pack(pop)
+
+	class InstancedCardRenderingVao {
+		public:
+			InstancedCardRenderingVao(DataTextureVertexArrayObject wrappedVao);
+			void update(const std::vector<InstancedCardData>& data);
+
+		private:
+			static int const BYTES_PER_CARD = (16 * sizeof(float) + 1 * sizeof(std::uint32_t));
+
+			DataTextureVertexArrayObject vao;
+			std::uint32_t vboId;
+
+			void addInstancedFloatAttribute(std::uint32_t index, std::uint32_t offsetInBytes, std::uint32_t amountOfFloats);
+			void addInstacedIntegerAttribute(std::uint32_t index, std::uint32_t offsetInBytes, std::uint32_t amountOfInteger);
+	};
+
+	class CardRendererShader : public VertexFragmentShaderProgram {
+		public:
+			CardRendererShader();
+	};
+	
+	class CardRenderer {
+		// ----------------------------------------------------------------------
+		// ----------------------------STATIC-FIELDS-----------------------------
+		// ----------------------------------------------------------------------
+		public:
+			static float const WIDTH;
+			static float const HEIGHT;
+
+		private:
+			static std::vector<float> const VERTEX_DATA;
+			static std::vector<float> const TEXTURE_DATA;
+
+		// ----------------------------------------------------------------------
+		// --------------------------------FIELDS--------------------------------
+		// ----------------------------------------------------------------------
+		private:
+			Renderer3D& renderer3d;
+			DataTextureVertexArrayObject singleCardVao;
+			InstancedCardRenderingVao instancedVbo;
+			CardRendererShader shader;
+			CardTextures cardTextures;
+
+			std::vector<InstancedCardData> cardsToRenderInNextPass;
+
+		// ----------------------------------------------------------------------
+		// -----------------------------CONSTRUCTORS-----------------------------
+		// ----------------------------------------------------------------------
+		public:
+			CardRenderer(Renderer3D& renderer3d, CardTextures cardTextures);
+			CardRenderer(const CardRenderer&) = delete;
+			~CardRenderer();
+
+		// ----------------------------------------------------------------------
+		// -------------------------------METHODS--------------------------------
+		// ----------------------------------------------------------------------
+		public:
+			void renderInNextPass(const PositionedCard& card, ProjectionMatrix& projectionMatrix, Viewport& viewport);
+			void renderInNextPass(const std::vector<PositionedCard>& cards, ProjectionMatrix& projectionMatrix, Viewport& viewport);
+			void flush();
+
+	};
+}
