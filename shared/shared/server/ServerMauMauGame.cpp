@@ -82,10 +82,6 @@ namespace card {
 	bool ServerMauMauGame::canDraw(Player& player) const {
 		if(playerOnTurn->getUsername() != player.getUsername()) return false;
 
-		for(auto& card : player.getHandCards()) {
-			if(canPlay(player, card)) return false;
-		}
-
 		return true;
 	}
 	bool ServerMauMauGame::canChangeColor(Card playedCard) const {

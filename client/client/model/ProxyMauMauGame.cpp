@@ -94,10 +94,6 @@ namespace card {
 		// has already drawn a card
 		if(localPlayer->hasStartedToDrawCard()) return false;
 
-		for(auto& card : localPlayer->getCardStack()) {
-			if(canPlay(card)) return false;
-		}
-
 		return true;		
 	}
 
