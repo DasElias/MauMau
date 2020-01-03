@@ -13,9 +13,9 @@ namespace card {
 			static long long int const NOT_ON_TURN = -1;
 
 		protected:
-			static int const PLAY_DURATION_MS = 2000;
-			static int const DRAW_DURATION_MS = 2000;
-			static int const DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS = 1000;
+			static int const PLAY_DURATION_MS = 1500;
+			static int const DRAW_DURATION_MS = 1500;
+			static int const DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS = 500;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
