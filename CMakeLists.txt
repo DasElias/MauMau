@@ -32,6 +32,8 @@ if (WIN32)
     add_definitions(-D_WIN32_WINNT=${ver})
 endif(WIN32)
 
+add_compile_definitions(_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING)
+
 add_subdirectory(deps)
 add_subdirectory(shared)
 add_subdirectory(client)

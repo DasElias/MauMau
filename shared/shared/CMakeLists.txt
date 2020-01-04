@@ -1,4 +1,3 @@
-add_compile_definitions(_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING)
 add_subdirectory(utils)
 add_subdirectory(packet)
 add_subdirectory(model)
