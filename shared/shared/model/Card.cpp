@@ -73,7 +73,7 @@ namespace card {
 		return c;
 	}
 
-	std::vector<Card> Card::getVectorFromCardNumber(std::vector<int> cardNumbers) {
+	std::vector<Card> Card::getVectorFromCardNumber(const std::vector<int>& cardNumbers) {
 		std::vector<Card> c;
 		for(auto& singleCard : cardNumbers) {
 			c.push_back(Card(singleCard));

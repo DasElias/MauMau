@@ -88,7 +88,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			static std::vector<Card> getVectorWithCards(Card card, std::size_t length);
-			static std::vector<Card> getVectorFromCardNumber(std::vector<int> cardNumbers);
+			static std::vector<Card> getVectorFromCardNumber(const std::vector<int>& cardNumbers);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
