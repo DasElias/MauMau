@@ -202,14 +202,34 @@ namespace card {
 		// render hand cards
 		handCardRenderer.renderCardStackInX(localPlayer->getCardStack(), HAND_CARDS_LOCAL_POSITION, HAND_CARDS_LOCAL_ROTATION, projectionMatrix, viewport, 2 * CardSceneBackgroundRenderer::TABLE_MAX_X);
 
-		// render cards from temporary card stack to hand cards
-		for(auto& animation : localPlayer->getCardStack().getCardAnimations()) {
-			this->interpolateAndRender(animation,
-										DrawnCardRenderer::POSITION,
-										DrawnCardRenderer::ROTATION,
-										HAND_CARDS_LOCAL_POSITION,
-										HAND_CARDS_LOCAL_ROTATION
-			);
+		// render cards to hand cards
+		// please note that we iterate over the set from the end to the begin (we use a reverse-iterator),
+		// since we want to render animations added later also to be rendered later
+		// this is important when we have multiple CardAnimations from the draw card stack to the hand card stack,
+		// for example when the player was forced to draw 2 cards
+		auto localPlayerAnimations = localPlayer->getCardStack().getCardAnimations();
+		for(auto it = localPlayerAnimations.rbegin(); it != localPlayerAnimations.rend(); ++it) {
+			auto& animation = *it;
+
+			if(animation.source.get().equalsId(game->getDrawStack())) {
+				// render cards from draw card stack to hand cards
+				float cardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * (game->getDrawStack().getSize());
+				this->interpolateAndRender(animation,
+										   DRAW_CARDS_POSITION + glm::vec3(0, cardStackHeightAddition, 0),
+										   DRAW_CARDS_ROTATION,
+										   DRAW_CARDS_POSITION + glm::vec3(0, cardStackHeightAddition + CardRenderer::HEIGHT, CardRenderer::HEIGHT * 1.5f),
+										   DRAW_CARDS_ROTATION - glm::vec3(PI / 2, 0, 0),
+										   HAND_CARDS_LOCAL_POSITION,
+										   HAND_CARDS_LOCAL_ROTATION);
+			} else if(animation.source.get().equalsId(localPlayer->getDrawnCardAsStack())) {
+				// render cards from temporary card stack to hand cards
+				this->interpolateAndRender(animation,
+										   DrawnCardRenderer::POSITION,
+										   DrawnCardRenderer::ROTATION,
+										   HAND_CARDS_LOCAL_POSITION,
+										   HAND_CARDS_LOCAL_ROTATION
+				);
+			}	
 		}
 
 		// render cards from draw card stack to temporary card stack
