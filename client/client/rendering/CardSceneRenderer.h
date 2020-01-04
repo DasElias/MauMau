@@ -27,16 +27,16 @@ namespace card {
 			static glm::vec3 const DRAW_CARDS_POSITION;
 			static glm::vec3 const PLAY_CARDS_POSITION;
 			static glm::vec3 const HAND_CARDS_LOCAL_POSITION;
-			static glm::vec3 const HAND_CARDS_OPPONENT0_POSITION;
-			static glm::vec3 const HAND_CARDS_OPPONENT1_POSITION;
-			static glm::vec3 const HAND_CARDS_OPPONENT2_POSITION;
+			static glm::vec3 const HAND_CARDS_OPPONENT_VISAVIS_POSITION;
+			static glm::vec3 const HAND_CARDS_OPPONENT_RIGHT_POSITION;
+			static glm::vec3 const HAND_CARDS_OPPONENT_LEFT_POSITION;
 
 			static glm::vec3 const DRAW_CARDS_ROTATION;
 			static glm::vec3 const PLAY_CARDS_ROTATION;
 			static glm::vec3 const HAND_CARDS_LOCAL_ROTATION;
-			static glm::vec3 const HAND_CARDS_OPPONENT0_ROTATION;
-			static glm::vec3 const HAND_CARDS_OPPONENT1_ROTATION;
-			static glm::vec3 const HAND_CARDS_OPPONENT2_ROTATION;
+			static glm::vec3 const HAND_CARDS_OPPONENT_VISAVIS_ROTATION;
+			static glm::vec3 const HAND_CARDS_OPPONENT_RIGHT_ROTATION;
+			static glm::vec3 const HAND_CARDS_OPPONENT_LEFT_ROTATION;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
