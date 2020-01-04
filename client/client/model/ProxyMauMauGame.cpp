@@ -202,7 +202,7 @@ namespace card {
 
 	void ProxyMauMauGame::chooseColor(CardIndex color) {
 		if(! isWaitingForColorChoose()) throw std::runtime_error("Can't choose color!");
-		localPlayer->clearWaitingForColorPickFlag();
+		localPlayer->setColorWasPicked();
 
 		this->indexForNextCard = color;
 		sendPlayCardPacket(color);

@@ -82,7 +82,7 @@ namespace card {
 		return drawnCardTempStack;
 	}
 
-	void LocalPlayer::clearWaitingForColorPickFlag() {
+	void LocalPlayer::setColorWasPicked() {
 		this->isWaitingForColorPick_field = false;
 	}
 

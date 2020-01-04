@@ -22,14 +22,14 @@ namespace card {
 
 			// when a card is drawn, it should appear to the user so that he can
 			// play it immediately
-			// this HandCardStack has always the size 0 or 1
+			// has always the size 0 or 1
 			CardAnimator drawnCardTempStack;
 
 			// is true when there is a card in drawCardTempStack
 			// due to threading issues a scheduled animation might take
 			// more than one frame to appear in drawnCardTempStack
 			// since an exception is thrown when the local player tries to draw
-			// a card twice, we have to use a flag
+			// this card twice, we have to use a flag
 			bool wasCardDrawn_flag = false;
 
 		// ----------------------------------------------------------------------
@@ -46,17 +46,15 @@ namespace card {
 			// but rather we want to let the player choose if it should be played
 			void drawCardLocal(Card mutatesTo, CardAnimator& source) override;
 			void playCardLocal(Card card, CardAnimator& destination, bool isWaitingForColorPick) override;
+			void sortDrawnCardIntoHandCardsLocal();
 
 			std::optional<Card> getPlayedCard() const;
 			bool hasPlayedCard() const;
-
-			void sortDrawnCardIntoHandCardsLocal();
 			bool hasStartedToDrawCard() const;
 			bool isCardInTemporaryStack() const;
 			std::optional<Card> getDrawnCard() const;
 			const CardAnimator& getDrawnCardAsStack() const;
-
-			void clearWaitingForColorPickFlag();
+			void setColorWasPicked();
 			bool isWaitingForColorPick() const;
 
 			void onStartTurn() override;
