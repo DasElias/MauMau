@@ -68,6 +68,16 @@ namespace card {
 			void playCard(std::size_t index);
 			void chooseColor(CardIndex color);
 
+			void playCardAndSetNextPlayerOnTurnLocal(std::string username, Card card, CardIndex newCardIndex, std::vector<Card> cardsToDraw, bool wasDrawedJustBefore);
+			void drawCardAndSetNextPlayerOnTurnLocal(std::string username);
+			void localPlayerGetCardsLocal(std::vector<Card> cards);
+			void proxyPlayerGetCardLocal(std::string username, std::size_t amountOfCards);
+
+			void setNextOrNextButOneOnTurnLocal(Card playedCard);
+			void setNextPlayerOnTurnLocal();
+			void setNextButOnePlayerOnTurnLocal();
+			void setOnTurnLocal(std::shared_ptr<ProxyPlayer> player);
+			
 			const CardAnimator& getDrawStack() const;
 			const CardAnimator& getPlayStack() const;
 			std::shared_ptr<LocalPlayer> getLocalPlayer();
@@ -75,16 +85,7 @@ namespace card {
 			void removeOpponentLocal(std::shared_ptr<ParticipantOnClient> player);
 			bool checkIfIsOpponent(std::string username) const;
 			std::shared_ptr<ProxyPlayer> lookupPlayer(std::string username);
-			std::shared_ptr<ProxyPlayer> lookupOpponent(std::string username);
-
-			void playCardAndSetNextPlayerOnTurnLocal(std::string username, Card card, CardIndex newCardIndex, std::vector<Card> cardsToDraw, bool wasDrawedJustBefore);
-			void drawCardAndSetNextPlayerOnTurnLocal(std::string username);
-			void setNextOrNextButOneOnTurnLocal(Card playedCard);
-			void setNextPlayerOnTurnLocal();
-			void setNextButOnePlayerOnTurnLocal();
-			void setOnTurnLocal(std::shared_ptr<ProxyPlayer> player);
-			void localPlayerGetCardsLocal(std::vector<Card> cards);
-			void proxyPlayerGetCardLocal(std::string username, std::size_t amountOfCards);
+			std::shared_ptr<ProxyPlayer> lookupOpponent(std::string username);	
 
 		private:
 			void initStartCards(const std::vector<int>& handCardNumbersOfLocalPlayer);

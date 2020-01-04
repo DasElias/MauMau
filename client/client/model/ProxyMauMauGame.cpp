@@ -230,7 +230,7 @@ namespace card {
 		return playCardStack;
 	}
 
-	std::shared_ptr<LocalPlayer> ProxyMauMauGame::getLocalPlayer() {
+	std::shared_ptr<const LocalPlayer> ProxyMauMauGame::getLocalPlayer() {
 		return localPlayer;
 	}
 
