@@ -355,7 +355,7 @@ namespace card {
 				interpolateAndRender(animation,
 									 HAND_CARDS_OPPONENT2_POSITION, glm::vec3(PI, -PI/2, 0),
 									 HAND_CARDS_OPPONENT2_POSITION + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), glm::vec3(PI, -PI / 2, 0),
-									 DRAW_CARDS_POSITION, glm::vec3(PI, -PI, 0),
+									 DRAW_CARDS_POSITION + glm::vec3(0, CardRenderer::HEIGHT * 0.25f + CardStackRenderer::ADDITION_PER_CARD * (game->getDrawStack().getSize()), 0), {1.5f * PI/2, -PI, rotationEnd.z},
 									 positionEnd, {rotationEnd.x, -PI, rotationEnd.z}
 				);
 			} else {
