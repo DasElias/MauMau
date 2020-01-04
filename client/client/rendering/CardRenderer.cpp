@@ -115,7 +115,7 @@ namespace card {
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D_ARRAY, cardTextures.getTexId());
-		glDrawArraysInstanced(singleCardVao.getRenderMode(), 0, singleCardVao.getIndiciesCount(), cardsToRenderInNextPass.size());
+		glDrawArraysInstanced(singleCardVao.getRenderMode(), 0, singleCardVao.getIndiciesCount(), GLsizei(cardsToRenderInNextPass.size()));
 		glBindVertexArray(0);
 		shader.stopProgram();
 

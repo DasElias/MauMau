@@ -367,11 +367,11 @@ namespace card {
 	void CardSceneRenderer::interpolateAndRender(const CardAnimation& animation, glm::vec3 startPosition, glm::vec3 startRotation, glm::vec3 middle1Position, glm::vec3 middle1Rotation, glm::vec3 middle2Position, glm::vec3 middle2Rotation, glm::vec3 endPosition, glm::vec3 endRotation) {
 		glm::vec3 interpolatedPosition, interpolatedRotation;
 
-		float x = getMilliseconds() - animation.animationStartTime;
+		float x = float(getMilliseconds() - animation.animationStartTime);
 		float x1 = 0;
-		float x2 = animation.duration / 3;
+		float x2 = animation.duration / 3.0f;
 		float x3 = 2 * x2;
-		float x4 = animation.duration;
+		float x4 = float(animation.duration);
 
 		if(x < x2) {
 			// part 1 of the animation
@@ -393,10 +393,10 @@ namespace card {
 	void CardSceneRenderer::interpolateAndRender(const CardAnimation& animation, glm::vec3 startPosition, glm::vec3 startRotation, glm::vec3 middlePosition, glm::vec3 middleRotation, glm::vec3 endPosition, glm::vec3 endRotation) {
 		glm::vec3 interpolatedPosition, interpolatedRotation;
 
-		float x = getMilliseconds() - animation.animationStartTime;
+		float x = float(getMilliseconds() - animation.animationStartTime);
 		float x1 = 0;
-		float x2 = animation.duration / 2;
-		float x3 = animation.duration;
+		float x2 = animation.duration / 2.0f;
+		float x3 = float(animation.duration);
 
 		if(x < x2) {
 			// part 1 of the animation
@@ -414,9 +414,9 @@ namespace card {
 	void CardSceneRenderer::interpolateAndRender(const CardAnimation& animation, glm::vec3 startPosition, glm::vec3 startRotation, glm::vec3 endPosition, glm::vec3 endRotation) {
 		glm::vec3 interpolatedPosition, interpolatedRotation;
 
-		float x = getMilliseconds() - animation.animationStartTime;
+		float x = float(getMilliseconds() - animation.animationStartTime);
 		float x1 = 0;
-		float x2 = animation.duration;
+		float x2 = float(animation.duration);
 
 		interpolatedPosition = interpolateLinear(x, x1, startPosition, x2, endPosition);
 		interpolatedRotation = interpolateLinear(x, x1, startRotation, x2, endRotation);
