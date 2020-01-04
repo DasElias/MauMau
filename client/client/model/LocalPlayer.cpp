@@ -6,16 +6,17 @@
 #include <shared/packet/cts/MauRequest_CTSPacket.h>
 #include <shared/packet/cts/PlayCardRequest_CTSPacket.h>
 #include <shared/packet/cts/DrawCardRequest_CTSPacket.h>
+#include <shared/model/CardAnimationDuration.h>
 
 namespace card {
-	LocalPlayer::LocalPlayer(std::shared_ptr<ParticipantOnClient> wrappedLocalPlayer, std::shared_ptr<CTSPacketTransmitter> packetTransmitter, PlayVerifier& playVerifier, std::vector<Card> handCards) :
-			ProxyPlayer(wrappedLocalPlayer, handCards),
+	LocalPlayer::LocalPlayer(std::shared_ptr<ParticipantOnClient> wrappedLocalPlayer, std::shared_ptr<CTSPacketTransmitter> packetTransmitter, PlayVerifier& playVerifier) :
+			ProxyPlayer(wrappedLocalPlayer),
 			wrappedLocalPlayer(wrappedLocalPlayer),
 			packetTransmitter(packetTransmitter),
 			playVerifier(playVerifier),
 			drawnCardTempStack(std::make_unique<HandCardStack>()) {
 
-		if(handCards.empty()) throw std::runtime_error("LocalPlayer needs at least one default hand card");
+	//	if(handCards.empty()) throw std::runtime_error("LocalPlayer needs at least one default hand card");
 //		this->selectedCard = handCards.at((handCards.size() - 1) / 2);
 
 	}
@@ -107,7 +108,7 @@ namespace card {
 
 		playedCard = std::nullopt;
 		isWaitingForColorPick_field = false;
-		for(int counter = drawnCardTempStack.getSize() - 1; counter > 0; counter--) {
+		for(int counter = static_cast<int>(drawnCardTempStack.getSize() - 1); counter > 0; counter--) {
 			ProxyPlayer::pickLastCardFromCardStackLocal(drawnCardTempStack.get(counter), drawnCardTempStack);
 		}
 		wasCardDrawn_flag = false;

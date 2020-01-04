@@ -1,12 +1,20 @@
 #include "ProxyPlayer.h"
 #include <shared/utils/TimeUtils.h>
 #include <stdexcept>
+#include <shared/model/CardAnimationDuration.h>
 
 namespace card {
 	ProxyPlayer::ProxyPlayer(std::shared_ptr<ParticipantOnClient> wrappedParticipant, std::vector<Card> handCards) :
 			handCardStack(std::make_unique<HandCardStack>(handCards)),
 			wrappedParticipant(wrappedParticipant),
 			unixTimeTurnStarted(NOT_ON_TURN) {
+	}
+	void ProxyPlayer::initHandCards(std::vector<Card> handCards, CardAnimator& drawCardStack, std::size_t playerIndex) {
+		int delay = int(playerIndex * handCards.size() * INITIAL_DRAW_DELAY_BETWEEN_CARDS_MS);
+		for(auto& card : handCards) {
+			handCardStack.addLastCardFrom(card, drawCardStack, INITIAL_DRAW_DURATION_PER_CARD_MS, delay);
+			delay += INITIAL_DRAW_DELAY_BETWEEN_CARDS_MS;
+		}
 	}
 	void ProxyPlayer::addHandCardFromPlainLocal(Card c) {
 		handCardStack.addFromPlain(c);

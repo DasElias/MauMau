@@ -64,7 +64,6 @@ namespace card {
 			const CardStack& getPlayCardStack() const;
 			const CardStack& getDrawCardStack() const;
 
-			void setPlayerOnTurnWithoutPacket(std::shared_ptr<Player> player);
 			void setPlayerOnTurn(std::shared_ptr<Player> player);
 			void setNextPlayerOnTurn();
 			void setNextButOnePlayerOnTurn();
@@ -72,6 +71,7 @@ namespace card {
 			bool drawCardAndSetNextPlayerOnTurn(Player& player);
 
 		private:
+			void setInitialPlayerOnTurn();
 			void tryRebalanceCardStacks();
 
 			std::optional<OperationSuccessful_STCAnswerPacket> listener_onPlayCard(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);

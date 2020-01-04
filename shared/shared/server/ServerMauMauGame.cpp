@@ -14,6 +14,8 @@
 #include <iostream>
 
 #include "../utils/MathUtils.h"
+#include "../utils/ThreadUtils.h"
+#include "../model/CardAnimationDuration.h"
 
 namespace card {
 	ServerMauMauGame::ServerMauMauGame(std::shared_ptr<STCPacketTransmitter> packetTransmitter, std::vector<std::shared_ptr<ParticipantOnServer>> participants) :
@@ -53,7 +55,9 @@ namespace card {
 		}
 
 		// set player on turn
-		setPlayerOnTurnWithoutPacket(getRandomPlayer());
+		setInitialPlayerOnTurn();
+
+		
 
 		// init packet listeners
 		packetTransmitter->addListenerForClientPkt(PlayCardRequest_CTSPacket::PACKET_ID, handler_onPlayCard);
@@ -140,13 +144,19 @@ namespace card {
 	const CardStack& ServerMauMauGame::getDrawCardStack() const {
 		return drawCardStack;
 	}
-	void ServerMauMauGame::setPlayerOnTurnWithoutPacket(std::shared_ptr<Player> player) {
-		if(playerOnTurn) this->playerOnTurn->onEndTurn();
-		this->playerOnTurn = player;
-		this->playerOnTurn->onStartTurn();
+	void ServerMauMauGame::setInitialPlayerOnTurn() {
+		auto newPlayerOnTurn = getRandomPlayer();
+		this->playerOnTurn = newPlayerOnTurn;
+
+		int timeUntilCardsDistributed = getDurationUntilInitialCardsAreDistributed(this->players.size(), AMOUNT_OF_HAND_CARDS);
+		threadUtils_invokeIn(timeUntilCardsDistributed, [this]() {
+			playerOnTurn->onStartTurn();
+		});
 	}
 	void ServerMauMauGame::setPlayerOnTurn(std::shared_ptr<Player> player) {
-		setPlayerOnTurnWithoutPacket(player);
+		this->playerOnTurn->onEndTurn();
+		this->playerOnTurn = player;
+		this->playerOnTurn->onStartTurn();
 
 		Card nextOnDrawStackToSend = drawCardStack.getLast();
 		LocalPlayerIsOnTurn_STCPacket packet(nextOnDrawStackToSend.getCardNumber());

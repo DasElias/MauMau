@@ -39,6 +39,7 @@ namespace card {
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
+			void initHandCards(std::vector<Card> handCards, CardAnimator& drawCardStack, std::size_t playerIndex);
 			void addHandCardFromPlainLocal(Card c);
 			void addHandCardsFromPlainLocal(std::vector<Card> cards);
 			virtual void pickLastCardFromCardStackLocal(Card mutatesTo, CardAnimator& drawCardStack);

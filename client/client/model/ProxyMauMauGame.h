@@ -48,7 +48,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			bool isLocalPlayerOnTurn() const;
-			bool isPreviousTurnCompleted() const;
+			bool areAllPreviousCardTransactionsCompleted() const;
 			bool canPlay(std::size_t indexInLocalPlayerHandCards) const;
 			bool canPlay(Card card) const;
 			bool canDraw() const;
@@ -87,7 +87,7 @@ namespace card {
 			void proxyPlayerGetCardLocal(std::string username, std::size_t amountOfCards);
 
 		private:
-			void initStartCards(std::size_t amountOfStartCardsPerPlayer);
+			void initStartCards(const std::vector<int>& handCardNumbersOfLocalPlayer);
 			void tryRebalanceCardStacks();
 			void setLocalPlayerAtTheBeginOfPlayersVector();
 

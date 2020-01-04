@@ -12,6 +12,7 @@
 #include <shared/packet/stc/LocalPlayerIsOnTurn_STCPacket.h>
 
 #include <iostream>
+#include <shared/model/CardAnimationDuration.h>
 
 namespace card {
 	ProxyMauMauGame::ProxyMauMauGame(std::shared_ptr<CTSPacketTransmitter> packetTransmitter, std::vector<std::shared_ptr<ParticipantOnClient>> allParticipantsInclLocal, std::shared_ptr<ParticipantOnClient> localParticipant, std::string usernameOnTurn, std::vector<int> handCards, int startCard, int nextCardOnDrawStack, RoomOptions& roomOptions) :
@@ -27,8 +28,7 @@ namespace card {
 		// initialize players
 		for(auto& o : allParticipantsInclLocal) {
 			if(o == localParticipant) {
-				std::vector<Card> localPlayerCards = Card::getVectorFromCardNumber(handCards);
-				this->localPlayer = std::make_shared<LocalPlayer>(localParticipant, packetTransmitter, *this, localPlayerCards);
+				this->localPlayer = std::make_shared<LocalPlayer>(localParticipant, packetTransmitter, *this);
 				this->allPlayers.push_back(localPlayer);
 			} else {
 				auto player = std::make_shared<ProxyPlayer>(o);
@@ -38,7 +38,7 @@ namespace card {
 		}
 
 		// initialize other player's hand cards and draw card stack
-		initStartCards(handCards.size());
+		initStartCards(handCards);
 
 		// initialize player on turn
 		this->userOnTurn = lookupPlayer(usernameOnTurn);
@@ -54,19 +54,41 @@ namespace card {
 		packetTransmitter->addListenerForServerPkt(OtherPlayerHasPlayedCard_STCPacket::PACKET_ID, handler_onOtherPlayerHasPlayedCard);
 		packetTransmitter->addListenerForServerPkt(LocalPlayerIsOnTurn_STCPacket::PACKET_ID, handler_onLocalPlayerIsOnTurn);
 	}
-
+	
 	ProxyMauMauGame::~ProxyMauMauGame() {
 		packetTransmitter->removeListenerForServerPkt(OtherPlayerHasDrawnCards_STCPacket::PACKET_ID, handler_onOtherPlayerHasDrawnCard);
 		packetTransmitter->removeListenerForServerPkt(OtherPlayerHasPlayedCard_STCPacket::PACKET_ID, handler_onOtherPlayerHasPlayedCard);
 		packetTransmitter->removeListenerForServerPkt(LocalPlayerIsOnTurn_STCPacket::PACKET_ID, handler_onLocalPlayerIsOnTurn);
 	}
 
+	void ProxyMauMauGame::initStartCards(const std::vector<int>& handCardNumbersOfLocalPlayer) {
+		// init draw card stack
+		drawCardStack.addFromPlain(Card::NULLCARD, Card::MAX_CARDS);
+
+		std::size_t cardsPerPlayer = handCardNumbersOfLocalPlayer.size();
+		std::vector<Card> nullHandCards = Card::getVectorWithCards(Card::NULLCARD, cardsPerPlayer);
+		for(std::size_t i = 0; i < opponents.size(); i++) {
+			auto& o = opponents[i];
+			o->initHandCards(nullHandCards, drawCardStack, i);
+		}
+		
+		std::vector<Card> handCardsOfLocalPlayer = Card::getVectorFromCardNumber(handCardNumbersOfLocalPlayer);
+		localPlayer->initHandCards(handCardsOfLocalPlayer, drawCardStack, opponents.size());
+	}
+
 	bool ProxyMauMauGame::isLocalPlayerOnTurn() const {
 		return *userOnTurn == *localPlayer;
 	}
 
-	bool ProxyMauMauGame::isPreviousTurnCompleted() const {
-		return playCardStack.getCardAnimations().empty();
+	bool ProxyMauMauGame::areAllPreviousCardTransactionsCompleted() const {
+		if(! playCardStack.getCardAnimations().empty()) return false;
+		if(! localPlayer->getDrawnCardAsStack().getCardAnimations().empty()) return false;
+
+		for(auto& player : this->allPlayers) {
+			if(! player->getCardStack().getCardAnimations().empty()) return false;
+		}
+		
+		return true;
 	}
 
 	bool ProxyMauMauGame::canPlay(std::size_t indexInLocalPlayerHandCards) const {
@@ -74,7 +96,7 @@ namespace card {
 	}
 
 	bool ProxyMauMauGame::canPlay(Card card) const {
-		if(! isLocalPlayerOnTurn() || localPlayer->hasPlayedCard() || !isPreviousTurnCompleted()) return false;
+		if(! isLocalPlayerOnTurn() || localPlayer->hasPlayedCard() || !areAllPreviousCardTransactionsCompleted()) return false;
 
 		Card lastCardOnPlayStack = playCardStack.getLast();
 		if(lastCardOnPlayStack.getValue() == CHANGE_COLOR_VALUE) {
@@ -89,7 +111,7 @@ namespace card {
 	}
 
 	bool ProxyMauMauGame::canDraw() const {
-		if(! isLocalPlayerOnTurn() || !isPreviousTurnCompleted() || isWaitingForColorChoose() || drawCardForNextPlayer == Card::NULLCARD) return false;
+		if(! isLocalPlayerOnTurn() || !areAllPreviousCardTransactionsCompleted() || isWaitingForColorChoose() || drawCardForNextPlayer == Card::NULLCARD) return false;
 
 		// has already drawn a card
 		if(localPlayer->hasStartedToDrawCard()) return false;
@@ -313,17 +335,6 @@ namespace card {
 		player->pickLastCardsFromCardStackLocal(cards, drawCardStack);
 		
 		tryRebalanceCardStacks();
-	}
-	void ProxyMauMauGame::initStartCards(std::size_t startCardsPerPlayer) {
-		std::vector<Card> cards = Card::getVectorWithCards(Card::NULLCARD, startCardsPerPlayer);
-		for(auto& o : opponents) {
-			o->addHandCardsFromPlainLocal(cards);
-		}
-
-		// init draw card stack
-		std::size_t usedCards = allPlayers.size() * startCardsPerPlayer;
-		std::size_t amountOfCardsOnDrawStack = Card::MAX_CARDS - usedCards;
-		drawCardStack.addFromPlain(Card::NULLCARD, amountOfCardsOnDrawStack);
 	}
 	void ProxyMauMauGame::tryRebalanceCardStacks() {
 		if(drawCardStack.getSize() <= 3) {
