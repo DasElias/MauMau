@@ -44,7 +44,7 @@ namespace card {
 		public:
 			// we want to override this function since we don't want to put the drawn card into the hands card
 			// but rather we want to let the player choose if it should be played
-			void pickLastCardFromCardStackLocal(Card mutatesTo, CardAnimator& source) override;
+			void drawCardLocal(Card mutatesTo, CardAnimator& source) override;
 			void playCardLocal(Card card, CardAnimator& destination, bool isWaitingForColorPick) override;
 
 			std::optional<Card> getPlayedCard() const;

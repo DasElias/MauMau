@@ -40,13 +40,10 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			void initHandCards(std::vector<Card> handCards, CardAnimator& drawCardStack, std::size_t playerIndex);
-			void addHandCardFromPlainLocal(Card c);
-			void addHandCardsFromPlainLocal(std::vector<Card> cards);
-			virtual void pickLastCardFromCardStackLocal(Card mutatesTo, CardAnimator& drawCardStack);
-			void pickLastCardsFromCardStackLocal(std::vector<Card> mutatesTo, CardAnimator& drawCardStack);
+			virtual void drawCardLocal(Card mutatesTo, CardAnimator& drawCardStack);
+			void drawCardsLocal(std::vector<Card> mutatesTo, CardAnimator& drawCardStack);
 			virtual void playCardLocal(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick);
 
-			void removeHandCardLocal(Card c);
 			const CardAnimator& getCardStack() const;
 			std::string getUsername() const;
 			long long int getUnixTimeTurnStarted() const;

@@ -16,21 +16,13 @@ namespace card {
 			delay += INITIAL_DRAW_DELAY_BETWEEN_CARDS_MS;
 		}
 	}
-	void ProxyPlayer::addHandCardFromPlainLocal(Card c) {
-		handCardStack.addFromPlain(c);
-	}
-	void ProxyPlayer::addHandCardsFromPlainLocal(std::vector<Card> cards) {
-		for(auto& c : cards) {
-			addHandCardFromPlainLocal(c);
-		}
-	}
-	void ProxyPlayer::pickLastCardFromCardStackLocal(Card mutatesTo, CardAnimator& source) {
+	void ProxyPlayer::drawCardLocal(Card mutatesTo, CardAnimator& source) {
 		handCardStack.addLastCardFromImmediately(mutatesTo, source, DRAW_DURATION_MS);
 	}
-	void ProxyPlayer::pickLastCardsFromCardStackLocal(std::vector<Card> cards, CardAnimator& source) {
+	void ProxyPlayer::drawCardsLocal(std::vector<Card> cards, CardAnimator& source) {
 		if(cards.size() == 1) {
 			// when there is only one card drawn, we have to call the virtual function since this one may be overridden
-			pickLastCardFromCardStackLocal(cards[0], source);
+			drawCardLocal(cards[0], source);
 			return;
 		} 
 
@@ -42,9 +34,6 @@ namespace card {
 	}
 	void ProxyPlayer::playCardLocal(Card card, CardAnimator& destination, bool isWaitingForColorPick) {
 		destination.addRandomCardFromImmediately(card, handCardStack, PLAY_DURATION_MS);
-	}
-	void ProxyPlayer::removeHandCardLocal(Card c) {
-		handCardStack.remove(c);
 	}
 	const CardAnimator& ProxyPlayer::getCardStack() const {
 		return handCardStack;

@@ -161,7 +161,7 @@ namespace card {
 
 		// we don't have to send a packet yet, since we want to let the player choose if he wants
 		// to add the drawn card into it's hand card or play it
-		localPlayer->pickLastCardFromCardStackLocal(drawCardForNextPlayer, drawCardStack);
+		localPlayer->drawCardLocal(drawCardForNextPlayer, drawCardStack);
 
 		this->drawCardForNextPlayer = Card::NULLCARD;
 	}
@@ -273,7 +273,7 @@ namespace card {
 	void ProxyMauMauGame::playCardAndSetNextPlayerOnTurnLocal(std::string username, Card card, CardIndex newCardIndex, std::vector<Card> cardsToDraw, bool wasDrawedJustBefore) {
 		std::shared_ptr<ProxyPlayer> player = lookupOpponent(username);
 
-		if(wasDrawedJustBefore) player->pickLastCardFromCardStackLocal(card, drawCardStack);
+		if(wasDrawedJustBefore) player->drawCardLocal(card, drawCardStack);
 		player->playCardLocal(card, playCardStack, canChangeColor(card));
 
 		if(canChangeColor(card)) {
@@ -293,7 +293,7 @@ namespace card {
 	}
 	void ProxyMauMauGame::drawCardAndSetNextPlayerOnTurnLocal(std::string username) {
 		std::shared_ptr<ProxyPlayer> player = lookupOpponent(username);
-		player->pickLastCardFromCardStackLocal(Card::NULLCARD, drawCardStack);
+		player->drawCardLocal(Card::NULLCARD, drawCardStack);
 		tryRebalanceCardStacks();
 
 		setNextPlayerOnTurnLocal();
@@ -325,14 +325,14 @@ namespace card {
 	}
 	
 	void ProxyMauMauGame::localPlayerGetCardsLocal(std::vector<Card> cards) {
-		localPlayer->pickLastCardsFromCardStackLocal(cards, drawCardStack);
+		localPlayer->drawCardsLocal(cards, drawCardStack);
 		tryRebalanceCardStacks();
 
 	}
 	void ProxyMauMauGame::proxyPlayerGetCardLocal(std::string username, std::size_t amountOfCards) {
 		std::shared_ptr<ProxyPlayer> player = lookupOpponent(username);
 		auto cards = Card::getVectorWithCards(Card::NULLCARD, amountOfCards);
-		player->pickLastCardsFromCardStackLocal(cards, drawCardStack);
+		player->drawCardsLocal(cards, drawCardStack);
 		
 		tryRebalanceCardStacks();
 	}
