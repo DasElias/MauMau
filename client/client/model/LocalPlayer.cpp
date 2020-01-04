@@ -21,16 +21,16 @@ namespace card {
 
 	}
 
-	void LocalPlayer::drawCardLocal(Card mutatesTo, CardAnimator& source) {
+	void LocalPlayer::drawCardLocal(Card mutatesTo, CardAnimator& drawCardStack) {
 		if(hasStartedToDrawCard()) {
 			log(LogSeverity::ERR, "Inconsistent data model. Card was moved to LocalPlayer even though he has already got a card.");
 		} else {
-			drawnCardTempStack.addLastCardFromImmediately(mutatesTo, source, DRAW_DURATION_MS);
+			drawnCardTempStack.addLastCardFromImmediately(mutatesTo, drawCardStack, DRAW_DURATION_MS);
 			wasCardDrawn_flag = true;
 		}
 	}
 
-	void LocalPlayer::playCardLocal(Card card, CardAnimator& destination, bool isWaitingForColorPick_local) {
+	void LocalPlayer::playCardLocal(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick_local) {
 		this->playedCard = card;
 
 		if(isWaitingForColorPick_local) {
@@ -39,13 +39,13 @@ namespace card {
 
 		if(! isCardInTemporaryStack()) {
 			// player hasn't drawn a card, which could be played
-			destination.addDeterminedCardFromImmediately(card, handCardStack, PLAY_DURATION_MS);
+			playCardStack.addDeterminedCardFromImmediately(card, handCardStack, PLAY_DURATION_MS);
 		} else {
 			if(drawnCardTempStack.getSize() > 1 || ! (card == drawnCardTempStack.get(0))) {
 				throw std::runtime_error("Inconsistent data model. There are too many cards on drawnCardTempStack or the player tries to play a card which wasn't drawn by him.");
 			} 
 
-			destination.addDeterminedCardFromImmediately(card, drawnCardTempStack, PLAY_DURATION_MS);
+			playCardStack.addDeterminedCardFromImmediately(card, drawnCardTempStack, PLAY_DURATION_MS);
 		}
 	}
 
