@@ -37,7 +37,7 @@ namespace card {
 		// TODO use multisampling?
 		glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, width, height, GLsizei(textures.size()), 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
-		for(std::size_t counter = 0; counter < textures.size(); counter++) {
+		for(int counter = 0; counter < textures.size(); counter++) {
 			int loadedImageWidth, loadedImageHeight;
 
 			// load image 
