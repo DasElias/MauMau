@@ -1,6 +1,4 @@
 #include "ClientPacketTransmitter.h"
-#include "ClientPacketTransmitter.h"
-#include "ClientPacketTransmitter.h"
 #include <shared/packet/STCPacketConstructorFromJson.h>
 #include <shared/utils/ThreadUtils.h>
 
