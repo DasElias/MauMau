@@ -216,9 +216,7 @@ namespace card {
 		setNextOrNextButOneOnTurnLocal(playedCard);
 
 		std::size_t cardsToDrawForNextPlayer = getAmountsOfCardsToDrawForNextPlayer(playedCard);
-		if(cardsToDrawForNextPlayer != 0) {
-			proxyPlayerGetCardLocal(this->userOnTurn->getUsername(), cardsToDrawForNextPlayer);
-		}
+		playerHasToDrawCards(this->userOnTurn, cardsToDrawForNextPlayer);
 
 		this->drawCardForNextPlayer = Card::NULLCARD;
 	}
@@ -273,8 +271,12 @@ namespace card {
 	void ProxyMauMauGame::playCardAndSetNextPlayerOnTurnLocal(std::string username, Card card, CardIndex newCardIndex, std::vector<Card> cardsToDraw, bool wasDrawedJustBefore) {
 		std::shared_ptr<ProxyPlayer> player = lookupOpponent(username);
 
-		if(wasDrawedJustBefore) player->drawCardLocal(card, drawCardStack);
-		player->playCardLocal(card, playCardStack, canChangeColor(card));
+		if(wasDrawedJustBefore) {
+			player->drawCardLocal(card, drawCardStack);
+			player->playCardAfterTimeCardWasDrawn(card, playCardStack, canChangeColor(card));
+		} else {
+			player->playCardLocal(card, playCardStack, canChangeColor(card));
+		}
 
 		if(canChangeColor(card)) {
 			if(newCardIndex == CardIndex::NULLINDEX) throw std::runtime_error("Can't set NULLINDEX as new card index");
@@ -285,11 +287,7 @@ namespace card {
 
 		setNextOrNextButOneOnTurnLocal(card);
 
-		if(localPlayer == userOnTurn) {
-			localPlayerGetCardsLocal(cardsToDraw);
-		} else {
-			proxyPlayerGetCardLocal(userOnTurn->getUsername(), cardsToDraw.size());
-		}
+		playerHasToDrawCards(userOnTurn, cardsToDraw);
 	}
 	void ProxyMauMauGame::drawCardAndSetNextPlayerOnTurnLocal(std::string username) {
 		std::shared_ptr<ProxyPlayer> player = lookupOpponent(username);
@@ -324,18 +322,18 @@ namespace card {
 		this->userOnTurn->onStartTurn();
 	}
 	
-	void ProxyMauMauGame::localPlayerGetCardsLocal(std::vector<Card> cards) {
-		localPlayer->drawCardsLocal(cards, drawCardStack);
-		tryRebalanceCardStacks();
+	void ProxyMauMauGame::playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, std::size_t amountOfCards) {
+		if(amountOfCards == 0) return;
 
-	}
-	void ProxyMauMauGame::proxyPlayerGetCardLocal(std::string username, std::size_t amountOfCards) {
-		std::shared_ptr<ProxyPlayer> player = lookupOpponent(username);
 		auto cards = Card::getVectorWithCards(Card::NULLCARD, amountOfCards);
-		player->drawCardsLocal(cards, drawCardStack);
-		
+		playerHasToDrawCards(player, cards);
+	}
+
+	void ProxyMauMauGame::playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, const std::vector<Card>& cards) {
+		player->drawCardsAfterTimeCardWasPlayed(cards, drawCardStack);
 		tryRebalanceCardStacks();
 	}
+
 	void ProxyMauMauGame::tryRebalanceCardStacks() {
 		if(drawCardStack.getSize() <= 3) {
 			// TODO

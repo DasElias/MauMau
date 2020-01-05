@@ -32,8 +32,18 @@ namespace card {
 			delay += DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS;
 		}
 	}
-	void ProxyPlayer::playCardLocal(Card card, CardAnimator& destination, bool isWaitingForColorPick) {
-		destination.addRandomCardFromImmediately(card, handCardStack, PLAY_DURATION_MS);
+	void ProxyPlayer::drawCardsAfterTimeCardWasPlayed(std::vector<Card> cards, CardAnimator& drawCardStack) {
+		int delay = PLAY_DURATION_MS;
+		for(Card& c : cards) {
+			handCardStack.addLastCardFrom(c, drawCardStack, DRAW_DURATION_MS, delay);
+			delay += DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS;
+		}
+	}
+	void ProxyPlayer::playCardLocal(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick) {
+		playCardStack.addRandomCardFromImmediately(card, handCardStack, PLAY_DURATION_MS);
+	}
+	void ProxyPlayer::playCardAfterTimeCardWasDrawn(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick) {
+		playCardStack.addRandomCardFrom(card, handCardStack, PLAY_DURATION_MS, DRAW_DURATION_MS);
 	}
 	const CardAnimator& ProxyPlayer::getCardStack() const {
 		return handCardStack;
