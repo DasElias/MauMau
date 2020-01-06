@@ -16,6 +16,7 @@ namespace card {
 			std::shared_ptr<egui::AspectRatioElement> createOnlineRoomBtn;
 			std::shared_ptr<egui::AspectRatioElement> joinOnlineRoomBtn;
 
+			std::shared_ptr<egui::AspectRatioElement> infoBtn;
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
