@@ -139,7 +139,7 @@ namespace card {
 		participantsForNextGame.erase(std::remove(participantsForNextGame.begin(), participantsForNextGame.end(), participant), participantsForNextGame.end());
 		if(isGameRunning() && getGame().checkIfPlayerByParticipant(participant)) {
 			auto& game = getGame();
-			auto& player = game.lookupPlayerByParticipant(participant);
+			auto player = game.lookupPlayerByParticipant(participant);
 			game.removePlayer(player);
 		};
 

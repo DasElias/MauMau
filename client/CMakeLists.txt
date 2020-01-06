@@ -10,12 +10,15 @@ find_package(Boost COMPONENTS filesystem log REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 
 include_directories("${CMAKE_SOURCE_DIR}/shared")
-include_directories("${CMAKE_SOURCE_DIR}/deps/glad")
-include_directories("${CMAKE_SOURCE_DIR}/deps/glm")
-include_directories("${CMAKE_SOURCE_DIR}/deps/nanovg")
-include_directories("${CMAKE_SOURCE_DIR}/deps/egui")
+
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/glad")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/glm")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/nanovg")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/egui")
+
 include_directories("${CMAKE_SOURCE_DIR}/deps/simpleIni")
 include_directories("${CMAKE_SOURCE_DIR}/deps/json")
 
+add_subdirectory(deps)
 add_subdirectory(client)
 

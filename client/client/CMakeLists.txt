@@ -8,9 +8,8 @@ add_subdirectory(renderingModel)
 add_subdirectory(rendering)
 add_subdirectory(state)
 
-set(card_source_files main.h main.cpp)
+set(card_source_files Main.h Main.cpp)
 add_executable(card ${card_source_files})
-
 
 message("GLFW linked library: \"${GLFW3_LIBRARY}\"")
 target_link_libraries(card

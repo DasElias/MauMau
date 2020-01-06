@@ -2,6 +2,7 @@
 #include <functional>
 #include "TimeUtils.h"
 #include "ThreadUtilsProvider.h"
+#include <memory>
 
 namespace card {
 	void threadUtils_setProvider(std::unique_ptr<ThreadUtilsProvider> provider);

@@ -34,7 +34,13 @@ endif(WIN32)
 
 add_compile_definitions(_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING)
 
-add_subdirectory(deps)
+option(BUILD_CLIENT "Build client" ON)
+option(BUILD_SERVER "Build server" ON)
+
 add_subdirectory(shared)
-add_subdirectory(client)
-add_subdirectory(server)
+if(BUILD_CLIENT)
+    add_subdirectory(client)
+endif(BUILD_CLIENT)
+if(BUILD_SERVER)
+    add_subdirectory(server)
+endif(BUILD_SERVER)

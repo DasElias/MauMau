@@ -1,6 +1,7 @@
 #pragma once
 #include <boost/asio.hpp>
 #include <memory>
+#include <list>
 #include "../utils/ReferenceOrValueWrapper.h"
 using boost::asio::ip::tcp;
 

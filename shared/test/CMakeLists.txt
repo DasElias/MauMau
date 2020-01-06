@@ -9,12 +9,7 @@ file(GLOB_RECURSE shared_test_files
 add_executable(shared_test ${shared_test_files})
 
 target_link_libraries(shared_test
-	${GLFW3_LIBRARY}
 	${Boost_LIBRARIES}
-	glad
-	nanovg
-	egui
-
 	system
 	localServer
 	client_model

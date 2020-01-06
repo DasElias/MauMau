@@ -1,6 +1,4 @@
-add_subdirectory(catch)
 add_subdirectory(glad)
 add_subdirectory(glm)
 add_subdirectory(nanovg)
 add_subdirectory(egui)
-add_subdirectory(simpleIni)

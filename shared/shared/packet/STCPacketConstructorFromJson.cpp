@@ -18,8 +18,11 @@
 #include "../packet/stc/LocalPlayerIsOnTurn_STCPacket.h"
 
 #define PACKET_TYPE_CASE(className) case className::PACKET_ID: \
-										callback(className(jsonHandle)); \
-										break;
+										{ \
+											className pkt(jsonHandle); \
+											callback(pkt); \
+											break; \
+										}
 
 namespace card {
 	void constructAndProcesSTCPacketFromJson(std::string& json, std::function<void(Packet&)> callback) {

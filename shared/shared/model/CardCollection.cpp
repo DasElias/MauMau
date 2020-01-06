@@ -93,7 +93,7 @@ namespace card {
 	}
 
 	Card CardCollection::remove(Card card) {
-		auto& ptr = std::find(cards.begin(), cards.end(), card);
+		auto ptr = std::find(cards.begin(), cards.end(), card);
 		if(ptr == cards.end()) throw std::runtime_error("Card " + std::to_string(card.getCardNumber()) + " is not part of this CardCollection.");
 		cards.erase(ptr);
 

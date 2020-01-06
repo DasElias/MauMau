@@ -16,8 +16,11 @@
 
 
 #define PACKET_TYPE_CASE(className) case className::PACKET_ID: \
-										callback(className(jsonHandle)); \
-										break;
+										{ \
+											className pkt(jsonHandle); \
+											callback(pkt); \
+											break; \
+										}
 
 namespace card {
 	void constructAndProcessCTSPacketFromJson(std::string& json, std::function<void(ClientToServerPacket&)> callback) {
