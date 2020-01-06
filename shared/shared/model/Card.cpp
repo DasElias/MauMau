@@ -9,7 +9,7 @@ namespace card {
 	const Card Card::HEART_FOUR(3);
 	const Card Card::HEART_FIVE(4);
 	const Card Card::HEART_SIX(5);
-	const Card Card::HEART_SÈVEN(6);
+	const Card Card::HEART_SEVEN(6);
 	const Card Card::HEART_EIGHT(7);
 	const Card Card::HEART_NINE(8);
 	const Card Card::HEART_TEN(9);
@@ -23,7 +23,7 @@ namespace card {
 	const Card Card::SPADE_FOUR(16);
 	const Card Card::SPADE_FIVE(17);
 	const Card Card::SPADE_SIX(18);
-	const Card Card::SPADE_SÈVEN(19);
+	const Card Card::SPADE_SEVEN(19);
 	const Card Card::SPADE_EIGHT(20);
 	const Card Card::SPADE_NINE(21);
 	const Card Card::SPADE_TEN(22);
@@ -37,7 +37,7 @@ namespace card {
 	const Card Card::DIAMOND_FOUR(29);
 	const Card Card::DIAMOND_FIVE(30);
 	const Card Card::DIAMOND_SIX(31);
-	const Card Card::DIAMOND_SÈVEN(32);
+	const Card Card::DIAMOND_SEVEN(32);
 	const Card Card::DIAMOND_EIGHT(33);
 	const Card Card::DIAMOND_NINE(34);
 	const Card Card::DIAMOND_TEN(35);
@@ -51,7 +51,7 @@ namespace card {
 	const Card Card::CLUB_FOUR(42);
 	const Card Card::CLUB_FIVE(43);
 	const Card Card::CLUB_SIX(44);
-	const Card Card::CLUB_SÈVEN(45);
+	const Card Card::CLUB_SEVEN(45);
 	const Card Card::CLUB_EIGHT(46);
 	const Card Card::CLUB_NINE(47);
 	const Card Card::CLUB_TEN(48);
