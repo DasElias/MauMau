@@ -17,26 +17,29 @@ namespace card {
 		});
 	}
 	void AiPlayer::performTurn() {
-		if(playCard()) return;
+		if(tryPlayCard()) return;
 
-		// no card was played, so we have to draw one
-		game.drawCardAndSetNextPlayerOnTurn(*this);
-		return;
-		throw std::runtime_error("Other player is already on turn! TODO FIX");
-
-		// can we draw the played card?
-		playCard();
+		// player cannot play, therefore no card was played
+		if(shouldPlayDrawnCard()) {
+			Card drawnCard = game.getDrawCardStack().getLast();
+			playCardImpl(drawnCard);
+		} else {
+			game.drawCardAndSetNextPlayerOnTurn(*this);
+		}
 	}
 	
-	bool AiPlayer::playCard() {
+	bool AiPlayer::tryPlayCard() {
 		for(auto& card : getHandCards()) {
 			if(game.canPlay(*this, card)) {
-				CardIndex nextCardIndex = (game.canChangeColor(card)) ? chooseCardIndex() : CardIndex::NULLINDEX;
-				game.playCardAndSetNextPlayerOnTurn(*this, card, nextCardIndex);
+				playCardImpl(card);
 				return true;
 			}
 		}
 		return false;
+	}
+	void AiPlayer::playCardImpl(Card card) {
+		CardIndex nextCardIndex = (game.canChangeColor(card)) ? chooseCardIndex() : CardIndex::NULLINDEX;
+		game.playCardAndSetNextPlayerOnTurn(*this, card, nextCardIndex);
 	}
 	CardIndex AiPlayer::chooseCardIndex() {
 		std::map<CardIndex, uint8_t> cardIndexCounter;
@@ -59,5 +62,9 @@ namespace card {
 		}
 
 		return maxCardIndex;
+	}
+	bool AiPlayer::shouldPlayDrawnCard() {
+		Card lastCardOnDrawStack = game.getDrawCardStack().getLast();
+		return game.canPlay(*this, lastCardOnDrawStack);
 	}
 }

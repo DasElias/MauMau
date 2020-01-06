@@ -25,8 +25,10 @@ namespace card {
 
 		private:
 			// return true if a card was played
-			bool playCard();
+			bool tryPlayCard();
+			void playCardImpl(Card c);
 			CardIndex chooseCardIndex();
+			bool shouldPlayDrawnCard();
 
 	};
 }
