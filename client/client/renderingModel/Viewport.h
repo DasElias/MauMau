@@ -11,6 +11,8 @@ namespace card {
 			glm::vec3 rotation;
 			float scale;
 
+			glm::mat4x4 viewMatrix;
+
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
@@ -30,6 +32,9 @@ namespace card {
 			glm::vec3 getRotation() const;
 			float getScale() const;
 			glm::mat4x4 getViewMatrix() const;
+
+		private:
+			void update();
 
 	};
 }

@@ -11,14 +11,18 @@ namespace card {
 			position(position),
 			rotation(rotation),
 			scale(scale) {
+
+		update();
 	}
-	glm::mat4 PositionedCard::getModelMatrix() const {
-		glm::mat4 modelMatrix(1.0f);
+	void PositionedCard::update() {
+		modelMatrix = glm::mat4x4(1.0f);
 		modelMatrix = glm::translate(modelMatrix, position);
 		modelMatrix = glm::rotate(modelMatrix, rotation.x, {1, 0, 0});
 		modelMatrix = glm::rotate(modelMatrix, rotation.y, {0, 1, 0});
 		modelMatrix = glm::rotate(modelMatrix, rotation.z, {0, 0, 1});
 		modelMatrix = glm::scale(modelMatrix, {scale, scale, scale});
+	}
+	glm::mat4 PositionedCard::getModelMatrix() const {
 		return modelMatrix;
 	}
 	Card PositionedCard::getCard() const {
@@ -32,21 +36,27 @@ namespace card {
 	}
 	void PositionedCard::setPosition(glm::vec3 pos) {
 		this->position = pos;
+		update();
 	}
 	void PositionedCard::setRotation(glm::vec3 rot) {
 		this->rotation = rot;
+		update();
 	}
 	void PositionedCard::setScale(float scale) {
 		this->scale = scale;
+		update();
 	}
 	void PositionedCard::changePosition(glm::vec3 addition) {
 		position += addition;
+		update();
 	}
 	void PositionedCard::changeRotation(glm::vec3 addition) {
 		rotation += addition;
+		update();
 	}
 	void PositionedCard::changeScale(float addition) {
 		scale += addition;
+		update();
 	}
 	glm::vec3 PositionedCard::getPosition() const {
 		return position;
@@ -57,4 +67,5 @@ namespace card {
 	float PositionedCard::getScale() const {
 		return scale;
 	}
+	
 }

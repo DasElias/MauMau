@@ -13,6 +13,8 @@ namespace card {
 			glm::vec3 rotation;
 			float scale;
 
+			glm::mat4x4 modelMatrix;
+
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
@@ -37,5 +39,8 @@ namespace card {
 			glm::vec3 getPosition() const;
 			glm::vec3 getRotation() const;
 			float getScale() const;
+
+		private:
+			void update();
 	};
 }

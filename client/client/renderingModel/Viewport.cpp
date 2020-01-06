@@ -11,15 +11,20 @@ namespace card {
 			position(position),
 			rotation(rotation),
 			scale(scale) {
+
+		update();
 	}
 	void Viewport::setPosition(glm::vec3 pos) {
 		this->position = pos;
+		update();
 	}
 	void Viewport::setRotation(glm::vec3 rotation) {
 		this->rotation = rotation;
+		update();
 	}
 	void Viewport::setScale(float scale) {
 		this->scale = scale;
+		update();
 	}
 	glm::vec3 Viewport::getPosition() const {
 		return position;
@@ -31,16 +36,15 @@ namespace card {
 		return scale;
 	}
 	glm::mat4x4 Viewport::getViewMatrix() const {
+		return viewMatrix;
+	}
+	void Viewport::update() {
+		viewMatrix = glm::mat4x4(1);
+		viewMatrix = glm::translate(viewMatrix, position * glm::vec3(-1, -1, -1));
 
-		glm::mat4x4 mat = glm::mat4x4(1);
-		mat = glm::translate(mat, position * glm::vec3(-1, -1, -1));
-
-		mat = glm::rotate(mat, -rotation.x, {1, 0, 0});
-		mat = glm::rotate(mat, -rotation.y, {0, 1, 0});
-		mat = glm::rotate(mat, -rotation.z, {0, 0, 1});
-		mat = glm::scale(mat, {scale, scale, scale});
-
-
-		return mat;
+		viewMatrix = glm::rotate(viewMatrix, -rotation.x, {1, 0, 0});
+		viewMatrix = glm::rotate(viewMatrix, -rotation.y, {0, 1, 0});
+		viewMatrix = glm::rotate(viewMatrix, -rotation.z, {0, 0, 1});
+		viewMatrix = glm::scale(viewMatrix, {scale, scale, scale});
 	}
 }
