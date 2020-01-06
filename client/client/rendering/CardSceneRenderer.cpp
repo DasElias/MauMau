@@ -47,6 +47,7 @@ namespace card {
 					game->chooseColor(c);
 				}
 			),
+			playerLabelRenderer(eguiRenderer, renderer2d),
 			cardStackIntersectionChecker(projectionMatrix, viewport),
 			handCardIntersectionChecker(projectionMatrix, viewport),
 			onMouseClicked(genOnMouseClickedHandler()) {
@@ -93,12 +94,12 @@ namespace card {
 		glEnable(GL_CULL_FACE);
 
 		auto opponents = game->getOpponents();
-		auto cardStacksOrNoneInCwOrder = mapOpponentsToTablePositionsInCwOrder(opponents);
+		auto opponentsOrNoneInCwOrder = mapOpponentsToTablePositionsInCwOrder(opponents);
 
 		// render opponents
-		renderOpponentIfHasValue(0, cardStacksOrNoneInCwOrder, HAND_CARDS_OPPONENT_LEFT_POSITION, HAND_CARDS_OPPONENT_LEFT_ROTATION, 2 * CardSceneBackgroundRenderer::TABLE_MAX_Z, false);
-		renderOpponentIfHasValue(1, cardStacksOrNoneInCwOrder, HAND_CARDS_OPPONENT_VISAVIS_POSITION, HAND_CARDS_OPPONENT_VISAVIS_ROTATION, 2 * CardSceneBackgroundRenderer::TABLE_MAX_X, true);
-		renderOpponentIfHasValue(2, cardStacksOrNoneInCwOrder, HAND_CARDS_OPPONENT_RIGHT_POSITION, HAND_CARDS_OPPONENT_RIGHT_ROTATION, 2 * CardSceneBackgroundRenderer::TABLE_MAX_Z, false);
+		renderOpponentIfHasValue(0, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_LEFT_POSITION, HAND_CARDS_OPPONENT_LEFT_ROTATION, 2 * CardSceneBackgroundRenderer::TABLE_MAX_Z, false);
+		renderOpponentIfHasValue(1, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_VISAVIS_POSITION, HAND_CARDS_OPPONENT_VISAVIS_ROTATION, 2 * CardSceneBackgroundRenderer::TABLE_MAX_X, true);
+		renderOpponentIfHasValue(2, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_RIGHT_POSITION, HAND_CARDS_OPPONENT_RIGHT_ROTATION, 2 * CardSceneBackgroundRenderer::TABLE_MAX_Z, false);
 
 		cardRenderer.flush();
 		glEnable(GL_DEPTH_TEST);
@@ -106,9 +107,9 @@ namespace card {
 		glDepthMask(GL_TRUE);
 
 		// render animations of the opponents
-		renderDrawedCardAnimationsOfOpponentIfHasValue(0, cardStacksOrNoneInCwOrder, HAND_CARDS_OPPONENT_LEFT_POSITION, HAND_CARDS_OPPONENT_LEFT_ROTATION);
-		renderDrawedCardAnimationsOfOpponentIfHasValue(1, cardStacksOrNoneInCwOrder, HAND_CARDS_OPPONENT_VISAVIS_POSITION, HAND_CARDS_OPPONENT_VISAVIS_ROTATION);
-		renderDrawedCardAnimationsOfOpponentIfHasValue(2, cardStacksOrNoneInCwOrder, HAND_CARDS_OPPONENT_RIGHT_POSITION, HAND_CARDS_OPPONENT_RIGHT_ROTATION, PLAY_CARDS_POSITION + glm::vec3(0, CardRenderer::HEIGHT / 2, -CardRenderer::HEIGHT), {PI, 0, 0});
+		renderDrawedCardAnimationsOfOpponentIfHasValue(0, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_LEFT_POSITION, HAND_CARDS_OPPONENT_LEFT_ROTATION);
+		renderDrawedCardAnimationsOfOpponentIfHasValue(1, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_VISAVIS_POSITION, HAND_CARDS_OPPONENT_VISAVIS_ROTATION);
+		renderDrawedCardAnimationsOfOpponentIfHasValue(2, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_RIGHT_POSITION, HAND_CARDS_OPPONENT_RIGHT_ROTATION, PLAY_CARDS_POSITION + glm::vec3(0, CardRenderer::HEIGHT / 2, -CardRenderer::HEIGHT), {PI, 0, 0});
 
 		// render card stack
 		cardRenderer.flush();
@@ -135,13 +136,15 @@ namespace card {
 
 		// flush CardRenderer
 		cardRenderer.flush();
+
+		renderPlayerLabels(opponentsOrNoneInCwOrder);
 		glEnable(GL_DEPTH_TEST);
 	}
 
-	void CardSceneRenderer::renderOpponentIfHasValue(std::size_t index, std::array<boost::optional<const CardAnimator&>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, float maxWidthOfHandCards, bool renderInX) {
+	void CardSceneRenderer::renderOpponentIfHasValue(std::size_t index, std::array<std::shared_ptr<ProxyPlayer>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, float maxWidthOfHandCards, bool renderInX) {
 		auto& opp = opponentsOrNullInCwOrder[index];
-		if(opp.has_value()) {
-			renderOpponent(* opp, handCardsPosition, handCardsRotation, maxWidthOfHandCards, renderInX);
+		if(opp) {
+			renderOpponent(opp->getCardStack(), handCardsPosition, handCardsRotation, maxWidthOfHandCards, renderInX);
 		}
 	}
 
@@ -153,10 +156,10 @@ namespace card {
 		}
 	}
 
-	void CardSceneRenderer::renderDrawedCardAnimationsOfOpponentIfHasValue(std::size_t index, std::array<boost::optional<const CardAnimator&>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation) {
+	void CardSceneRenderer::renderDrawedCardAnimationsOfOpponentIfHasValue(std::size_t index, std::array<std::shared_ptr<ProxyPlayer>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation) {
 		auto& opp = opponentsOrNullInCwOrder[index];
-		if(opp.has_value()) {
-			renderDrawedCardAnimationsOfOpponent(*opp, handCardsPosition, handCardsRotation);
+		if(opp) {
+			renderDrawedCardAnimationsOfOpponent(opp->getCardStack(), handCardsPosition, handCardsRotation);
 		}
 	}
 
@@ -173,10 +176,10 @@ namespace card {
 		}
 	}
 
-	void CardSceneRenderer::renderDrawedCardAnimationsOfOpponentIfHasValue(std::size_t index, std::array<boost::optional<const CardAnimator&>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, glm::vec3 middlePosition, glm::vec3 middleRotation) {
+	void CardSceneRenderer::renderDrawedCardAnimationsOfOpponentIfHasValue(std::size_t index, std::array<std::shared_ptr<ProxyPlayer>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, glm::vec3 middlePosition, glm::vec3 middleRotation) {
 		auto& opp = opponentsOrNullInCwOrder[index];
-		if(opp.has_value()) {
-			renderDrawedCardAnimationsOfOpponent(*opp, handCardsPosition, handCardsRotation,middlePosition, middleRotation);
+		if(opp) {
+			renderDrawedCardAnimationsOfOpponent(opp->getCardStack(), handCardsPosition, handCardsRotation,middlePosition, middleRotation);
 		}
 	}
 
@@ -194,6 +197,19 @@ namespace card {
 									   handCardsRotation);
 		}
 
+	}
+
+	void CardSceneRenderer::renderPlayerLabels(std::array<std::shared_ptr<ProxyPlayer>, 3>& opponents) {
+		if(opponents[0]) {
+			playerLabelRenderer.renderLeft(opponents[0]->getWrappedParticipiant());
+		}
+		if(opponents[1]) {
+			playerLabelRenderer.renderVisAVis(opponents[1]->getWrappedParticipiant());
+		}
+		if(opponents[2]) {
+			playerLabelRenderer.renderRight(opponents[2]->getWrappedParticipiant());
+		}
+		playerLabelRenderer.flush();
 	}
 
 	void CardSceneRenderer::renderLocalPlayer() {
@@ -289,26 +305,26 @@ namespace card {
 		return handCardIntersectionChecker.getIndexOfIntersectedCardInX(game->getLocalPlayer()->getCardStack(), HAND_CARDS_LOCAL_POSITION, HAND_CARDS_LOCAL_ROTATION, 2 * CardSceneBackgroundRenderer::TABLE_MAX_X, CardRenderer::WIDTH, CardRenderer::HEIGHT);
 	}
 
-	std::array<boost::optional<const CardAnimator&>, 3> CardSceneRenderer::mapOpponentsToTablePositionsInCwOrder(const std::vector<std::shared_ptr<ProxyPlayer>> opponents) {
-		std::array<boost::optional<const CardAnimator&>, 3> handCardOfOpponents;
+	std::array<std::shared_ptr<ProxyPlayer>, 3> CardSceneRenderer::mapOpponentsToTablePositionsInCwOrder(const std::vector<std::shared_ptr<ProxyPlayer>> opponents) {
+		std::array<std::shared_ptr<ProxyPlayer>, 3> orderedOpponents;
 
 		if(opponents.size() == 1) {
-			handCardOfOpponents = {
-				boost::none, opponents[0]->getCardStack(), boost::none
+			orderedOpponents = {
+				nullptr, opponents[0], nullptr
 			};
 		} else if(opponents.size() == 2) {
-			handCardOfOpponents = {
-				boost::none, opponents[0]->getCardStack(), opponents[1]->getCardStack()
+			orderedOpponents = {
+				nullptr, opponents[0], opponents[1]
 			};
 		} else if(opponents.size() == 3) {
-			handCardOfOpponents = {
-				opponents[0]->getCardStack(), opponents[1]->getCardStack(), opponents[2]->getCardStack()
+			orderedOpponents = {
+				opponents[0], opponents[1], opponents[2]
 			};
 		} else {
 			throw std::runtime_error("Invalid size of opponents vector.");
 		}
 		
-		return handCardOfOpponents;
+		return orderedOpponents;
 	}
 
 	void CardSceneRenderer::renderDrawCardStack() {
@@ -339,20 +355,20 @@ namespace card {
 									 HAND_CARDS_LOCAL_POSITION + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), HAND_CARDS_LOCAL_ROTATION + glm::vec3(PI, PI, 0),
 									 positionEnd, rotationEnd
 				);
-			} else if(cardStacksOrNoneInCwOrder[0].has_value() && animation.source.get().equalsId(*cardStacksOrNoneInCwOrder[0])) {
+			} else if(cardStacksOrNoneInCwOrder[0] && animation.source.get().equalsId(cardStacksOrNoneInCwOrder[0]->getCardStack())) {
 				interpolateAndRender(animation,
 									 HAND_CARDS_OPPONENT_LEFT_POSITION, glm::vec3(PI, -PI / 2, 0),
 									 HAND_CARDS_OPPONENT_LEFT_POSITION + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), glm::vec3(PI, -PI / 2, 0),
 									 DRAW_CARDS_POSITION + glm::vec3(0, CardRenderer::HEIGHT * 0.25f + CardStackRenderer::ADDITION_PER_CARD * (game->getDrawStack().getSize()), 0), {1.5f * PI / 2, -PI, rotationEnd.z},
 									 positionEnd, {rotationEnd.x, -PI, rotationEnd.z}
 				);
-			} else if(cardStacksOrNoneInCwOrder[1].has_value() && animation.source.get().equalsId(* cardStacksOrNoneInCwOrder[1])) {
+			} else if(cardStacksOrNoneInCwOrder[1] && animation.source.get().equalsId(cardStacksOrNoneInCwOrder[1]->getCardStack())) {
 				interpolateAndRender(animation,
 									 HAND_CARDS_OPPONENT_VISAVIS_POSITION, HAND_CARDS_OPPONENT_VISAVIS_ROTATION + glm::vec3(-PI, PI, 0),
 									 HAND_CARDS_OPPONENT_VISAVIS_POSITION + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), HAND_CARDS_OPPONENT_VISAVIS_ROTATION + glm::vec3(-PI, PI, 0),
 									 positionEnd, rotationEnd
 				);
-			} else if(cardStacksOrNoneInCwOrder[2].has_value() && animation.source.get().equalsId(*cardStacksOrNoneInCwOrder[2])) {
+			} else if(cardStacksOrNoneInCwOrder[2] && animation.source.get().equalsId(cardStacksOrNoneInCwOrder[2]->getCardStack())) {
 				interpolateAndRender(animation,
 									 HAND_CARDS_OPPONENT_RIGHT_POSITION, HAND_CARDS_OPPONENT_RIGHT_ROTATION,
 									 HAND_CARDS_OPPONENT_RIGHT_POSITION + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), HAND_CARDS_OPPONENT_RIGHT_ROTATION,

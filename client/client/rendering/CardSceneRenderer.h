@@ -15,6 +15,7 @@
 #include "CardSceneBackgroundRenderer.h"
 #include "DrawnCardRenderer.h"
 #include "ChooseCardRenderer.h"
+#include "PlayerLabelRenderer.h"
 #include "../renderingModel/CardStackIntersectionChecker.h"
 #include "../renderingModel/HandCardIntersectionChecker.h"
 
@@ -55,6 +56,7 @@ namespace card {
 			CardSceneBackgroundRenderer bgRenderer;
 			DrawnCardRenderer drawnCardRenderer;
 			ChooseCardRenderer chooseCardRenderer;
+			PlayerLabelRenderer playerLabelRenderer;
 
 			CardStackIntersectionChecker cardStackIntersectionChecker;
 			HandCardIntersectionChecker handCardIntersectionChecker;
@@ -84,12 +86,13 @@ namespace card {
 		private:
 			egui::FunctionWrapper<egui::MouseEvent> genOnMouseClickedHandler();
 
-			void renderOpponentIfHasValue(std::size_t index, std::array<boost::optional<const CardAnimator&>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, float maxWidthOfHandCards, bool renderInX);
+			void renderOpponentIfHasValue(std::size_t index, std::array<std::shared_ptr<ProxyPlayer>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, float maxWidthOfHandCards, bool renderInX);
 			void renderOpponent(const CardAnimator& handCardStack, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, float maxWidthOfHandCards, bool renderInX);
-			void renderDrawedCardAnimationsOfOpponentIfHasValue(std::size_t index, std::array<boost::optional<const CardAnimator&>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation);
+			void renderDrawedCardAnimationsOfOpponentIfHasValue(std::size_t index, std::array<std::shared_ptr<ProxyPlayer>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation);
 			void renderDrawedCardAnimationsOfOpponent(const CardAnimator& handCardStack, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation);
-			void renderDrawedCardAnimationsOfOpponentIfHasValue(std::size_t index, std::array<boost::optional<const CardAnimator&>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, glm::vec3 middlePosition, glm::vec3 middleRotation);
+			void renderDrawedCardAnimationsOfOpponentIfHasValue(std::size_t index, std::array<std::shared_ptr<ProxyPlayer>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, glm::vec3 middlePosition, glm::vec3 middleRotation);
 			void renderDrawedCardAnimationsOfOpponent(const CardAnimator& handCardStack, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, glm::vec3 middlePosition, glm::vec3 middleRotation);
+			void renderPlayerLabels(std::array<std::shared_ptr<ProxyPlayer>, 3>& opponents);
 			void renderLocalPlayer();
 			void renderDrawnCardOverlay();
 			void renderChooseColorOverlay();
@@ -99,7 +102,7 @@ namespace card {
 			bool checkIntersectionWithDrawCardStack();
 			std::optional<int> checkIntersectionWithOwnHandCards();
 
-			std::array<boost::optional<const CardAnimator&>, 3> mapOpponentsToTablePositionsInCwOrder(const std::vector<std::shared_ptr<ProxyPlayer>> opponents);
+			std::array<std::shared_ptr<ProxyPlayer>, 3> mapOpponentsToTablePositionsInCwOrder(const std::vector<std::shared_ptr<ProxyPlayer>> opponents);
 
 			void interpolateAndRender(const CardAnimation& animation, glm::vec3 startPosition, glm::vec3 startRotation, glm::vec3 middle1Position, glm::vec3 middle1Rotation, glm::vec3 middle2Position, glm::vec3 middle2Rotation, glm::vec3 endPosition, glm::vec3 endRotation);
 			void interpolateAndRender(const CardAnimation& animation, glm::vec3 startPosition, glm::vec3 startRotation, glm::vec3 middlePosition, glm::vec3 middleRotation, glm::vec3 endPosition, glm::vec3 endRotation);
