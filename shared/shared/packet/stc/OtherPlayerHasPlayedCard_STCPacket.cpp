@@ -1,4 +1,3 @@
-#pragma once
 #include "OtherPlayerHasPlayedCard_STCPacket.h"
 
 namespace card {
