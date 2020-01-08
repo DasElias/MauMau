@@ -13,7 +13,7 @@ using namespace std::chrono_literals;
 using namespace std::string_literals;
 
 namespace card {
-	std::string const ConnectionToServer::HOST = "127.0.0.1";
+	std::string const ConnectionToServer::HOST = "5.230.22.72";
 	std::string const ConnectionToServer::PORT = "6767";
 
 	ConnectionToServer::ConnectionToServer() :

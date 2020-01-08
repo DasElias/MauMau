@@ -8,6 +8,7 @@
 #include <egui/model/scene/Scene.h>
 #include <egui/model/nodes/UnorganizedParentElement.h>
 #include <egui/model/nodes/Button.h>
+#include "../gui/ColoredButton.h"
 
 namespace card {
 	class DrawnCardRenderer {
@@ -30,8 +31,8 @@ namespace card {
 			std::function<void(void)> takeIntoHandCardsFunction;
 
 			egui::Scene scene;
-			std::shared_ptr<egui::Button> playCardButton;
-			std::shared_ptr<egui::Button> takeIntoHandCardsButton;
+			std::shared_ptr<ColoredButton> playCardButton;
+			std::shared_ptr<ColoredButton> takeIntoHandCardsButton;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------

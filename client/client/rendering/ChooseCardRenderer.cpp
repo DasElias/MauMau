@@ -80,9 +80,6 @@ namespace card {
 		eguiRenderer.beginFrame();
 		scene.render(eguiRenderer);
 		eguiRenderer.endFrame();
-		glDisable(GL_BLEND);
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_CULL_FACE);
 	}
 	void card::ChooseCardRenderer::adjustButtonBar() {
 		int btnWidthInPixels = egui::x_percentToPixel(indexButtons[0]->getComputedWidth());

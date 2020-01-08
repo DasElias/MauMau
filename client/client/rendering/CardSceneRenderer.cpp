@@ -124,12 +124,10 @@ namespace card {
 
 		renderPlayCardStack();
 
-	
-
-
 
 		// render local player
 		renderLocalPlayer();
+		renderPlayerLabels(opponentsOrNoneInCwOrder);
 		renderDrawnCardOverlay();
 		renderChooseColorOverlay();
 		//handleInput();
@@ -137,7 +135,6 @@ namespace card {
 		// flush CardRenderer
 		cardRenderer.flush();
 
-		renderPlayerLabels(opponentsOrNoneInCwOrder);
 		glEnable(GL_DEPTH_TEST);
 	}
 

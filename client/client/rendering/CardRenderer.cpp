@@ -108,6 +108,9 @@ namespace card {
 	void CardRenderer::flush() {
 		if(this->cardsToRenderInNextPass.empty()) return;
 
+		glDisable(GL_BLEND);
+		glEnable(GL_CULL_FACE);
+
 		instancedVbo.update(this->cardsToRenderInNextPass);
 
 		shader.startProgram();
