@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 
 #include "../utils/FileUtils.h"
+#include "../renderingModel/SimpleTextureFactory.h"
 
 namespace card {
 	float const CardSceneBackgroundRenderer::TABLE_MAX_X = 2;
@@ -123,8 +124,15 @@ namespace card {
 			renderImpl2d(rendererImpl2d),
 			renderImpl3d(renderImpl3d),
 			tableVao(VertexArrayObject::RenderMode::TRIANGLES, 3, TABLE_VERTICES, TABLE_TEXTURE_COORDS),
-			backgroundTexture(getApplicationFolder() + "\\resources\\ingamebackground.png"),
-			tableTopTexture(getApplicationFolder() + "\\resources\\tabletop.png") {
+			backgroundTexture(SimpleTextureFactory(getApplicationFolder() + "\\resources\\ingamebackground.png").generateTexture()),
+			tableTopTexture(SimpleTextureFactory(getApplicationFolder() + "\\resources\\tabletop.png")
+				.setMagFilter(TextureMagFilter::LINEAR)
+				.setMinFilter(TextureMinFilter::NEAREST_MIPMAP_LINEAR)
+				.setWrapS(TextureWrap::CLAMP_TO_EDGE)
+				.setWrapT(TextureWrap::CLAMP_TO_EDGE)
+				.setAnisotropicFiltering(2)
+				.generateTexture()
+			) {
 	}
 	void CardSceneBackgroundRenderer::render(ProjectionMatrix& projectionMatrix, Viewport& viewport) {
 		glActiveTexture(GL_TEXTURE0);

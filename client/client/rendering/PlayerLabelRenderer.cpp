@@ -1,6 +1,7 @@
 #include "PlayerLabelRenderer.h"
 #include <egui/model/nodes/UnorganizedParentElement.h>
 #include "../utils/FileUtils.h"
+#include "../renderingModel/SimpleTextureFactory.h"
 
 namespace card {
 	PlayerLabelRenderer::PlayerLabelRenderer(egui::MasterRenderer& eguiRenderer, Renderer2D& renderer2D) :
@@ -9,7 +10,7 @@ namespace card {
 			playerVisAVis(std::make_shared<PlayerLabel>()),
 			playerLeft(std::make_shared<PlayerLabel>()),
 			playerRight(std::make_shared<PlayerLabel>()),
-			textureVisAVis(getApplicationFolder() + "\\resources\\user.png"),
+			textureVisAVis(SimpleTextureFactory(getApplicationFolder() + "\\resources\\user.png").setMinFilter(TextureMinFilter::NEAREST).setAnisotropicFiltering(4).generateTexture()),
 			textureLeft(textureVisAVis),
 			textureRight(textureVisAVis) {
 
