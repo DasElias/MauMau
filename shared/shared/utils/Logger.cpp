@@ -1,5 +1,6 @@
 #include "Logger.h"
 
+#include <boost/filesystem.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/log/utility/setup.hpp>
 
@@ -14,6 +15,9 @@ namespace card {
 			boost::log::keywords::format = COMMON_FMT,
 			boost::log::keywords::auto_flush = true
 		);
+		
+		// prevent linker error
+		boost::filesystem::current_path();
 
 		// Output message to file
 		boost::log::add_file_log(
@@ -25,7 +29,7 @@ namespace card {
 			boost::log::keywords::format = COMMON_FMT,
 			boost::log::keywords::auto_flush = true
 		);
-
+		
 		boost::log::add_common_attributes();
 
 		boost::log::core::get()->set_filter(
