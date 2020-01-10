@@ -2,12 +2,14 @@
 #include <shared/utils/TimeUtils.h>
 #include <stdexcept>
 #include <shared/model/CardAnimationDuration.h>
+#include <shared/utils/MathUtils.h>
 
 namespace card {
 	ProxyPlayer::ProxyPlayer(std::shared_ptr<ParticipantOnClient> wrappedParticipant, std::vector<Card> handCards) :
 			handCardStack(std::make_unique<HandCardStack>(handCards)),
 			wrappedParticipant(wrappedParticipant),
-			unixTimeTurnStarted(NOT_ON_TURN) {
+			unixTimeTurnStarted(NOT_ON_TURN),
+			unixTimePlayerSkipped(0) {
 	}
 	void ProxyPlayer::initHandCards(std::vector<Card> handCards, CardAnimator& drawCardStack, std::size_t playerIndex) {
 		int delay = int(playerIndex * handCards.size() * INITIAL_DRAW_DELAY_BETWEEN_CARDS_MS);
@@ -54,11 +56,26 @@ namespace card {
 	long long int ProxyPlayer::getUnixTimeTurnStarted() const {
 		return unixTimeTurnStarted;
 	}
+	bool ProxyPlayer::isSkipAnimationActive() const {
+		float x = getMilliseconds() - unixTimePlayerSkipped;
+		return x >= 0 && x <= SKIP_ANIMATION_DURATION_MS;
+	}
+	float ProxyPlayer::getPercentOfSkipAnimation() const {
+		float const x = getMilliseconds() - unixTimePlayerSkipped;
+		return interpolateLinear(x, 0, 0, SKIP_ANIMATION_DURATION_MS, 1);
+	}
+	std::optional<float> ProxyPlayer::getPercentOfSkipAnimationOrNone() const {
+		if(isSkipAnimationActive()) return getPercentOfSkipAnimation();
+		return std::nullopt;
+	}
 	bool ProxyPlayer::isOnTurn() const {
 		return unixTimeTurnStarted != NOT_ON_TURN;
 	}
 	std::shared_ptr<ParticipantOnClient> ProxyPlayer::getWrappedParticipiant() {
 		return wrappedParticipant;
+	}
+	void ProxyPlayer::onSkip() {
+		this->unixTimePlayerSkipped = getMilliseconds();
 	}
 	void ProxyPlayer::onStartTurn() {
 		this->unixTimeTurnStarted = getMilliseconds();

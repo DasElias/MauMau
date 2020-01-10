@@ -198,14 +198,15 @@ namespace card {
 
 	void CardSceneRenderer::renderPlayerLabels(std::array<std::shared_ptr<ProxyPlayer>, 3>& opponents) {
 		if(opponents[0]) {
-			playerLabelRenderer.renderLeft(opponents[0]->getWrappedParticipiant());
+			playerLabelRenderer.renderLeft(opponents[0]);
 		}
 		if(opponents[1]) {
-			playerLabelRenderer.renderVisAVis(opponents[1]->getWrappedParticipiant());
+			playerLabelRenderer.renderVisAVis(opponents[1]);
 		}
 		if(opponents[2]) {
-			playerLabelRenderer.renderRight(opponents[2]->getWrappedParticipiant());
+			playerLabelRenderer.renderRight(opponents[2]);
 		}
+		playerLabelRenderer.renderLocal(game->getLocalPlayer());
 		playerLabelRenderer.flush();
 	}
 

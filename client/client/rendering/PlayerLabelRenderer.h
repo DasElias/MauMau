@@ -1,6 +1,6 @@
 #pragma once
 #include <egui/model/scene/Scene.h>
-#include "../model/ParticipantOnClient.h"
+#include "../model/ProxyPlayer.h"
 #include "../gui/PlayerLabel.h"
 #include <memory>
 #include "Renderer2D.h"
@@ -18,10 +18,13 @@ namespace card {
 
             egui::Scene scene;
 
+            std::shared_ptr<PlayerLabel> playerLocal;
             std::shared_ptr<PlayerLabel> playerVisAVis;
             std::shared_ptr<PlayerLabel> playerLeft;
             std::shared_ptr<PlayerLabel> playerRight;
 
+            SimpleTexture textureSkip;
+            SimpleTexture textureLocal;
             SimpleTexture textureVisAVis;
             SimpleTexture textureLeft;
             SimpleTexture textureRight;
@@ -36,15 +39,17 @@ namespace card {
         // -------------------------------METHODS--------------------------------
         // ----------------------------------------------------------------------
         public:
-             void renderVisAVis(const std::shared_ptr<ParticipantOnClient>& participant);
-             void renderLeft(const std::shared_ptr<ParticipantOnClient>& participant);
-             void renderRight(const std::shared_ptr<ParticipantOnClient>& participant);
+             void renderLocal(const std::shared_ptr<ProxyPlayer>& participant);
+             void renderVisAVis(const std::shared_ptr<ProxyPlayer>& participant);
+             void renderLeft(const std::shared_ptr<ProxyPlayer>& participant);
+             void renderRight(const std::shared_ptr<ProxyPlayer>& participant);
              void flush();
             
         private:
             void updatePositions();
             void flushText();
             void flushImages();
+            void flushImageOfPlayer(const std::shared_ptr<PlayerLabel>& element, const SimpleTexture& texture);
             void endFlush();
 
 	};

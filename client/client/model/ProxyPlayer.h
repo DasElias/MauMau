@@ -3,6 +3,7 @@
 #include <shared/model/HandCardStack.h>
 #include "CardAnimator.h"
 #include <memory>
+#include <optional>
 
 namespace card {
 	class ProxyPlayer {
@@ -16,6 +17,7 @@ namespace card {
 			static int const PLAY_DURATION_MS = 1500;
 			static int const DRAW_DURATION_MS = 1500;
 			static int const DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS = 500;
+			static int const SKIP_ANIMATION_DURATION_MS = 1500;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
@@ -26,7 +28,8 @@ namespace card {
 		private:
 			std::shared_ptr<ParticipantOnClient> const wrappedParticipant;
 			long long int unixTimeTurnStarted;
-
+			long long int unixTimePlayerSkipped;
+		
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
@@ -51,9 +54,13 @@ namespace card {
 			const CardAnimator& getCardStack() const;
 			std::string getUsername() const;
 			long long int getUnixTimeTurnStarted() const;
+			bool isSkipAnimationActive() const;
+			float getPercentOfSkipAnimation() const;
+			std::optional<float> getPercentOfSkipAnimationOrNone() const;
 			bool isOnTurn() const;
 			std::shared_ptr<ParticipantOnClient> getWrappedParticipiant();
 
+			void onSkip();
 			virtual void onStartTurn();
 			virtual void onEndTurn();
 

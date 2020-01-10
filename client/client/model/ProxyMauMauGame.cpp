@@ -309,10 +309,13 @@ namespace card {
 	}
 	void ProxyMauMauGame::setNextButOnePlayerOnTurnLocal() {
 		auto playerOnTurnIter = std::find(allPlayers.begin(), allPlayers.end(), userOnTurn);
-		for(int i = 0; i < 2; i++) {
-			playerOnTurnIter++;
-			if(playerOnTurnIter == allPlayers.end()) playerOnTurnIter = allPlayers.begin();
-		}
+
+		playerOnTurnIter++;
+		if(playerOnTurnIter == allPlayers.end()) playerOnTurnIter = allPlayers.begin();
+		(* playerOnTurnIter)->onSkip();
+
+		playerOnTurnIter++;
+		if(playerOnTurnIter == allPlayers.end()) playerOnTurnIter = allPlayers.begin();
 
 		setOnTurnLocal(*playerOnTurnIter);
 	}

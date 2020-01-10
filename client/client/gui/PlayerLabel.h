@@ -1,24 +1,29 @@
 #pragma once
 #include <string>
 #include <egui/model/nodes/VBox.h>
+#include <egui/model/nodes/UnorganizedParentElement.h>
 #include <egui/model/nodes/Label.h>
 #include <egui/model/nodes/AspectRatioElement.h>
 #include <egui/model/positioning/RelativePositioningOnScreen.h>
+#include <optional>
 
 namespace card {
-	class PlayerLabel : public egui::VBox {
+	class PlayerLabel : public egui::UnorganizedParentElement {
         // ----------------------------------------------------------------------
         // ----------------------------STATIC-FIELDS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            static float const WIDTH_RELATIVE_ON_SCREEN;
+            static float const IMAGE_WIDTH_RELATIVE_ON_SCREEN;
+            static int const SKIP_IMAGE_WIDTH_ADDITION;
 
         // ----------------------------------------------------------------------
         // --------------------------------FIELDS--------------------------------
         // ----------------------------------------------------------------------
         private:
+            std::shared_ptr<egui::VBox> rootElement;
             std::shared_ptr<egui::Label> playerNameLabel;
             std::shared_ptr<egui::AspectRatioElement> imageElement;
+            std::shared_ptr<egui::AspectRatioElement> skipImageElement;
             std::shared_ptr<egui::RelativePositioningOnScreen> positioning;
 
         // ----------------------------------------------------------------------
@@ -31,9 +36,12 @@ namespace card {
         // -------------------------------METHODS--------------------------------
         // ----------------------------------------------------------------------
         public:
-            void set(std::string playerName);
+            void set(std::string playerName, std::optional<float> percentSkipAnimationOrNone);
             void clear();
             void setPositionOnScreen(float x, float y);
-            std::shared_ptr<egui::AspectRatioElement> getImageElement();
+            std::shared_ptr<egui::AspectRatioElement> getImageElement(); 
+            std::shared_ptr<egui::AspectRatioElement> getSkipElementIfVisible();
+
+            void setOwnPositioning(std::shared_ptr<egui::Positioning> positioning) override;
 	};
 }
