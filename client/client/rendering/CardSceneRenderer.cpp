@@ -231,6 +231,8 @@ namespace card {
 				this->interpolateAndRender(animation,
 										   DRAW_CARDS_POSITION + glm::vec3(0, cardStackHeightAddition, 0),
 										   DRAW_CARDS_ROTATION,
+										   DRAW_CARDS_POSITION + glm::vec3(0, cardStackHeightAddition + CardRenderer::HEIGHT / 4, CardRenderer::HEIGHT * 0.75f),
+										   DRAW_CARDS_ROTATION - glm::vec3(PI / 4, 0, 0),
 										   DRAW_CARDS_POSITION + glm::vec3(0, cardStackHeightAddition + CardRenderer::HEIGHT, CardRenderer::HEIGHT * 1.5f),
 										   DRAW_CARDS_ROTATION - glm::vec3(PI / 2, 0, 0),
 										   HAND_CARDS_LOCAL_POSITION,
