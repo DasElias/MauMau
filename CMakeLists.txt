@@ -36,6 +36,11 @@ add_compile_definitions(_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING
 
 option(BUILD_CLIENT "Build client" ON)
 option(BUILD_SERVER "Build server" ON)
+option(BUILD_SERVER_AS_DAEMON "Build server as daemon" OFF)
+
+if(BUILD_SERVER_AS_DAEMON) 
+    add_compile_definitions(BUILD_SERVER_AS_DAEMON)
+endif(BUILD_SERVER_AS_DAEMON)
 
 add_subdirectory(shared)
 if(BUILD_CLIENT)
