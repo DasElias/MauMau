@@ -18,6 +18,7 @@
 #include "PlayerLabelRenderer.h"
 #include "../renderingModel/CardStackIntersectionChecker.h"
 #include "../renderingModel/HandCardIntersectionChecker.h"
+#include "../renderingModel/MauMauCardStackMisalignmentGenerator.h"
 
 namespace card {
 	class CardSceneRenderer {
@@ -48,6 +49,7 @@ namespace card {
 
 			egui::MasterRenderer& eguiRenderer;
 			CardTextures cardTextures;
+			MauMauCardStackMisalignmentGenerator misalignmentGenerator;
 			Renderer2D renderer2d;
 			Renderer3D renderer3d;
 			CardRenderer cardRenderer;

@@ -1,6 +1,8 @@
 #pragma once
 #include "CardRenderer.h"
 #include "../model/CardAnimator.h"
+#include "../renderingModel/CardStackMisalignmentGenerator.h"
+
 
 namespace card {
 	class CardStackRenderer {
@@ -15,12 +17,13 @@ namespace card {
 		// ----------------------------------------------------------------------
 		private:
 			CardRenderer& cardRendererImpl;
+			CardStackMisalignmentGenerator& misalignmentGenerator;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			CardStackRenderer(CardRenderer& cardRendererImpl);
+			CardStackRenderer(CardRenderer& cardRendererImpl, CardStackMisalignmentGenerator& misalignmentGenerator);
 			CardStackRenderer(const CardStackRenderer&) = delete;
 
 		// ----------------------------------------------------------------------
@@ -28,5 +31,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			void renderCardStack(const CardAnimator& cardStack, glm::vec3 position, glm::vec3 rotation, ProjectionMatrix& projectionMatrix, Viewport& viewport);
+			void renderCardStackWithMisalignment(const CardAnimator& cardStack, glm::vec3 position, glm::vec3 rotation, ProjectionMatrix& projectionMatrix, Viewport& viewport);
+
 	};
 }

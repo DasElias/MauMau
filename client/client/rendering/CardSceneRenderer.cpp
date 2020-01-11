@@ -29,8 +29,9 @@ namespace card {
 			projectionMatrix(projectionMatrix),
 			viewport(viewport),
 			eguiRenderer(eguiRenderer),
+			misalignmentGenerator(Card::MAX_CARDS),
 			cardRenderer(renderer3d, cardTextures),
-			cardStackRenderer(cardRenderer),
+			cardStackRenderer(cardRenderer, misalignmentGenerator),
 			handCardRenderer(cardRenderer),
 			bgRenderer(renderer2d, renderer3d),
 			drawnCardRenderer(cardRenderer, eguiRenderer, projectionMatrix, viewport, 
@@ -337,13 +338,13 @@ namespace card {
 		auto& opponents = game->getOpponents();
 		auto cardStacksOrNoneInCwOrder = mapOpponentsToTablePositionsInCwOrder(opponents);
 
-		cardStackRenderer.renderCardStack(cardStack, PLAY_CARDS_POSITION, PLAY_CARDS_ROTATION, projectionMatrix, viewport);
+		cardStackRenderer.renderCardStackWithMisalignment(cardStack, PLAY_CARDS_POSITION, PLAY_CARDS_ROTATION, projectionMatrix, viewport);
 
-		glm::vec3 positionEnd = PLAY_CARDS_POSITION + glm::vec3(0, cardStack.getSize() * CardStackRenderer::ADDITION_PER_CARD, 0);
-		glm::vec3 rotationEnd = PLAY_CARDS_ROTATION;
-
-
+		int animationCounter = 0;
 		for(auto animation : cardStack.getCardAnimations()) {
+			glm::vec3 positionEnd = PLAY_CARDS_POSITION + glm::vec3(0, cardStack.getSize() * CardStackRenderer::ADDITION_PER_CARD, 0);
+			glm::vec3 rotationEnd = PLAY_CARDS_ROTATION + misalignmentGenerator.computeRotationMisalignment(cardStack.getSize() + animationCounter);
+
 			if(animation.source.get().equalsId(localPlayer->getDrawnCardAsStack())) {
 				interpolateAndRender(animation, 
 									DrawnCardRenderer::POSITION, {PI, PI, 0}, 
@@ -377,6 +378,8 @@ namespace card {
 			} else {
 				throw std::runtime_error("Card isn't from an user card stack.");
 			}
+
+			animationCounter++;
 		}
 	}
 

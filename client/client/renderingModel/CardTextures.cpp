@@ -6,8 +6,11 @@
 namespace card {
 	CardTextures::CardTextures() :
 			textureArrayImpl(TextureArrayFactory(getTexturePaths())
-				.setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR)
+				.setMinFilter(TextureMinFilter::LINEAR_MIPMAP_NEAREST)
 				.setMagFilter(TextureMagFilter::LINEAR)
+				.setWrapS(TextureWrap::CLAMP_TO_BORDER)
+				.setWrapT(TextureWrap::CLAMP_TO_BORDER)
+				.setAnisotropicFiltering(16)
 				.generateTexture()
 			) {
 	}
