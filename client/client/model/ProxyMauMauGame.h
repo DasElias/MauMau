@@ -50,9 +50,9 @@ namespace card {
 			bool isLocalPlayerOnTurn() const;
 			bool areAllPreviousCardTransactionsCompleted() const;
 			bool canPlay(std::size_t indexInLocalPlayerHandCards) const;
-			bool canPlay(Card card) const;
+			bool canPlay(Card card) const override;
 			bool canDraw() const;
-			bool canChangeColor(Card playedCard) const override;
+			bool canChangeColor(Card playedCard) const;
 			bool canMau() const;
 			bool canPlayDrawnCard() const;
 			bool canTakeDrawnCardIntoHandCards() const;

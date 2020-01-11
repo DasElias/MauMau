@@ -159,9 +159,16 @@ namespace card {
 		if(! canDraw()) throw std::runtime_error("Can't draw card in the current situation!");
 		if(drawCardForNextPlayer == Card::NULLCARD) throw std::runtime_error("Can't draw a NULLCARD");
 
-		// we don't have to send a packet yet, since we want to let the player choose if he wants
-		// to add the drawn card into it's hand card or play it
 		localPlayer->drawCardLocal(drawCardForNextPlayer, drawCardStack);
+		if(! canPlay(drawCardForNextPlayer)) {
+			DrawCardRequest_CTSPacket p;
+			packetTransmitter->sendPacketToServer(p);
+
+			setNextPlayerOnTurnLocal();	
+		} else {
+			// we don't have to send a packet yet, since we want to let the player choose if he wants
+			// to add the drawn card into it's hand card or play it
+		}
 
 		this->drawCardForNextPlayer = Card::NULLCARD;
 	}

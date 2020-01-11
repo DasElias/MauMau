@@ -7,6 +7,6 @@ namespace card {
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			virtual bool canChangeColor(Card playedCard) const =0;
+			virtual bool canPlay(Card card) const =0;
 	};
 }

@@ -24,9 +24,11 @@ namespace card {
 	void LocalPlayer::drawCardLocal(Card mutatesTo, CardAnimator& drawCardStack) {
 		if(hasStartedToDrawCard()) {
 			log(LogSeverity::ERR, "Inconsistent data model. Card was moved to LocalPlayer even though he has already got a card.");
-		} else {
+		} else if(playVerifier.canPlay(mutatesTo)) {
 			drawnCardTempStack.addLastCardFromImmediately(mutatesTo, drawCardStack, DRAW_DURATION_MS);
 			wasCardDrawn_flag = true;
+		} else {
+			ProxyPlayer::drawCardLocal(mutatesTo, drawCardStack);
 		}
 	}
 
