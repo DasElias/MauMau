@@ -1,7 +1,10 @@
 #include "Daemon.h"
 
-#if defined(__unix__) && defined(BUILD_SERVER_AS_DAEMON) 
-#pragma message "BUILD SERVER AS DAEMON"
+#ifdef BUILD_SERVER_AS_DAEMON
+#ifndef __unix__
+#error "Can't build server as daemon on other target than unix"
+#endif // !__unix__
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdio.h>
@@ -60,7 +63,6 @@ namespace card {
 	}
 }
 #else
-#pragma message "NOT BUILD AS DAEMON"
 namespace card {
 	void initDaemon() {
 		// empty method body
