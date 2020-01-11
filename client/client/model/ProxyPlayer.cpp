@@ -5,8 +5,8 @@
 #include <shared/utils/MathUtils.h>
 
 namespace card {
-	ProxyPlayer::ProxyPlayer(std::shared_ptr<ParticipantOnClient> wrappedParticipant, std::vector<Card> handCards) :
-			handCardStack(std::make_unique<HandCardStack>(handCards)),
+	ProxyPlayer::ProxyPlayer(std::shared_ptr<ParticipantOnClient> wrappedParticipant) :
+			handCardStack(std::make_unique<HandCardStack>()),
 			wrappedParticipant(wrappedParticipant),
 			unixTimeTurnStarted(NOT_ON_TURN),
 			unixTimePlayerSkipped(0) {
@@ -18,33 +18,27 @@ namespace card {
 			delay += INITIAL_DRAW_DELAY_BETWEEN_CARDS_MS;
 		}
 	}
-	void ProxyPlayer::drawCardLocal(Card mutatesTo, CardAnimator& source) {
-		handCardStack.addLastCardFromImmediately(mutatesTo, source, DRAW_DURATION_MS);
+	void ProxyPlayer::drawSingleCardInHandCardsLocal(Card mutatesTo, CardAnimator& drawCardStack) {
+		handCardStack.addLastCardFromImmediately(mutatesTo, drawCardStack, DRAW_DURATION_MS);
 	}
-	void ProxyPlayer::drawCardsLocal(std::vector<Card> cards, CardAnimator& source) {
-		if(cards.size() == 1) {
-			// when there is only one card drawn, we have to call the virtual function since this one may be overridden
-			drawCardLocal(cards[0], source);
-			return;
-		} 
-
+	void ProxyPlayer::drawMultipleCardsInHandCardsLocal(std::vector<Card> mutatesTo, CardAnimator& drawCardStack) {
 		int delay = 0;
-		for(Card& c : cards) {
-			handCardStack.addLastCardFrom(c, source, DRAW_DURATION_MS, delay);
-			delay += DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS;
-		}
-	}
-	void ProxyPlayer::drawCardsAfterTimeCardWasPlayed(std::vector<Card> cards, CardAnimator& drawCardStack) {
-		int delay = PLAY_DURATION_MS;
-		for(Card& c : cards) {
+		for(Card& c : mutatesTo) {
 			handCardStack.addLastCardFrom(c, drawCardStack, DRAW_DURATION_MS, delay);
 			delay += DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS;
 		}
 	}
-	void ProxyPlayer::playCardLocal(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick) {
+	void ProxyPlayer::drawMultipleCardsInHandCardsAfterCardPlayTimeLocal(std::vector<Card> mutatesTo, CardAnimator& drawCardStack) {
+		int delay = PLAY_DURATION_MS;
+		for(Card& c : mutatesTo) {
+			handCardStack.addLastCardFrom(c, drawCardStack, DRAW_DURATION_MS, delay);
+			delay += DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS;
+		}
+	}
+	void ProxyPlayer::playCardFromHandCards(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick) {
 		playCardStack.addRandomCardFromImmediately(card, handCardStack, PLAY_DURATION_MS);
 	}
-	void ProxyPlayer::playCardAfterTimeCardWasDrawn(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick) {
+	void ProxyPlayer::playCardFromHandCardsAfterDrawTime(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick) {
 		playCardStack.addRandomCardFrom(card, handCardStack, PLAY_DURATION_MS, DRAW_DURATION_MS);
 	}
 	const CardAnimator& ProxyPlayer::getCardStack() const {

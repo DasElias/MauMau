@@ -159,15 +159,17 @@ namespace card {
 		if(! canDraw()) throw std::runtime_error("Can't draw card in the current situation!");
 		if(drawCardForNextPlayer == Card::NULLCARD) throw std::runtime_error("Can't draw a NULLCARD");
 
-		localPlayer->drawCardLocal(drawCardForNextPlayer, drawCardStack);
-		if(! canPlay(drawCardForNextPlayer)) {
-			DrawCardRequest_CTSPacket p;
-			packetTransmitter->sendPacketToServer(p);
-
-			setNextPlayerOnTurnLocal();	
-		} else {
+		if(canPlay(drawCardForNextPlayer)) {
 			// we don't have to send a packet yet, since we want to let the player choose if he wants
 			// to add the drawn card into it's hand card or play it
+
+			localPlayer->drawSingleCardInTempCardStackLocal(drawCardForNextPlayer, drawCardStack);
+		} else {
+			localPlayer->drawSingleCardInHandCardsLocal(drawCardForNextPlayer, drawCardStack);
+
+			DrawCardRequest_CTSPacket p;
+			packetTransmitter->sendPacketToServer(p);
+			setNextPlayerOnTurnLocal();
 		}
 
 		this->drawCardForNextPlayer = Card::NULLCARD;
@@ -184,11 +186,6 @@ namespace card {
 		setNextPlayerOnTurnLocal();
 	}
 
-	void ProxyMauMauGame::playDrawnCard() {
-		if(! canPlayDrawnCard()) throw std::runtime_error("Can't play drawn card!");
-		this->playCard(* localPlayer->getDrawnCard());
-	}
-
 	void ProxyMauMauGame::playCard(std::size_t index) {
 		auto card = localPlayer->getCardStack().get(index);
 		this->playCard(card);
@@ -198,7 +195,7 @@ namespace card {
 		if(!canPlay(card)) throw std::runtime_error("Can't play card!");
 
 		bool canChangeColor = this->canChangeColor(card);
-		localPlayer->playCardLocal(card, playCardStack, canChangeColor);
+		localPlayer->playCardFromHandCards(card, playCardStack, canChangeColor);
 
 		if(! canChangeColor) {
 			sendPlayCardPacket();
@@ -206,6 +203,21 @@ namespace card {
 
 		// else packet will be send in chooseColor()
 	}
+
+	void ProxyMauMauGame::playDrawnCard() {
+		if(!canPlayDrawnCard()) throw std::runtime_error("Can't play drawn card!");
+		
+		Card drawnCard = *localPlayer->getDrawnCard();
+		bool canChangeColor = this->canChangeColor(drawnCard);
+		localPlayer->playCardFromTempCardStackLocal(playCardStack, canChangeColor);
+
+		if(!canChangeColor) {
+			sendPlayCardPacket();
+		}
+
+		// else packet will be send in chooseColor()
+	}
+
 
 	void ProxyMauMauGame::chooseColor(CardIndex color) {
 		if(! isWaitingForColorChoose()) throw std::runtime_error("Can't choose color!");
@@ -279,10 +291,10 @@ namespace card {
 		std::shared_ptr<ProxyPlayer> player = lookupOpponent(username);
 
 		if(wasDrawedJustBefore) {
-			player->drawCardLocal(card, drawCardStack);
-			player->playCardAfterTimeCardWasDrawn(card, playCardStack, canChangeColor(card));
+			player->drawSingleCardInHandCardsLocal(card, drawCardStack);
+			player->playCardFromHandCardsAfterDrawTime(card, playCardStack, canChangeColor(card));
 		} else {
-			player->playCardLocal(card, playCardStack, canChangeColor(card));
+			player->playCardFromHandCards(card, playCardStack, canChangeColor(card));
 		}
 
 		if(canChangeColor(card)) {
@@ -298,7 +310,7 @@ namespace card {
 	}
 	void ProxyMauMauGame::drawCardAndSetNextPlayerOnTurnLocal(std::string username) {
 		std::shared_ptr<ProxyPlayer> player = lookupOpponent(username);
-		player->drawCardLocal(Card::NULLCARD, drawCardStack);
+		player->drawSingleCardInHandCardsLocal(Card::NULLCARD, drawCardStack);
 		tryRebalanceCardStacks();
 
 		setNextPlayerOnTurnLocal();
@@ -340,7 +352,7 @@ namespace card {
 	}
 
 	void ProxyMauMauGame::playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, const std::vector<Card>& cards) {
-		player->drawCardsAfterTimeCardWasPlayed(cards, drawCardStack);
+		player->drawMultipleCardsInHandCardsAfterCardPlayTimeLocal(cards, drawCardStack);
 		tryRebalanceCardStacks();
 	}
 

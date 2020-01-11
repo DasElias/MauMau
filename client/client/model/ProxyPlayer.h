@@ -34,7 +34,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			ProxyPlayer(std::shared_ptr<ParticipantOnClient> wrappedParticipant, std::vector<Card> handCards = {});
+			ProxyPlayer(std::shared_ptr<ParticipantOnClient> wrappedParticipant);
 			ProxyPlayer(const ProxyPlayer&) = delete;
 			virtual ~ProxyPlayer() = default;
 
@@ -43,13 +43,11 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			void initHandCards(std::vector<Card> handCards, CardAnimator& drawCardStack, std::size_t playerIndex);
-			virtual void drawCardLocal(Card mutatesTo, CardAnimator& drawCardStack);
-			void drawCardsLocal(std::vector<Card> mutatesTo, CardAnimator& drawCardStack);
-			void drawCardsAfterTimeCardWasPlayed(std::vector<Card> mutatesTo, CardAnimator& drawCardStack);
-			virtual void playCardLocal(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick);
-			// this method cannot be overridden, since it will never be called on LocalPlayer
-			// we need to wait until the card has been drawn only at a ProxyPlayer
-			void playCardAfterTimeCardWasDrawn(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick);
+			void drawSingleCardInHandCardsLocal(Card mutatesTo, CardAnimator& drawCardStack);
+			void drawMultipleCardsInHandCardsLocal(std::vector<Card> mutatesTo, CardAnimator& drawCardStack);
+			void drawMultipleCardsInHandCardsAfterCardPlayTimeLocal(std::vector<Card> mutatesTo, CardAnimator& drawCardStack);
+			virtual void playCardFromHandCards(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick);
+			virtual void playCardFromHandCardsAfterDrawTime(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick);
 
 			const CardAnimator& getCardStack() const;
 			std::string getUsername() const;

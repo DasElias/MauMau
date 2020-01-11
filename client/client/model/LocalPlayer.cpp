@@ -21,36 +21,6 @@ namespace card {
 
 	}
 
-	void LocalPlayer::drawCardLocal(Card mutatesTo, CardAnimator& drawCardStack) {
-		if(hasStartedToDrawCard()) {
-			log(LogSeverity::ERR, "Inconsistent data model. Card was moved to LocalPlayer even though he has already got a card.");
-		} else if(playVerifier.canPlay(mutatesTo)) {
-			drawnCardTempStack.addLastCardFromImmediately(mutatesTo, drawCardStack, DRAW_DURATION_MS);
-			wasCardDrawn_flag = true;
-		} else {
-			ProxyPlayer::drawCardLocal(mutatesTo, drawCardStack);
-		}
-	}
-
-	void LocalPlayer::playCardLocal(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick_local) {
-		this->playedCard = card;
-
-		if(isWaitingForColorPick_local) {
-			this->isWaitingForColorPick_field = isWaitingForColorPick_local;
-		}
-
-		if(! isCardInTemporaryStack()) {
-			// player hasn't drawn a card, which could be played
-			playCardStack.addDeterminedCardFromImmediately(card, handCardStack, PLAY_DURATION_MS);
-		} else {
-			if(drawnCardTempStack.getSize() > 1 || ! (card == drawnCardTempStack.get(0))) {
-				throw std::runtime_error("Inconsistent data model. There are too many cards on drawnCardTempStack or the player tries to play a card which wasn't drawn by him.");
-			} 
-
-			playCardStack.addDeterminedCardFromImmediately(card, drawnCardTempStack, PLAY_DURATION_MS);
-		}
-	}
-
 	std::optional<Card> LocalPlayer::getPlayedCard() const {
 		return playedCard;
 	}
@@ -59,9 +29,40 @@ namespace card {
 		return getPlayedCard().has_value();
 	}
 
+	void LocalPlayer::drawSingleCardInTempCardStackLocal(Card mutatesTo, CardAnimator& drawCardStack) {
+		if(hasStartedToDrawCard()) {
+			log(LogSeverity::ERR, "Inconsistent data model. Card was moved to LocalPlayer even though he has already got a card.");
+		} else {
+			drawnCardTempStack.addLastCardFromImmediately(mutatesTo, drawCardStack, DRAW_DURATION_MS);
+			wasCardDrawn_flag = true;
+		}
+	}
+
+	void LocalPlayer::playCardFromHandCardsAfterDrawTime(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick) {
+		if(isWaitingForColorPick) isWaitingForColorPick_field = isWaitingForColorPick;
+		this->playedCard = card;
+
+		playCardStack.addDeterminedCardFrom(card, handCardStack, PLAY_DURATION_MS, DRAW_DURATION_MS);
+	}
+
+	void LocalPlayer::playCardFromHandCards(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick) {
+		if(isWaitingForColorPick) isWaitingForColorPick_field = isWaitingForColorPick;
+		this->playedCard = card;
+
+		playCardStack.addDeterminedCardFromImmediately(card, handCardStack, PLAY_DURATION_MS);
+	}
+
+	void LocalPlayer::playCardFromTempCardStackLocal(CardAnimator& playCardStack, bool isWaitingForColorPick) {
+		if(!isCardInTemporaryStack()) throw std::runtime_error("The player hasn't drawn a card yet!");
+		if(isWaitingForColorPick) isWaitingForColorPick_field = isWaitingForColorPick;
+		this->playedCard = getDrawnCard();
+
+		playCardStack.addDeterminedCardFromImmediately(*getDrawnCard(), drawnCardTempStack, PLAY_DURATION_MS);
+	}
+
 	void LocalPlayer::sortDrawnCardIntoHandCardsLocal() {
 		if(! isCardInTemporaryStack()) throw std::runtime_error("The player hasn't drawn a card yet!");
-		ProxyPlayer::drawCardLocal(drawnCardTempStack.get(0), drawnCardTempStack);
+		drawSingleCardInHandCardsLocal(drawnCardTempStack.get(0), drawnCardTempStack);
 	}
 
 	bool LocalPlayer::hasStartedToDrawCard() const {
@@ -111,7 +112,7 @@ namespace card {
 		playedCard = std::nullopt;
 		isWaitingForColorPick_field = false;
 		for(int counter = static_cast<int>(drawnCardTempStack.getSize() - 1); counter > 0; counter--) {
-			ProxyPlayer::drawCardLocal(drawnCardTempStack.get(counter), drawnCardTempStack);
+			ProxyPlayer::drawSingleCardInHandCardsLocal(drawnCardTempStack.get(counter), drawnCardTempStack);
 		}
 		wasCardDrawn_flag = false;
 		
