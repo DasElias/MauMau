@@ -21,4 +21,5 @@ include_directories("${CMAKE_SOURCE_DIR}/deps/json")
 
 add_subdirectory(deps)
 add_subdirectory(client)
+add_subdirectory(test)
 
