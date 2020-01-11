@@ -18,6 +18,11 @@ namespace card {
 			static int const DRAW_DURATION_MS = 1500;
 			static int const DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS = 500;
 			static int const SKIP_ANIMATION_DURATION_MS = 1500;
+			// card is drawed and played in the same turn
+			static int const DELAY_BETWEEN_DRAW_AND_PLAY = 1000;
+
+		private:
+			static bool wasSingleCardDrawedInHandCardsThisTurn;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
@@ -29,7 +34,7 @@ namespace card {
 			std::shared_ptr<ParticipantOnClient> const wrappedParticipant;
 			long long int unixTimeTurnStarted;
 			long long int unixTimePlayerSkipped;
-		
+
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------

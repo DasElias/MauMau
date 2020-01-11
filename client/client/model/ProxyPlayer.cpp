@@ -5,6 +5,8 @@
 #include <shared/utils/MathUtils.h>
 
 namespace card {
+	bool ProxyPlayer::wasSingleCardDrawedInHandCardsThisTurn = false;
+
 	ProxyPlayer::ProxyPlayer(std::shared_ptr<ParticipantOnClient> wrappedParticipant) :
 			handCardStack(std::make_unique<HandCardStack>()),
 			wrappedParticipant(wrappedParticipant),
@@ -20,6 +22,7 @@ namespace card {
 	}
 	void ProxyPlayer::drawSingleCardInHandCardsLocal(Card mutatesTo, CardAnimator& drawCardStack) {
 		handCardStack.addLastCardFromImmediately(mutatesTo, drawCardStack, DRAW_DURATION_MS);
+		this->wasSingleCardDrawedInHandCardsThisTurn = true;
 	}
 	void ProxyPlayer::drawMultipleCardsInHandCardsLocal(std::vector<Card> mutatesTo, CardAnimator& drawCardStack) {
 		int delay = 0;
@@ -29,7 +32,7 @@ namespace card {
 		}
 	}
 	void ProxyPlayer::drawMultipleCardsInHandCardsAfterCardPlayTimeLocal(std::vector<Card> mutatesTo, CardAnimator& drawCardStack) {
-		int delay = PLAY_DURATION_MS;
+		int delay = PLAY_DURATION_MS + DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS;
 		for(Card& c : mutatesTo) {
 			handCardStack.addLastCardFrom(c, drawCardStack, DRAW_DURATION_MS, delay);
 			delay += DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS;
@@ -39,7 +42,7 @@ namespace card {
 		playCardStack.addRandomCardFromImmediately(card, handCardStack, PLAY_DURATION_MS);
 	}
 	void ProxyPlayer::playCardFromHandCardsAfterDrawTime(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick) {
-		playCardStack.addRandomCardFrom(card, handCardStack, PLAY_DURATION_MS, DRAW_DURATION_MS);
+		playCardStack.addRandomCardFrom(card, handCardStack, PLAY_DURATION_MS, DRAW_DURATION_MS + DELAY_BETWEEN_DRAW_AND_PLAY);
 	}
 	const CardAnimator& ProxyPlayer::getCardStack() const {
 		return handCardStack;
@@ -70,12 +73,14 @@ namespace card {
 	}
 	void ProxyPlayer::onSkip() {
 		this->unixTimePlayerSkipped = getMilliseconds();
+		if(wasSingleCardDrawedInHandCardsThisTurn) this->unixTimePlayerSkipped += DRAW_DURATION_MS + DELAY_BETWEEN_DRAW_AND_PLAY;
 	}
 	void ProxyPlayer::onStartTurn() {
 		this->unixTimeTurnStarted = getMilliseconds();
 	}
 	void ProxyPlayer::onEndTurn() {
 		this->unixTimeTurnStarted = NOT_ON_TURN;
+		this->wasSingleCardDrawedInHandCardsThisTurn = false;
 	}
 	bool ProxyPlayer::operator==(const ProxyPlayer& p2) const {
 		return p2.wrappedParticipant == this->wrappedParticipant;

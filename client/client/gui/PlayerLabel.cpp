@@ -50,7 +50,6 @@ namespace card {
 		if(isSkipAnimationActive) {
 			if(* percentSkipAnimationOrNone > 0.5f) percentSkipAnimationOrNone = (* percentSkipAnimationOrNone - 1) * (-2);
 			else percentSkipAnimationOrNone = (*percentSkipAnimationOrNone) * 2;
-			std::cout << (*percentSkipAnimationOrNone) << std::endl;
 
 			computedSkipImageWidthAddition += 10 * (*percentSkipAnimationOrNone);
 			computedSkipImageYTranslation += 10 * (*percentSkipAnimationOrNone);
