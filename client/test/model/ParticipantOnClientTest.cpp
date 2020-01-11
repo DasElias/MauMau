@@ -1,5 +1,5 @@
 #include <catch/catch.hpp>
-#include <ParticipantOnClient.h>
+#include <model/ParticipantOnClient.h>
 
 using namespace card;
 
@@ -8,6 +8,6 @@ TEST_CASE("ParticipantOnClient", "[ParticipantOnClient]") {
 	ParticipantOnClient p(username);
 
 	SECTION("getUsername") {
-		REQUIRE(p.getUsername() == p);
+		REQUIRE(p.getUsername() == username);
 	}
 }
