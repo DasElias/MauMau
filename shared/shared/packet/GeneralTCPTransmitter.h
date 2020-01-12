@@ -14,7 +14,7 @@ namespace card {
 		// ----------------------------STATIC-FIELDS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			static std::string const DELIMITER;
+			static char const DELIMITER;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
@@ -48,6 +48,8 @@ namespace card {
 			bool dequeue();
 			void writeLoop();
 			void readLoop();
+
+			void filterDelimiterFromMsg(std::string& msg);
 
 	};
 }

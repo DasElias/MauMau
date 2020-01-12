@@ -2,6 +2,7 @@
 #include <thread>
 #include <stdexcept>
 #include <iostream>
+#include "../utils/Logger.h"
 
 namespace ba = boost::asio;
 using ba::ip::tcp;
@@ -9,8 +10,14 @@ using boost::system::error_code;
 using namespace std::chrono_literals;
 using namespace std::string_literals;
 
+#ifdef NDEBUG
+#define FILTER_DELIMITER_IF_DEBUG(x) {}
+#else
+#define FILTER_DELIMITER_IF_DEBUG(x) filterDelimiterFromMsg(x)
+#endif
+	
 namespace card {
-	std::string const GeneralTCPTransmitter::DELIMITER = "\n";
+	char const GeneralTCPTransmitter::DELIMITER = '\n';
 
 	GeneralTCPTransmitter::GeneralTCPTransmitter(receiveFunc onReceiveFunc) :
 			onReceiveFunc(onReceiveFunc),
@@ -23,6 +30,7 @@ namespace card {
 		readLoop();
 	}
 	void GeneralTCPTransmitter::send(std::string msg, bool atFront) {
+		FILTER_DELIMITER_IF_DEBUG(msg);
 		ba::post(getIoContext(), [=] {
 			if(enqueue(msg + DELIMITER, atFront)) {
 				writeLoop();
@@ -59,7 +67,7 @@ namespace card {
 			if(! ec) {
 				std::string json{
 					boost::asio::buffers_begin(rx.data()),
-					boost::asio::buffers_begin(rx.data()) + bytesTransferred - DELIMITER.size()
+					boost::asio::buffers_begin(rx.data()) + bytesTransferred - sizeof(DELIMITER)
 				};
 				rx.consume(bytesTransferred);
 
@@ -69,5 +77,14 @@ namespace card {
 				onErrorFunc(ec);
 			}
 		});
+	}
+	void card::GeneralTCPTransmitter::filterDelimiterFromMsg(std::string& msg) {
+		auto sizeBefore = msg.size();
+		msg.erase(std::remove(msg.begin(), msg.end(), DELIMITER), msg.end());
+		auto sizeAfter = msg.size();
+
+		if(sizeBefore != sizeAfter) {
+			log(LogSeverity::WARNING, "Message sent by GeneralTCPTransmitter contains the delimiter char.");
+		}
 	}
 }
