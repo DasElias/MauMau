@@ -7,7 +7,7 @@ namespace card {
 			eguiRenderer(eguiRenderer) {
 	}
 	void CreateLocalRoomState::updateAndRender(float delta) {
-		auto gameFacade = std::make_shared<LocalGameFacade>("Lokaler Spieler");
+		auto gameFacade = std::make_shared<LocalGameFacade>("Lokaler Spieler", 1);
 		stateManager.setGameFacade(gameFacade);
 		gameFacade->getRoom().requestGameStart();
 

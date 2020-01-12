@@ -8,12 +8,12 @@ namespace card {
 	float const PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN = 0.05f;
 	int const PlayerLabel::SKIP_IMAGE_WIDTH_ADDITION = 25;
 
-	PlayerLabel::PlayerLabel() :
+	PlayerLabel::PlayerLabel(float imageAspectRatio) :
 			UnorganizedParentElement() {
 		rootElement = std::make_shared<egui::VBox>();
 		this->addChildElement(rootElement);
 
-		imageElement = std::make_shared<egui::AspectRatioElement>(1.0f);
+		imageElement = std::make_shared<egui::AspectRatioElement>(imageAspectRatio);
 		rootElement->addChildElement(imageElement);
 		imageElement->setMaxWidth({IMAGE_WIDTH_RELATIVE_ON_SCREEN, egui::RelativityMode::RELATIVE_ON_SCREEN});
 

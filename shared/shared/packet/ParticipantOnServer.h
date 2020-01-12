@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include "../model/Avatar.h"
 
 namespace card {
 	class ParticipantOnServer {
@@ -10,12 +11,13 @@ namespace card {
 		// ----------------------------------------------------------------------
 		private:
 			std::string username;
+			Avatar avatar;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			ParticipantOnServer(std::string username);
+			ParticipantOnServer(std::string username, Avatar avatar);
 
 		// ----------------------------------------------------------------------
 		// ---------------------------STATIC-METHODS-----------------------------
@@ -29,6 +31,7 @@ namespace card {
 		public:
 			virtual bool isRealPlayer() const;
 			std::string getUsername() const;
+			Avatar getAvatar() const;
 
 	};
 }

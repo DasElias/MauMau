@@ -17,7 +17,7 @@
 #include <shared/packet/cts/ChangeRoomLeaderRequest_CTSPacket.h>
 
 namespace card {
-	ProxyRoom::ProxyRoom(std::shared_ptr<CTSPacketTransmitter> packetTransmitter, std::vector<std::string> opponentsUsernames, std::string localPlayerUsername, std::string usernameOfLeader, std::map<std::string, int> options) :
+	ProxyRoom::ProxyRoom(std::shared_ptr<CTSPacketTransmitter> packetTransmitter, std::vector<std::string> opponentsUsernames, std::vector<Avatar> opponentAvatars, std::string localPlayerUsername, Avatar localPlayerAvatar, std::string usernameOfLeader, std::map<std::string, int> options) :
 			packetTransmitter(packetTransmitter),
 			options(options),
 
@@ -38,12 +38,18 @@ namespace card {
 		packetTransmitter->addListenerForServerPkt(GameHasBeenStarted_STCPacket::PACKET_ID, handler_onGameStart);
 
 		// init opponents
-		for(auto& o : opponentsUsernames) {
-			this->joinPlayerLocal(o);
+		if(opponentsUsernames.size() != opponentAvatars.size()) {
+			throw std::runtime_error("Size of opponent usernames and avatars is not equal");
+		}
+		for(int i = 0; i < opponentsUsernames.size(); i++) {
+			auto name = opponentsUsernames[i];
+			auto avatar = opponentAvatars[i];
+
+			this->joinPlayerLocal(name, avatar);
 		}
 
 		// init local player
-		this->localParticipant = std::make_shared<ParticipantOnClient>(localPlayerUsername);
+		this->localParticipant = std::make_shared<ParticipantOnClient>(localPlayerUsername, localPlayerAvatar);
 		allParticipants.push_back(localParticipant);
 		participantsForNextGame.push_back(localParticipant);
 
@@ -154,8 +160,8 @@ namespace card {
 		packetTransmitter->sendPacketToServer(packet);
 	}
 
-	void ProxyRoom::joinPlayerLocal(std::string username) {
-		auto& newParticipant = std::make_shared<ParticipantOnClient>(username);
+	void ProxyRoom::joinPlayerLocal(std::string username, Avatar avatar) {
+		auto& newParticipant = std::make_shared<ParticipantOnClient>(username, avatar);
 		allParticipants.push_back(newParticipant);
 		participantsForNextGame.push_back(newParticipant);
 	}
@@ -208,7 +214,7 @@ namespace card {
 
 	void ProxyRoom::listener_onPlayerJoinsRoom(Packet& p) {
 		auto& casted = dynamic_cast<OtherPlayerHasJoinedRoom_STCPacket&>(p);
-		joinPlayerLocal(casted.getUsername());
+		joinPlayerLocal(casted.getUsername(), casted.getAvatar());
 	}
 
 	void ProxyRoom::listener_onPlayerLeavesRoom(Packet& p) {
@@ -218,7 +224,7 @@ namespace card {
 
 	void ProxyRoom::listener_onPlayerJoinsNextGame(Packet& p) {
 		auto& casted = dynamic_cast<PlayerWantsJoinNextGame_STCPacket&>(p);
-		joinPlayerLocal(casted.getUsername());
+		joinQueueForNextGameLocal(casted.getUsername());
 	}
 
 	void ProxyRoom::listener_onPlayerLeavesNextGame(Packet& p) {

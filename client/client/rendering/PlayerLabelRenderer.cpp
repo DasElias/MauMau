@@ -7,15 +7,11 @@ namespace card {
 	PlayerLabelRenderer::PlayerLabelRenderer(egui::MasterRenderer& eguiRenderer, Renderer2D& renderer2D) :
 			eguiRenderer(eguiRenderer),
 			renderer2D(renderer2D),
-			playerLocal(std::make_shared<PlayerLabel>()),
-			playerVisAVis(std::make_shared<PlayerLabel>()),
-			playerLeft(std::make_shared<PlayerLabel>()),
-			playerRight(std::make_shared<PlayerLabel>()),
 			textureSkip(SimpleTextureFactory(getApplicationFolder() + "\\resources\\skipPlayer.png").setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).generateTexture()),
-			textureLocal(SimpleTextureFactory(getApplicationFolder() + "\\resources\\user.png").setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).generateTexture()),
-			textureVisAVis(textureLocal),
-			textureLeft(textureVisAVis),
-			textureRight(textureVisAVis) {
+			playerLocal(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
+			playerVisAVis(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
+			playerLeft(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
+			playerRight(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())) {
 
 		auto parentElement = std::make_shared<egui::UnorganizedParentElement>();
 		parentElement->addChildElement(playerLocal);
@@ -28,15 +24,19 @@ namespace card {
 	}
 	void PlayerLabelRenderer::renderLocal(const std::shared_ptr<ProxyPlayer>& participant) {
 		playerLocal->set(participant->getUsername(), participant->getPercentOfSkipAnimationOrNone());
+		localAvatar = participant->getAvatar();
 	}
 	void PlayerLabelRenderer::renderVisAVis(const std::shared_ptr<ProxyPlayer>& participant) {
 		playerVisAVis->set(participant->getUsername(), participant->getPercentOfSkipAnimationOrNone());
+		visAVisAvatar = participant->getAvatar();
 	}
 	void PlayerLabelRenderer::renderLeft(const std::shared_ptr<ProxyPlayer>& participant) {
 		playerLeft->set(participant->getUsername(), participant->getPercentOfSkipAnimationOrNone());
+		leftAvatar = participant->getAvatar();
 	}
 	void PlayerLabelRenderer::renderRight(const std::shared_ptr<ProxyPlayer>& participant) {
 		playerRight->set(participant->getUsername(), participant->getPercentOfSkipAnimationOrNone());
+		rightAvatar = participant->getAvatar();
 	}
 	void PlayerLabelRenderer::flush() {
 		flushText();
@@ -62,15 +62,15 @@ namespace card {
 	void PlayerLabelRenderer::flushImages() {
 		glActiveTexture(GL_TEXTURE0);
 
-		flushImageOfPlayer(playerLocal, textureLocal);
-		flushImageOfPlayer(playerVisAVis, textureVisAVis);
-		flushImageOfPlayer(playerLeft, textureLeft);
-		flushImageOfPlayer(playerRight, textureRight);
+		flushImageOfPlayer(playerLocal, localAvatar);
+		flushImageOfPlayer(playerVisAVis, visAVisAvatar);
+		flushImageOfPlayer(playerLeft, leftAvatar);
+		flushImageOfPlayer(playerRight, rightAvatar);
 	}
-	void PlayerLabelRenderer::flushImageOfPlayer(const std::shared_ptr<PlayerLabel>& element, const SimpleTexture& texture) {
+	void PlayerLabelRenderer::flushImageOfPlayer(const std::shared_ptr<PlayerLabel>& element, Avatar avatar) {
 		if(element->isVisible()) {
-			texture.bind();
-			renderer2D.render(element->getImageElement());
+			avatarTextures.bind(avatar);
+			renderer2D.render(element->getImageElement(), true);
 
 			auto skipElementOrNull = element->getSkipElementIfVisible();
 			if(skipElementOrNull) {

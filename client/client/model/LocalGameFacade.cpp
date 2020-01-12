@@ -1,11 +1,11 @@
 #include "LocalGameFacade.h"
 
 namespace card {
-	LocalGameFacade::LocalGameFacade(std::string username) :
-			localParticipantOnServer(std::make_shared<ParticipantOnServer>(username)),
+	LocalGameFacade::LocalGameFacade(std::string username, Avatar avatar) :
+			localParticipantOnServer(std::make_shared<ParticipantOnServer>(username, avatar)),
 			packetTransmitter(std::make_shared<LocalPacketTransmitter>(localParticipantOnServer)),
 			server(packetTransmitter, localParticipantOnServer),
-			room(packetTransmitter, server.getOpponentUsernames(), username, username, {}) {
+			room(packetTransmitter, server.getOpponentUsernames(), server.getOpponentAvatars(), username, avatar, username, {}) {
 	}
 
 	bool LocalGameFacade::isGameRunning() const {

@@ -19,6 +19,7 @@
 
 #include "AiParticipant.h"
 #include "RandomStringGenerator.h"
+#include "../model/AvatarUtils.h"
 
 namespace card {
 	ServerRoom::ServerRoom(RoomCode roomCode, std::shared_ptr<STCPacketTransmitter> packetTransmitter) :
@@ -108,7 +109,7 @@ namespace card {
 		auto username = constructedParticipant->getUsername();
 		if(!isUsernameAvailable(username) || isRoomFull()) return false;
 
-		OtherPlayerHasJoinedRoom_STCPacket packet(username);
+		OtherPlayerHasJoinedRoom_STCPacket packet(username, constructedParticipant->getAvatar());
 		packetTransmitter->sendPacketToClients(packet, allParticipants);
 
 		allParticipants.push_back(constructedParticipant);
@@ -122,11 +123,13 @@ namespace card {
 		auto allReservedUsernames = getUsernamesOfParticipants();
 		if(! reservedUsername.empty()) allReservedUsernames.push_back(reservedUsername);
 
-		std::string username = generateUsernameNotIn(allReservedUsernames);
-		OtherPlayerHasJoinedRoom_STCPacket packet(username);
+		bool isMale;
+		std::string username = generateUsernameNotIn(allReservedUsernames, isMale);
+		Avatar avatar = getRandomAvatar(isMale);
+		OtherPlayerHasJoinedRoom_STCPacket packet(username, avatar);
 		packetTransmitter->sendPacketToClients(packet, allParticipants);
 
-		auto newParticipant = std::make_shared<AiParticipant>(username);
+		auto newParticipant = std::make_shared<AiParticipant>(username, avatar);
 		allParticipants.push_back(newParticipant);
 		participantsForNextGame.push_back(newParticipant);
 

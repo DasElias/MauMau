@@ -35,5 +35,15 @@ namespace card {
 
 		return opponentUsernames;
 	}
+
+	std::vector<Avatar> LocalServer::getOpponentAvatars() {
+		std::vector<Avatar> opponentAvatars;
+		for(auto& p : room.getParticipants()) {
+			if(p != localParticipantOnServer) opponentAvatars.push_back(p->getAvatar());
+
+		}
+		
+		return opponentAvatars;
+	}
 	
 }

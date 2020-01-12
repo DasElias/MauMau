@@ -3,7 +3,8 @@
 #include <shared/packet/stc/EnteringRoomSuccessReport_STCAnswerPacket.h>
 
 namespace card {
-	NetworkGameFacade::NetworkGameFacade(NetworkErrorHandler& errorHandler, std::string username) :
+	NetworkGameFacade::NetworkGameFacade(NetworkErrorHandler& errorHandler, std::string username, Avatar avatar) :
+			avatar(avatar),
 			isWaitingForResponse_field(true),
 			errorMsgInPlainText(std::nullopt),
 			usernameOfLocalPlayer(username),
@@ -60,7 +61,7 @@ namespace card {
 
 		auto& casted = dynamic_cast<EnteringRoomSuccessReport_STCAnswerPacket&>(p);
 		if(casted.getStatusCode() == EnteringRoomSuccessReport_STCAnswerPacket::SUCCESS_STATUS) {
-			room = std::make_unique<ProxyRoom>(packetTransmitter, casted.getUsernamesOfOtherParticipants(), usernameOfLocalPlayer, casted.getRoomLeader(), casted.getNonDefaultOptions());
+			room = std::make_unique<ProxyRoom>(packetTransmitter, casted.getUsernamesOfOtherParticipants(), casted.getAvatarsOfOtherParticipants(), usernameOfLocalPlayer, avatar, casted.getRoomLeader(), casted.getNonDefaultOptions());
 		} else {
 			setErrorMsgForSuccessReport(casted.getStatusCode());
 		}

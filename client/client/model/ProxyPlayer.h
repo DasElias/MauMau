@@ -65,6 +65,7 @@ namespace card {
 
 			const CardAnimator& getCardStack() const;
 			std::string getUsername() const;
+			Avatar getAvatar() const;
 			long long int getUnixTimeTurnStarted() const;
 			bool isSkipAnimationActive() const;
 			float getPercentOfSkipAnimation() const;

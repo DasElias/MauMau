@@ -49,6 +49,9 @@ namespace card {
 	std::string ProxyPlayer::getUsername() const {
 		return wrappedParticipant->getUsername();
 	}
+	Avatar ProxyPlayer::getAvatar() const {
+		return wrappedParticipant->getAvatar();
+	}
 	long long int ProxyPlayer::getUnixTimeTurnStarted() const {
 		return unixTimeTurnStarted;
 	}

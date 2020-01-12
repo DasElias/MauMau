@@ -1,10 +1,11 @@
+
 #pragma once
 #include <egui/model/scene/Scene.h>
 #include "../model/ProxyPlayer.h"
 #include "../gui/PlayerLabel.h"
 #include <memory>
 #include "Renderer2D.h"
-#include "../renderingModel/SimpleTexture.h"
+#include "../renderingModel/AvatarTextures.h"
 #include <egui/model/positioning/RelativePositioningOnScreen.h>
 
 namespace card {
@@ -16,19 +17,16 @@ namespace card {
             egui::MasterRenderer& eguiRenderer;
             Renderer2D& renderer2D;
 
-            egui::Scene scene;
+            SimpleTexture textureSkip;
+            AvatarTextures avatarTextures;
 
+            egui::Scene scene;
             std::shared_ptr<PlayerLabel> playerLocal;
             std::shared_ptr<PlayerLabel> playerVisAVis;
             std::shared_ptr<PlayerLabel> playerLeft;
             std::shared_ptr<PlayerLabel> playerRight;
 
-            SimpleTexture textureSkip;
-            SimpleTexture textureLocal;
-            SimpleTexture textureVisAVis;
-            SimpleTexture textureLeft;
-            SimpleTexture textureRight;
-
+            Avatar localAvatar, visAVisAvatar, leftAvatar, rightAvatar;
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
@@ -49,7 +47,7 @@ namespace card {
             void updatePositions();
             void flushText();
             void flushImages();
-            void flushImageOfPlayer(const std::shared_ptr<PlayerLabel>& element, const SimpleTexture& texture);
+            void flushImageOfPlayer(const std::shared_ptr<PlayerLabel>& element, Avatar avatar);
             void endFlush();
 
 	};

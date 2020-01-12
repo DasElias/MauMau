@@ -5,7 +5,7 @@ using namespace card;
 
 TEST_CASE("ParticipantOnClient", "[ParticipantOnClient]") {
 	const std::string username = "Testnutzer";
-	ParticipantOnClient p(username);
+	ParticipantOnClient p(username, 0);
 
 	SECTION("getUsername") {
 		REQUIRE(p.getUsername() == username);

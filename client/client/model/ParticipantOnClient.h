@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <shared/model/Avatar.h>
 
 
 namespace card {
@@ -9,12 +10,13 @@ namespace card {
 		// ----------------------------------------------------------------------
 		private:
 			std::string username;
+			Avatar avatar;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			ParticipantOnClient(std::string username);
+			ParticipantOnClient(std::string username, Avatar avatar);
 			ParticipantOnClient(const ParticipantOnClient&) = delete;
 
 		// ----------------------------------------------------------------------
@@ -22,6 +24,6 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			std::string getUsername() const;
-
+			Avatar getAvatar() const;
 	};
 }

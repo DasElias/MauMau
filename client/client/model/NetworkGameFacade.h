@@ -13,6 +13,7 @@ namespace card {
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
+			Avatar avatar;
 			bool isWaitingForResponse_field;
 			std::optional<std::string> errorMsgInPlainText;
 			std::string usernameOfLocalPlayer;
@@ -26,7 +27,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			NetworkGameFacade(NetworkErrorHandler& errorHandler, std::string username);
+			NetworkGameFacade(NetworkErrorHandler& errorHandler, std::string username, Avatar avatar);
 			~NetworkGameFacade();
 
 		// ----------------------------------------------------------------------

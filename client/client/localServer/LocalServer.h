@@ -1,6 +1,7 @@
 #pragma once
 #include <shared/packet/STCPacketTransmitter.h>
 #include <shared/server/ServerRoom.h>
+#include <shared/model/Avatar.h>
 
 namespace card {
 	class LocalServer {
@@ -34,6 +35,7 @@ namespace card {
 
 			void joinAiPlayer();
 			std::vector<std::string> getOpponentUsernames();
+			std::vector<Avatar> getOpponentAvatars();
 
 		private:
 			void initJoinAiPlayers();

@@ -32,7 +32,7 @@ namespace card {
 			void onStateExit() override;
 
 		private:
-			void sendRequest(std::string username, RoomCode roomCode);
+			void sendRequest(std::string username, Avatar avatar, RoomCode roomCode);
 			void handleResponseIfAvailable();
 	};
 }

@@ -8,12 +8,12 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			JoinRoomNetworkGameFacade(NetworkErrorHandler& errorHandler, std::string username, RoomCode roomCode);
+			JoinRoomNetworkGameFacade(NetworkErrorHandler& errorHandler, std::string username, Avatar avatar, RoomCode roomCode);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
-			void sendRequest(std::string username, RoomCode roomCode);
+			void sendRequest(std::string username, Avatar avatar, RoomCode roomCode);
 	};
 }

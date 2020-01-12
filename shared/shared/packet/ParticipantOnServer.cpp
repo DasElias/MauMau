@@ -1,8 +1,9 @@
 #include "ParticipantOnServer.h"
 
 namespace card {
-	ParticipantOnServer::ParticipantOnServer(std::string username) :
-			username(username) {
+	ParticipantOnServer::ParticipantOnServer(std::string username, Avatar avatar) :
+			username(username),
+			avatar(avatar) {
 	}
 	std::vector<std::string> ParticipantOnServer::getVectorWithUsernames(const std::vector<std::shared_ptr<ParticipantOnServer>>& players) {
 		std::vector<std::string> usernames;
@@ -17,5 +18,8 @@ namespace card {
 	}
 	std::string ParticipantOnServer::getUsername() const {
 		return username;
+	}
+	Avatar ParticipantOnServer::getAvatar() const {
+		return avatar;
 	}
 }

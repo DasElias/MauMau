@@ -15,15 +15,15 @@ namespace card {
 		State::onStateEnter();
 		createdGameFacade.reset();
 
-		sendRequest("JoinUser" + std::to_string(getMilliseconds()), 0);
+		sendRequest("JoinUser" + std::to_string(getMilliseconds()), 1, 0);
 	}
 	void JoinRoomState::onStateExit() {
 		State::onStateExit();
 	}
-	void JoinRoomState::sendRequest(std::string username, RoomCode roomCode) {
+	void JoinRoomState::sendRequest(std::string username, Avatar avatar, RoomCode roomCode) {
 		wasResponseReceived = false;
 
-		this->createdGameFacade = std::make_shared<JoinRoomNetworkGameFacade>(networkErrorHandler, username, roomCode);
+		this->createdGameFacade = std::make_shared<JoinRoomNetworkGameFacade>(networkErrorHandler, username, avatar, roomCode);
 		stateManager.setGameFacade(createdGameFacade);
 	}
 	void JoinRoomState::handleResponseIfAvailable() {		
