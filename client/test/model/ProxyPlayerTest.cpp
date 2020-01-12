@@ -3,6 +3,7 @@
 #include <shared/model/CardStack.h>
 #include <shared/utils/ThreadUtils.h>
 #include <shared/utils/InstantExecutionThreadUtilsProvider.h>
+#include <iostream>
 
 using namespace card;
 
@@ -12,7 +13,6 @@ TEST_CASE("ProxyPlayer can draw and play cards", "[ProxyPlayer]") {
 	const std::string username = "Testnutzer";
 	auto wrappedParticipant = std::make_shared<ParticipantOnClient>(username);
 	ProxyPlayer p(wrappedParticipant);
-
 	CardAnimator drawCardStack(std::make_unique<CardStack>());
 	drawCardStack.addFromPlain(Card::NULLCARD, Card::MAX_CARDS);
 
@@ -76,6 +76,7 @@ TEST_CASE("ProxyPlayer can draw and play cards", "[ProxyPlayer]") {
 		REQUIRE(p.getCardStack().getSize() == handCards.size() - 1);
 	}
 	SECTION("on skip") {
+		p.onStartTurn();
 		p.onSkip();
 
 		REQUIRE(p.getPercentOfSkipAnimationOrNone().has_value());
@@ -83,10 +84,7 @@ TEST_CASE("ProxyPlayer can draw and play cards", "[ProxyPlayer]") {
 		REQUIRE(p.getPercentOfSkipAnimation() <= 1);
 		REQUIRE(p.isSkipAnimationActive());
 
-		p.onEndTurn();
-		p.onStartTurn();
-
-		REQUIRE(! p.isSkipAnimationActive());
 	}
 
+	p.onEndTurn();
 }
