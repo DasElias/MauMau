@@ -55,7 +55,7 @@
 #include "model/JoinRoomNetworkGameFacade.h"
 #include "model/CreateRoomNetworkGameFacade.h"
 #include "state/MainMenuNetworkErrorHandler.h"
-
+#include "gui/MauMauTheme.h"
 using namespace std;
 using namespace card;
 
@@ -69,8 +69,6 @@ void glfwErrorCallback(int error, const char* description) {
 
 void cppExceptionCallback() {
 	log(LogSeverity::FATAL, "--------------- Exception ----------------");
-	egui::PopupErrorBox a("A fatal error has occured!", "A fatal unknown error has happened! Please see the logs for details.");
-	a.show();
 
 	if(auto exc = std::current_exception()) {
 		// we have an exception
@@ -78,8 +76,14 @@ void cppExceptionCallback() {
 			std::rethrow_exception(exc);
 		} catch(const std::exception& exception) {
 			log(LogSeverity::FATAL, exception.what());
+
+			egui::PopupErrorBox a("A fatal error has occured!", "A fatal unknown error has happened! \""+ std::string(exception.what()) + "\"");
+			a.show();
 		} catch(...) {
 			log(LogSeverity::FATAL, "Unknown Exception!");
+
+			egui::PopupErrorBox a("A fatal error has occured!", "A fatal unknown error has happened! Unknown exception has been thrown.");
+			a.show();
 		}
 	}
 
@@ -152,11 +156,13 @@ namespace card {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		#ifndef NDEBUG
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+		#endif
 
 		//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-		p_window = glfwCreateWindow(START_WIDTH, START_HEIGHT, "VoxelCraft", NULL, NULL);
+		p_window = glfwCreateWindow(START_WIDTH, START_HEIGHT, "MauMau", NULL, NULL);
 
 		GlfwDisplayHandler displayHandler(p_window, START_WIDTH, START_HEIGHT);
 		GlfwInputHandler inputHandler(p_window);
@@ -176,20 +182,24 @@ namespace card {
 
 		glfwSwapInterval(VSYNC);
 
+		#ifndef NDEBUG
 		glDebugMessageCallback( MessageCallback, 0 );
 		glEnable( GL_DEBUG_OUTPUT );
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		#endif
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_MULTISAMPLE);
 		//glEnable(GL_DEPTH_CLAMP);
 		glClearColor(0, 0, 0, 1);
 
-
 		egui::EGuiContext ctx = {};
 		egui::NvgRenderer nvgRenderer(ctx);
 		egui::Image::setContext(ctx);
 		egui::Font::setDefaultFont(egui::Font::createSystemFont(ctx, "Arial"));
+
+		auto theme = std::make_unique<egui::MauMauTheme>(ctx);
+		egui::ThemeManager::getInstance().addTheme(theme.get());
 
 		MainMenuNetworkErrorHandler errorHandler(stateManager);
 
