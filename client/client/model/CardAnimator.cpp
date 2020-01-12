@@ -14,6 +14,32 @@ namespace card {
 	bool CardAnimator::arePendingAnimations() {
 		return pendingAnimationsCounter > 0;
 	}
+
+	void card::CardAnimator::addFirstCardFrom(Card mutatesTo, CardAnimator& source, int durationMs, int delayMs) {
+		if(delayMs == 0) {
+			this->addFirstCardFromImmediately(mutatesTo, source, durationMs);
+			return;
+		}
+
+		threadUtils_invokeIn(delayMs, [this, mutatesTo, &source, durationMs]() {
+			this->addFirstCardFromImmediately(mutatesTo, source, durationMs);
+		});
+	}
+
+	void card::CardAnimator::addFirstCardFromImmediately(Card mutatesTo, CardAnimator& source, int durationMs) {
+		onAnimationStart();
+		source.remove(0);
+
+		CardAnimation a(getMilliseconds(), durationMs, source, mutatesTo);
+		animations.insert(a);
+
+		threadUtils_invokeIn(durationMs, [this, a, mutatesTo] {
+			animations.erase(a);
+			this->addFromPlain(mutatesTo);
+			onAnimationEnd();
+		});
+	}
+
 	void CardAnimator::addLastCardFrom(Card mutatesTo, CardAnimator& source, int durationMs, int delayMs) {
 		if(delayMs == 0) {
 			this->addLastCardFromImmediately(mutatesTo, source, durationMs);
@@ -22,28 +48,6 @@ namespace card {
 
 		threadUtils_invokeIn(delayMs, [this, mutatesTo, &source, durationMs]() {
 			this->addLastCardFromImmediately(mutatesTo, source, durationMs);
-		});
-	}
-
-	void CardAnimator::addDeterminedCardFrom(Card card, CardAnimator& source, int durationMs, int delayMs) {
-		if(delayMs == 0) {
-			this->addDeterminedCardFromImmediately(card, source, durationMs);
-			return;
-		}
-
-		threadUtils_invokeIn(delayMs, [this, card, &source, durationMs]() {
-			this->addDeterminedCardFromImmediately(card, source, durationMs);
-		});
-	}
-
-	void CardAnimator::addRandomCardFrom(Card mutatesTo, CardAnimator& source, int durationMs, int delayMs) {
-		if(delayMs == 0) {
-			addRandomCardFromImmediately(mutatesTo, source, durationMs);
-			return;
-		}
-	
-		threadUtils_invokeIn(delayMs, [this, mutatesTo, &source, durationMs]() {
-			addRandomCardFromImmediately(mutatesTo, source, durationMs);
 		});
 	}
 
@@ -61,6 +65,17 @@ namespace card {
 		});
 	}
 
+	void CardAnimator::addDeterminedCardFrom(Card card, CardAnimator& source, int durationMs, int delayMs) {
+		if(delayMs == 0) {
+			this->addDeterminedCardFromImmediately(card, source, durationMs);
+			return;
+		}
+
+		threadUtils_invokeIn(delayMs, [this, card, &source, durationMs]() {
+			this->addDeterminedCardFromImmediately(card, source, durationMs);
+		});
+	}
+
 	void CardAnimator::addDeterminedCardFromImmediately(Card card, CardAnimator& source, int durationMs) {
 		onAnimationStart();
 		source.remove(card);
@@ -72,6 +87,17 @@ namespace card {
 			onAnimationEnd();
 			animations.erase(a);
 			this->addFromPlain(card);
+							 });
+	}
+
+	void CardAnimator::addRandomCardFrom(Card mutatesTo, CardAnimator& source, int durationMs, int delayMs) {
+		if(delayMs == 0) {
+			addRandomCardFromImmediately(mutatesTo, source, durationMs);
+			return;
+		}
+	
+		threadUtils_invokeIn(delayMs, [this, mutatesTo, &source, durationMs]() {
+			addRandomCardFromImmediately(mutatesTo, source, durationMs);
 		});
 	}
 

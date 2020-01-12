@@ -41,10 +41,12 @@ namespace card {
 			//
 			// METHODS FROM AnimatedCardCollection
 			//
+			void addFirstCardFrom(Card mutatesTo, CardAnimator& source, int durationMs, int delayMs);
 			void addLastCardFrom(Card mutatesTo, CardAnimator& source, int durationMs, int delayMs);
 			void addDeterminedCardFrom(Card card, CardAnimator& source, int durationMs, int delayMs);
 			void addRandomCardFrom(Card mutatesTo, CardAnimator& source, int durationMs, int delayMs);
 
+			void addFirstCardFromImmediately(Card mutatesTo, CardAnimator& source, int durationMs);
 			void addLastCardFromImmediately(Card mutatesTo, CardAnimator& source, int durationMs);
 			void addDeterminedCardFromImmediately(Card card, CardAnimator& source, int durationMs);
 			void addRandomCardFromImmediately(Card mutatesTo, CardAnimator& source, int durationMs);
