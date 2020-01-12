@@ -5,13 +5,12 @@
 #include <shared/utils/MathUtils.h>
 
 namespace card {
-	bool ProxyPlayer::wasSingleCardDrawedInHandCardsThisTurn = false;
-
-	ProxyPlayer::ProxyPlayer(std::shared_ptr<ParticipantOnClient> wrappedParticipant) :
+	ProxyPlayer::ProxyPlayer(std::shared_ptr<ParticipantOnClient> wrappedParticipant, ProxyPlayerGameInformation& gameInformation) :
 			handCardStack(std::make_unique<HandCardStack>()),
 			wrappedParticipant(wrappedParticipant),
 			unixTimeTurnStarted(NOT_ON_TURN),
-			unixTimePlayerSkipped(0) {
+			unixTimePlayerSkipped(0),
+			gameInformation(gameInformation) {
 	}
 	void ProxyPlayer::initHandCards(std::vector<Card> handCards, CardAnimator& drawCardStack, std::size_t playerIndex) {
 		int delay = int(playerIndex * handCards.size() * INITIAL_DRAW_DELAY_BETWEEN_CARDS_MS);
@@ -22,7 +21,7 @@ namespace card {
 	}
 	void ProxyPlayer::drawSingleCardInHandCardsLocal(Card mutatesTo, CardAnimator& drawCardStack) {
 		handCardStack.addLastCardFromImmediately(mutatesTo, drawCardStack, DRAW_DURATION_MS);
-		this->wasSingleCardDrawedInHandCardsThisTurn = true;
+		gameInformation.wasSingleCardDrawedInHandCardsThisTurn = true;
 	}
 	void ProxyPlayer::drawMultipleCardsInHandCardsLocal(std::vector<Card> mutatesTo, CardAnimator& drawCardStack) {
 		int delay = 0;
@@ -73,14 +72,14 @@ namespace card {
 	}
 	void ProxyPlayer::onSkip() {
 		this->unixTimePlayerSkipped = getMilliseconds();
-		if(wasSingleCardDrawedInHandCardsThisTurn) this->unixTimePlayerSkipped += DRAW_DURATION_MS + DELAY_BETWEEN_DRAW_AND_PLAY;
+		if(gameInformation.wasSingleCardDrawedInHandCardsThisTurn) this->unixTimePlayerSkipped += DRAW_DURATION_MS + DELAY_BETWEEN_DRAW_AND_PLAY;
 	}
 	void ProxyPlayer::onStartTurn() {
 		this->unixTimeTurnStarted = getMilliseconds();
 	}
 	void ProxyPlayer::onEndTurn() {
 		this->unixTimeTurnStarted = NOT_ON_TURN;
-		this->wasSingleCardDrawedInHandCardsThisTurn = false;
+		gameInformation.wasSingleCardDrawedInHandCardsThisTurn = false;
 	}
 	bool ProxyPlayer::operator==(const ProxyPlayer& p2) const {
 		return p2.wrappedParticipant == this->wrappedParticipant;

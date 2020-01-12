@@ -21,6 +21,7 @@ namespace card {
 			Direction direction = Direction::CW;
 			Card drawCardForNextPlayer;
 			RoomOptions& roomOptions;
+			ProxyPlayerGameInformation gameInformation;
 
 			std::shared_ptr<ProxyPlayer> userOnTurn;
 			std::vector<std::shared_ptr<ProxyPlayer>> allPlayers;

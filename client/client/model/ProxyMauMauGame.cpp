@@ -28,10 +28,10 @@ namespace card {
 		// initialize players
 		for(auto& o : allParticipantsInclLocal) {
 			if(o == localParticipant) {
-				this->localPlayer = std::make_shared<LocalPlayer>(localParticipant, packetTransmitter, *this);
+				this->localPlayer = std::make_shared<LocalPlayer>(localParticipant, packetTransmitter, *this, gameInformation);
 				this->allPlayers.push_back(localPlayer);
 			} else {
-				auto player = std::make_shared<ProxyPlayer>(o);
+				auto player = std::make_shared<ProxyPlayer>(o, gameInformation);
 				this->opponents.push_back(player);
 				this->allPlayers.push_back(player);
 			}

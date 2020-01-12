@@ -6,6 +6,17 @@
 #include <optional>
 
 namespace card {
+	struct ProxyPlayerGameInformation {
+		public:
+			ProxyPlayerGameInformation() = default;
+			ProxyPlayerGameInformation(const ProxyPlayerGameInformation&) = delete;
+
+		private:
+			bool wasSingleCardDrawedInHandCardsThisTurn = false;
+
+		friend class ProxyPlayer;
+	};
+
 	class ProxyPlayer {
 		// ----------------------------------------------------------------------
 		// ----------------------------STATIC-FIELDS-----------------------------
@@ -21,9 +32,6 @@ namespace card {
 			// card is drawed and played in the same turn
 			static int const DELAY_BETWEEN_DRAW_AND_PLAY = 1000;
 
-		private:
-			static bool wasSingleCardDrawedInHandCardsThisTurn;
-
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
@@ -34,12 +42,13 @@ namespace card {
 			std::shared_ptr<ParticipantOnClient> const wrappedParticipant;
 			long long int unixTimeTurnStarted;
 			long long int unixTimePlayerSkipped;
+			ProxyPlayerGameInformation& gameInformation;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			ProxyPlayer(std::shared_ptr<ParticipantOnClient> wrappedParticipant);
+			ProxyPlayer(std::shared_ptr<ParticipantOnClient> wrappedParticipant, ProxyPlayerGameInformation& gameInformation);
 			ProxyPlayer(const ProxyPlayer&) = delete;
 			virtual ~ProxyPlayer() = default;
 

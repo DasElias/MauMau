@@ -12,7 +12,8 @@ TEST_CASE("ProxyPlayer can draw and play cards", "[ProxyPlayer]") {
 
 	const std::string username = "Testnutzer";
 	auto wrappedParticipant = std::make_shared<ParticipantOnClient>(username);
-	ProxyPlayer p(wrappedParticipant);
+	ProxyPlayerGameInformation gameInformation;
+	ProxyPlayer p(wrappedParticipant, gameInformation);
 	CardAnimator drawCardStack(std::make_unique<CardStack>());
 	drawCardStack.addFromPlain(Card::NULLCARD, Card::MAX_CARDS);
 
