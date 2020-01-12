@@ -63,6 +63,10 @@ namespace card {
 		joinOnlineRoomBtn->getMouseClickedEventManager().addEventHandler(convertedCallback);
 
 	}
+	void MainMenuElement::addOnInfoBtnHandler(egui::FunctionWrapper<egui::ActionEvent> callback) {
+		auto convertedCallback = convertEventHandler(callback);
+		infoBtn->getMouseClickedEventManager().addEventHandler(convertedCallback);
+	}
 	egui::FunctionWrapper<egui::MouseEvent> MainMenuElement::convertEventHandler(egui::FunctionWrapper<egui::ActionEvent> constWrappedHandler) {
 		return {[constWrappedHandler](egui::MouseEvent&) {
 			auto wrappedHandler = constWrappedHandler;

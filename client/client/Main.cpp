@@ -12,6 +12,7 @@
 #include "state/CreateRoomState.h"
 #include "state/CreateLocalRoomState.h"
 #include "state/ParticipantsOverviewState.h"
+#include "state/CreditsState.h"
 
 #include "system/GlfwCursorHandler.h"
 #include "system/GlfwDisplayHandler.h"
@@ -209,13 +210,15 @@ namespace card {
 		CreateRoomState createRoomState(stateManager, nvgRenderer, errorHandler);
 		CreateLocalRoomState createLocalRoomState(stateManager, nvgRenderer);
 		ParticipantsOverviewState participantsOverviewState(stateManager, nvgRenderer);
-		
+		CreditsState creditsState(stateManager, nvgRenderer);
+
 		stateManager.addState("IngameState", &ingameState);
 		stateManager.addState("MainMenuState", &mainMenuState);
 		stateManager.addState("JoinRoomState", &joinRoomState);
 		stateManager.addState("CreateRoomState", &createRoomState);
 		stateManager.addState("CreateLocalRoomState", &createLocalRoomState);
 		stateManager.addState("ParticipantsOverviewState", &participantsOverviewState);
+		stateManager.addState("CreditsState", &creditsState);
 		stateManager.changeState("MainMenuState");
 
 		loop();

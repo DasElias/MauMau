@@ -4,35 +4,26 @@
 #include <egui/model/nodes/UnorganizedParentElement.h>
 #include <egui/model/nodes/Button.h>
 #include <egui/model/nodes/AspectRatioElement.h>
+#include <egui/model/nodes/VBox.h>
 #include <egui/model/nodes/HBox.h>
+#include <egui/model/nodes/Label.h>
 
 namespace card {
-	class MainMenuElement : public MenuElement {
+	class CreditsElement : public MenuElement {
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
-			std::shared_ptr<egui::AspectRatioElement> singlePlayerBtn;
-			std::shared_ptr<egui::AspectRatioElement> createOnlineRoomBtn;
-			std::shared_ptr<egui::AspectRatioElement> joinOnlineRoomBtn;
-
-			std::shared_ptr<egui::AspectRatioElement> infoBtn;
+			
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			MainMenuElement();
+			CreditsElement();
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
-		public:
-			void addOnSinglePlayerBtnHandler(egui::FunctionWrapper<egui::ActionEvent> callback);
-			void addOnCreateOnlineRoomHandler(egui::FunctionWrapper<egui::ActionEvent> callback);
-			void addOnJoinOnlineRoomHandler(egui::FunctionWrapper<egui::ActionEvent> callback);
-			void addOnInfoBtnHandler(egui::FunctionWrapper<egui::ActionEvent> callback);
 
-		private:
-			egui::FunctionWrapper<egui::MouseEvent> convertEventHandler(egui::FunctionWrapper<egui::ActionEvent> wrapped);
 	};
 }

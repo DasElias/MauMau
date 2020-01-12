@@ -16,6 +16,9 @@ namespace card {
 		element->addOnCreateOnlineRoomHandler({[this](egui::ActionEvent&) {
 			getStateMananger().changeState("CreateRoomState");
 		}});
+		element->addOnInfoBtnHandler({[this](egui::ActionEvent&) {
+			getStateMananger().changeState("CreditsState");
+		}});
 	}
 	void MainMenuState::updateAndRender(float delta) {
 		renderer.beginFrame();
