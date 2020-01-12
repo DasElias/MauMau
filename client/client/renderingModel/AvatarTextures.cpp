@@ -3,6 +3,7 @@
 #include "../utils/FileUtils.h"
 #include "SimpleTextureFactory.h"
 #include <stdexcept>
+#include <boost/filesystem.hpp>
 
 namespace card {
 	AvatarTextures::AvatarTextures() :
@@ -18,6 +19,8 @@ namespace card {
 
 		for(auto& avatar : allAvatars) {
 			std::string path = folder + std::to_string(avatar) + ".png";
+			if(! boost::filesystem::exists(path)) continue;
+
 			SimpleTexture tex = SimpleTextureFactory(path)
 				.setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR)
 				.generateTexture();
