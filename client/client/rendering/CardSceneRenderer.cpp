@@ -128,6 +128,7 @@ namespace card {
 
 		// render local player
 		renderLocalPlayer();
+		cardRenderer.flush(true);
 		renderPlayerLabels(opponentsOrNoneInCwOrder);
 		renderDrawnCardOverlay();
 		renderChooseColorOverlay();
@@ -329,7 +330,15 @@ namespace card {
 	}
 
 	void CardSceneRenderer::renderDrawCardStack() {
-		cardStackRenderer.renderCardStack(game->getDrawStack(), DRAW_CARDS_POSITION, DRAW_CARDS_ROTATION, projectionMatrix, viewport);
+		auto& drawCardStack = game->getDrawStack();
+		cardStackRenderer.renderCardStack(drawCardStack, DRAW_CARDS_POSITION, DRAW_CARDS_ROTATION, projectionMatrix, viewport);
+
+		for(auto animation : drawCardStack.getCardAnimations()) {
+			interpolateAndRender(animation,
+								 PLAY_CARDS_POSITION, PLAY_CARDS_ROTATION,
+								 DRAW_CARDS_POSITION, DRAW_CARDS_ROTATION
+			);
+		}
 	}
 
 	void CardSceneRenderer::renderPlayCardStack() {

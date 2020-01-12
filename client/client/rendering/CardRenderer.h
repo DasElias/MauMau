@@ -76,7 +76,7 @@ namespace card {
 		public:
 			void renderInNextPass(const PositionedCard& card, ProjectionMatrix& projectionMatrix, Viewport& viewport);
 			void renderInNextPass(const std::vector<PositionedCard>& cards, ProjectionMatrix& projectionMatrix, Viewport& viewport);
-			void flush();
+			void flush(bool renderWithHighAnisotropicFiltering = false);
 
 	};
 }

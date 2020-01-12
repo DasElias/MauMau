@@ -105,7 +105,7 @@ namespace card {
 			this->renderInNextPass(c, projectionMatrix, viewport);
 		}
 	}
-	void CardRenderer::flush() {
+	void CardRenderer::flush(bool renderWithHighAnisotropy) {
 		if(this->cardsToRenderInNextPass.empty()) return;
 
 		glDisable(GL_BLEND);
@@ -117,9 +117,11 @@ namespace card {
 		glBindVertexArray(singleCardVao.getVertexArrayObjectId());
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D_ARRAY, cardTextures.getTexId());
+		if(renderWithHighAnisotropy) cardTextures.bindWithHighAnisotropy();
+		else cardTextures.bindDefault();
 		glDrawArraysInstanced(singleCardVao.getRenderMode(), 0, singleCardVao.getIndiciesCount(), GLsizei(cardsToRenderInNextPass.size()));
 		glBindVertexArray(0);
+		cardTextures.unbind();
 		shader.stopProgram();
 
 		this->cardsToRenderInNextPass.clear();

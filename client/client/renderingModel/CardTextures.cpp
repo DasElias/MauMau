@@ -2,7 +2,7 @@
 #include <shared/model/Card.h>
 #include "../utils/FileUtils.h"
 #include "TextureArrayFactory.h"
-
+#include "SamplerObjectFactory.h"
 namespace card {
 	CardTextures::CardTextures() :
 			textureArrayImpl(TextureArrayFactory(getTexturePaths())
@@ -10,9 +10,16 @@ namespace card {
 				.setMagFilter(TextureMagFilter::LINEAR)
 				.setWrapS(TextureWrap::CLAMP_TO_BORDER)
 				.setWrapT(TextureWrap::CLAMP_TO_BORDER)
-				.setAnisotropicFiltering(16)
 				.generateTexture()
-			) {
+			),
+			highAnisotropicFilteringSampler(SamplerObjectFactory()
+				.setMinFilter(TextureMinFilter::LINEAR_MIPMAP_NEAREST)
+				.setMagFilter(TextureMagFilter::LINEAR)
+				.setWrapS(TextureWrap::CLAMP_TO_BORDER)
+				.setWrapT(TextureWrap::CLAMP_TO_BORDER)
+				.setAnisotropicFiltering(16)
+				.generateSampler()
+		) {
 	}
 	std::vector<std::string> CardTextures::getTexturePaths() {
 		std::vector<std::string> paths;
@@ -24,19 +31,18 @@ namespace card {
 
 		return paths;
 	}
-	uint32_t CardTextures::getTexId() const {
-		return textureArrayImpl.getTexId();
-	}
-	void CardTextures::bind() const {
+	void CardTextures::bindDefault() const {
 		textureArrayImpl.bind();
 	}
-	int32_t CardTextures::getWidth() const {
-		return textureArrayImpl.getWidth();
+	void CardTextures::bindWithHighAnisotropy() const {
+		bindDefault();
+		highAnisotropicFilteringSampler.bind();
 	}
-	int32_t CardTextures::getHeight() const {
-		return textureArrayImpl.getHeight();
+	void CardTextures::unbind() const {
+		highAnisotropicFilteringSampler.unbind();
 	}
 	void CardTextures::cleanUp() {
 		textureArrayImpl.cleanUp();
+		highAnisotropicFilteringSampler.cleanUp();
 	}
 }

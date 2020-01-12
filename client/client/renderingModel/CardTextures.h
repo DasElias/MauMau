@@ -1,13 +1,15 @@
 #pragma once
 #include "TextureArray.h"
+#include "SamplerObject.h"
 
 namespace card {
-	class CardTextures : public Texture {
+	class CardTextures {
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
 			TextureArray textureArrayImpl;
+			SamplerObject highAnisotropicFilteringSampler;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
@@ -25,11 +27,9 @@ namespace card {
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			uint32_t getTexId() const override;
-			void bind() const override;
-			int32_t getWidth() const;
-			int32_t getHeight() const;
-
-			void cleanUp() override;
+			void bindDefault() const;
+			void bindWithHighAnisotropy() const;
+			void unbind() const;
+			void cleanUp();
 	};
 }
