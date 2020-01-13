@@ -13,6 +13,6 @@ namespace card {
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
-			void sendRequest(std::string username);
+			void sendRequest(std::string username, Avatar avatar);
 	};
 }
