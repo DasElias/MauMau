@@ -1,8 +1,8 @@
 #include "PlayCardRequest_CTSPacket.h"
 
 namespace card {
-	std::string const PlayCardRequest_CTSPacket::CARD_NUMBER_KEY = "cardNumber";
-	std::string const PlayCardRequest_CTSPacket::NEW_CARD_INDEX_KEY = "newCardIndex";
+	std::string const PlayCardRequest_CTSPacket::CARD_NUMBER_KEY = "50A";
+	std::string const PlayCardRequest_CTSPacket::NEW_CARD_INDEX_KEY = "50B";
 
 
 	PlayCardRequest_CTSPacket::PlayCardRequest_CTSPacket(int cardNumber, int newCardIndex) :
@@ -10,7 +10,7 @@ namespace card {
 			cardNumber(cardNumber),
 			newCardIndex(newCardIndex) {
 	}
-	PlayCardRequest_CTSPacket::PlayCardRequest_CTSPacket(nlohmann::json jsonHandle) :
+	PlayCardRequest_CTSPacket::PlayCardRequest_CTSPacket(nlohmann::json& jsonHandle) :
 			ClientToServerPacket(jsonHandle, PACKET_ID),
 			cardNumber(jsonHandle[CARD_NUMBER_KEY]),
 			newCardIndex(jsonHandle[NEW_CARD_INDEX_KEY]) {

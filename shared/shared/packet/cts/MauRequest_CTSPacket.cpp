@@ -5,7 +5,7 @@ namespace card {
 			ClientToServerPacket(PACKET_ID) {
 	}
 
-	MauRequest_CTSPacket::MauRequest_CTSPacket(nlohmann::json jsonHandle) :
+	MauRequest_CTSPacket::MauRequest_CTSPacket(nlohmann::json& jsonHandle) :
 			ClientToServerPacket(jsonHandle, PACKET_ID) {
 
 		throwErrorIfTypeIsIncorrect(jsonHandle);

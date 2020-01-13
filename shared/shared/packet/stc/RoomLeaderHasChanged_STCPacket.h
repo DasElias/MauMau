@@ -15,7 +15,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			RoomLeaderHasChanged_STCPacket(std::string username);
-			RoomLeaderHasChanged_STCPacket(nlohmann::json jsonHandle);
+			RoomLeaderHasChanged_STCPacket(nlohmann::json& jsonHandle);
 
 	};
 }

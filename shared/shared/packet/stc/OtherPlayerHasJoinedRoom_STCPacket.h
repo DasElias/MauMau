@@ -24,7 +24,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			OtherPlayerHasJoinedRoom_STCPacket(std::string username, Avatar avatar);
-			OtherPlayerHasJoinedRoom_STCPacket(nlohmann::json jsonHandle);
+			OtherPlayerHasJoinedRoom_STCPacket(nlohmann::json& jsonHandle);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------

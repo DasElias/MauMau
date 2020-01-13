@@ -9,7 +9,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			ClientToServerPacket(int packetType);
-			ClientToServerPacket(nlohmann::json jsonHandle, int packetType);
+			ClientToServerPacket(nlohmann::json& jsonHandle, int packetType);
 			ClientToServerPacket(const ClientToServerPacket&) = default;
 
 	};

@@ -7,7 +7,8 @@ TEST_CASE("ChangeOptionsRequest_CTSPacket", "[ChangeOptionsRequest_CTSPacket]") 
 	options["Test"] = 1;
 
 	ChangeOptionsRequest_CTSPacket packet(options);
-	ChangeOptionsRequest_CTSPacket jsonPacket(packet.getJson());
+	nlohmann::json json = nlohmann::json::parse(packet.getJson());
+	ChangeOptionsRequest_CTSPacket jsonPacket(json);
 
 	REQUIRE(options == jsonPacket.getOptions());
 }

@@ -26,7 +26,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			OptionsWereChanged_STCPacket(std::map<std::string, int> options);
-			OptionsWereChanged_STCPacket(nlohmann::json jsonHandle);
+			OptionsWereChanged_STCPacket(nlohmann::json& jsonHandle);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------

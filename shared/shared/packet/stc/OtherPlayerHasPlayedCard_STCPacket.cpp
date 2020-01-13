@@ -1,10 +1,10 @@
 #include "OtherPlayerHasPlayedCard_STCPacket.h"
 
 namespace card {
-	std::string const OtherPlayerHasPlayedCard_STCPacket::CARD_NUMBER_KEY = "cardNumber";
-	std::string const OtherPlayerHasPlayedCard_STCPacket::NEW_CARD_INDEX_KEY = "newCardIndex";
-	std::string const OtherPlayerHasPlayedCard_STCPacket::CARDS_TO_DRAW_KEY = "cardsToDraw";
-	std::string const OtherPlayerHasPlayedCard_STCPacket::WAS_DRAWN_KEY = "wasDrawnBeforePlayed";
+	std::string const OtherPlayerHasPlayedCard_STCPacket::CARD_NUMBER_KEY = "23A";
+	std::string const OtherPlayerHasPlayedCard_STCPacket::NEW_CARD_INDEX_KEY = "23B";
+	std::string const OtherPlayerHasPlayedCard_STCPacket::CARDS_TO_DRAW_KEY = "23C";
+	std::string const OtherPlayerHasPlayedCard_STCPacket::WAS_DRAWN_KEY = "23D";
 	
 	OtherPlayerHasPlayedCard_STCPacket::OtherPlayerHasPlayedCard_STCPacket(std::string username, int cardNumber, int newCardIndex, std::vector<int> cardsToDraw, bool wasDrawnBeforePlayed) :
 			AbstractUsernamePacket_STCPacket(username, PACKET_ID),
@@ -13,7 +13,7 @@ namespace card {
 			cardsToDraw(cardsToDraw),
 			wasDrawnBeforePlayed_field(wasDrawnBeforePlayed) {
 	}
-	OtherPlayerHasPlayedCard_STCPacket::OtherPlayerHasPlayedCard_STCPacket(nlohmann::json jsonHandle) :
+	OtherPlayerHasPlayedCard_STCPacket::OtherPlayerHasPlayedCard_STCPacket(nlohmann::json& jsonHandle) :
 			AbstractUsernamePacket_STCPacket(jsonHandle, PACKET_ID),
 			cardNumber(jsonHandle[CARD_NUMBER_KEY]),
 			newCardIndex(jsonHandle[NEW_CARD_INDEX_KEY]),

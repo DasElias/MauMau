@@ -7,7 +7,8 @@ TEST_CASE("RoomCreationRequest_CTSPacket", "[RoomCreationRequest_CTSPacket]") {
 	Avatar const avatar = 0;
 
 	RoomCreationRequest_CTSPacket packet(username, avatar);
-	RoomCreationRequest_CTSPacket jsonPacket(packet.getJson());
+	nlohmann::json json = nlohmann::json::parse(packet.getJson());
+	RoomCreationRequest_CTSPacket jsonPacket(json);
 
 	REQUIRE(username == jsonPacket.getOwnUsername());
 	REQUIRE(avatar == jsonPacket.getAvatar());

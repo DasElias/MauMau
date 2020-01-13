@@ -1,15 +1,15 @@
 #include "RoomCreationRequest_CTSPacket.h"
 
 namespace card {
-	std::string const RoomCreationRequest_CTSPacket::USERNAME_KEY = "username";
-	std::string const RoomCreationRequest_CTSPacket::AVATAR_KEY = "avatar";
+	std::string const RoomCreationRequest_CTSPacket::USERNAME_KEY = "41A";
+	std::string const RoomCreationRequest_CTSPacket::AVATAR_KEY = "41B";
 
 	RoomCreationRequest_CTSPacket::RoomCreationRequest_CTSPacket(std::string ownUsername, Avatar avatar) :
 			ClientToServerPacket(PACKET_ID),
 			ownUsername(ownUsername),
 			avatar(avatar) {
 	}
-	RoomCreationRequest_CTSPacket::RoomCreationRequest_CTSPacket(nlohmann::json jsonHandle) :
+	RoomCreationRequest_CTSPacket::RoomCreationRequest_CTSPacket(nlohmann::json& jsonHandle) :
 			ClientToServerPacket(jsonHandle, PACKET_ID),
 			ownUsername(jsonHandle[USERNAME_KEY]),
 			avatar(jsonHandle[AVATAR_KEY]) {

@@ -14,7 +14,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			LeaveNextGameRequest_CTSPacket();
-			LeaveNextGameRequest_CTSPacket(nlohmann::json jsonHandle);
+			LeaveNextGameRequest_CTSPacket(nlohmann::json& jsonHandle);
 
 	};
 }

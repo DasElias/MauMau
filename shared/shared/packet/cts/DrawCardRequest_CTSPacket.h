@@ -14,7 +14,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			DrawCardRequest_CTSPacket();
-			DrawCardRequest_CTSPacket(nlohmann::json jsonHandle);
+			DrawCardRequest_CTSPacket(nlohmann::json& jsonHandle);
 
 	};
 }

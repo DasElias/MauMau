@@ -29,7 +29,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			RoomJoinRequest_CTSPacket(std::string ownUsername, Avatar avatar, RoomCode roomCode);
-			RoomJoinRequest_CTSPacket(nlohmann::json jsonHandle);
+			RoomJoinRequest_CTSPacket(nlohmann::json& jsonHandle);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------

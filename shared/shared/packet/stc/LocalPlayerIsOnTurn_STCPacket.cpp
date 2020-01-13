@@ -1,14 +1,14 @@
 #include "LocalPlayerIsOnTurn_STCPacket.h"
 
 namespace card {
-	std::string const LocalPlayerIsOnTurn_STCPacket::NEXT_CARD_ON_DRAW_STCK = "nextCardOnDrawStack";
+	std::string const LocalPlayerIsOnTurn_STCPacket::NEXT_CARD_ON_DRAW_STCK = "20A";
 	
 	LocalPlayerIsOnTurn_STCPacket::LocalPlayerIsOnTurn_STCPacket(int nextCardOnDrawStack) :
 			Packet(PACKET_ID),
 			nextCardOnDrawStack(nextCardOnDrawStack) {
 	
 	}
-	LocalPlayerIsOnTurn_STCPacket::LocalPlayerIsOnTurn_STCPacket(nlohmann::json jsonHandle) :
+	LocalPlayerIsOnTurn_STCPacket::LocalPlayerIsOnTurn_STCPacket(nlohmann::json& jsonHandle) :
 			Packet(PACKET_ID),
 			nextCardOnDrawStack(jsonHandle[NEXT_CARD_ON_DRAW_STCK]) {
 

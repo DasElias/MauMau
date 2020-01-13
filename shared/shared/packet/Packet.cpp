@@ -1,7 +1,7 @@
 #include "Packet.h"
 
 namespace card {
-	std::string const Packet::PACKET_TYPE_KEY = "packetType";
+	std::string const Packet::PACKET_TYPE_KEY = "pType";
 
 	Packet::Packet(int packetType) :
 			packetType(packetType) {

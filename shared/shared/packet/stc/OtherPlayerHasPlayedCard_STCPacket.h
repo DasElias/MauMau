@@ -29,7 +29,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			OtherPlayerHasPlayedCard_STCPacket(std::string username, int cardNumber, int newCardIndex, std::vector<int> cardsToDraw, bool wasDrawnBeforePlayed);
-			OtherPlayerHasPlayedCard_STCPacket(nlohmann::json jsonHandle);
+			OtherPlayerHasPlayedCard_STCPacket(nlohmann::json& jsonHandle);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------

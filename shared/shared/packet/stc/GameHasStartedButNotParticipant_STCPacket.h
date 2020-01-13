@@ -15,7 +15,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			GameHasStartedButNotParticipant_STCPacket();
-			GameHasStartedButNotParticipant_STCPacket(nlohmann::json jsonHandle);
+			GameHasStartedButNotParticipant_STCPacket(nlohmann::json& jsonHandle);
 
 	};
 }

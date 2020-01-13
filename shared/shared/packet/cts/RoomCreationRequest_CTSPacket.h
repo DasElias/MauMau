@@ -26,7 +26,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			RoomCreationRequest_CTSPacket(std::string ownUsername, Avatar avatar);
-			RoomCreationRequest_CTSPacket(nlohmann::json jsonHandle);
+			RoomCreationRequest_CTSPacket(nlohmann::json& jsonHandle);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------

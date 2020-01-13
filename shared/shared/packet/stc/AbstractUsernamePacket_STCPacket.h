@@ -21,7 +21,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		protected:
 			AbstractUsernamePacket_STCPacket(std::string username, int packetType);
-			AbstractUsernamePacket_STCPacket(nlohmann::json json, int packetType);
+			AbstractUsernamePacket_STCPacket(nlohmann::json& json, int packetType);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------

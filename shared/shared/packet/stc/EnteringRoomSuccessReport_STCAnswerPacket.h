@@ -43,7 +43,7 @@ namespace card {
 		public:
 			EnteringRoomSuccessReport_STCAnswerPacket(int statusCode, std::vector<std::string> usernamesOfOtherParticipants, std::vector<Avatar> avatarsOfOtherParticipants, std::string roomLeader, RoomCode roomCode, std::map<std::string, int> nonDefaultOptions);
 			EnteringRoomSuccessReport_STCAnswerPacket(const EnteringRoomSuccessReport_STCAnswerPacket&) = default;
-			EnteringRoomSuccessReport_STCAnswerPacket(nlohmann::json jsonHandle);
+			EnteringRoomSuccessReport_STCAnswerPacket(nlohmann::json& jsonHandle);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------

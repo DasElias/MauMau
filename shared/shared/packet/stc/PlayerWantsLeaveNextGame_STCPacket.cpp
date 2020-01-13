@@ -5,7 +5,7 @@ namespace card {
 			AbstractUsernamePacket_STCPacket(username, PACKET_ID) {
 	}
 
-	PlayerWantsLeaveNextGame_STCPacket::PlayerWantsLeaveNextGame_STCPacket(nlohmann::json jsonHandle) :
+	PlayerWantsLeaveNextGame_STCPacket::PlayerWantsLeaveNextGame_STCPacket(nlohmann::json& jsonHandle) :
 			AbstractUsernamePacket_STCPacket(jsonHandle, PACKET_ID) {
 
 		throwErrorIfTypeIsIncorrect(jsonHandle);

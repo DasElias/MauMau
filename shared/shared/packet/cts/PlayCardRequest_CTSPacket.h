@@ -25,7 +25,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			PlayCardRequest_CTSPacket(int cardNumber, int newCardIndex = 0);
-			PlayCardRequest_CTSPacket(nlohmann::json jsonHandle);
+			PlayCardRequest_CTSPacket(nlohmann::json& jsonHandle);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------

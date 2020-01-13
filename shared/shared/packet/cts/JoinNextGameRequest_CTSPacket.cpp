@@ -5,7 +5,7 @@ namespace card {
 			ClientToServerPacket(PACKET_ID) {
 	}
 
-	JoinNextGameRequest_CTSPacket::JoinNextGameRequest_CTSPacket(nlohmann::json jsonHandle) :
+	JoinNextGameRequest_CTSPacket::JoinNextGameRequest_CTSPacket(nlohmann::json& jsonHandle) :
 			ClientToServerPacket(jsonHandle, PACKET_ID) {
 
 		throwErrorIfTypeIsIncorrect(jsonHandle);

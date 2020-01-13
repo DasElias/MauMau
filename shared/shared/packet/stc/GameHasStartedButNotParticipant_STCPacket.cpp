@@ -5,7 +5,7 @@ namespace card {
 			Packet(PACKET_ID) {
 	}
 
-	GameHasStartedButNotParticipant_STCPacket::GameHasStartedButNotParticipant_STCPacket(nlohmann::json jsonHandle) :
+	GameHasStartedButNotParticipant_STCPacket::GameHasStartedButNotParticipant_STCPacket(nlohmann::json& jsonHandle) :
 			Packet(PACKET_ID) {
 
 		throwErrorIfTypeIsIncorrect(jsonHandle);

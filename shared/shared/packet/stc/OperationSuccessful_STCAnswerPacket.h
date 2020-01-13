@@ -24,7 +24,7 @@ namespace card {
 		public:
 			OperationSuccessful_STCAnswerPacket(bool wasSuccessful);
 			OperationSuccessful_STCAnswerPacket(const OperationSuccessful_STCAnswerPacket&) = default;
-			OperationSuccessful_STCAnswerPacket(nlohmann::json jsonHandle);
+			OperationSuccessful_STCAnswerPacket(nlohmann::json& jsonHandle);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------

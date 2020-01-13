@@ -1,9 +1,9 @@
 #include "RoomJoinRequest_CTSPacket.h"
 
 namespace card {
-	std::string const RoomJoinRequest_CTSPacket::ROOM_CODE_KEY = "roomCode";
-	std::string const RoomJoinRequest_CTSPacket::USERNAME_KEY = "username";
-	std::string const RoomJoinRequest_CTSPacket::AVATAR_KEY = "avatar";
+	std::string const RoomJoinRequest_CTSPacket::ROOM_CODE_KEY = "40A";
+	std::string const RoomJoinRequest_CTSPacket::USERNAME_KEY = "40B";
+	std::string const RoomJoinRequest_CTSPacket::AVATAR_KEY = "40C";
 
 	RoomJoinRequest_CTSPacket::RoomJoinRequest_CTSPacket(std::string ownUsername, Avatar avatar, RoomCode roomCode) :
 			ClientToServerPacket(PACKET_ID),
@@ -11,7 +11,7 @@ namespace card {
 			roomCode(roomCode),
 			avatar(avatar) {
 	}
-	RoomJoinRequest_CTSPacket::RoomJoinRequest_CTSPacket(nlohmann::json jsonHandle) :
+	RoomJoinRequest_CTSPacket::RoomJoinRequest_CTSPacket(nlohmann::json& jsonHandle) :
 			ClientToServerPacket(jsonHandle, PACKET_ID),
 			ownUsername(jsonHandle[USERNAME_KEY]),
 			roomCode(jsonHandle[ROOM_CODE_KEY]),

@@ -1,14 +1,14 @@
 #include "AbstractUsernamePacket_STCPacket.h"
 
 namespace card {
-	std::string const AbstractUsernamePacket_STCPacket::USERNAME_KEY = "username";
+	std::string const AbstractUsernamePacket_STCPacket::USERNAME_KEY = "UNM";
 
 	AbstractUsernamePacket_STCPacket::AbstractUsernamePacket_STCPacket(std::string username, int packetType) :
 			Packet(packetType),
 			username(username) {
 	}
 
-	AbstractUsernamePacket_STCPacket::AbstractUsernamePacket_STCPacket(nlohmann::json json, int packetType) :
+	AbstractUsernamePacket_STCPacket::AbstractUsernamePacket_STCPacket(nlohmann::json& json, int packetType) :
 			Packet(packetType),
 			username(json[USERNAME_KEY]) {
 

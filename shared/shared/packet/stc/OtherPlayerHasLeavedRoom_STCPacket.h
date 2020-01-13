@@ -14,7 +14,7 @@ namespace card {
 	// ----------------------------------------------------------------------
 	public:
 		OtherPlayerHasLeavedRoom_STCPacket(std::string username);
-		OtherPlayerHasLeavedRoom_STCPacket(nlohmann::json jsonHandle);
+		OtherPlayerHasLeavedRoom_STCPacket(nlohmann::json& jsonHandle);
 
 	};
 }

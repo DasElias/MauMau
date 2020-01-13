@@ -1,12 +1,12 @@
 #include "EnteringRoomSuccessReport_STCAnswerPacket.h"
 
 namespace card {
-	std::string const EnteringRoomSuccessReport_STCAnswerPacket::STATUS_CODE_KEY = "statusCode";
-	std::string const EnteringRoomSuccessReport_STCAnswerPacket::USERNAMES_OF_OTHER_PARTICIPANTS_KEY = "usernamesOfOtherParticipants";
-	std::string const EnteringRoomSuccessReport_STCAnswerPacket::AVATARS_OF_OTHER_PARTICIPANTS_KEY = "avatarsOfOtherParticipants";
-	std::string const EnteringRoomSuccessReport_STCAnswerPacket::ROOM_LEADER_KEY = "roomLeader";
-	std::string const EnteringRoomSuccessReport_STCAnswerPacket::ROOM_CODE_KEY = "roomCode";
-	std::string const EnteringRoomSuccessReport_STCAnswerPacket::NON_DEFAULT_OPTIONS_KEY = "nonDefaultOptions";
+	std::string const EnteringRoomSuccessReport_STCAnswerPacket::STATUS_CODE_KEY = "31A";
+	std::string const EnteringRoomSuccessReport_STCAnswerPacket::USERNAMES_OF_OTHER_PARTICIPANTS_KEY = "31B";
+	std::string const EnteringRoomSuccessReport_STCAnswerPacket::AVATARS_OF_OTHER_PARTICIPANTS_KEY = "31C";
+	std::string const EnteringRoomSuccessReport_STCAnswerPacket::ROOM_LEADER_KEY = "31D";
+	std::string const EnteringRoomSuccessReport_STCAnswerPacket::ROOM_CODE_KEY = "31E";
+	std::string const EnteringRoomSuccessReport_STCAnswerPacket::NON_DEFAULT_OPTIONS_KEY = "31F";
 
 
 	EnteringRoomSuccessReport_STCAnswerPacket::EnteringRoomSuccessReport_STCAnswerPacket(int statusCode, std::vector<std::string> usernamesOfOtherParticipants, std::vector<Avatar> avatarsOfOtherParticipants, std::string roomLeader, RoomCode roomCode, std::map<std::string, int> nonDefaultOptions) :
@@ -19,7 +19,7 @@ namespace card {
 			nonDefaultOptions(nonDefaultOptions) {
 	}
 
-	EnteringRoomSuccessReport_STCAnswerPacket::EnteringRoomSuccessReport_STCAnswerPacket(nlohmann::json jsonHandle) :
+	EnteringRoomSuccessReport_STCAnswerPacket::EnteringRoomSuccessReport_STCAnswerPacket(nlohmann::json& jsonHandle) :
 			Packet(PACKET_ID),
 			statusCode(jsonHandle[STATUS_CODE_KEY]),
 			usernamesOfOtherParticipants(jsonHandle.at(USERNAMES_OF_OTHER_PARTICIPANTS_KEY).get<std::vector<std::string>>()),

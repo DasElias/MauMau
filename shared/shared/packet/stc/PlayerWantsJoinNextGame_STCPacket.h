@@ -14,7 +14,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			PlayerWantsJoinNextGame_STCPacket(std::string username);
-			PlayerWantsJoinNextGame_STCPacket(nlohmann::json jsonHandle);
+			PlayerWantsJoinNextGame_STCPacket(nlohmann::json& jsonHandle);
 
 
 	};

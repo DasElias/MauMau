@@ -14,7 +14,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			MauRequest_CTSPacket();
-			MauRequest_CTSPacket(nlohmann::json jsonHandle);
+			MauRequest_CTSPacket(nlohmann::json& jsonHandle);
 
 	};
 }

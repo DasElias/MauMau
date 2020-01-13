@@ -1,14 +1,14 @@
 #include "OptionsWereChanged_STCPacket.h"
 
 namespace card {
-	std::string const OptionsWereChanged_STCPacket::OPTIONS_KEY = "options";
+	std::string const OptionsWereChanged_STCPacket::OPTIONS_KEY = "16A";
 
 	OptionsWereChanged_STCPacket::OptionsWereChanged_STCPacket(std::map<std::string, int> options) :
 			Packet(PACKET_ID),
 			options(options) {
 	}
 
-	OptionsWereChanged_STCPacket::OptionsWereChanged_STCPacket(nlohmann::json jsonHandle) :
+	OptionsWereChanged_STCPacket::OptionsWereChanged_STCPacket(nlohmann::json& jsonHandle) :
 			Packet(PACKET_ID),
 			options(jsonHandle.at(OPTIONS_KEY).get<std::map<std::string, int>>()) {
 

@@ -23,7 +23,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			LocalPlayerIsOnTurn_STCPacket(int nextCardOnDrawStack);
-			LocalPlayerIsOnTurn_STCPacket(nlohmann::json jsonHandle);
+			LocalPlayerIsOnTurn_STCPacket(nlohmann::json& jsonHandle);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------

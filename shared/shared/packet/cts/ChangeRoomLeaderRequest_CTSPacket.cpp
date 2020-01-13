@@ -1,14 +1,14 @@
 #include "ChangeRoomLeaderRequest_CTSPacket.h"
 
 namespace card {
-	std::string const ChangeRoomLeaderRequest_CTSPacket::USERNAME_KEY = "username";
+	std::string const ChangeRoomLeaderRequest_CTSPacket::USERNAME_KEY = "43A";
 
-	ChangeRoomLeaderRequest_CTSPacket::ChangeRoomLeaderRequest_CTSPacket(std::string usernameOfNewLeader) :
+	ChangeRoomLeaderRequest_CTSPacket::ChangeRoomLeaderRequest_CTSPacket(std::string& usernameOfNewLeader) :
 			ClientToServerPacket(PACKET_ID),
 			username(usernameOfNewLeader) {
 	}
 	
-	ChangeRoomLeaderRequest_CTSPacket::ChangeRoomLeaderRequest_CTSPacket(nlohmann::json json) :
+	ChangeRoomLeaderRequest_CTSPacket::ChangeRoomLeaderRequest_CTSPacket(nlohmann::json& json) :
 			ClientToServerPacket(json, PACKET_ID),
 			username(json[USERNAME_KEY]) {
 

@@ -1,14 +1,14 @@
 #include "OtherPlayerHasJoinedRoom_STCPacket.h"
 
 namespace card {
-	std::string const OtherPlayerHasJoinedRoom_STCPacket::AVATAR_KEY = "avatar";
+	std::string const OtherPlayerHasJoinedRoom_STCPacket::AVATAR_KEY = "10A";
 
 	OtherPlayerHasJoinedRoom_STCPacket::OtherPlayerHasJoinedRoom_STCPacket(std::string username, Avatar avatar) :
 			AbstractUsernamePacket_STCPacket(username, PACKET_ID),
 			avatar(avatar) {
 	}
 
-	OtherPlayerHasJoinedRoom_STCPacket::OtherPlayerHasJoinedRoom_STCPacket(nlohmann::json jsonHandle) :
+	OtherPlayerHasJoinedRoom_STCPacket::OtherPlayerHasJoinedRoom_STCPacket(nlohmann::json& jsonHandle) :
 			AbstractUsernamePacket_STCPacket(jsonHandle, PACKET_ID),
 			avatar(jsonHandle[AVATAR_KEY]) {
 

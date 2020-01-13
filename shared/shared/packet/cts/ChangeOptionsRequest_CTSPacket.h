@@ -24,8 +24,8 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			ChangeOptionsRequest_CTSPacket(std::map<std::string, int> options);
-			ChangeOptionsRequest_CTSPacket(nlohmann::json jsonHandle);
+			ChangeOptionsRequest_CTSPacket(std::map<std::string, int>& options);
+			ChangeOptionsRequest_CTSPacket(nlohmann::json& jsonHandle);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------

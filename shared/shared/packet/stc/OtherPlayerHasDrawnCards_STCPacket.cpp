@@ -5,7 +5,7 @@ namespace card {
 			AbstractUsernamePacket_STCPacket(username, PACKET_ID) {
 	
 	}
-	OtherPlayerHasDrawnCards_STCPacket::OtherPlayerHasDrawnCards_STCPacket(nlohmann::json jsonHandle) :
+	OtherPlayerHasDrawnCards_STCPacket::OtherPlayerHasDrawnCards_STCPacket(nlohmann::json& jsonHandle) :
 			AbstractUsernamePacket_STCPacket(jsonHandle, PACKET_ID) {
 
 		throwErrorIfTypeIsIncorrect(jsonHandle);

@@ -34,7 +34,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			GameHasBeenStarted_STCPacket(std::vector<std::string> allParticipants, std::string usernameOnTurn, std::vector<int> handCards, int startCard, int nextCardOnDrawStack);
-			GameHasBeenStarted_STCPacket(nlohmann::json json);
+			GameHasBeenStarted_STCPacket(nlohmann::json& json);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
