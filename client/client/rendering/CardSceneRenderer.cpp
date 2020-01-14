@@ -171,7 +171,8 @@ namespace card {
 									   DRAW_CARDS_POSITION + glm::vec3(0, cardStackHeightAddition + CardRenderer::HEIGHT/2, -CardRenderer::HEIGHT),
 									   DRAW_CARDS_ROTATION + glm::vec3(PI / 4, 0, 0),
 									   handCardsPosition,
-									   handCardsRotation);
+									   handCardsRotation,
+									   0.33f, 0.66f);
 		}
 	}
 
@@ -193,7 +194,8 @@ namespace card {
 									   middlePosition,
 									   middleRotation,
 									   handCardsPosition,
-									   handCardsRotation);
+									   handCardsRotation,
+									   0.33f, 0.33f);
 		}
 
 	}
@@ -392,14 +394,21 @@ namespace card {
 		}
 	}
 
-	void CardSceneRenderer::interpolateAndRender(const CardAnimation& animation, glm::vec3 startPosition, glm::vec3 startRotation, glm::vec3 middle1Position, glm::vec3 middle1Rotation, glm::vec3 middle2Position, glm::vec3 middle2Rotation, glm::vec3 endPosition, glm::vec3 endRotation) {
+	void CardSceneRenderer::interpolateAndRender(const CardAnimation& animation, glm::vec3 startPosition, glm::vec3 startRotation, glm::vec3 middle1Position, glm::vec3 middle1Rotation, glm::vec3 middle2Position, glm::vec3 middle2Rotation, glm::vec3 endPosition, glm::vec3 endRotation,
+												 float period1Ratio, float period2Ratio, float period3Ratio) {
+		float ratioSum = period1Ratio + period2Ratio + period3Ratio;
+		float TOLERANCE = 0.02f;
+		if(ratioSum < 1 - TOLERANCE || ratioSum > 1 + TOLERANCE) {
+			throw std::runtime_error("ratio arguments doesn't sum up to 1");
+		}
+
 		glm::vec3 interpolatedPosition, interpolatedRotation;
 
 		float x = float(getMilliseconds() - animation.animationStartTime);
 		float x1 = 0;
-		float x2 = animation.duration / 3.0f;
-		float x3 = 2 * x2;
-		float x4 = float(animation.duration);
+		float x2 = animation.duration * period1Ratio;
+		float x3 = x2 + animation.duration * period2Ratio;
+		float x4 = x3 + animation.duration * period3Ratio;
 
 		if(x < x2) {
 			// part 1 of the animation
@@ -418,14 +427,20 @@ namespace card {
 		cardRenderer.renderInNextPass({animation.mutatesTo, interpolatedPosition, interpolatedRotation}, projectionMatrix, viewport);
 	}
 
-	void CardSceneRenderer::interpolateAndRender(const CardAnimation& animation, glm::vec3 startPosition, glm::vec3 startRotation, glm::vec3 middlePosition, glm::vec3 middleRotation, glm::vec3 endPosition, glm::vec3 endRotation) {
+	void CardSceneRenderer::interpolateAndRender(const CardAnimation& animation, glm::vec3 startPosition, glm::vec3 startRotation, glm::vec3 middlePosition, glm::vec3 middleRotation, glm::vec3 endPosition, glm::vec3 endRotation, float period1Ratio, float period2Ratio) {
+		float ratioSum = period1Ratio + period2Ratio;
+		float TOLERANCE = 0.02f;
+		if(ratioSum < 1 - TOLERANCE || ratioSum > 1 + TOLERANCE) {
+			throw std::runtime_error("ratio arguments doesn't sum up to 1");
+		}
+
 		glm::vec3 interpolatedPosition, interpolatedRotation;
 
 		float x = float(getMilliseconds() - animation.animationStartTime);
 		float x1 = 0;
-		float x2 = animation.duration / 2.0f;
-		float x3 = float(animation.duration);
-
+		float x2 = animation.duration * period1Ratio;
+		float x3 = x2 + animation.duration * period2Ratio;
+		
 		if(x < x2) {
 			// part 1 of the animation
 			interpolatedPosition = interpolateLinear(x, x1, startPosition, x2, middlePosition);
