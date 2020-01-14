@@ -5,8 +5,8 @@
 #include <iostream>
 
 namespace card {
-	float const PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN = 0.05f;
-	int const PlayerLabel::SKIP_IMAGE_WIDTH_ADDITION = 25;
+	float const PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN = 0.045f;
+	int const PlayerLabel::SKIP_IMAGE_WIDTH_ADDITION = 30;
 
 	PlayerLabel::PlayerLabel(float imageAspectRatio) :
 			UnorganizedParentElement() {
@@ -31,7 +31,6 @@ namespace card {
 		playerNameLabel->setStretchX(TEXT_WIDTH_PIXEL_ADDITION);
 		rootElement->addChildElement(playerNameLabel);
 		playerNameLabel->setMaxWidth({IMAGE_WIDTH_RELATIVE_ON_SCREEN, egui::RelativityMode::RELATIVE_ON_SCREEN});
-
 
 		this->setVisible(false);
 		this->setMaxWidth({IMAGE_WIDTH_RELATIVE_ON_SCREEN, egui::RelativityMode::RELATIVE_ON_SCREEN});
