@@ -9,6 +9,8 @@
 #include <egui/model/positioning/CenterAllInParentWrapper.h>
 #include <egui/model/positioning/RelativePositioningOnScreen.h>
 #include <egui/model/utils/PositioningUtils.h>
+#include <egui/model/nodeComponents/background/DisabledBackground.h>
+
 #include <iostream>
 #include "../utils/FileUtils.h"
 
@@ -25,6 +27,7 @@ namespace card {
 			indexButtons.push_back(btn);
 
 			btn->setPreferredDimension({{BUTTON_WIDTH, egui::RelativityMode::RELATIVE_ON_SCREEN}}, {{0, egui::RelativityMode::RELATIVE_ON_SCREEN}});
+			btn->setBorder(std::make_shared<egui::Border>(egui::Color(), egui::BorderType::DISABLED));
 		}
 
 		indexButtons[0]->getActionEventManager().addEventHandler({[this](egui::ActionEvent&) {
@@ -68,7 +71,7 @@ namespace card {
 		buttonBarBackground->setBackground(std::make_shared<egui::ColoredBackground>(egui::Color(1, 1, 1, 0.85f)));
 
 		std::shared_ptr<egui::UnorganizedParentElement> rootElem(new egui::UnorganizedParentElement({buttonBarBackground, buttonBar}));
-		rootElem->setBackground(std::make_shared<egui::ColoredBackground>(egui::Color(0, 0, 0, 0.85f)));
+		rootElem->setBackground(std::make_shared<egui::ColoredBackground>(egui::Color(0, 0, 0, 0.55f)));
 		this->scene.setRootElement(rootElem);
 	}
 	void ChooseCardRenderer::resetScene() {
