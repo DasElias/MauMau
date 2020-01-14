@@ -1,3 +1,4 @@
+include_directories("${CMAKE_SOURCE_DIR}/deps/loguru")
 include_directories("${CMAKE_SOURCE_DIR}/deps/json")
 
 #Boost

@@ -3,6 +3,7 @@
 #include "RoomManager.h"
 #include <memory>
 #include "Daemon.h"
+#include <shared/utils/Logger.h>
 
 using namespace card;
 namespace ba = boost::asio;
@@ -13,6 +14,7 @@ using namespace std::string_literals;
 
 int main() {
 	initDaemon();
+	initLogger("~/latest.log", "~/fatal.log");
 
 	auto packetTransmitter = std::make_shared<ServerPacketTransmitter>();
 	ba::io_context ioc;

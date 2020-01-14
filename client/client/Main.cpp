@@ -139,7 +139,8 @@ static void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GL
 namespace card {
 	Main::Main() {
 		// initialize boost trivial logging
-		initLogger(card::getApplicationFolder() + "\\logs");
+		std::string const logFolder = card::getApplicationFolder() + "\\logs";
+		initLogger(logFolder + "\\latest.log", logFolder + "\\fatal.log");
 
 		// log application start
 		log(LogSeverity::INFO, "Application has started!");

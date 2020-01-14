@@ -42,6 +42,7 @@ if(BUILD_SERVER_AS_DAEMON)
     add_compile_definitions(BUILD_SERVER_AS_DAEMON)
 endif(BUILD_SERVER_AS_DAEMON)
 
+add_subdirectory(deps)
 add_subdirectory(shared)
 if(BUILD_CLIENT)
     add_subdirectory(client)

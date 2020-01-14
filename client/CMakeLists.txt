@@ -16,6 +16,7 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/glm")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/nanovg")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/egui")
 
+include_directories("${CMAKE_SOURCE_DIR}/deps/loguru")
 include_directories("${CMAKE_SOURCE_DIR}/deps/simpleIni")
 include_directories("${CMAKE_SOURCE_DIR}/deps/json")
 
