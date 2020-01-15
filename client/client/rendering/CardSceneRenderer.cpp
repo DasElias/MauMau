@@ -386,7 +386,14 @@ namespace card {
 									 HAND_CARDS_OPPONENT_RIGHT_POSITION + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), HAND_CARDS_OPPONENT_RIGHT_ROTATION,
 									 positionEnd, rotationEnd
 				);
-			} else {
+			} else if (animation.source.get().equalsId(game->getDrawStack())) {
+				float drawCardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * (game->getDrawStack().getSize());
+				interpolateAndRender(animation,
+									DRAW_CARDS_POSITION + glm::vec3(0, drawCardStackHeightAddition, 0), glm::vec3(PI / 2, 0, 0),
+									DRAW_CARDS_POSITION + glm::vec3(CardRenderer::WIDTH/2, drawCardStackHeightAddition + CardRenderer::WIDTH/2, 0), glm::vec3(PI / 2, -PI/2, 0),
+									positionEnd, glm::vec3(PI/2, -PI, 0),
+									0.4f, 0.6f);
+			}else {
 				throw std::runtime_error("Card isn't from an user card stack.");
 			}
 
