@@ -90,7 +90,7 @@ namespace card {
 			std::shared_ptr<ProxyPlayer> lookupOpponent(std::string username);	
 
 		private:
-			void initStartCards(const std::vector<int>& handCardNumbersOfLocalPlayer);
+			void initStartCards(const std::vector<int>& handCardNumbersOfLocalPlayer, Card cardOnPlayStack);
 			void tryRebalanceCardStacks();
 			void setLocalPlayerAtTheBeginOfPlayersVector();
 

@@ -100,6 +100,7 @@ namespace card {
 			void renderChooseColorOverlay();
 			void renderDrawCardStack();
 			void renderPlayCardStack();
+			void renderAnimationFromDrawToPlayStack(const CardAnimation& cardAnimation, glm::vec3 endPosition, glm::vec3 endRotation);
 			void handleInput();
 			bool checkIntersectionWithDrawCardStack();
 			std::optional<int> checkIntersectionWithOwnHandCards();
@@ -109,7 +110,7 @@ namespace card {
 			void interpolateAndRender(const CardAnimation& animation, glm::vec3 startPosition, glm::vec3 startRotation, glm::vec3 middle1Position, glm::vec3 middle1Rotation, glm::vec3 middle2Position, glm::vec3 middle2Rotation, glm::vec3 endPosition, glm::vec3 endRotation, float period1Ratio = 0.33f, float period2Ratio = 0.33f, float period3Ratio = 0.33f);
 			void interpolateAndRender(const CardAnimation& animation, glm::vec3 startPosition, glm::vec3 startRotation, glm::vec3 middlePosition, glm::vec3 middleRotation, glm::vec3 endPosition, glm::vec3 endRotation, float period1Ratio = 0.5f, float period2Ratio = 0.5f);
 			void interpolateAndRender(const CardAnimation& animation, glm::vec3 startPosition, glm::vec3 startRotation, glm::vec3 endPosition, glm::vec3 endRotation);
-
-		
+			
+			
 	};
 }

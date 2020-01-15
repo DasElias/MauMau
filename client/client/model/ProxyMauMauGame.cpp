@@ -18,7 +18,7 @@ namespace card {
 	ProxyMauMauGame::ProxyMauMauGame(std::shared_ptr<CTSPacketTransmitter> packetTransmitter, std::vector<std::shared_ptr<ParticipantOnClient>> allParticipantsInclLocal, std::shared_ptr<ParticipantOnClient> localParticipant, std::string usernameOnTurn, std::vector<int> handCards, int startCard, int nextCardOnDrawStack, RoomOptions& roomOptions) :
 			packetTransmitter(packetTransmitter),
 			drawCardStack(std::make_unique<CardStack>()),
-			playCardStack(std::make_unique<CardStack>(std::initializer_list<Card>({startCard}))),
+			playCardStack(std::make_unique<CardStack>()),
 			indexForNextCard(Card(startCard).getCardIndex()),
 			roomOptions(roomOptions),
 			handler_onOtherPlayerHasDrawnCard(std::bind(&ProxyMauMauGame::listener_onOtherPlayerHasDrawnCard, this, std::placeholders::_1)),
@@ -38,7 +38,7 @@ namespace card {
 		}
 
 		// initialize other player's hand cards and draw card stack
-		initStartCards(handCards);
+		initStartCards(handCards, startCard);
 
 		// initialize player on turn
 		this->userOnTurn = lookupPlayer(usernameOnTurn);
@@ -61,7 +61,7 @@ namespace card {
 		packetTransmitter->removeListenerForServerPkt(LocalPlayerIsOnTurn_STCPacket::PACKET_ID, handler_onLocalPlayerIsOnTurn);
 	}
 
-	void ProxyMauMauGame::initStartCards(const std::vector<int>& handCardNumbersOfLocalPlayer) {
+	void ProxyMauMauGame::initStartCards(const std::vector<int>& handCardNumbersOfLocalPlayer, Card cardOnPlayStack) {
 		// init draw card stack
 		drawCardStack.addFromPlain(Card::NULLCARD, Card::MAX_CARDS);
 
@@ -74,6 +74,9 @@ namespace card {
 		
 		std::vector<Card> handCardsOfLocalPlayer = Card::getVectorFromCardNumber(handCardNumbersOfLocalPlayer);
 		localPlayer->initHandCards(handCardsOfLocalPlayer, drawCardStack, opponents.size());
+
+		// init play card stack
+		playCardStack.addLastCardFrom(cardOnPlayStack, drawCardStack, INITIAL_DRAW_DURATION_PLAYCARDSTACK_MS, getDelayForPlayCardStack(allPlayers.size(), handCardNumbersOfLocalPlayer.size()));
 	}
 
 	bool ProxyMauMauGame::isLocalPlayerOnTurn() const {

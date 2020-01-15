@@ -387,17 +387,46 @@ namespace card {
 									 positionEnd, rotationEnd
 				);
 			} else if (animation.source.get().equalsId(game->getDrawStack())) {
-				float drawCardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * (game->getDrawStack().getSize());
-				interpolateAndRender(animation,
-									DRAW_CARDS_POSITION + glm::vec3(0, drawCardStackHeightAddition, 0), glm::vec3(PI / 2, 0, 0),
-									DRAW_CARDS_POSITION + glm::vec3(CardRenderer::WIDTH/2, drawCardStackHeightAddition + CardRenderer::WIDTH/2, 0), glm::vec3(PI / 2, -PI/2, 0),
-									positionEnd, glm::vec3(PI/2, -PI, 0),
-									0.4f, 0.6f);
+				renderAnimationFromDrawToPlayStack(animation, positionEnd, rotationEnd);
 			}else {
 				throw std::runtime_error("Card isn't from an user card stack.");
 			}
 
 			animationCounter++;
+		}
+	}
+
+	void CardSceneRenderer::renderAnimationFromDrawToPlayStack(const CardAnimation& cardAnimation, glm::vec3 endPosition, glm::vec3 endRotation) {
+		CardAnimation firstAnimationPart = cardAnimation;
+		firstAnimationPart.duration /= 2;
+		CardAnimation secondAnimationPart = firstAnimationPart;
+		secondAnimationPart.animationStartTime += firstAnimationPart.duration;
+
+		float drawCardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * (game->getDrawStack().getSize());
+
+		float x = float(getMilliseconds() - firstAnimationPart.animationStartTime);
+		float x1 = 0;
+		float x2 = float(firstAnimationPart.duration);
+		float x3 = x2 + float(secondAnimationPart.duration);
+
+		if(x < x2) {
+			float arc = interpolateLinear(x, x1, 0, x2, PI/2);
+			float xAddition = cos(arc) * CardRenderer::WIDTH/2;
+			float yAddition = sin(arc) * CardRenderer::WIDTH/2;
+
+			//glm::vec2 interpolatedAddition = interpolateInCircle(firstAnimation, {-CardRenderer::WIDTH / 2, 0}, {0, CardRenderer::WIDTH / 2}, startArc, endArc);
+			cardRenderer.renderInNextPass({firstAnimationPart.mutatesTo,
+								DRAW_CARDS_POSITION + glm::vec3(-xAddition + CardRenderer::WIDTH / 2, drawCardStackHeightAddition + yAddition, 0),
+								glm::vec3(DRAW_CARDS_ROTATION.x, -arc, DRAW_CARDS_ROTATION.z)},
+								projectionMatrix, viewport);
+		} else {
+
+			interpolateAndRender(secondAnimationPart,
+								 DRAW_CARDS_POSITION + glm::vec3(CardRenderer::WIDTH / 2, drawCardStackHeightAddition + CardRenderer::WIDTH / 2, 0), 
+								 glm::vec3(DRAW_CARDS_ROTATION.x, -PI / 2, DRAW_CARDS_ROTATION.z),
+								 endPosition, 
+								 glm::vec3(endRotation.x, -PI, endRotation.z)
+			);
 		}
 	}
 
