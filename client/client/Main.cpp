@@ -300,7 +300,7 @@ namespace card {
 			stateManager.updateAndRender(deltaSeconds);
 
 			if(CardAnimator::arePendingAnimations()) {
-				std::cout << fps << std::endl;
+				//std::cout << fps << std::endl;
 				glfwSwapInterval(VSYNC);
 			} else {
 				glfwSwapInterval(VSYNC_NO_ANIMATION_PENDING);
@@ -318,5 +318,5 @@ namespace card {
 
 int main() {
 	card::Main();
-	return 1;
+	return 0;
 }
