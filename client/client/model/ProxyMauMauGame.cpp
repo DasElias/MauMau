@@ -76,7 +76,7 @@ namespace card {
 		localPlayer->initHandCards(handCardsOfLocalPlayer, drawCardStack, opponents.size());
 
 		// init play card stack
-		playCardStack.addLastCardFrom(cardOnPlayStack, drawCardStack, INITIAL_DRAW_DURATION_PLAYCARDSTACK_MS, getDelayForPlayCardStack(allPlayers.size(), handCardNumbersOfLocalPlayer.size()));
+		playCardStack.addLastCardFrom(cardOnPlayStack, drawCardStack, INITIAL_DRAW_DURATION_PLAYCARDSTACK_MS, getDelayUntilPlayStackCanBeInitialized(allPlayers.size(), handCardNumbersOfLocalPlayer.size()));
 	}
 
 	bool ProxyMauMauGame::isLocalPlayerOnTurn() const {

@@ -2,6 +2,8 @@
 #include "../utils/MathUtils.h"
 #include "../utils/ThreadUtils.h"
 #include <climits>
+#include "../model/MauMauCardValueMeanings.h"
+#include "../model/CardAnimationDuration.h"
 
 namespace card {
 	AiPlayer::AiPlayer(std::shared_ptr<ParticipantOnServer> wrappedParticipant, ServerMauMauGame& game, std::vector<Card> handCards) :
@@ -11,7 +13,10 @@ namespace card {
 	void AiPlayer::onStartTurn() {
 		Player::onStartTurn();
 
-		int delay = randomInRange(3000, 4000);
+		int delay = randomInRange(2000, 3000);
+		if(game.getPlayCardStack().getSize() > 1 && game.getPlayCardStack().getLast().getValue() == DRAW_2_VALUE) {
+			delay += getDelayUntilTwoCardsAreDrawed();
+		}
 		threadUtils_invokeIn(delay, [this]() {
 			performTurn();
 		});

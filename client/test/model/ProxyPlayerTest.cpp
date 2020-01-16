@@ -40,14 +40,6 @@ TEST_CASE("ProxyPlayer can draw and play cards", "[ProxyPlayer]") {
 		REQUIRE(drawCardStack.getSize() == (Card::MAX_CARDS - 1));
 		REQUIRE(p.getCardStack().getSize() == 1);
 	}
-	SECTION("draw multiple cards") {
-		std::vector<Card> cardsToDraw = {Card::CLUB_ACE, Card::DIAMOND_SEVEN};
-
-		p.drawMultipleCardsInHandCardsLocal(cardsToDraw, drawCardStack);
-
-		REQUIRE(drawCardStack.getSize() == (Card::MAX_CARDS - cardsToDraw.size()));
-		REQUIRE(p.getCardStack().getSize() == cardsToDraw.size());
-	}
 	SECTION("draw multiple cards after card play time") {
 		std::vector<Card> cardsToDraw = {Card::CLUB_ACE, Card::DIAMOND_SEVEN};
 

@@ -31,7 +31,7 @@ namespace card {
 		}
 	}
 	void ProxyPlayer::drawMultipleCardsInHandCardsAfterCardPlayTimeLocal(std::vector<Card> mutatesTo, CardAnimator& drawCardStack) {
-		int delay = PLAY_DURATION_MS + DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS;
+		int delay = PLAY_DURATION_MS;
 		for(Card& c : mutatesTo) {
 			handCardStack.addLastCardFrom(c, drawCardStack, DRAW_DURATION_MS, delay);
 			delay += DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS;
