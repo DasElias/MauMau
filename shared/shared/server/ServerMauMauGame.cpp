@@ -262,7 +262,7 @@ namespace card {
 		return true;
 	}
 	void ServerMauMauGame::tryRebalanceCardStacks() {
-		while(drawCardStack.getSize() <= 3) {
+		while(drawCardStack.getSize() <= 3 && playCardStack.getSize() >= 1) {
 			drawCardStack.addFromPlain(playCardStack.remove(0));
 		}
 	}

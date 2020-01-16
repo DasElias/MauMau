@@ -360,9 +360,8 @@ namespace card {
 	}
 
 	void ProxyMauMauGame::tryRebalanceCardStacks() {
-		if(drawCardStack.getSize() <= 3) {
-			// TODO
-			throw std::runtime_error("NOT IMPLEMENTED YET");
+		if(drawCardStack.getSize() <= 3 && playCardStack.getSize() >= 1) {
+			playCardStack.addFirstCardFrom(Card::NULLCARD, drawCardStack, REBALANCE_DURATION, 0);
 		}
 	}
 	void ProxyMauMauGame::setLocalPlayerAtTheBeginOfPlayersVector() {
