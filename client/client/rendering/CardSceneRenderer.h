@@ -21,6 +21,7 @@
 #include "../renderingModel/CardStackIntersectionChecker.h"
 #include "../renderingModel/HandCardIntersectionChecker.h"
 #include "../renderingModel/MauMauCardStackMisalignmentGenerator.h"
+#include "../renderingModel/CardIndexTextures.h"
 
 namespace card {
 	class CardSceneRenderer {
@@ -51,6 +52,7 @@ namespace card {
 
 			egui::MasterRenderer& eguiRenderer;
 			CardTextures cardTextures;
+			CardIndexTextures cardIndexTextures;
 			MauMauCardStackMisalignmentGenerator misalignmentGenerator;
 			Renderer2D renderer2d;
 			Renderer3D renderer3d;

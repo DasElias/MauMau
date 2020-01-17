@@ -32,6 +32,8 @@ namespace card {
 	SimpleTexture CardIndexTextures::loadCardIndexTex(std::string texName) {
 		std::string const path = getApplicationFolder() + "\\resources\\cards\\" + texName;
 		return SimpleTextureFactory(path)
+			.setMagFilter(TextureMagFilter::LINEAR)
+			.setMinFilter(TextureMinFilter::LINEAR)
 			.generateTexture();
 	}
 	std::shared_ptr<egui::Image> CardIndexTextures::getImage(CardIndex cardIndex) const {

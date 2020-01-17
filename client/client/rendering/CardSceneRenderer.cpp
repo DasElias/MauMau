@@ -43,14 +43,14 @@ namespace card {
 					game->takeDrawnCardIntoHandCards();
 				}
 			),
-			chooseCardRenderer(eguiRenderer, 
+			chooseCardRenderer(eguiRenderer,cardIndexTextures,
 				[this](CardIndex c) {
 					game->chooseColor(c);
 				}
 			),
 			circleSectorRenderer(),
 			playerLabelRenderer(eguiRenderer, renderer2d, circleSectorRenderer),
-			cardIndexRenderer(renderer2d),
+			cardIndexRenderer(renderer2d, cardIndexTextures),
 			cardStackIntersectionChecker(projectionMatrix, viewport),
 			handCardIntersectionChecker(projectionMatrix, viewport),
 			onMouseClicked(genOnMouseClickedHandler()) {

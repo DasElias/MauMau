@@ -8,6 +8,7 @@
 #include <egui/model/nodes/Button.h>
 #include <egui/model/nodes/HBox.h>
 #include <egui/model/nodes/Label.h>
+#include "../renderingModel/CardIndexTextures.h"
 
 namespace card {
 	class ChooseCardRenderer {
@@ -27,7 +28,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			ChooseCardRenderer(egui::MasterRenderer& eguiRenderer, std::function<void(CardIndex)> chooseIndexFunction);
+			ChooseCardRenderer(egui::MasterRenderer& eguiRenderer, CardIndexTextures& cardIndexTextures, std::function<void(CardIndex)> chooseIndexFunction);
 			ChooseCardRenderer(const ChooseCardRenderer&) = delete;
 
 		// ----------------------------------------------------------------------

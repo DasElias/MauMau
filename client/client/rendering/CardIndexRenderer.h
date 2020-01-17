@@ -17,7 +17,7 @@ namespace card {
         // ----------------------------------------------------------------------
         private:
             Renderer2D& renderer2D;
-            CardIndexTextures cardIndexTextures;
+            CardIndexTextures& cardIndexTextures;
             SimpleTexture letteringTexture;
 
             std::shared_ptr<egui::VBox> parentElement;
@@ -29,7 +29,7 @@ namespace card {
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            CardIndexRenderer(Renderer2D& renderer2D);
+            CardIndexRenderer(Renderer2D& renderer2D, CardIndexTextures& cardIndexTextures);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------

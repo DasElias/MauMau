@@ -15,7 +15,7 @@
 #include "../utils/FileUtils.h"
 
 namespace card {
-	ChooseCardRenderer::ChooseCardRenderer(egui::MasterRenderer& eguiRenderer, std::function<void(CardIndex)> chooseIndexFunction) :
+	ChooseCardRenderer::ChooseCardRenderer(egui::MasterRenderer& eguiRenderer, CardIndexTextures& cardIndexTextures, std::function<void(CardIndex)> chooseIndexFunction) :
 				eguiRenderer(eguiRenderer),
 				chooseIndexFunction(chooseIndexFunction) {
 		
@@ -33,27 +33,19 @@ namespace card {
 		indexButtons[0]->getActionEventManager().addEventHandler({[this](egui::ActionEvent&) {
 			this->chooseIndexFunction(CardIndex::CLUB);
 		}});
-		indexButtons[0]->setBackground(std::make_shared<egui::TexturedBackground>(
-			egui::Image::loadTexture(getApplicationFolder() + "\\resources\\cards\\club.png")
-		));
+		indexButtons[0]->setBackground(std::make_shared<egui::TexturedBackground>(cardIndexTextures.getImage(CardIndex::CLUB)));
 		indexButtons[1]->getActionEventManager().addEventHandler({[this](egui::ActionEvent&) {
 			this->chooseIndexFunction(CardIndex::DIAMOND);
 		}});
-		indexButtons[1]->setBackground(std::make_shared<egui::TexturedBackground>(
-			egui::Image::loadTexture(getApplicationFolder() + "\\resources\\cards\\diamond.png")
-			));
+		indexButtons[1]->setBackground(std::make_shared<egui::TexturedBackground>(cardIndexTextures.getImage(CardIndex::DIAMOND)));
 		indexButtons[2]->getActionEventManager().addEventHandler({[this](egui::ActionEvent&) {
 			this->chooseIndexFunction(CardIndex::HEART);
 		}});
-		indexButtons[2]->setBackground(std::make_shared<egui::TexturedBackground>(
-			egui::Image::loadTexture(getApplicationFolder() + "\\resources\\cards\\heart.png")
-			));
+		indexButtons[2]->setBackground(std::make_shared<egui::TexturedBackground>(cardIndexTextures.getImage(CardIndex::HEART)));
 		indexButtons[3]->getActionEventManager().addEventHandler({[this](egui::ActionEvent&) {
 			this->chooseIndexFunction(CardIndex::SPADE);
 		}});
-		indexButtons[3]->setBackground(std::make_shared<egui::TexturedBackground>(
-			egui::Image::loadTexture(getApplicationFolder() + "\\resources\\cards\\spade.png")
-		));
+		indexButtons[3]->setBackground(std::make_shared<egui::TexturedBackground>(cardIndexTextures.getImage(CardIndex::SPADE)));
 
 		egui::Value buttonBarWidth(indexButtons.size() * BUTTON_WIDTH + (indexButtons.size() - 1) * DISTANCE_BETWEEN_BUTTONS, egui::RelativityMode::RELATIVE_ON_SCREEN);
 		egui::Value buttonBarHeight(0, egui::RelativityMode::RELATIVE_ON_SCREEN);

@@ -8,9 +8,9 @@
 #include <egui/model/nodeComponents/background/TexturedBackground.h>
 
 namespace card {
-	CardIndexRenderer::CardIndexRenderer(Renderer2D& renderer2D) :
+	CardIndexRenderer::CardIndexRenderer(Renderer2D& renderer2D, CardIndexTextures& cardIndexTextures) :
 			renderer2D(renderer2D),
-			cardIndexTextures(),
+			cardIndexTextures(cardIndexTextures),
 			letteringTexture(
 				SimpleTextureFactory(getApplicationFolder() + "\\resources\\nextCardIndex.png")
 				.setMagFilter(TextureMagFilter::NEAREST)
