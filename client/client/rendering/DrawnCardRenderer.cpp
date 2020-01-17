@@ -10,7 +10,7 @@
 #include <iostream>
 
 namespace card {
-	glm::vec3 const DrawnCardRenderer::POSITION = {0, 0, 0};
+	glm::vec3 const DrawnCardRenderer::POSITION = {0, 0, 0.25f};
 	glm::vec3 const DrawnCardRenderer::ROTATION = {0, 0, 0};
 
 	DrawnCardRenderer::DrawnCardRenderer(CardRenderer& cardRenderer, egui::MasterRenderer& eguiRenderer, 
