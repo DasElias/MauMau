@@ -30,8 +30,8 @@ namespace card {
 			Text::VerticalAlignment::TOP,
 			Color(1, 1, 1)
 		);
-		auto content = std::make_shared<egui::Label>(
-			"by DasElias",
+		this->content = std::make_shared<egui::Label>(
+			"",
 			CONTENT_FONT_SIZE_PX,
 			false,
 			Text::HorizontalAlignment::CENTER,
@@ -47,6 +47,13 @@ namespace card {
 		title->setPreferredHeight({TITLE_FONT_SIZE_PX, RelativityMode::ABSOLUTE_VALUE});
 		subtitle->setPreferredHeight({SUBTITLE_FONT_SIZE_PX + 20, RelativityMode::ABSOLUTE_VALUE});
 
-		content->setText("Hallo Welt");
+		appendContent("Karten", "www.svg-cards.sourceforge.net");
+		appendContent("Avatare", "www.getavataaars.com");
+		appendContent("Textur fuer Tisch", "Petr Kovar - www.freeimages.com");
+		appendContent("Icons", "Freepik - www.flaticon.com");
+
+	}
+	void CreditsElement::appendContent(std::string titleText, std::string contentText) {
+		this->content->setText(this->content->getText() + titleText + "\n" + contentText + "\n\n");
 	}
 }
