@@ -16,6 +16,7 @@
 #include "DrawnCardRenderer.h"
 #include "ChooseCardRenderer.h"
 #include "PlayerLabelRenderer.h"
+#include "CircleSectorRenderer.h"
 #include "../renderingModel/CardStackIntersectionChecker.h"
 #include "../renderingModel/HandCardIntersectionChecker.h"
 #include "../renderingModel/MauMauCardStackMisalignmentGenerator.h"
@@ -58,6 +59,7 @@ namespace card {
 			CardSceneBackgroundRenderer bgRenderer;
 			DrawnCardRenderer drawnCardRenderer;
 			ChooseCardRenderer chooseCardRenderer;
+			CircleSectorRenderer circleSectorRenderer;
 			PlayerLabelRenderer playerLabelRenderer;
 
 			CardStackIntersectionChecker cardStackIntersectionChecker;

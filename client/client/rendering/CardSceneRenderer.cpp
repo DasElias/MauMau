@@ -48,7 +48,8 @@ namespace card {
 					game->chooseColor(c);
 				}
 			),
-			playerLabelRenderer(eguiRenderer, renderer2d),
+			circleSectorRenderer(),
+			playerLabelRenderer(eguiRenderer, renderer2d, circleSectorRenderer),
 			cardStackIntersectionChecker(projectionMatrix, viewport),
 			handCardIntersectionChecker(projectionMatrix, viewport),
 			onMouseClicked(genOnMouseClickedHandler()) {

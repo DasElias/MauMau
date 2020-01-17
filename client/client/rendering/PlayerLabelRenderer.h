@@ -7,6 +7,7 @@
 #include "Renderer2D.h"
 #include "../renderingModel/AvatarTextures.h"
 #include <egui/model/positioning/RelativePositioningOnScreen.h>
+#include "CircleSectorRenderer.h"
 
 namespace card {
 	class PlayerLabelRenderer {
@@ -16,6 +17,7 @@ namespace card {
         private:
             egui::MasterRenderer& eguiRenderer;
             Renderer2D& renderer2D;
+            CircleSectorRenderer& circleSectorRenderer;
 
             SimpleTexture textureSkip;
             AvatarTextures avatarTextures;
@@ -27,11 +29,12 @@ namespace card {
             std::shared_ptr<PlayerLabel> playerRight;
 
             Avatar localAvatar, visAVisAvatar, leftAvatar, rightAvatar;
+            
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            PlayerLabelRenderer(egui::MasterRenderer& eguiRenderer, Renderer2D& renderer2D);
+            PlayerLabelRenderer(egui::MasterRenderer& eguiRenderer, Renderer2D& renderer2D, CircleSectorRenderer& circleSectorRenderer);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
@@ -44,6 +47,8 @@ namespace card {
              void flush();
             
         private:
+            float computePercentExpired(const std::shared_ptr<ProxyPlayer>& participant);
+            void renderCircleSector(const std::shared_ptr<PlayerLabel>& playerLabel, float percentExpired);
             void updatePositions();
             void flushText();
             void flushImages();

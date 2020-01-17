@@ -1,4 +1,6 @@
 #include "AvatarTextures.h"
+#include "AvatarTextures.h"
+#include "AvatarTextures.h"
 #include <shared/model/AvatarUtils.h>
 #include "../utils/FileUtils.h"
 #include "SimpleTextureFactory.h"
@@ -40,6 +42,12 @@ namespace card {
 	void AvatarTextures::bind(Avatar avatar) const {
 		if(textures.find(avatar) != textures.end()) textures.at(avatar).bind();
 		else avatarNotFoundTexture.bind();
+	}
+	std::int32_t AvatarTextures::getWidth() const {
+		return width;
+	}
+	std::int32_t AvatarTextures::getHeight() const {
+		return height;
 	}
 	float AvatarTextures::getAspectRatio() const {
 		return float(width)/height;

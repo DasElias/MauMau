@@ -26,6 +26,8 @@ namespace card {
         // ----------------------------------------------------------------------
         public:
             void bind(Avatar avatar) const;
+            std::int32_t getWidth() const;
+            std::int32_t getHeight() const;
             float getAspectRatio() const;
             void cleanUp();
 

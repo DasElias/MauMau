@@ -2,11 +2,16 @@
 #include <egui/model/nodes/UnorganizedParentElement.h>
 #include "../utils/FileUtils.h"
 #include "../renderingModel/SimpleTextureFactory.h"
+#include <shared\utils\MathUtils.h>
+#include <shared\utils\TimeUtils.h>
+#include <shared/model/MaxTurnDuration.h>
+#include <egui/input/IOHandler.h>
 
 namespace card {
-	PlayerLabelRenderer::PlayerLabelRenderer(egui::MasterRenderer& eguiRenderer, Renderer2D& renderer2D) :
+	PlayerLabelRenderer::PlayerLabelRenderer(egui::MasterRenderer& eguiRenderer, Renderer2D& renderer2D, CircleSectorRenderer& circleSectorRenderer) :
 			eguiRenderer(eguiRenderer),
 			renderer2D(renderer2D),
+			circleSectorRenderer(circleSectorRenderer),
 			textureSkip(SimpleTextureFactory(getApplicationFolder() + "\\resources\\skipPlayer.png").setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).generateTexture()),
 			playerLocal(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
 			playerVisAVis(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
@@ -25,23 +30,55 @@ namespace card {
 	void PlayerLabelRenderer::renderLocal(const std::shared_ptr<ProxyPlayer>& participant) {
 		playerLocal->set(participant->getUsername(), participant->getPercentOfSkipAnimationOrNone());
 		localAvatar = participant->getAvatar();
+
+		if(participant->isOnTurn()) renderCircleSector(playerLocal, computePercentExpired(participant));
 	}
 	void PlayerLabelRenderer::renderVisAVis(const std::shared_ptr<ProxyPlayer>& participant) {
 		playerVisAVis->set(participant->getUsername(), participant->getPercentOfSkipAnimationOrNone());
 		visAVisAvatar = participant->getAvatar();
+
+		if(participant->isOnTurn()) renderCircleSector(playerVisAVis, computePercentExpired(participant));
 	}
 	void PlayerLabelRenderer::renderLeft(const std::shared_ptr<ProxyPlayer>& participant) {
 		playerLeft->set(participant->getUsername(), participant->getPercentOfSkipAnimationOrNone());
 		leftAvatar = participant->getAvatar();
+
+		if(participant->isOnTurn()) renderCircleSector(playerLeft, computePercentExpired(participant));
 	}
 	void PlayerLabelRenderer::renderRight(const std::shared_ptr<ProxyPlayer>& participant) {
 		playerRight->set(participant->getUsername(), participant->getPercentOfSkipAnimationOrNone());
 		rightAvatar = participant->getAvatar();
+		
+		if(participant->isOnTurn()) renderCircleSector(playerRight, computePercentExpired(participant));
 	}
 	void PlayerLabelRenderer::flush() {
 		flushText();
 		flushImages();
 		endFlush();
+	}
+	float PlayerLabelRenderer::computePercentExpired(const std::shared_ptr<ProxyPlayer>& participant) {
+		float x = float(getMilliseconds() - participant->getUnixTimeTurnStarted());
+		float x1 = 0;
+		float x2 = MAX_TURN_DURATION;
+
+		return interpolateLinear(x, x1, 0, x2, 1);
+	}
+	void PlayerLabelRenderer::renderCircleSector(const std::shared_ptr<PlayerLabel>& playerLabel, float percentExpired) {
+		float startAngle = PI/2;
+		float endAngle = interpolateLinear(percentExpired, 0, PI/2 + 2*PI, 1, PI/2);
+
+		float centerX = playerLabel->getImageElement()->getAbsXMargin();
+		float centerY = playerLabel->getImageElement()->getAbsYMargin();
+		
+		float const CIRCLE_RADIUS = 117 / 2.0f;
+		float const CIRCLE_DIAMETER = 2 * CIRCLE_RADIUS;
+		float const CIRCLE_CENTER_OFFSET_PX_X = 5 + (CIRCLE_RADIUS);
+		float const CIRCLE_CENTER_OFFSET_PX_Y = 19 + (CIRCLE_RADIUS);
+		centerX += playerLabel->getImageElement()->getComputedWidth() / avatarTextures.getWidth() * CIRCLE_CENTER_OFFSET_PX_X;
+		centerY += playerLabel->getImageElement()->getComputedHeight() / avatarTextures.getHeight() * CIRCLE_CENTER_OFFSET_PX_Y;
+
+		float diameterX = playerLabel->getImageElement()->getComputedWidth() / avatarTextures.getWidth() * (CIRCLE_DIAMETER + 25);
+		circleSectorRenderer.renderSector_xDiameter({centerX, centerY}, diameterX, startAngle, endAngle, 500, {0.93f, 0.62f, 0.16f, 0.5f});
 	}
 	void PlayerLabelRenderer::updatePositions() {
 		float const PADDING_LEFT_RIGHT = 0.055f;
