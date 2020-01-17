@@ -17,6 +17,9 @@ namespace card {
 		if(game.getPlayCardStack().getSize() > 1 && game.getPlayCardStack().getLast().getValue() == DRAW_2_VALUE) {
 			delay += getDelayUntilTwoCardsAreDrawed();
 		}
+		if(game.wasCardDrawnAndPlayedLastTurn()) {
+			delay += DRAW_DURATION_MS + DELAY_BETWEEN_DRAW_AND_PLAY;
+		}
 		threadUtils_invokeIn(delay, [this]() {
 			performTurn();
 		});

@@ -97,6 +97,9 @@ namespace card {
 	bool ServerMauMauGame::canSkipPlayer(Card playedCard) const {
 		return playedCard.getValue() == SKIP_VALUE;
 	}
+	bool ServerMauMauGame::wasCardDrawnAndPlayedLastTurn() const {
+		return wasCardDrawnAndPlayed_lastTurn;
+	}
 	bool ServerMauMauGame::checkIfPlayerByParticipant(const std::shared_ptr<ParticipantOnServer>& participant) {
 		for(auto& p : players) {
 			if(p->getWrappedParticipant() == participant) return true;
@@ -154,6 +157,9 @@ namespace card {
 		});
 	}
 	void ServerMauMauGame::setPlayerOnTurn(std::shared_ptr<Player> player) {
+		wasCardDrawnAndPlayed_lastTurn = wasCardDrawnAndPlayed_thisTurn;
+		wasCardDrawnAndPlayed_thisTurn = false;
+
 		this->playerOnTurn->onEndTurn();
 		this->playerOnTurn = player;
 		this->playerOnTurn->onStartTurn();
@@ -208,11 +214,13 @@ namespace card {
 			drawCardStack.removeLast();
 			playCardStack.addFromPlain(card);
 			wasCardJustDrawn = true;
+			wasCardDrawnAndPlayed_thisTurn = true;
 		} else if(player.containsHandCard(card)) {
 			// player wants to play a card in his hand card
 
 			player.removeHandCard(card);
 			playCardStack.addFromPlain(card);
+			wasCardDrawnAndPlayed_thisTurn = false;
 		} else {
 			// player tries to play a card which isn't owned by him
 

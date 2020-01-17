@@ -32,6 +32,9 @@ namespace card {
 			CardIndex indexForNextCard;
 			Direction direction = Direction::CW;
 
+			bool wasCardDrawnAndPlayed_thisTurn = false;
+			bool wasCardDrawnAndPlayed_lastTurn = false;
+
 			ClientPacketListenerCallback handler_onPlayCard;
 			ClientPacketListenerCallback handler_onDrawCard;
 
@@ -53,6 +56,7 @@ namespace card {
 			bool canSkipPlayer(Card playedCard) const;
 			bool canMau(Player& player) const;
 
+			bool wasCardDrawnAndPlayedLastTurn() const;
 			bool checkIfPlayerByParticipant(const std::shared_ptr<ParticipantOnServer>& participant);
 			bool checkIfPlayerByUsername(std::string username);
 			std::shared_ptr<Player> getPlayerOnTurn();
