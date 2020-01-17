@@ -47,6 +47,7 @@ namespace card {
 
 		private:
 			void listener_enteringRoomSuccessReport(Packet& p);
+			void setErrorMsgOnConnectionFail(boost::system::error_code ec);
 			void setErrorMsgForSuccessReport(int statusCode);
 	};
 }

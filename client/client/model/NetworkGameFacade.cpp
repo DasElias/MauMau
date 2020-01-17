@@ -1,6 +1,7 @@
 #include "NetworkGameFacade.h"
 #include <boost/asio.hpp>
 #include <shared/packet/stc/EnteringRoomSuccessReport_STCAnswerPacket.h>
+#include <shared/utils/Logger.h>
 
 namespace card {
 	NetworkGameFacade::NetworkGameFacade(NetworkErrorHandler& errorHandler, std::string username, Avatar avatar) :
@@ -18,7 +19,7 @@ namespace card {
 			this->packetTransmitter = std::make_shared<ClientPacketTransmitter>(conn, errorHandler);
 			this->packetTransmitter->addListenerForServerPkt(EnteringRoomSuccessReport_STCAnswerPacket::PACKET_ID, handler_enteringRoomSuccessReport);
 		} catch(boost::system::system_error e) {
-			errorMsgInPlainText = e.what();
+			setErrorMsgOnConnectionFail(e.code());
 			isWaitingForResponse_field = false;
 		}
 	}
@@ -66,6 +67,18 @@ namespace card {
 			setErrorMsgForSuccessReport(casted.getStatusCode());
 		}
 	}
+	void NetworkGameFacade::setErrorMsgOnConnectionFail(boost::system::error_code ec) {
+		switch(ec.value()) {
+			case boost::asio::error::host_unreachable:
+				errorMsgInPlainText = "Keine Internetverbindung.";
+				break;
+			case boost::asio::error::connection_refused:
+				errorMsgInPlainText = "Der Server ist zurzeit nicht verfügbar. Bitte versuche es später erneut.";
+				break;
+			default:
+				errorMsgInPlainText = ec.message();
+		}
+	}
 	void NetworkGameFacade::setErrorMsgForSuccessReport(int statusCode) {
 		switch(statusCode) {	
 			case EnteringRoomSuccessReport_STCAnswerPacket::SUCCESS_STATUS:
@@ -83,6 +96,7 @@ namespace card {
 			case EnteringRoomSuccessReport_STCAnswerPacket::UNKNOWN_ERROR_STATUS:
 			default:
 				this->errorMsgInPlainText = "Ein unbekannter Fehler ist aufgetreten.";
+				log(LogSeverity::ERR, "Unknown error in EnteringRoomSuccessReport: " + std::to_string(statusCode));
 		}
 	}
 }
