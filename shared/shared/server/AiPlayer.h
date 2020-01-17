@@ -26,6 +26,7 @@ namespace card {
 		private:
 			// return true if a card was played
 			bool tryPlayCard();
+			std::vector<Card> getPlayableCards();
 			void playCardImpl(Card c);
 			CardIndex chooseCardIndex();
 			bool shouldPlayDrawnCard();

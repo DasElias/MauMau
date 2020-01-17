@@ -37,13 +37,24 @@ namespace card {
 	}
 	
 	bool AiPlayer::tryPlayCard() {
+		std::vector<Card> playableCards = getPlayableCards();
+
+		if(playableCards.empty()) return false;
+		else {
+			std::size_t chosenIndex = randomInRange<std::size_t>(0, playableCards.size() - 1);
+			Card chosenCard = playableCards[chosenIndex];
+			playCardImpl(chosenCard);
+			return true;
+		}
+	}
+	std::vector<Card> AiPlayer::getPlayableCards() {
+		std::vector<Card> playableCards;
 		for(auto& card : getHandCards()) {
 			if(game.canPlay(*this, card)) {
-				playCardImpl(card);
-				return true;
+				playableCards.push_back(card);
 			}
 		}
-		return false;
+		return playableCards;
 	}
 	void AiPlayer::playCardImpl(Card card) {
 		CardIndex nextCardIndex = (game.canChangeColor(card)) ? chooseCardIndex() : CardIndex::NULLINDEX;
