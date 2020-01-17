@@ -1,10 +1,8 @@
 #include "ConnectionToServer.h"
-#include "ConnectionToServer.h"
-#include "ConnectionToServer.h"
+#include <shared/utils/Logger.h>
 
 #include <thread>
 #include <stdexcept>
-#include <iostream>
 
 namespace ba = boost::asio;
 using ba::ip::tcp;
@@ -28,7 +26,7 @@ namespace card {
 			try {
 				ioContext.run();
 			} catch(...) {
-				std::cout << "Exception" << std::endl;
+				log(LogSeverity::FATAL, "An unknown exception has happened during ioContext.run().");
 			}
 		});
 	}
@@ -49,7 +47,8 @@ namespace card {
 			socket.connect(*iterator++, error);
 		}
 		if(error) {
-			std::cout << error.message() << std::endl;
+			log(LogSeverity::ERR, "Error during trying to establish connection to server:");
+			log(LogSeverity::ERR, error.message() + "(" + std::to_string(error.value()) + ")");
 			throw boost::system::system_error(error);
 		}
 	}
