@@ -5,6 +5,7 @@
 #include "shaderPrograms/shaders/circleSector_vertex.glsl"
 #include "shaderPrograms/shaders/circleSector_fragment.glsl"
 #include <egui/input/IOHandler.h>
+#include "../utils/DimensionsConversionUtils.h"
 
 namespace card {
 	CircleSectorRenderer::CircleSectorShader::CircleSectorShader() :
@@ -27,9 +28,9 @@ namespace card {
 	}
 
 	void CircleSectorRenderer::renderSector_xDiameter(glm::vec2 center, float xDiameter, float angleStart, float angleEnd, int segments, glm::vec4 color) {
-		float yDiameter = (xDiameter / egui::getDisplayHandler().getHeight()) * egui::getDisplayHandler().getWidth();
-		center.x = (center.x * 2) - 1;
-		center.y = ((center.y * 2) - 1) * (-1);	// TODO
+		float yDiameter = computeYFromXForQuadratOnScreen(xDiameter);
+		center.x = convertToOpenGLCoordinate(center.x);
+		center.y = (-1) * convertToOpenGLCoordinate(center.y);
 
 		updateVao(center, xDiameter, yDiameter, angleStart, angleEnd, segments);
 		renderImpl(color);
