@@ -86,6 +86,8 @@ namespace card {
 			void setNextButOnePlayerOnTurnLocal();
 			void setOnTurnLocal(std::shared_ptr<ProxyPlayer> player);
 			
+			// returns none if the card index for the next card is equal to the one for the last card on play stacks
+			std::optional<CardIndex> getCardIndexForNextCardOrNone() const;
 			const CardAnimator& getDrawStack() const;
 			const CardAnimator& getPlayStack() const;
 			std::shared_ptr<LocalPlayer> getLocalPlayer();

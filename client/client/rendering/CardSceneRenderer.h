@@ -17,6 +17,7 @@
 #include "ChooseCardRenderer.h"
 #include "PlayerLabelRenderer.h"
 #include "CircleSectorRenderer.h"
+#include "CardIndexRenderer.h"
 #include "../renderingModel/CardStackIntersectionChecker.h"
 #include "../renderingModel/HandCardIntersectionChecker.h"
 #include "../renderingModel/MauMauCardStackMisalignmentGenerator.h"
@@ -61,6 +62,7 @@ namespace card {
 			ChooseCardRenderer chooseCardRenderer;
 			CircleSectorRenderer circleSectorRenderer;
 			PlayerLabelRenderer playerLabelRenderer;
+			CardIndexRenderer cardIndexRenderer;
 
 			CardStackIntersectionChecker cardStackIntersectionChecker;
 			HandCardIntersectionChecker handCardIntersectionChecker;
@@ -103,6 +105,7 @@ namespace card {
 			void renderDrawCardStack();
 			void renderPlayCardStack();
 			void renderAnimationFromDrawToPlayStack(const CardAnimation& cardAnimation, glm::vec3 endPosition, glm::vec3 endRotation);
+			void renderCardIndexForNextCard();
 			void handleInput();
 			bool checkIntersectionWithDrawCardStack();
 			std::optional<int> checkIntersectionWithOwnHandCards();

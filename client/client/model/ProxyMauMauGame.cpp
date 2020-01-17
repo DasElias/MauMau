@@ -346,6 +346,11 @@ namespace card {
 		this->userOnTurn = player;
 		this->userOnTurn->onStartTurn();
 	}
+
+	std::optional<CardIndex> ProxyMauMauGame::getCardIndexForNextCardOrNone() const {
+		if(playCardStack.getSize() <= 1 || playCardStack.getLast().getValue() != CHANGE_COLOR_VALUE) return std::nullopt;
+		else return indexForNextCard;
+	}
 	
 	void ProxyMauMauGame::playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, std::size_t amountOfCards) {
 		if(amountOfCards == 0) return;

@@ -50,6 +50,7 @@ namespace card {
 			),
 			circleSectorRenderer(),
 			playerLabelRenderer(eguiRenderer, renderer2d, circleSectorRenderer),
+			cardIndexRenderer(renderer2d),
 			cardStackIntersectionChecker(projectionMatrix, viewport),
 			handCardIntersectionChecker(projectionMatrix, viewport),
 			onMouseClicked(genOnMouseClickedHandler()) {
@@ -138,6 +139,7 @@ namespace card {
 		// flush CardRenderer
 		cardRenderer.flush();
 
+		renderCardIndexForNextCard();
 		glEnable(GL_DEPTH_TEST);
 	}
 
@@ -428,6 +430,14 @@ namespace card {
 								 endPosition, 
 								 glm::vec3(endRotation.x, -PI, endRotation.z)
 			);
+		}
+	}
+
+	void CardSceneRenderer::renderCardIndexForNextCard() {	
+		std::optional<CardIndex> cardIndexForNextCardOrNone = game->getCardIndexForNextCardOrNone();
+
+		if(cardIndexForNextCardOrNone.has_value()) {
+			cardIndexRenderer.renderCardIndexForNextCard(*cardIndexForNextCardOrNone);
 		}
 	}
 
