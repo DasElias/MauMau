@@ -41,8 +41,8 @@ namespace card {
         private:
             static std::vector<float> const VERTICES;
             static uint32_t const MAX_PARTICLES = 10000;
-            // 16 floats for modelview-matrix, 4 for texture offset and 1 for texture blend
-            static uint32_t const DATA_SIZE_PER_PARTICLE = 16 + 4 + 1;
+            // 16 floats for modelview-matrix, 4 for texture offset, 1 for texture blend and 2 for displacement on screen
+            static uint32_t const DATA_SIZE_PER_PARTICLE = 16 + 4 + 1 + 2;
             
         // ----------------------------------------------------------------------
         // --------------------------------FIELDS--------------------------------

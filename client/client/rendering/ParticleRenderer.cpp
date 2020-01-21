@@ -22,6 +22,7 @@ namespace card {
 					createShaderVariable(1, "modelViewMatrix");
 					createShaderVariable(5, "texOffsets");
 					createShaderVariable(6, "blendFactor");
+					createShaderVariable(7, "displacementOnScreen");
 				}) {
 
 		location_textureRowsCount = createUniformLocation("textureRowsCount");
@@ -52,6 +53,8 @@ namespace card {
 		vbo.addInstancedAttribute(5, 4, DATA_SIZE_PER_PARTICLE * sizeof(GLfloat), 4 * 4 * sizeof(GLfloat));
 		// texture blend factor
 		vbo.addInstancedAttribute(6, 1, DATA_SIZE_PER_PARTICLE * sizeof(GLfloat), 5 * 4 * sizeof(GLfloat));
+		// displacement on screen
+		vbo.addInstancedAttribute(7, 2, DATA_SIZE_PER_PARTICLE * sizeof(GLfloat), 5 * 4 * sizeof(GLfloat) + 4);
 
 }
 
@@ -108,6 +111,8 @@ namespace card {
 			vboData.push_back(p.getOffsetTex2().x);
 			vboData.push_back(p.getOffsetTex2().y);
 			vboData.push_back(p.getTexBlendFactor());
+			vboData.push_back(p.getDisplacementOnScreen().x);
+			vboData.push_back(p.getDisplacementOnScreen().y);
 		}
 
 		this->vbo.updateVbo(vboData);

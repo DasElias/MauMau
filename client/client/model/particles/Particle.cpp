@@ -4,7 +4,7 @@
 #include <iostream>
 
 namespace card {
-	Particle::Particle(glm::vec3 position, glm::vec3 startVelocity, glm::vec3 velocityAdditionPerSecond, float lifeLengthSeconds, float rotation, float scale, ParticleTexture texture) :
+	Particle::Particle(glm::vec3 position, glm::vec3 startVelocity, glm::vec3 velocityAdditionPerSecond, float lifeLengthSeconds, float rotation, float scale, ParticleTexture texture, glm::vec2 displacementOnScreen) :
 			position(position),
 			velocity(startVelocity),
 			velocityAdditionPerSecond(velocityAdditionPerSecond),
@@ -12,7 +12,8 @@ namespace card {
 			rotation(rotation),
 			scale(scale),
 			elapsedTime(0),
-			texture(texture) {
+			texture(texture),
+			displacementOnScreen(displacementOnScreen) {
 	}
 	bool Particle::update(float delta, glm::vec3 playerPosition) {
 		velocity.x += velocityAdditionPerSecond.x * delta;
@@ -94,6 +95,10 @@ namespace card {
 	}
 	float Particle::getDistanceFromCamera() const {
 		return distanceFromCamera;
+	}
+
+	glm::vec2 Particle::getDisplacementOnScreen() const {
+		return displacementOnScreen;
 	}
 	
 }

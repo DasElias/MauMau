@@ -6,17 +6,10 @@
 #include <egui/model/nodes/UnorganizedParentElement.h>
 #include <egui/model/scene/Scene.h>
 #include <egui/model/nodeComponents/background/ColoredBackground.h>
+#include "../gui/GameEndElement.h"
 
 namespace card {
 	class GameEndRenderer {
-        // ----------------------------------------------------------------------
-        // ----------------------------STATIC-FIELDS-----------------------------
-        // ----------------------------------------------------------------------
-        private:
-            static float const START_BG_OPACITY;
-            static float const END_BG_OPACITY;
-            static int const BG_OPACITY_ANIMATION_DURATION_MS = 1500;
-
         // ----------------------------------------------------------------------
         // --------------------------------FIELDS--------------------------------
         // ----------------------------------------------------------------------
@@ -30,10 +23,8 @@ namespace card {
             egui::MasterRenderer& eguiRenderer;
             Renderer2D& renderer2D;
 
-            bool isAnimationActive = false;
-            float bgOpacity;
-            std::shared_ptr<egui::UnorganizedParentElement> bgElement;
-            std::shared_ptr<egui::ColoredBackground> bgElementColor;
+            bool field_isAnimationActive = false;
+            std::shared_ptr<GameEndElement> element;
             egui::Scene scene;
 
         // ----------------------------------------------------------------------
@@ -54,9 +45,12 @@ namespace card {
         public:
             void updateAndRender(float delta, ProjectionMatrix& projectionMatrix);
             void startAnimation();
+            void endAnimation();
+            bool isAnimationActive() const;
 
         private:
-            void generateParticlesInMs(std::shared_ptr<FireworkParticleSystem> ps, glm::vec3 center, int delayMs);
+            void generateParticlesRecursive();
+            void generateParticlesInMs(std::shared_ptr<FireworkParticleSystem> ps, glm::vec2 systemCenter, int& delay);
 
 	};
 }

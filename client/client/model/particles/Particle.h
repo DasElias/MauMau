@@ -23,12 +23,13 @@ namespace card {
 			float texBlendFactor = 0;
 
 			float distanceFromCamera = 0;
+			glm::vec2 displacementOnScreen;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			Particle(glm::vec3 position, glm::vec3 startVelocity, glm::vec3 velocityAdditionPerSecond, float lifeLengthSeconds, float rotation, float scale, ParticleTexture texture);
+			Particle(glm::vec3 position, glm::vec3 startVelocity, glm::vec3 velocityAdditionPerSecond, float lifeLengthSeconds, float rotation, float scale, ParticleTexture texture, glm::vec2 displacementOnScreen);
 		//	Particle(const Particle&) = delete;
 
 		// ----------------------------------------------------------------------
@@ -46,6 +47,7 @@ namespace card {
 			glm::vec2 getOffsetTex2() const;
 			float getTexBlendFactor() const;
 			float getDistanceFromCamera() const;
+			glm::vec2 getDisplacementOnScreen() const;
 			glm::mat4x4 generateModelMatrix(glm::mat4x4 viewMatrix) const;
 
 		private:
