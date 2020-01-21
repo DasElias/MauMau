@@ -4,7 +4,7 @@
 
 #include "../renderingModel/SimpleTextureFactory.h"
 #include "../utils/FileUtils.h"
-#include "../model/particles/FireworkParticleSystem.h"
+#include "../renderingModel/particles/FireworkParticleSystem.h"
 #include <egui/input/IOHandler.h>
 #include <shared/utils/MathUtils.h>
 #include <shared/utils/ThreadUtils.h>

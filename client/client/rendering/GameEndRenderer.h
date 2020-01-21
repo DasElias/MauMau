@@ -1,8 +1,8 @@
 #pragma once
 #include "ParticleRenderer.h"
 #include "Renderer2D.h"
-#include "../model/particles/ParticleManager.h"
-#include "../model/particles/FireworkParticleSystem.h"
+#include "../renderingModel/particles/ParticleManager.h"
+#include "../renderingModel/particles/FireworkParticleSystem.h"
 #include <egui/model/nodes/UnorganizedParentElement.h>
 #include <egui/model/scene/Scene.h>
 #include <egui/model/nodeComponents/background/ColoredBackground.h>

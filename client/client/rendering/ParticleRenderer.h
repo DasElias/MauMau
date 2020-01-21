@@ -3,7 +3,7 @@
 #include "shaderPrograms/VertexFragmentShaderProgram.h"
 #include "../renderingModel/DataVertexArrayObject.h"
 #include "../renderingModel/InstancedRenderingVbo.h"
-#include "../model/particles/ParticleList.h"
+#include "../renderingModel/particles/ParticleList.h"
 #include "../renderingModel/Viewport.h"
 #include "../renderingModel/ProjectionMatrix.h"
 
