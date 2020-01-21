@@ -1,33 +1,25 @@
 #pragma once
-#include "VertexArrayObject.h"
-#include <vector>
-#include <cstdint>
+#include "ParticleSystem.h"
 
 namespace card {
-	class InstancedRenderingVbo {
+	class FireworkParticleSystem : public ParticleSystem {
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
-			VertexArrayObject const targetVao;
-			std::uint32_t vboId;
+			ParticleTexture tex;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			InstancedRenderingVbo(VertexArrayObject targetVao, int amountOfFloats);
-			InstancedRenderingVbo(const InstancedRenderingVbo&) = delete;
-			~InstancedRenderingVbo();
+			FireworkParticleSystem(ParticleTexture tex);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			void addInstancedAttribute(std::int32_t attributeIndex, std::int32_t dataSize, std::int32_t instancedDataLengthInBytes, std::int32_t offsetInBytes);
-			void updateVbo(std::vector<float>& data);
-
-
+			void update(float delta, ParticleList& particleList) override;
+			void explode(glm::vec3 fireworkCenter, ParticleList& particleList);
 	};
-
 }

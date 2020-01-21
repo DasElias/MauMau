@@ -10,17 +10,46 @@ namespace card {
 	template<typename T = int>
 	T randomInRange(T min, T max);
 
+	template<typename T = float>
+	T randomReal();
+
+	template<typename T = float>
+	T randomRealInRange(T min, T max);
+
+	template<typename T = float>
+	T clamp(T val, T min, T max);
+
 	float avg(float a, float b);
 	int sgn(float value);
 	float toRadiands(float deg);
 	float toDegrees(float rad);
 
+	std::mt19937& getEngine();
 	std::random_device& getRandomDevice();
 }
 
 template<typename T>
 T card::randomInRange(T min, T max) {
-	static std::mt19937 eng(getRandomDevice()());
+	auto& engine = getEngine();
 	std::uniform_int_distribution<T> distr(min, max);
-	return distr(eng);
+	return distr(engine);
+}
+
+template<typename T>
+T card::randomReal() {
+	return randomRealInRange<T>(0, 1);
+}
+
+template<typename T>
+T card::randomRealInRange(T min, T max) {
+	auto& engine = getEngine();
+	std::uniform_real_distribution<T> distr(min, max);
+	return distr(engine);
+}
+
+template<typename T>
+T card::clamp(T val, T min, T max) {
+	if(val < min) return min;
+	if(val > max) return max;
+	return val;
 }

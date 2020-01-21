@@ -18,6 +18,7 @@
 #include "PlayerLabelRenderer.h"
 #include "CircleSectorRenderer.h"
 #include "CardIndexRenderer.h"
+#include "GameEndRenderer.h"
 #include "../renderingModel/CardStackIntersectionChecker.h"
 #include "../renderingModel/HandCardIntersectionChecker.h"
 #include "../renderingModel/MauMauCardStackMisalignmentGenerator.h"
@@ -65,6 +66,8 @@ namespace card {
 			CircleSectorRenderer circleSectorRenderer;
 			PlayerLabelRenderer playerLabelRenderer;
 			CardIndexRenderer cardIndexRenderer;
+			ParticleRenderer particleRenderer;
+			GameEndRenderer fireworkRenderer;
 
 			CardStackIntersectionChecker cardStackIntersectionChecker;
 			HandCardIntersectionChecker handCardIntersectionChecker;
@@ -89,7 +92,7 @@ namespace card {
 			void onSceneExit();
 			[[deprecated]]
 			void setGame(ProxyMauMauGame& game);
-			void render();
+			void render(float deltaSeconds);
 
 		private:
 			egui::FunctionWrapper<egui::MouseEvent> genOnMouseClickedHandler();

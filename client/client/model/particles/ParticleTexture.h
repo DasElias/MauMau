@@ -1,33 +1,34 @@
 #pragma once
-#include "VertexArrayObject.h"
-#include <vector>
-#include <cstdint>
+#include "../../renderingModel/SimpleTexture.h"
 
 namespace card {
-	class InstancedRenderingVbo {
+	class ParticleTexture : public Cleanable {
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
-			VertexArrayObject const targetVao;
-			std::uint32_t vboId;
+			SimpleTexture backboneTexture;
+			int stages;
+			bool field_useAdditiveBlending;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			InstancedRenderingVbo(VertexArrayObject targetVao, int amountOfFloats);
-			InstancedRenderingVbo(const InstancedRenderingVbo&) = delete;
-			~InstancedRenderingVbo();
+			ParticleTexture(SimpleTexture tex, int stages = 1, bool isAdditive = false);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			void addInstancedAttribute(std::int32_t attributeIndex, std::int32_t dataSize, std::int32_t instancedDataLengthInBytes, std::int32_t offsetInBytes);
-			void updateVbo(std::vector<float>& data);
+			void bind() const;
+			uint32_t getTexId() const;
+			int32_t getStages() const;
+			int32_t getWidth() const;
+			int32_t getHeight() const;
+			bool useAdditiveBlending() const;
+			bool operator<(const ParticleTexture&) const;
 
-
+			void cleanUp() override;
 	};
-
 }

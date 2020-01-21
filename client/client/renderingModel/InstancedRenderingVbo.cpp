@@ -20,16 +20,15 @@ namespace card {
 		//TODO delete vbo
 	}
 
-	void InstancedRenderingVbo::addInstancedAttribute(std::int32_t dataSize, std::int32_t instancedDataLengthInBytes, std::int32_t offsetInBytes) {
+	void InstancedRenderingVbo::addInstancedAttribute(std::int32_t attributeIndex, std::int32_t dataSize, std::int32_t instancedDataLengthInBytes, std::int32_t offsetInBytes) {
 		glBindBuffer(GL_ARRAY_BUFFER, vboId);
 		glBindVertexArray(targetVao.getVertexArrayObjectId());
 
-		GLuint indexInVao = maxVboAttributeIndex++;
-		glEnableVertexAttribArray(indexInVao);
-		glVertexAttribPointer(indexInVao, dataSize, GL_FLOAT, false, instancedDataLengthInBytes, BUFFER_OFFSET(offsetInBytes));
+		glEnableVertexAttribArray(attributeIndex);
+		glVertexAttribPointer(attributeIndex, dataSize, GL_FLOAT, false, instancedDataLengthInBytes, BUFFER_OFFSET(offsetInBytes));
 
 		// indicate that it's a per-instance-vbo
-		glVertexAttribDivisor(indexInVao, 1);
+		glVertexAttribDivisor(attributeIndex, 1);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 	}

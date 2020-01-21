@@ -51,6 +51,8 @@ namespace card {
 			circleSectorRenderer(),
 			playerLabelRenderer(eguiRenderer, renderer2d, circleSectorRenderer),
 			cardIndexRenderer(renderer2d, cardIndexTextures),
+			particleRenderer(),
+			fireworkRenderer(particleRenderer, eguiRenderer, renderer2d),
 			cardStackIntersectionChecker(projectionMatrix, viewport),
 			handCardIntersectionChecker(projectionMatrix, viewport),
 			onMouseClicked(genOnMouseClickedHandler()) {
@@ -88,7 +90,7 @@ namespace card {
 		this->game = game;
 	}
 
-	void CardSceneRenderer::render() {
+	void CardSceneRenderer::render(float deltaSeconds) {
 		bgRenderer.render(projectionMatrix, viewport);
 
 		glClear(GL_DEPTH_BUFFER_BIT);
@@ -140,7 +142,10 @@ namespace card {
 		cardRenderer.flush();
 
 		renderCardIndexForNextCard();
+		fireworkRenderer.updateAndRender(deltaSeconds, projectionMatrix);
+
 		glEnable(GL_DEPTH_TEST);
+
 	}
 
 	void CardSceneRenderer::renderOpponentIfHasValue(std::size_t index, std::array<std::shared_ptr<ProxyPlayer>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, float maxWidthOfHandCards, bool renderInX) {

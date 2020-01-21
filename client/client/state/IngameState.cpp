@@ -47,7 +47,7 @@ namespace card {
 			std::cout << vec3ToString(viewport.getRotation()) << std::endl;
 		}
 
-		sceneRenderer.render();
+		sceneRenderer.render(delta);
 
 	}
 

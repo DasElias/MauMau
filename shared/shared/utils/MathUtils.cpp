@@ -27,5 +27,9 @@ namespace card {
 		static std::random_device rd{};
 		return rd;
 	}
+	std::mt19937& getEngine() {
+		static std::mt19937 eng(getRandomDevice()());
+		return eng;
+	}
 }
 
