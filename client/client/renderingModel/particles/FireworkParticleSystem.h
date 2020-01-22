@@ -20,6 +20,6 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			void update(float delta, ParticleList& particleList) override;
-			void explode(glm::vec2 center, ParticleList& particleList);
+			void explode(glm::vec2 center, ParticleList& particleList, float fireworkRadiusMultiplicator = 1.0f);
 	};
 }

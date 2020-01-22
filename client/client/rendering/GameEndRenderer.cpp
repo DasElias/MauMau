@@ -46,13 +46,11 @@ namespace card {
 		if(! field_isAnimationActive) return;
 
 		element->update(deltaSec);
-
 		eguiRenderer.beginFrame();
 		scene.render(eguiRenderer);
 		eguiRenderer.endFrame();
 
 		particleManager.update(deltaSec, fireworkViewport.getPosition());
-
 		particleRenderer.render(particleManager.getList(), fireworkViewport, projectionMatrix);
 	}
 	void GameEndRenderer::startAnimation() {
@@ -73,15 +71,15 @@ namespace card {
 
 		int delay = 0;
 		generateParticlesInMs(redParticleSystem, {-0.4, 0.65}, delay);
-		generateParticlesInMs(greenParticleSystem, {-0.67, 0.14}, delay);
 		generateParticlesInMs(redParticleSystem, {0.6, 0.7}, delay);
+		generateParticlesInMs(redParticleSystem, {-0.67, 0.14}, delay);
 		generateParticlesInMs(redParticleSystem, {0.85, 0.3}, delay);
-		generateParticlesInMs(redParticleSystem, {-0.55, -0.37}, delay);
-		generateParticlesInMs(redParticleSystem, {-0.2, -0.55}, delay);
+		generateParticlesInMs(greenParticleSystem, {-0.55, -0.17}, delay);
 		generateParticlesInMs(redParticleSystem, {0.7, -0.5}, delay);
-		generateParticlesInMs(redParticleSystem, {-0.8, 0.8}, delay);
-		generateParticlesInMs(redParticleSystem, {0.25, 0.45}, delay);
+		generateParticlesInMs(greenParticleSystem, {-0.4, -0.55}, delay);
 		generateParticlesInMs(redParticleSystem, {0.4, -0.25}, delay);
+		generateParticlesInMs(redParticleSystem, {-0.8, 0.8}, delay);
+		generateParticlesInMs(redParticleSystem, {0.35, 0.8}, delay);
 		generateParticlesInMs(redParticleSystem, {-0.1, 0.8}, delay);
 
 		threadUtils_invokeIn(delay, [this]() {
@@ -89,8 +87,13 @@ namespace card {
 		});
 	}
 	void GameEndRenderer::generateParticlesInMs(std::shared_ptr<FireworkParticleSystem> ps, glm::vec2 systemCenter, int& delayMs) {
+		float const MAX_CENTER_SHIFT = 0.1f;
+		systemCenter.x += randomRealInRange<float>(-MAX_CENTER_SHIFT, MAX_CENTER_SHIFT);
+		systemCenter.y += randomRealInRange<float>(-MAX_CENTER_SHIFT, MAX_CENTER_SHIFT);
+
 		threadUtils_invokeIn(delayMs, [this, systemCenter, ps]() {
-			ps->explode(systemCenter, particleManager.getList());
+			float radiusMultiplicator = randomRealInRange<float>(0.75, 1.15);
+			ps->explode(systemCenter, particleManager.getList(), radiusMultiplicator);
 		});
 
 		int const MIN_RAND_DELAY_ADDITION = 250;

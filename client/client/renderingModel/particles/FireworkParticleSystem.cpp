@@ -10,7 +10,7 @@ namespace card {
 	}
 	void FireworkParticleSystem::update(float delta, ParticleList& particleList) {
 	}
-	void FireworkParticleSystem::explode(glm::vec2 center, ParticleList& particleList) {
+	void FireworkParticleSystem::explode(glm::vec2 center, ParticleList& particleList, float fireworkRadiusMultiplicator) {
 		int const PARTICLES_PER_EXPLOSION = 20;
 		float const ARC_PER_PARTICLE = 2*PI / PARTICLES_PER_EXPLOSION;
 
@@ -38,11 +38,12 @@ namespace card {
 				velocityZ += velocityXAddition;
 
 				glm::vec3 velocity(velocityX, velocityY, velocityZ);
-				glm::vec3 velocityAdditionPerSecond(endVelocityX - velocityX, endVelocityY - velocityY, endVelocityZ - velocityZ);
+				velocity *= fireworkRadiusMultiplicator;
+				glm::vec3 velocityAdditionPerSecond(endVelocityX - velocity.x, endVelocityY - velocity.y, endVelocityZ - velocity.z);
 				velocityAdditionPerSecond /= LIFE_LENGTH_SECONDS;
 
-
-				Particle p({0,0,0}, velocity, velocityAdditionPerSecond, LIFE_LENGTH_SECONDS, 0, 0.05f, tex, center);
+				float rot = randomRealInRange<float>(0, 2*PI);
+				Particle p({0,0,0}, velocity, velocityAdditionPerSecond, LIFE_LENGTH_SECONDS, rot, 0.075f, tex, center);
 				particleList.add(p);
 
 				arcXY += 2* ARC_PER_PARTICLE;
