@@ -79,10 +79,11 @@ namespace card {
 		continueBtn->getActionEventManager().addEventHandler(evtHandler);
 	}
 	
-	void GameEndElement::update(float deltaSeconds) {
+	void GameEndElement::update(float deltaSeconds, std::string winnerUsername) {
 		float deltaMs = deltaSeconds * 1000;
 		updateBg(deltaMs);
 		updateFonts(deltaMs);
+		winnerLabel->setText(winnerUsername);
 	}
 	void GameEndElement::updateBg(float deltaMs) {
 		bgOpacity += (BG_MAX_OPACITY - BG_MIN_OPACITY) / BG_OPACITY_ANIMATION_DURATION_MS * deltaMs;

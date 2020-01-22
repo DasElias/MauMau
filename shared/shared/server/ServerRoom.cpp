@@ -190,7 +190,7 @@ namespace card {
 		if(! checkIfLeader(sender) || isGameRunning() || participantsForNextGame.size() <= 1) return false;
 
 		// create game
-		this->game = std::make_unique<ServerMauMauGame>(packetTransmitter, participantsForNextGame);
+		this->game = std::make_unique<ServerMauMauGame>(packetTransmitter, *this, participantsForNextGame);
 
 		// send packets
 		std::vector<std::string> usernameOfAllPlayers = getUsernamesOfParticipants();
@@ -214,6 +214,9 @@ namespace card {
 			
 		}
 		return true;
+	}
+	void ServerRoom::onGameEnd() {
+		this->game = nullptr;
 	}
 	optionalSuccessAnswerPacket ServerRoom::listener_onChangeOptions(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant) {
 		if(!checkIfParticipant(participant)) return std::nullopt;

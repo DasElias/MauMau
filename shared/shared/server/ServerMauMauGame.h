@@ -6,6 +6,7 @@
 #include <optional>
 #include "../model/CardStack.h"
 #include "../model/Direction.h"
+#include "ServerGameEndHandler.h"
 
 namespace card {
 	class ServerMauMauGame {
@@ -16,13 +17,14 @@ namespace card {
 			static int const MAX_DURATION_OF_TURN_MS = 30 * 1000;
 
 		private:
-			static int const AMOUNT_OF_HAND_CARDS = 6;
+			static int const AMOUNT_OF_HAND_CARDS = 2;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
 			std::shared_ptr<STCPacketTransmitter> packetTransmitter;
+			ServerGameEndHandler& gameEndHandler;
 
 			std::shared_ptr<Player> playerOnTurn;
 			std::vector<std::shared_ptr<Player>> players;
@@ -42,7 +44,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			ServerMauMauGame(std::shared_ptr<STCPacketTransmitter> packetTransmitter, std::vector<std::shared_ptr<ParticipantOnServer>> participants);
+			ServerMauMauGame(std::shared_ptr<STCPacketTransmitter> packetTransmitter, ServerGameEndHandler& gameEndHandler, std::vector<std::shared_ptr<ParticipantOnServer>> participants);
 			~ServerMauMauGame();
 
 		// ----------------------------------------------------------------------
@@ -77,6 +79,12 @@ namespace card {
 		private:
 			void setInitialPlayerOnTurn();
 			void tryRebalanceCardStacks();
+
+			// warning: if game has ended, object will be invalidated after call
+			void callGameEndFunctIfGameHasEnded();
+			bool hasPlayerWon();
+
+			std::vector<int> removeCardsToDrawForNextPlayerFromDrawStack(Card playedCardByLastPlayer);
 
 			std::optional<OperationSuccessful_STCAnswerPacket> listener_onPlayCard(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);
 			std::optional<OperationSuccessful_STCAnswerPacket> listener_onDrawCard(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);

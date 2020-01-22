@@ -35,6 +35,9 @@ namespace card {
 			std::shared_ptr<LocalPlayer> localPlayer;
 			std::vector<std::shared_ptr<ProxyPlayer>> skippedPlayers;
 
+			// is null, if game hasn't ended yet
+			std::shared_ptr<ProxyPlayer> winner;
+
 			ServerPacketListenerCallback handler_onOtherPlayerHasDrawnCard;
 			ServerPacketListenerCallback handler_onOtherPlayerHasPlayedCard;
 			ServerPacketListenerCallback handler_onLocalPlayerIsOnTurn;
@@ -96,6 +99,8 @@ namespace card {
 			bool checkIfIsOpponent(std::string username) const;
 			std::shared_ptr<ProxyPlayer> lookupPlayer(std::string username);
 			std::shared_ptr<ProxyPlayer> lookupOpponent(std::string username);	
+			bool hasGameEnded() const;
+			std::shared_ptr<ProxyPlayer> getWinnerOrNull();
 
 		private:
 			void initStartCards(const std::vector<int>& handCardNumbersOfLocalPlayer, Card cardOnPlayStack);
@@ -103,6 +108,8 @@ namespace card {
 			void setLocalPlayerAtTheBeginOfPlayersVector();
 
 			void sendPlayCardPacket(CardIndex newCardIndex = CardIndex::NULLINDEX);
+			void updateGameEndFlag();
+			void throwIfGameHasEnded();
 
 			void listener_onOtherPlayerHasDrawnCard(Packet& p);
 			void listener_onOtherPlayerHasPlayedCard(Packet& p);

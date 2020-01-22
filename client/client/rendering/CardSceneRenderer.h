@@ -73,6 +73,7 @@ namespace card {
 			HandCardIntersectionChecker handCardIntersectionChecker;
 
 			boost::optional<ProxyMauMauGame&> game;
+			bool shouldRenderGameEndScreen = false;
 
 			egui::FunctionWrapper<egui::MouseEvent> onMouseClicked;
 
@@ -105,12 +106,14 @@ namespace card {
 			void renderDrawedCardAnimationsOfOpponent(const CardAnimator& handCardStack, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, glm::vec3 middlePosition, glm::vec3 middleRotation);
 			void renderPlayerLabels(std::array<std::shared_ptr<ProxyPlayer>, 3>& opponents);
 			void renderLocalPlayer();
-			void renderDrawnCardOverlay();
-			void renderChooseColorOverlay();
+			void renderDrawnCardOverlayIfGameHasntEnded();
+			void renderChooseColorOverlayIfGameHasntEnded();
 			void renderDrawCardStack();
 			void renderPlayCardStack();
 			void renderAnimationFromDrawToPlayStack(const CardAnimation& cardAnimation, glm::vec3 endPosition, glm::vec3 endRotation);
-			void renderCardIndexForNextCard();
+			void renderCardIndexForNextCardIfGameHasntEnded();
+			void renderGameEndScreenIfGameHasEnded(float delta);
+			void updateRenderGameEndScreenFlag();
 			void handleInput();
 			bool checkIntersectionWithDrawCardStack();
 			std::optional<int> checkIntersectionWithOwnHandCards();

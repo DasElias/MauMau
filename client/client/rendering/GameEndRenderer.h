@@ -43,7 +43,7 @@ namespace card {
         // -------------------------------METHODS--------------------------------
         // ----------------------------------------------------------------------
         public:
-            void updateAndRender(float delta, ProjectionMatrix& projectionMatrix);
+            void updateAndRender(float delta, std::string winnerUsername, ProjectionMatrix& projectionMatrix);
             void startAnimation();
             void endAnimation();
             bool isAnimationActive() const;

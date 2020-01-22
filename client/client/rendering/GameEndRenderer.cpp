@@ -1,6 +1,7 @@
 #include "GameEndRenderer.h"
 #include "GameEndRenderer.h"
 #include "GameEndRenderer.h"
+#include "GameEndRenderer.h"
 
 #include "../renderingModel/SimpleTextureFactory.h"
 #include "../utils/FileUtils.h"
@@ -34,18 +35,10 @@ namespace card {
 			false
 		);
 	}
-	void GameEndRenderer::updateAndRender(float deltaSec, ProjectionMatrix& projectionMatrix) {
-		static bool flag = false;
-		if(flag && egui::getInputHandler().isKeyDown(KEY_U)) {
-			startAnimation();
-			flag = false;
-		} else if(egui::getInputHandler().isKeyDown(KEY_T)) {
-			flag = true;
-		}
-
+	void GameEndRenderer::updateAndRender(float deltaSec, std::string winnerUsername, ProjectionMatrix& projectionMatrix) {
 		if(! field_isAnimationActive) return;
 
-		element->update(deltaSec);
+		element->update(deltaSec, winnerUsername);
 		eguiRenderer.beginFrame();
 		scene.render(eguiRenderer);
 		eguiRenderer.endFrame();
@@ -62,6 +55,9 @@ namespace card {
 		threadUtils_invokeIn(fireworkDelay, [this]() {
 			generateParticlesRecursive();
 		});
+	}
+	void GameEndRenderer::endAnimation() {
+		field_isAnimationActive = false;
 	}
 	bool GameEndRenderer::isAnimationActive() const {
 		return field_isAnimationActive;

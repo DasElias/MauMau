@@ -21,6 +21,7 @@ namespace card {
 			playCardStack(std::make_unique<CardStack>()),
 			indexForNextCard(Card(startCard).getCardIndex()),
 			roomOptions(roomOptions),
+			winner(nullptr),
 			handler_onOtherPlayerHasDrawnCard(std::bind(&ProxyMauMauGame::listener_onOtherPlayerHasDrawnCard, this, std::placeholders::_1)),
 			handler_onOtherPlayerHasPlayedCard(std::bind(&ProxyMauMauGame::listener_onOtherPlayerHasPlayedCard, this, std::placeholders::_1)),
 			handler_onLocalPlayerIsOnTurn(std::bind(&ProxyMauMauGame::listener_onLocalPlayerIsOnTurn, this, std::placeholders::_1)) {
@@ -99,7 +100,7 @@ namespace card {
 	}
 
 	bool ProxyMauMauGame::canPlay(Card card) const {
-		if(! isLocalPlayerOnTurn() || localPlayer->hasPlayedCard() || !areAllPreviousCardTransactionsCompleted()) return false;
+		if(! isLocalPlayerOnTurn() || localPlayer->hasPlayedCard() || !areAllPreviousCardTransactionsCompleted() || hasGameEnded()) return false;
 
 		Card lastCardOnPlayStack = playCardStack.getLast();
 		if(lastCardOnPlayStack.getValue() == CHANGE_COLOR_VALUE) {
@@ -115,6 +116,7 @@ namespace card {
 
 	bool ProxyMauMauGame::canDraw() const {
 		if(! isLocalPlayerOnTurn() || !areAllPreviousCardTransactionsCompleted() || isWaitingForColorChoose() || drawCardForNextPlayer == Card::NULLCARD) return false;
+		if(hasGameEnded()) return false;
 
 		// has already drawn a card
 		if(localPlayer->hasStartedToDrawCard()) return false;
@@ -123,10 +125,12 @@ namespace card {
 	}
 
 	bool ProxyMauMauGame::canChangeColor(Card playedCard) const {
-		return roomOptions.chooseCardIndexOnJack() && playedCard.getValue() == CHANGE_COLOR_VALUE;
+		return !hasGameEnded() && roomOptions.chooseCardIndexOnJack() && playedCard.getValue() == CHANGE_COLOR_VALUE;
 	}
 
 	bool ProxyMauMauGame::canMau() const {
+		if(hasGameEnded()) return false;
+
 		// player has already finished game, no more mau needed
 		if(localPlayer->getCardStack().isEmptyAndNoPendingTransactions()) return false;
 
@@ -161,7 +165,7 @@ namespace card {
 	void ProxyMauMauGame::drawCard() {
 		if(! canDraw()) throw std::runtime_error("Can't draw card in the current situation!");
 		if(drawCardForNextPlayer == Card::NULLCARD) throw std::runtime_error("Can't draw a NULLCARD");
-
+		
 		if(canPlay(drawCardForNextPlayer)) {
 			// we don't have to send a packet yet, since we want to let the player choose if he wants
 			// to add the drawn card into it's hand card or play it
@@ -199,8 +203,9 @@ namespace card {
 
 		bool canChangeColor = this->canChangeColor(card);
 		localPlayer->playCardFromHandCards(card, playCardStack, canChangeColor);
+		updateGameEndFlag();
 
-		if(! canChangeColor) {
+		if(! canChangeColor || hasGameEnded()) {
 			sendPlayCardPacket();
 		}
 
@@ -213,8 +218,9 @@ namespace card {
 		Card drawnCard = *localPlayer->getDrawnCard();
 		bool canChangeColor = this->canChangeColor(drawnCard);
 		localPlayer->playCardFromTempCardStackLocal(playCardStack, canChangeColor);
+		updateGameEndFlag();
 
-		if(!canChangeColor) {
+		if(!canChangeColor || hasGameEnded()) {
 			sendPlayCardPacket();
 		}
 
@@ -242,6 +248,19 @@ namespace card {
 
 		this->drawCardForNextPlayer = Card::NULLCARD;
 	}
+	void ProxyMauMauGame::updateGameEndFlag() {
+		for(auto& player : allPlayers) {
+			if(player->getCardStack().isEmptyAndNoPendingTransactions()) {
+				winner = player;
+				break;
+			}
+		}
+	}
+	void ProxyMauMauGame::throwIfGameHasEnded() {
+		if(hasGameEnded()) {
+			throw std::runtime_error("Can't perform action when the game has already ended.");
+		}
+	}
 	const CardAnimator& ProxyMauMauGame::getDrawStack() const {
 		return drawCardStack;
 	}
@@ -259,6 +278,8 @@ namespace card {
 	}
 
 	void ProxyMauMauGame::removeOpponentLocal(std::shared_ptr<ParticipantOnClient> player) {
+		if(hasGameEnded()) return;
+
 		for(std::size_t i = 0; i < opponents.size(); i++) {
 			if(opponents[i]->getWrappedParticipiant() == player) {
 				opponents.erase(opponents.begin() + i);
@@ -290,7 +311,14 @@ namespace card {
 
 		throw PlayerNotFoundException("\"" + username + "\" is not an opponent.");
 	}
+	bool ProxyMauMauGame::hasGameEnded() const {
+		return winner != nullptr;
+	}
+	std::shared_ptr<ProxyPlayer> ProxyMauMauGame::getWinnerOrNull() {
+		return winner;
+	}
 	void ProxyMauMauGame::playCardAndSetNextPlayerOnTurnLocal(std::string username, Card card, CardIndex newCardIndex, std::vector<Card> cardsToDraw, bool wasDrawedJustBefore) {
+		throwIfGameHasEnded();
 		std::shared_ptr<ProxyPlayer> player = lookupOpponent(username);
 
 		if(wasDrawedJustBefore) {
@@ -310,8 +338,11 @@ namespace card {
 		setNextOrNextButOneOnTurnLocal(card);
 
 		playerHasToDrawCards(userOnTurn, cardsToDraw);
+		updateGameEndFlag();
 	}
 	void ProxyMauMauGame::drawCardAndSetNextPlayerOnTurnLocal(std::string username) {
+		throwIfGameHasEnded();
+
 		std::shared_ptr<ProxyPlayer> player = lookupOpponent(username);
 		player->drawSingleCardInHandCardsLocal(Card::NULLCARD, drawCardStack);
 		tryRebalanceCardStacks();

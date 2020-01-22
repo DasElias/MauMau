@@ -4,9 +4,10 @@
 #include "UsernameGenerator.h"
 #include "../model/RoomCode.h"
 #include "../model/RoomOptions.h"
+#include "ServerGameEndHandler.h"
 
 namespace card {
-	class ServerRoom {
+	class ServerRoom : public ServerGameEndHandler {
 		// ----------------------------------------------------------------------
 		// ----------------------------STATIC-FIELDS-----------------------------
 		// ----------------------------------------------------------------------
@@ -71,6 +72,8 @@ namespace card {
 			void initRoomLeaderWithoutPermissionsChecking(const std::shared_ptr<ParticipantOnServer>& newLeader);
 			bool changeRoomLeader(const std::shared_ptr<ParticipantOnServer>& sender, std::string usernameOfNewLeader);
 			bool startGame(const std::shared_ptr<ParticipantOnServer>& sender);
+
+			void onGameEnd();
 
 			optionalSuccessAnswerPacket listener_onChangeOptions(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant); 
 			optionalSuccessAnswerPacket listener_onChangeRoomLeader(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);

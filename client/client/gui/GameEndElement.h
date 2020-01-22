@@ -47,7 +47,7 @@ namespace card {
         public:
             void startAnimation();
             void setOnContinueBtn(egui::FunctionWrapper<egui::ActionEvent> evtHandler);
-            void update(float deltaSeconds);
+            void update(float deltaSeconds, std::string winnerUsername);
 
         private:
             void updateBg(float deltaMs);

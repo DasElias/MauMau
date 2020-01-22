@@ -18,8 +18,9 @@
 #include "../model/CardAnimationDuration.h"
 
 namespace card {
-	ServerMauMauGame::ServerMauMauGame(std::shared_ptr<STCPacketTransmitter> packetTransmitter, std::vector<std::shared_ptr<ParticipantOnServer>> participants) :
+	ServerMauMauGame::ServerMauMauGame(std::shared_ptr<STCPacketTransmitter> packetTransmitter, ServerGameEndHandler& gameEndHandler, std::vector<std::shared_ptr<ParticipantOnServer>> participants) :
 			packetTransmitter(packetTransmitter),
+			gameEndHandler(gameEndHandler),
 			drawCardStack(),
 			playCardStack(),
 			handler_onPlayCard(std::bind(&ServerMauMauGame::listener_onPlayCard, this, std::placeholders::_1, std::placeholders::_2)),
@@ -57,7 +58,7 @@ namespace card {
 		// set player on turn
 		setInitialPlayerOnTurn();
 
-		
+
 
 		// init packet listeners
 		packetTransmitter->addListenerForClientPkt(PlayCardRequest_CTSPacket::PACKET_ID, handler_onPlayCard);
@@ -226,31 +227,26 @@ namespace card {
 
 			return false;	
 		}
-		
+
 		// compute cards to draw for next player
 		// it's important to compute those before the next player is set on turn,
 		// since afterwards we've send already the last card on draw stack to the new
 		// player on turn
-		std::vector<int> cardsToDrawForNextPlayer;
-		for(int i = 0; i < getAmountsOfCardsToDrawForNextPlayer(card); i++) {
-			Card removed = drawCardStack.removeLast();
-			tryRebalanceCardStacks();
-			
-			cardsToDrawForNextPlayer.push_back(removed.getCardNumber());
-		}
-		
-		// set next player on turn
-		if(canSkipPlayer(card)) setNextButOnePlayerOnTurn();
-		else setNextPlayerOnTurn();
+		std::vector<int> cardsToDrawForNextPlayer = removeCardsToDrawForNextPlayerFromDrawStack(card);
 
-		// actually draw cardsToDrawForNextPlayer
-		for(auto& cardNumber : cardsToDrawForNextPlayer) {
-			playerOnTurn->addHandCard(Card(cardNumber));
+		if(! hasPlayerWon()) {
+			// set next player on turn
+			if(canSkipPlayer(card)) setNextButOnePlayerOnTurn();
+			else setNextPlayerOnTurn();
+
+			// actually draw cardsToDrawForNextPlayer
+			for(auto& cardNumber : cardsToDrawForNextPlayer) {
+				playerOnTurn->addHandCard(Card(cardNumber));
+			}
 		}
 		
 		// change color
 		if(canChangeColor(card)) {
-			log(LogSeverity::INFO, "color changed");
 			this->indexForNextCard = chosenIndex;
 		} else {
 			this->indexForNextCard = card.getCardIndex();
@@ -267,12 +263,37 @@ namespace card {
 			packetTransmitter->sendPacketToClient(packet, p->getWrappedParticipant());
 		}
 
+		callGameEndFunctIfGameHasEnded();
+
 		return true;
+	}
+	std::vector<int> ServerMauMauGame::removeCardsToDrawForNextPlayerFromDrawStack(Card playedCardByLastPlayer) {
+		std::vector<int> removedCards;
+		for(int i = 0; i < getAmountsOfCardsToDrawForNextPlayer(playedCardByLastPlayer); i++) {
+			Card removed = drawCardStack.removeLast();
+			tryRebalanceCardStacks();
+
+			removedCards.push_back(removed.getCardNumber());
+		}
+		return removedCards;
 	}
 	void ServerMauMauGame::tryRebalanceCardStacks() {
 		while(drawCardStack.getSize() <= 3 && playCardStack.getSize() >= 1) {
 			drawCardStack.addFromPlain(playCardStack.remove(0));
 		}
+	}
+	void ServerMauMauGame::callGameEndFunctIfGameHasEnded() {
+		if(hasPlayerWon()) {
+			gameEndHandler.onGameEnd();
+		}
+	}
+	bool ServerMauMauGame::hasPlayerWon() {
+		for(auto& p : players) {
+			if(p->getHandCards().isEmpty()) {
+				return true;
+			}
+		}
+		return false;
 	}
 	std::optional<OperationSuccessful_STCAnswerPacket> ServerMauMauGame::listener_onPlayCard(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant) {
 		if(! checkIfPlayerByParticipant(participant)) return std::nullopt;

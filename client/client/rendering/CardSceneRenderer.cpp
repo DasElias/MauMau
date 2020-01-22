@@ -9,6 +9,8 @@
 
 #include <shared/utils/TimeUtils.h>
 #include <shared/utils/Logger.h>
+#include <shared/utils/ThreadUtils.h>
+#include <shared/model/CardAnimationDuration.h>
 
 namespace card {
 	const glm::vec3 CardSceneRenderer::DRAW_CARDS_POSITION = {-0.5, 0, 0};
@@ -78,12 +80,14 @@ namespace card {
 
 	void CardSceneRenderer::onSceneEnter(ProxyMauMauGame& game) {
 		this->game = game;
+		shouldRenderGameEndScreen = false;
 		egui::getInputHandler().getMouseBtnEventManager().addEventHandler(onMouseClicked);
-
 	}
 
 	void CardSceneRenderer::onSceneExit() {
 		egui::getInputHandler().getMouseBtnEventManager().removeEventHandler(onMouseClicked);
+		fireworkRenderer.endAnimation();
+		shouldRenderGameEndScreen = false;
 	}
 
 	void CardSceneRenderer::setGame(ProxyMauMauGame& game) {
@@ -134,15 +138,14 @@ namespace card {
 		renderLocalPlayer();
 		cardRenderer.flush(true);
 		renderPlayerLabels(opponentsOrNoneInCwOrder);
-		renderDrawnCardOverlay();
-		renderChooseColorOverlay();
-		//handleInput();
+		renderDrawnCardOverlayIfGameHasntEnded();
+		renderChooseColorOverlayIfGameHasntEnded();
 
 		// flush CardRenderer
 		cardRenderer.flush();
 
-		renderCardIndexForNextCard();
-		fireworkRenderer.updateAndRender(deltaSeconds, projectionMatrix);
+		renderCardIndexForNextCardIfGameHasntEnded();
+		renderGameEndScreenIfGameHasEnded(deltaSeconds);
 
 		glEnable(GL_DEPTH_TEST);
 
@@ -273,13 +276,14 @@ namespace card {
 		}
 	}
 
-	void CardSceneRenderer::renderDrawnCardOverlay() {
+	void CardSceneRenderer::renderDrawnCardOverlayIfGameHasntEnded() {
 		auto& localPlayer = game->getLocalPlayer();
 
 		static std::optional<Card> drawnCardInLastPass = std::nullopt;
 		std::optional<Card> drawnCard = localPlayer->getDrawnCard();
 
-		if(drawnCard.has_value()) {
+		bool isGameRunning = !game->hasGameEnded();
+		if(drawnCard.has_value() && isGameRunning) {
 			// if the overlay wasn't displayed in the last frame, we need to ensure that there
 			// are no previous mouse events which are going to fire
 			if(! drawnCardInLastPass.has_value()) drawnCardRenderer.clearPreviousMouseEvents();
@@ -291,10 +295,11 @@ namespace card {
 		drawnCardInLastPass = drawnCard;
 	}
 
-	void CardSceneRenderer::renderChooseColorOverlay() {
+	void CardSceneRenderer::renderChooseColorOverlayIfGameHasntEnded() {
 		auto& localPlayer = game->getLocalPlayer();
 
-		if(localPlayer->isWaitingForColorPick()) {
+		bool isGameRunning = !game->hasGameEnded();
+		if(localPlayer->isWaitingForColorPick() && isGameRunning) {
 			cardRenderer.flush();
 			chooseCardRenderer.render();
 		}
@@ -438,12 +443,38 @@ namespace card {
 		}
 	}
 
-	void CardSceneRenderer::renderCardIndexForNextCard() {	
+	void CardSceneRenderer::renderCardIndexForNextCardIfGameHasntEnded() {	
 		std::optional<CardIndex> cardIndexForNextCardOrNone = game->getCardIndexForNextCardOrNone();
 
-		if(cardIndexForNextCardOrNone.has_value()) {
+		bool isGameRunning = !game->hasGameEnded();
+		if(cardIndexForNextCardOrNone.has_value() && isGameRunning) {
 			cardIndexRenderer.renderCardIndexForNextCard(*cardIndexForNextCardOrNone);
 		}
+	}
+
+	void CardSceneRenderer::renderGameEndScreenIfGameHasEnded(float delta) {
+		updateRenderGameEndScreenFlag();
+
+		if(shouldRenderGameEndScreen) {
+			auto winner = game->getWinnerOrNull();
+			assert(winner);
+
+			std::string winnerUsername = winner->getUsername();
+			fireworkRenderer.updateAndRender(delta, winnerUsername, projectionMatrix);
+		}
+	}
+
+	void CardSceneRenderer::updateRenderGameEndScreenFlag() {
+		static bool hasGameEndedLastFrame = false;
+		bool hasGameEnded = game->hasGameEnded();
+
+		if(hasGameEnded && !hasGameEndedLastFrame) {
+			threadUtils_invokeIn(DRAW_DURATION_MS, [this]() {
+				fireworkRenderer.startAnimation();
+				shouldRenderGameEndScreen = true;
+			});
+		}
+		hasGameEndedLastFrame = hasGameEnded;
 	}
 
 	void CardSceneRenderer::interpolateAndRender(const CardAnimation& animation, glm::vec3 startPosition, glm::vec3 startRotation, glm::vec3 middle1Position, glm::vec3 middle1Rotation, glm::vec3 middle2Position, glm::vec3 middle2Rotation, glm::vec3 endPosition, glm::vec3 endRotation,
