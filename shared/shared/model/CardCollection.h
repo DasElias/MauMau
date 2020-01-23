@@ -33,6 +33,8 @@ namespace card {
 			void addFromPlain(Card c, std::size_t amount = 1);
 			void addFromPlain(std::vector<Card> cards);
 			void addFromPlain(std::initializer_list<Card> cards);
+			void addFromPlain(const std::vector<int>& cardNumbers);
+
 
 			Card get(std::size_t index) const;
 			Card getLast() const;

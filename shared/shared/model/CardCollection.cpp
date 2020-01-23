@@ -30,6 +30,13 @@ namespace card {
 		reorder();
 	}
 
+	void CardCollection::addFromPlain(const std::vector<int>& cardNumbers) {
+		for(auto& cn : cardNumbers) {
+			this->cards.push_back(Card(cn));
+		}
+		reorder();
+	}
+
 	Card CardCollection::get(std::size_t index) const {
 		return cards.at(index);
 	}
