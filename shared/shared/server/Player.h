@@ -38,7 +38,8 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			void addHandCard(Card c);
-			void addHandCard(std::vector<Card> cards);
+			void addHandCards(const std::vector<Card>& cards);
+			void addHandCards(const std::vector<int>& cardNumbers);
 			void removeHandCard(Card c);
 			bool containsHandCard(Card c) const;
 			const HandCardStack& getHandCards() const;

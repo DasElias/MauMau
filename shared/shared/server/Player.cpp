@@ -26,8 +26,11 @@ namespace card {
 	void Player::addHandCard(Card c) {
 		handCardStack.addFromPlain(c);
 	}
-	void Player::addHandCard(std::vector<Card> cards) {
+	void Player::addHandCards(const std::vector<Card>& cards) {
 		handCardStack.addFromPlain(cards);
+	}
+	void Player::addHandCards(const std::vector<int>& cardNumbers) {
+		handCardStack.addFromPlain(cardNumbers);
 	}
 	void Player::removeHandCard(Card c) {
 		handCardStack.remove(c);
