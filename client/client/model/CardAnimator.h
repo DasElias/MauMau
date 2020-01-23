@@ -17,7 +17,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		private:
 			long long id;
-			std::set<CardAnimation> animations;
+			std::vector<CardAnimation> animations;
 			std::unique_ptr<CardCollection> wrappedCardCollection;
 
 		// ----------------------------------------------------------------------
@@ -51,7 +51,7 @@ namespace card {
 			void addDeterminedCardFromImmediately(Card card, CardAnimator& source, int durationMs);
 			void addRandomCardFromImmediately(Card mutatesTo, CardAnimator& source, int durationMs);
 
-			std::set<CardAnimation> getCardAnimations() const;
+			std::vector<CardAnimation> getCardAnimations() const;
 
 			std::size_t getSizeInclPendingTransactions() const;
 			bool isEmptyAndNoPendingTransactions() const;
@@ -60,6 +60,7 @@ namespace card {
 			CardCollection& getWrappedCardCollection();
 			CardCollection& operator*();
 
+			Card getLastInclAnimations() const;
 
 			//
 			// METHODS FROM CardCollection
@@ -90,5 +91,8 @@ namespace card {
 		private:
 			void onAnimationStart();
 			void onAnimationEnd();
+
+			void addCardAnimation(CardAnimation ca);
+			void removeCardAnimation(CardAnimation ca);
 	};
 }

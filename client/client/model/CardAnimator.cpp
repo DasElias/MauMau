@@ -31,10 +31,10 @@ namespace card {
 		source.remove(0);
 
 		CardAnimation a(getMilliseconds(), durationMs, source, mutatesTo);
-		animations.insert(a);
+		addCardAnimation(a);
 
 		threadUtils_invokeIn(durationMs, [this, a, mutatesTo] {
-			animations.erase(a);
+			removeCardAnimation(a);
 			this->addFromPlain(mutatesTo);
 			onAnimationEnd();
 		});
@@ -56,10 +56,10 @@ namespace card {
 		source.removeLast();
 
 		CardAnimation a(getMilliseconds(), durationMs, source, mutatesTo);
-		animations.insert(a);
+		addCardAnimation(a);
 
 		threadUtils_invokeIn(durationMs, [this, a, mutatesTo] {
-			animations.erase(a);
+			removeCardAnimation(a);
 			this->addFromPlain(mutatesTo);
 			onAnimationEnd();
 		});
@@ -81,13 +81,13 @@ namespace card {
 		source.remove(card);
 
 		CardAnimation a(getMilliseconds(), durationMs, source, card);
-		animations.insert(a);
+		addCardAnimation(a);
 
 		threadUtils_invokeIn(durationMs, [this, a, card] {
 			onAnimationEnd();
-			animations.erase(a);
+			removeCardAnimation(a);
 			this->addFromPlain(card);
-							 });
+		});
 	}
 
 	void CardAnimator::addRandomCardFrom(Card mutatesTo, CardAnimator& source, int durationMs, int delayMs) {
@@ -107,10 +107,10 @@ namespace card {
 		source.remove(randomInRange<std::size_t>(0, source.getSize() - 1));
 
 		CardAnimation a(getMilliseconds(), durationMs, source, mutatesTo);
-		animations.insert(a);
+		addCardAnimation(a);
 
-		threadUtils_invokeIn(durationMs, [this, a, mutatesTo] {
-			animations.erase(a);
+		threadUtils_invokeIn(durationMs, [this, a, mutatesTo] {	
+			removeCardAnimation(a);
 			this->addFromPlain(mutatesTo);
 			onAnimationEnd();
 		});
@@ -124,7 +124,15 @@ namespace card {
 		pendingAnimationsCounter--;
 	}
 
-	std::set<CardAnimation> CardAnimator::getCardAnimations() const {
+	void CardAnimator::addCardAnimation(CardAnimation ca) {
+		animations.push_back(ca);
+	}
+
+	void CardAnimator::removeCardAnimation(CardAnimation ca) {
+		animations.erase(std::find(animations.begin(), animations.end(), ca));
+	}
+
+	std::vector<CardAnimation> CardAnimator::getCardAnimations() const {
 		return animations;
 	}
 
@@ -146,6 +154,14 @@ namespace card {
 
 	CardCollection& CardAnimator::operator*() {
 		return getWrappedCardCollection();
+	}
+
+	Card CardAnimator::getLastInclAnimations() const {
+		if(animations.empty()) {
+			return getLast();
+		} else {
+			return animations[animations.size() - 1].mutatesTo;
+		}
 	}
 
 

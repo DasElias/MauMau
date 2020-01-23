@@ -11,4 +11,7 @@ namespace card {
 	bool CardAnimation::operator<(const CardAnimation& other) const {
 		return this->animationStartTime < other.animationStartTime;
 	}
+	bool CardAnimation::operator==(const CardAnimation& other) const {
+		return animationStartTime == other.animationStartTime && duration == other.duration && mutatesTo == other.mutatesTo;
+	}
 }

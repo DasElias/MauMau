@@ -35,6 +35,9 @@ namespace card {
 			std::shared_ptr<LocalPlayer> localPlayer;
 			std::vector<std::shared_ptr<ProxyPlayer>> skippedPlayers;
 
+			bool field_wasCardDrawn = false;
+			bool field_wasCardPlayed = false;
+
 			// is null, if game hasn't ended yet
 			std::shared_ptr<ProxyPlayer> winner;
 

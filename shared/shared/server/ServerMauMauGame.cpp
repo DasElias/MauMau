@@ -16,6 +16,7 @@
 #include "../utils/MathUtils.h"
 #include "../utils/ThreadUtils.h"
 #include "../model/CardAnimationDuration.h"
+#include "../model/TimeToSetNextPlayerOnTurnDuration.h"
 
 namespace card {
 	ServerMauMauGame::ServerMauMauGame(std::shared_ptr<STCPacketTransmitter> packetTransmitter, ServerGameEndHandler& gameEndHandler, std::vector<std::shared_ptr<ParticipantOnServer>> participants) :
@@ -98,8 +99,14 @@ namespace card {
 	bool ServerMauMauGame::canSkipPlayer(Card playedCard) const {
 		return playedCard.getValue() == SKIP_VALUE;
 	}
+	bool ServerMauMauGame::wasCardDrawnLastTurn() const {
+		return wasCardDrawn_lastTurn;
+	}
+	bool ServerMauMauGame::wasCardPlayedLastTurn() const {
+		return wasCardPlayed_lastTurn;
+	}
 	bool ServerMauMauGame::wasCardDrawnAndPlayedLastTurn() const {
-		return wasCardDrawnAndPlayed_lastTurn;
+		return wasCardDrawnLastTurn() && wasCardPlayedLastTurn();
 	}
 	bool ServerMauMauGame::checkIfPlayerByParticipant(const std::shared_ptr<ParticipantOnServer>& participant) {
 		for(auto& p : players) {
@@ -158,12 +165,16 @@ namespace card {
 		});
 	}
 	void ServerMauMauGame::setPlayerOnTurn(std::shared_ptr<Player> player) {
-		wasCardDrawnAndPlayed_lastTurn = wasCardDrawnAndPlayed_thisTurn;
-		wasCardDrawnAndPlayed_thisTurn = false;
-
 		this->playerOnTurn->onEndTurn();
 		this->playerOnTurn = player;
 		this->playerOnTurn->onStartTurn();
+
+		wasCardDrawn_lastTurn = wasCardDrawn_thisTurn;
+		wasCardDrawn_thisTurn = false;
+
+		wasCardPlayed_lastTurn = wasCardPlayed_thisTurn;
+		wasCardPlayed_thisTurn = false;
+
 
 		Card nextOnDrawStackToSend = drawCardStack.getLast();
 		LocalPlayerIsOnTurn_STCPacket packet(nextOnDrawStackToSend.getCardNumber());
@@ -189,6 +200,8 @@ namespace card {
 	bool ServerMauMauGame::drawCardAndSetNextPlayerOnTurn(Player& player) {
 		if(! canDraw(player)) return false;
 
+		wasCardDrawn_thisTurn = true;
+
 		Card removed = drawCardStack.removeLast();
 		player.addHandCard(removed);
 		tryRebalanceCardStacks();
@@ -208,6 +221,8 @@ namespace card {
 		if(! canPlay(player, card)) return false;
 		if(! canChangeColor(card) && chosenIndex != CardIndex::NULLINDEX) return false;
 
+		wasCardPlayed_thisTurn = true;
+
 		bool wasCardJustDrawn = false;
 		if(! player.containsHandCard(card) && drawCardStack.getLast() == card) {
 			// player hasn't the drawn card in his hand cards, but it's the last on the drawCardStack, so he must have just drawn it
@@ -215,13 +230,12 @@ namespace card {
 			drawCardStack.removeLast();
 			playCardStack.addFromPlain(card);
 			wasCardJustDrawn = true;
-			wasCardDrawnAndPlayed_thisTurn = true;
+			wasCardDrawn_thisTurn = true;
 		} else if(player.containsHandCard(card)) {
 			// player wants to play a card in his hand card
 
 			player.removeHandCard(card);
 			playCardStack.addFromPlain(card);
-			wasCardDrawnAndPlayed_thisTurn = false;
 		} else {
 			// player tries to play a card which isn't owned by him
 

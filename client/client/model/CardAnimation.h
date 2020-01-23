@@ -13,5 +13,6 @@ namespace card {
 
 		CardAnimation(long long animationStartTime, int duration, CardAnimator& source, Card mutatesTo);
 		bool operator<(const CardAnimation&) const;
+		bool operator==(const CardAnimation&) const;
 	};	
 }

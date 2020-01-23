@@ -4,6 +4,7 @@
 #include <climits>
 #include "../model/MauMauCardValueMeanings.h"
 #include "../model/CardAnimationDuration.h"
+#include "../model/TimeToSetNextPlayerOnTurnDuration.h"
 
 namespace card {
 	AiPlayer::AiPlayer(std::shared_ptr<ParticipantOnServer> wrappedParticipant, ServerMauMauGame& game, std::vector<Card> handCards) :
@@ -13,13 +14,9 @@ namespace card {
 	void AiPlayer::onStartTurn() {
 		Player::onStartTurn();
 
-		int delay = randomInRange(2000, 3000);
-		if(game.getPlayCardStack().getSize() > 1 && game.getPlayCardStack().getLast().getValue() == DRAW_2_VALUE) {
-			delay += getDelayUntilTwoCardsAreDrawed();
-		}
-		if(game.wasCardDrawnAndPlayedLastTurn()) {
-			delay += DRAW_DURATION_MS + DELAY_BETWEEN_DRAW_AND_PLAY;
-		}
+		int delay = randomInRange(1250, 1750);
+		auto& playCardStack = game.getPlayCardStack();
+		delay += getTimeToSetNextPlayerOnTurn(playCardStack.getSize(), playCardStack.getLast(), game.wasCardPlayedLastTurn(), game.wasCardDrawnLastTurn());
 		threadUtils_invokeIn(delay, [this]() {
 			performTurn();
 		});
