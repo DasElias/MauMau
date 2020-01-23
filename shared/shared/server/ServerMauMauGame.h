@@ -54,6 +54,13 @@ namespace card {
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
+			bool playCardAndSetNextPlayerOnTurn(Player& player, Card card, CardIndex chosenIndex = CardIndex::NULLINDEX);
+			bool drawCardAndSetNextPlayerOnTurn(Player& player);
+			void setNextOrNextButOneOnTurnLocal(Card playedCard);
+			void setNextPlayerOnTurn();
+			void setNextButOnePlayerOnTurn();
+			void setPlayerOnTurn(std::shared_ptr<Player> player);
+
 			bool canPlay(Player& player, Card card) const;
 			bool canDraw(Player& player) const;
 			bool canChangeColor(Card playedCard) const;
@@ -75,11 +82,7 @@ namespace card {
 			const CardStack& getPlayCardStack() const;
 			const CardStack& getDrawCardStack() const;
 
-			void setPlayerOnTurn(std::shared_ptr<Player> player);
-			void setNextPlayerOnTurn();
-			void setNextButOnePlayerOnTurn();
-			bool playCardAndSetNextPlayerOnTurn(Player& player, Card card, CardIndex chosenIndex = CardIndex::NULLINDEX);
-			bool drawCardAndSetNextPlayerOnTurn(Player& player);
+			
 
 		private:
 			void setInitialPlayerOnTurn();
@@ -89,7 +92,10 @@ namespace card {
 			void callGameEndFunctIfGameHasEnded();
 			bool hasPlayerWon();
 
-			std::vector<int> removeCardsToDrawForNextPlayerFromDrawStack(Card playedCardByLastPlayer);
+			std::vector<int> popCardsToDrawForNextPlayerFromDrawStack(Card playedCardByLastPlayer);
+
+			// returns false if the player tries to play a card which isn't owned by him
+			bool movePlayedCardToPlayCardStack(Player& p, Card playedCard, bool& out_wasCardDrawnAndPlayed);
 
 			std::optional<OperationSuccessful_STCAnswerPacket> listener_onPlayCard(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);
 			std::optional<OperationSuccessful_STCAnswerPacket> listener_onDrawCard(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);

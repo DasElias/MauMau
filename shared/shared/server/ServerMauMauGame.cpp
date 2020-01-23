@@ -65,10 +65,161 @@ namespace card {
 		packetTransmitter->addListenerForClientPkt(PlayCardRequest_CTSPacket::PACKET_ID, handler_onPlayCard);
 		packetTransmitter->addListenerForClientPkt(DrawCardRequest_CTSPacket::PACKET_ID, handler_onDrawCard);
 	}
-
+	
 	ServerMauMauGame::~ServerMauMauGame() {
 		packetTransmitter->removeListenerForClientPkt(PlayCardRequest_CTSPacket::PACKET_ID, handler_onPlayCard);
 		packetTransmitter->removeListenerForClientPkt(DrawCardRequest_CTSPacket::PACKET_ID, handler_onDrawCard);
+	}
+
+	void ServerMauMauGame::setInitialPlayerOnTurn() {
+		auto newPlayerOnTurn = getRandomPlayer();
+		this->playerOnTurn = newPlayerOnTurn;
+
+		int timeUntilCardsDistributed = getDurationUntilInitialCardsAreDistributed(this->players.size(), AMOUNT_OF_HAND_CARDS);
+		threadUtils_invokeIn(timeUntilCardsDistributed, [this]() {
+			playerOnTurn->onStartTurn();
+		});
+	}
+
+	bool ServerMauMauGame::playCardAndSetNextPlayerOnTurn(Player& player, Card card, CardIndex chosenIndex) {
+		if(!canPlay(player, card)) return false;
+		if(!canChangeColor(card) && chosenIndex != CardIndex::NULLINDEX) return false;
+
+		bool wasCardJustDrawn = false;
+		bool moveSuccess = movePlayedCardToPlayCardStack(player, card, wasCardJustDrawn);
+		if(! moveSuccess) return false;
+
+		// compute cards to draw for next player
+		// it's important to compute those before the next player is set on turn,
+		// since afterwards we've send already the last card on draw stack to the new
+		// player on turn
+		std::vector<int> cardsToDrawForNextPlayer = popCardsToDrawForNextPlayerFromDrawStack(card);
+
+		if(!hasPlayerWon()) {
+			setNextOrNextButOneOnTurnLocal(card);
+
+			// actually draw cardsToDrawForNextPlayer
+			playerOnTurn->addHandCards(cardsToDrawForNextPlayer);
+		}
+
+		// change color
+		if(canChangeColor(card)) {
+			this->indexForNextCard = chosenIndex;
+		} else {
+			this->indexForNextCard = card.getCardIndex();
+		}
+
+		// send packet to all other players
+		auto senderPlayerPtr = lookupPlayerByUsername(player.getUsername());
+		for(auto& p : this->players) {
+			if(senderPlayerPtr == p) continue;
+
+			std::vector<int> cardsToDrawToSend = (playerOnTurn == p) ? cardsToDrawForNextPlayer : std::vector<int>(cardsToDrawForNextPlayer.size(), 0);
+
+			OtherPlayerHasPlayedCard_STCPacket packet(player.getUsername(), card.getCardNumber(), static_cast<int>(chosenIndex), cardsToDrawToSend, wasCardJustDrawn);
+			packetTransmitter->sendPacketToClient(packet, p->getWrappedParticipant());
+		}
+
+		callGameEndFunctIfGameHasEnded();
+
+		return true;
+	}
+
+	bool ServerMauMauGame::movePlayedCardToPlayCardStack(Player& player, Card card, bool& out_wasCardDrawnAndPlayed) {
+		wasCardPlayed_thisTurn = true;
+
+		if(!player.containsHandCard(card) && drawCardStack.getLast() == card) {
+			// player hasn't the drawn card in his hand cards, but it's the last on the drawCardStack, so he must have just drawn it
+
+			drawCardStack.removeLast();
+			playCardStack.addFromPlain(card);
+			wasCardDrawn_thisTurn = true;
+			out_wasCardDrawnAndPlayed = true;
+		} else if(player.containsHandCard(card)) {
+			// player wants to play a card in his hand card
+
+			player.removeHandCard(card);
+			playCardStack.addFromPlain(card);
+			out_wasCardDrawnAndPlayed = false;
+		} else {
+			// player tries to play a card which isn't owned by him
+
+			return false;
+		}
+
+		return true;
+	}
+	std::vector<int> ServerMauMauGame::popCardsToDrawForNextPlayerFromDrawStack(Card playedCardByLastPlayer) {
+		std::vector<int> removedCards;
+		for(int i = 0; i < getAmountsOfCardsToDrawForNextPlayer(playedCardByLastPlayer); i++) {
+			Card removed = drawCardStack.removeLast();
+			tryRebalanceCardStacks();
+
+			removedCards.push_back(removed.getCardNumber());
+		}
+		return removedCards;
+	}
+
+	bool ServerMauMauGame::drawCardAndSetNextPlayerOnTurn(Player& player) {
+		if(!canDraw(player)) return false;
+
+		wasCardDrawn_thisTurn = true;
+
+		Card removed = drawCardStack.removeLast();
+		player.addHandCard(removed);
+		tryRebalanceCardStacks();
+
+		setNextPlayerOnTurn();
+
+		// send packet to other players
+		OtherPlayerHasDrawnCards_STCPacket otherPlayerHasDrawnPacket(player.getUsername());
+		for(auto& p : this->players) {
+			if(*p == player) continue;
+			packetTransmitter->sendPacketToClient(otherPlayerHasDrawnPacket, p->getWrappedParticipant());
+		}
+
+		return true;
+	}
+
+	void ServerMauMauGame::setNextOrNextButOneOnTurnLocal(Card playedCard) {
+		if(canSkipPlayer(playedCard)) setNextButOnePlayerOnTurn();
+		else setNextPlayerOnTurn();
+	}
+
+	void ServerMauMauGame::setNextPlayerOnTurn() {
+		auto playerOnTurnIter = std::find(players.begin(), players.end(), playerOnTurn);
+		playerOnTurnIter++;
+
+		if(playerOnTurnIter == players.end()) playerOnTurnIter = players.begin();
+		setPlayerOnTurn(*playerOnTurnIter);
+	}
+
+	void ServerMauMauGame::setNextButOnePlayerOnTurn() {
+		auto playerOnTurnIter = std::find(players.begin(), players.end(), playerOnTurn);
+
+		for(int i = 0; i < 2; i++) {
+			playerOnTurnIter++;
+			if(playerOnTurnIter == players.end()) playerOnTurnIter = players.begin();
+		}
+
+		setPlayerOnTurn(*playerOnTurnIter);
+	}
+
+	void ServerMauMauGame::setPlayerOnTurn(std::shared_ptr<Player> player) {
+		this->playerOnTurn->onEndTurn();
+		this->playerOnTurn = player;
+		this->playerOnTurn->onStartTurn();
+
+		wasCardDrawn_lastTurn = wasCardDrawn_thisTurn;
+		wasCardDrawn_thisTurn = false;
+
+		wasCardPlayed_lastTurn = wasCardPlayed_thisTurn;
+		wasCardPlayed_thisTurn = false;
+
+
+		Card nextOnDrawStackToSend = drawCardStack.getLast();
+		LocalPlayerIsOnTurn_STCPacket packet(nextOnDrawStackToSend.getCardNumber());
+		packetTransmitter->sendPacketToClient(packet, player->getWrappedParticipant());
 	}
 
 	bool ServerMauMauGame::canPlay(Player& player, Card card) const {
@@ -155,142 +306,6 @@ namespace card {
 	const CardStack& ServerMauMauGame::getDrawCardStack() const {
 		return drawCardStack;
 	}
-	void ServerMauMauGame::setInitialPlayerOnTurn() {
-		auto newPlayerOnTurn = getRandomPlayer();
-		this->playerOnTurn = newPlayerOnTurn;
-
-		int timeUntilCardsDistributed = getDurationUntilInitialCardsAreDistributed(this->players.size(), AMOUNT_OF_HAND_CARDS);
-		threadUtils_invokeIn(timeUntilCardsDistributed, [this]() {
-			playerOnTurn->onStartTurn();
-		});
-	}
-	void ServerMauMauGame::setPlayerOnTurn(std::shared_ptr<Player> player) {
-		this->playerOnTurn->onEndTurn();
-		this->playerOnTurn = player;
-		this->playerOnTurn->onStartTurn();
-
-		wasCardDrawn_lastTurn = wasCardDrawn_thisTurn;
-		wasCardDrawn_thisTurn = false;
-
-		wasCardPlayed_lastTurn = wasCardPlayed_thisTurn;
-		wasCardPlayed_thisTurn = false;
-
-
-		Card nextOnDrawStackToSend = drawCardStack.getLast();
-		LocalPlayerIsOnTurn_STCPacket packet(nextOnDrawStackToSend.getCardNumber());
-		packetTransmitter->sendPacketToClient(packet, player->getWrappedParticipant());
-	}
-	void ServerMauMauGame::setNextPlayerOnTurn() {
-		auto playerOnTurnIter = std::find(players.begin(), players.end(), playerOnTurn);
-		playerOnTurnIter++;
-
-		if(playerOnTurnIter == players.end()) playerOnTurnIter = players.begin();
-		setPlayerOnTurn(*playerOnTurnIter);
-	}
-	void ServerMauMauGame::setNextButOnePlayerOnTurn() {
-		auto playerOnTurnIter = std::find(players.begin(), players.end(), playerOnTurn);
-
-		for(int i = 0; i < 2; i++) {
-			playerOnTurnIter++;
-			if(playerOnTurnIter == players.end()) playerOnTurnIter = players.begin();
-		}
-
-		setPlayerOnTurn(*playerOnTurnIter);
-	}
-	bool ServerMauMauGame::drawCardAndSetNextPlayerOnTurn(Player& player) {
-		if(! canDraw(player)) return false;
-
-		wasCardDrawn_thisTurn = true;
-
-		Card removed = drawCardStack.removeLast();
-		player.addHandCard(removed);
-		tryRebalanceCardStacks();
-
-		setNextPlayerOnTurn();
-
-		// send packet to other players
-		OtherPlayerHasDrawnCards_STCPacket otherPlayerHasDrawnPacket(player.getUsername());
-		for(auto& p : this->players) {
-			if(*p == player) continue;
-			packetTransmitter->sendPacketToClient(otherPlayerHasDrawnPacket, p->getWrappedParticipant());
-		}
-
-		return true;
-	}
-	bool ServerMauMauGame::playCardAndSetNextPlayerOnTurn(Player& player, Card card, CardIndex chosenIndex) {
-		if(! canPlay(player, card)) return false;
-		if(! canChangeColor(card) && chosenIndex != CardIndex::NULLINDEX) return false;
-
-		wasCardPlayed_thisTurn = true;
-
-		bool wasCardJustDrawn = false;
-		if(! player.containsHandCard(card) && drawCardStack.getLast() == card) {
-			// player hasn't the drawn card in his hand cards, but it's the last on the drawCardStack, so he must have just drawn it
-
-			drawCardStack.removeLast();
-			playCardStack.addFromPlain(card);
-			wasCardJustDrawn = true;
-			wasCardDrawn_thisTurn = true;
-		} else if(player.containsHandCard(card)) {
-			// player wants to play a card in his hand card
-
-			player.removeHandCard(card);
-			playCardStack.addFromPlain(card);
-		} else {
-			// player tries to play a card which isn't owned by him
-
-			return false;	
-		}
-
-		// compute cards to draw for next player
-		// it's important to compute those before the next player is set on turn,
-		// since afterwards we've send already the last card on draw stack to the new
-		// player on turn
-		std::vector<int> cardsToDrawForNextPlayer = removeCardsToDrawForNextPlayerFromDrawStack(card);
-
-		if(! hasPlayerWon()) {
-			// set next player on turn
-			if(canSkipPlayer(card)) setNextButOnePlayerOnTurn();
-			else setNextPlayerOnTurn();
-
-			// actually draw cardsToDrawForNextPlayer
-			for(auto& cardNumber : cardsToDrawForNextPlayer) {
-				playerOnTurn->addHandCard(Card(cardNumber));
-			}
-		}
-		
-		// change color
-		if(canChangeColor(card)) {
-			this->indexForNextCard = chosenIndex;
-		} else {
-			this->indexForNextCard = card.getCardIndex();
-		}
-
-		// send packet to all other players
-		auto senderPlayerPtr = lookupPlayerByUsername(player.getUsername());
-		for(auto& p : this->players) {
-			if(senderPlayerPtr == p) continue;
-
-			std::vector<int> cardsToDrawToSend = (playerOnTurn == p) ? cardsToDrawForNextPlayer : std::vector<int>(cardsToDrawForNextPlayer.size(), 0);
-
-			OtherPlayerHasPlayedCard_STCPacket packet(player.getUsername(), card.getCardNumber(), static_cast<int>(chosenIndex), cardsToDrawToSend, wasCardJustDrawn);
-			packetTransmitter->sendPacketToClient(packet, p->getWrappedParticipant());
-		}
-
-		callGameEndFunctIfGameHasEnded();
-
-		return true;
-	}
-	std::vector<int> ServerMauMauGame::removeCardsToDrawForNextPlayerFromDrawStack(Card playedCardByLastPlayer) {
-		std::vector<int> removedCards;
-		for(int i = 0; i < getAmountsOfCardsToDrawForNextPlayer(playedCardByLastPlayer); i++) {
-			Card removed = drawCardStack.removeLast();
-			tryRebalanceCardStacks();
-
-			removedCards.push_back(removed.getCardNumber());
-		}
-		return removedCards;
-	}
 	void ServerMauMauGame::tryRebalanceCardStacks() {
 		while(drawCardStack.getSize() <= 3 && playCardStack.getSize() >= 1) {
 			drawCardStack.addFromPlain(playCardStack.remove(0));
@@ -314,7 +329,7 @@ namespace card {
 		auto& casted = dynamic_cast<PlayCardRequest_CTSPacket&>(p);
 
 		auto player = lookupPlayerByParticipant(participant);
-		bool wasSuccessful = playCardAndSetNextPlayerOnTurn(*player, {casted.getCardNumber()}, static_cast<CardIndex>(casted.getNewCardIndex()));
+		bool wasSuccessful = playCardAndSetNextPlayerOnTurn(*player, Card(casted.getCardNumber()), static_cast<CardIndex>(casted.getNewCardIndex()));
 		return OperationSuccessful_STCAnswerPacket(wasSuccessful);
 	}
 	std::optional<OperationSuccessful_STCAnswerPacket> ServerMauMauGame::listener_onDrawCard(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant) {
