@@ -34,7 +34,7 @@ namespace card {
 		// init play card stack
 		for(std::size_t i = 0; i < drawCardStack.getSize(); i++) {
 			auto card = drawCardStack.get(i);
-			if(!canChangeColor(card)) {
+			if(! canChangeColor(card) && getAmountsOfCardsToDrawForNextPlayer(card) == 0 && !canSkipPlayer(card)) {
 				firstCardOnPlayStack = card;
 
 				drawCardStack.remove(i);
