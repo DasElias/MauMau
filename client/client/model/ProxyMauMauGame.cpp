@@ -42,7 +42,7 @@ namespace card {
 		}
 
 		// initialize other player's hand cards and draw card stack
-		initStartCards(handCards, startCard);
+		initStartCards(handCards, Card(startCard));
 
 		// initialize player on turn
 		this->userOnTurn = lookupPlayer(usernameOnTurn);

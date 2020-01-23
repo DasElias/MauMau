@@ -16,7 +16,7 @@ namespace card {
 		clear();
 		// first card is NULLCARD
 		for(int card = 1; card <= Card::MAX_CARDS; card++) {
-			addFromPlain({card});
+			addFromPlain(Card(card));
 		}
 
 		shuffle();

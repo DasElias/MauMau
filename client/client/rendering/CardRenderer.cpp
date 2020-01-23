@@ -96,7 +96,7 @@ namespace card {
 		// draw back side of the card
 		PositionedCard backside = card;
 		backside.changeRotation({0, PI, 0});
-		backside.setCard({0});
+		backside.setCard(Card::NULLCARD);
 		glm::mat4 backMVPMatrix = projectionMatrix.getProjectionMatrix() * viewport.getViewMatrix() * backside.getModelMatrix();
 		this->cardsToRenderInNextPass.push_back({backMVPMatrix[0], backMVPMatrix[1], backMVPMatrix[2], backMVPMatrix[3], backside.getCardNumber()});
 	}
