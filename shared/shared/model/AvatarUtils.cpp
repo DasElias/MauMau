@@ -5,10 +5,10 @@
 
 namespace card {
 	std::vector<Avatar> const males = {
-		1, 2, 3, 4, 6, 11, 14, 15, 16, 19
+		1, 2, 3, 4, 6, 11, 14, 15, 16, 19, 22
 	};
 	std::vector<Avatar> const females = {
-		5, 7, 8, 9, 10, 12, 13, 17, 18
+		5, 7, 8, 9, 10, 12, 13, 17, 18, 20, 21
 	};
 
 	Avatar getRandomMaleAvatar() {
