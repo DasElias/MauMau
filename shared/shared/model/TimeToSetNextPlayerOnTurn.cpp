@@ -10,9 +10,6 @@ namespace card {
 		if(playCardStackSize > 1 && lastCardOnPlayCardStack.getValue() == DRAW_2_VALUE) {
 			delay += DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS + DRAW_DURATION_MS;
 		}
-		if(playCardStackSize > 1 && lastCardOnPlayCardStack.getValue() == SKIP_VALUE) {
-			delay += SKIP_ANIMATION_DURATION_MS;
-		}
 		if(wasCardDrawedThisTurn && !wasCardPlayedThisTurn) {
 			delay += DRAW_DURATION_MS;
 		}
