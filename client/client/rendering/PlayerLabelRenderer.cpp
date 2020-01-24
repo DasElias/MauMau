@@ -31,37 +31,30 @@ namespace card {
 		playerLocal->set(participant->getUsername(), participant->getPercentOfSkipAnimationOrNone());
 		localAvatar = participant->getAvatar();
 
-		if(participant->isOnTurn()) renderCircleSector(playerLocal, computePercentExpired(participant));
+		if(participant->isRemainingTimeAnimationActive()) renderCircleSector(playerLocal, *participant->getPercentOfRemainingTime());
 	}
 	void PlayerLabelRenderer::renderVisAVis(const std::shared_ptr<ProxyPlayer>& participant) {
 		playerVisAVis->set(participant->getUsername(), participant->getPercentOfSkipAnimationOrNone());
 		visAVisAvatar = participant->getAvatar();
 
-		if(participant->isOnTurn()) renderCircleSector(playerVisAVis, computePercentExpired(participant));
+		if(participant->isRemainingTimeAnimationActive()) renderCircleSector(playerVisAVis, *participant->getPercentOfRemainingTime());
 	}
 	void PlayerLabelRenderer::renderLeft(const std::shared_ptr<ProxyPlayer>& participant) {
 		playerLeft->set(participant->getUsername(), participant->getPercentOfSkipAnimationOrNone());
 		leftAvatar = participant->getAvatar();
 
-		if(participant->isOnTurn()) renderCircleSector(playerLeft, computePercentExpired(participant));
+		if(participant->isRemainingTimeAnimationActive()) renderCircleSector(playerLeft, *participant->getPercentOfRemainingTime());
 	}
 	void PlayerLabelRenderer::renderRight(const std::shared_ptr<ProxyPlayer>& participant) {
 		playerRight->set(participant->getUsername(), participant->getPercentOfSkipAnimationOrNone());
 		rightAvatar = participant->getAvatar();
 		
-		if(participant->isOnTurn()) renderCircleSector(playerRight, computePercentExpired(participant));
+		if(participant->isRemainingTimeAnimationActive()) renderCircleSector(playerRight, *participant->getPercentOfRemainingTime());
 	}
 	void PlayerLabelRenderer::flush() {
 		flushText();
 		flushImages();
 		endFlush();
-	}
-	float PlayerLabelRenderer::computePercentExpired(const std::shared_ptr<ProxyPlayer>& participant) {
-		float x = float(getMilliseconds() - participant->getUnixTimeTurnStarted());
-		float x1 = 0;
-		float x2 = MAX_TURN_DURATION;
-
-		return interpolateLinear(x, x1, 0, x2, 1);
 	}
 	void PlayerLabelRenderer::renderCircleSector(const std::shared_ptr<PlayerLabel>& playerLabel, float percentExpired) {
 		float startAngle = PI/2;

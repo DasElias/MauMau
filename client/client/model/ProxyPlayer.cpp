@@ -3,12 +3,14 @@
 #include <stdexcept>
 #include <shared/model/CardAnimationDuration.h>
 #include <shared/utils/MathUtils.h>
+#include <shared/model/MaxTurnDuration.h>
 
 namespace card {
 	ProxyPlayer::ProxyPlayer(std::shared_ptr<ParticipantOnClient> wrappedParticipant, ProxyPlayerGameInformation& gameInformation) :
 			handCardStack(std::make_unique<HandCardStack>()),
 			wrappedParticipant(wrappedParticipant),
-			unixTimeTurnStarted(NOT_ON_TURN),
+			unixTimeOnTurnAnimationStarted(NOT_ON_TURN),
+			unixTimeOnTurnAnimationFreezed(ANIMATION_NOT_FREEZED),
 			unixTimePlayerSkipped(0),
 			gameInformation(gameInformation) {
 	}
@@ -52,9 +54,6 @@ namespace card {
 	Avatar ProxyPlayer::getAvatar() const {
 		return wrappedParticipant->getAvatar();
 	}
-	long long int ProxyPlayer::getUnixTimeTurnStarted() const {
-		return unixTimeTurnStarted;
-	}
 	bool ProxyPlayer::isSkipAnimationActive() const {
 		float x = getMilliseconds() - unixTimePlayerSkipped;
 		return x >= 0 && x <= SKIP_ANIMATION_DURATION_MS;
@@ -67,21 +66,38 @@ namespace card {
 		if(isSkipAnimationActive()) return getPercentOfSkipAnimation();
 		return std::nullopt;
 	}
-	bool ProxyPlayer::isOnTurn() const {
-		return unixTimeTurnStarted != NOT_ON_TURN;
+	bool ProxyPlayer::isRemainingTimeAnimationActive() const {
+		return getPercentOfRemainingTime().has_value();
+	}
+	std::optional<float> ProxyPlayer::getPercentOfRemainingTime() const {
+		if(unixTimeOnTurnAnimationStarted == NOT_ON_TURN) return std::nullopt;
+
+		long long int currentTime = (unixTimeOnTurnAnimationFreezed == ANIMATION_NOT_FREEZED) ? getMilliseconds() : unixTimeOnTurnAnimationFreezed;
+		float x = float(currentTime - unixTimeOnTurnAnimationStarted);
+		float x1 = 0;
+		float x2 = MAX_TURN_DURATION;
+
+		return interpolateLinear(x, x1, 0, x2, 1);
 	}
 	std::shared_ptr<ParticipantOnClient> ProxyPlayer::getWrappedParticipiant() {
 		return wrappedParticipant;
+	}
+	void ProxyPlayer::endRemainingTimeAnimation() {
+		this->unixTimeOnTurnAnimationStarted = NOT_ON_TURN;
+		this->unixTimeOnTurnAnimationFreezed = ANIMATION_NOT_FREEZED;
+	}
+	void ProxyPlayer::freezeRemainingTimeAnimation() {
+		this->unixTimeOnTurnAnimationFreezed = getMilliseconds();
 	}
 	void ProxyPlayer::onSkip() {
 		this->unixTimePlayerSkipped = getMilliseconds();
 		if(gameInformation.wasSingleCardDrawedInHandCardsThisTurn) this->unixTimePlayerSkipped += DRAW_DURATION_MS + DELAY_BETWEEN_DRAW_AND_PLAY;
 	}
 	void ProxyPlayer::onStartTurn() {
-		this->unixTimeTurnStarted = getMilliseconds();
+		this->unixTimeOnTurnAnimationStarted = getMilliseconds();
+		this->unixTimeOnTurnAnimationFreezed = ANIMATION_NOT_FREEZED;
 	}
 	void ProxyPlayer::onEndTurn() {
-		this->unixTimeTurnStarted = NOT_ON_TURN;
 		gameInformation.wasSingleCardDrawedInHandCardsThisTurn = false;
 	}
 	bool ProxyPlayer::operator==(const ProxyPlayer& p2) const {

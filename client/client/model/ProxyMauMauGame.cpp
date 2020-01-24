@@ -385,15 +385,29 @@ namespace card {
 		setOnTurnLocal(*playerOnTurnIter);
 	}
 	void ProxyMauMauGame::setOnTurnLocal(std::shared_ptr<ProxyPlayer> player) {
-		int delayToSetNextPlayerOnTurn = getTimeToSetNextPlayerOnTurn(playCardStack.getSizeInclPendingTransactions(), playCardStack.getLastInclAnimations(), field_wasCardPlayed, field_wasCardDrawn);
+		bool wasCardDrawn = field_wasCardDrawn;
+		if(field_wasCardDrawn && userOnTurn == localPlayer) {
+			// we don't have to take the time for drawing the card into consideration
+			wasCardDrawn = false;
+		}
+		int delayToSetNextPlayerOnTurn = getTimeToSetNextPlayerOnTurn(playCardStack.getSizeInclPendingTransactions(), playCardStack.getLastInclAnimations(), field_wasCardPlayed, wasCardDrawn);
+		int delayToFreezeAnimation = getTimeToEndCurrentTurn(playCardStack.getSizeInclPendingTransactions(), playCardStack.getLastInclAnimations(), field_wasCardPlayed, wasCardDrawn);
+		std::shared_ptr<ProxyPlayer> lastUserOnTurn = this->userOnTurn;
+		std::cout << "SET ON TURN LOCAL: " << player->getUsername() << " | was played: " << field_wasCardPlayed << " | wasCardDrawed " << field_wasCardDrawn << std::endl;
 
 		this->userOnTurn->onEndTurn();
 		this->userOnTurn = player;
 
 		field_wasCardDrawn = false;
 		field_wasCardPlayed = false;
-		threadUtils_invokeIn(delayToSetNextPlayerOnTurn, [this, player]() {
+		threadUtils_invokeIn(delayToSetNextPlayerOnTurn, [this, player, lastUserOnTurn]() {
+			std::cout << "ACTUALLY: " << player->getUsername() << std::endl;
+			
+			lastUserOnTurn->endRemainingTimeAnimation();
 			this->userOnTurn->onStartTurn();
+		});
+		threadUtils_invokeIn(delayToFreezeAnimation, [this, lastUserOnTurn]() {
+			lastUserOnTurn->freezeRemainingTimeAnimation();
 		});
 	}
 

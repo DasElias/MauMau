@@ -206,15 +206,19 @@ namespace card {
 	}
 
 	void ServerMauMauGame::setPlayerOnTurn(std::shared_ptr<Player> player) {
-		this->playerOnTurn->onEndTurn();
-		this->playerOnTurn = player;
-		this->playerOnTurn->onStartTurn();
 
 		wasCardDrawn_lastTurn = wasCardDrawn_thisTurn;
 		wasCardDrawn_thisTurn = false;
 
 		wasCardPlayed_lastTurn = wasCardPlayed_thisTurn;
 		wasCardPlayed_thisTurn = false;
+
+		log(LogSeverity::WARNING, "SET ON TURN LOCAL: " + player->getUsername() + " | was played: " + std::to_string(wasCardPlayedLastTurn()) + " | wasCardDrawed " + std::to_string(wasCardDrawnLastTurn()));
+
+		this->playerOnTurn->onEndTurn();
+		this->playerOnTurn = player;
+		this->playerOnTurn->onStartTurn();
+
 
 
 		Card nextOnDrawStackToSend = drawCardStack.getLast();

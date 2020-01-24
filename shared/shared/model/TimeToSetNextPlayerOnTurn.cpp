@@ -5,22 +5,30 @@
 
 namespace card {
 	int getTimeToSetNextPlayerOnTurn(std::size_t playCardStackSize, Card lastCardOnPlayCardStack, bool wasCardPlayedThisTurn, bool wasCardDrawedThisTurn) {
-		int delay = 0;
+		int delay = getTimeToEndCurrentTurn(playCardStackSize, lastCardOnPlayCardStack, wasCardPlayedThisTurn, wasCardDrawedThisTurn);
+
 		if(playCardStackSize > 1 && lastCardOnPlayCardStack.getValue() == DRAW_2_VALUE) {
 			delay += getDelayUntilTwoCardsAreDrawed();
 		}
 		if(playCardStackSize > 1 && lastCardOnPlayCardStack.getValue() == SKIP_VALUE) {
 			delay += SKIP_ANIMATION_DURATION_MS;
 		}
-		if(wasCardDrawedThisTurn && wasCardPlayedThisTurn) {
-			delay += DELAY_BETWEEN_DRAW_AND_PLAY;
-		}
-		if(wasCardDrawedThisTurn) {
+		if(wasCardDrawedThisTurn && !wasCardPlayedThisTurn) {
 			delay += DRAW_DURATION_MS;
 		}
 		if(wasCardPlayedThisTurn) {
 			delay += PLAY_DURATION_MS;
 		}
+		return delay;
+	}
+	int getTimeToEndCurrentTurn(std::size_t playCardStackSize, Card lastCardOnPlayCardStack, bool wasCardPlayedThisTurn, bool wasCardDrawedThisTurn) {
+		int delay = 0;
+
+		if(wasCardPlayedThisTurn && wasCardDrawedThisTurn) {
+			delay += DRAW_DURATION_MS;
+			delay += DELAY_BETWEEN_DRAW_AND_PLAY;
+		}
+
 		return delay;
 	}
 }

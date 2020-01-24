@@ -21,7 +21,7 @@ TEST_CASE("ProxyPlayer can draw and play cards", "[ProxyPlayer]") {
 
 	SECTION("test general methods after initialisation") {
 		REQUIRE(p.getUsername() == username);
-		REQUIRE(p.isOnTurn() == false);
+		REQUIRE(p.isRemainingTimeAnimationActive() == false);
 		REQUIRE(p.isSkipAnimationActive() == false);
 		REQUIRE(! p.getPercentOfSkipAnimationOrNone().has_value());
 		REQUIRE(p.getWrappedParticipiant() == wrappedParticipant);

@@ -47,7 +47,6 @@ namespace card {
              void flush();
             
         private:
-            float computePercentExpired(const std::shared_ptr<ProxyPlayer>& participant);
             void renderCircleSector(const std::shared_ptr<PlayerLabel>& playerLabel, float percentExpired);
             void updatePositions();
             void flushText();
