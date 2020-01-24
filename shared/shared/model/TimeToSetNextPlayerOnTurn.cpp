@@ -8,7 +8,7 @@ namespace card {
 		int delay = getTimeToEndCurrentTurn(playCardStackSize, lastCardOnPlayCardStack, wasCardPlayedThisTurn, wasCardDrawedThisTurn);
 
 		if(playCardStackSize > 1 && lastCardOnPlayCardStack.getValue() == DRAW_2_VALUE) {
-			delay += getDelayUntilTwoCardsAreDrawed();
+			delay += DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS + DRAW_DURATION_MS;
 		}
 		if(playCardStackSize > 1 && lastCardOnPlayCardStack.getValue() == SKIP_VALUE) {
 			delay += SKIP_ANIMATION_DURATION_MS;
