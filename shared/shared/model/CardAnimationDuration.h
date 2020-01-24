@@ -5,7 +5,6 @@ namespace card {
 	static int const PLAY_DURATION_MS = 1250;
 	static int const DRAW_DURATION_MS = 1250;
 	static int const DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS = 500;
-	static int const SKIP_ANIMATION_DURATION_MS = PLAY_DURATION_MS;
 	// card is drawed and played in the same turn
 	static int const DELAY_BETWEEN_DRAW_AND_PLAY = 750;
 

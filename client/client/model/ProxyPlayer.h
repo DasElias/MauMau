@@ -25,6 +25,8 @@ namespace card {
 			static long long int const NOT_ON_TURN = -1;			
 			static long long int const ANIMATION_NOT_FREEZED = -1;
 
+			static int const SKIP_ANIMATION_DURATION_MS;
+
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------

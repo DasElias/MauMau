@@ -6,6 +6,8 @@
 #include <shared/model/MaxTurnDuration.h>
 
 namespace card {
+	int const ProxyPlayer::SKIP_ANIMATION_DURATION_MS = PLAY_DURATION_MS;
+
 	ProxyPlayer::ProxyPlayer(std::shared_ptr<ParticipantOnClient> wrappedParticipant, ProxyPlayerGameInformation& gameInformation) :
 			handCardStack(std::make_unique<HandCardStack>()),
 			wrappedParticipant(wrappedParticipant),
