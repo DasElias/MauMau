@@ -2,6 +2,9 @@
 #include "CardAnimation.h"
 #include <shared/model/CardCollection.h>
 #include <memory>
+#include "CardAnimationSet.h"
+#include <map>
+#include <optional>
 
 namespace card {
 	class CardAnimator {
@@ -17,8 +20,9 @@ namespace card {
 		// ----------------------------------------------------------------------
 		private:
 			long long id;
-			std::vector<CardAnimation> animations;
+			CardAnimationSet animations;
 			std::unique_ptr<CardCollection> wrappedCardCollection;
+			std::optional<Card> lastRegisteredAnimation;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
@@ -51,7 +55,7 @@ namespace card {
 			void addDeterminedCardFromImmediately(Card card, CardAnimator& source, int durationMs);
 			void addRandomCardFromImmediately(Card mutatesTo, CardAnimator& source, int durationMs);
 
-			std::vector<CardAnimation> getCardAnimations() const;
+			std::set<CardAnimation> getCardAnimations() const;
 
 			std::size_t getSizeInclPendingTransactions() const;
 			bool isEmptyAndNoPendingTransactions() const;
@@ -94,5 +98,8 @@ namespace card {
 
 			void addCardAnimation(CardAnimation ca);
 			void removeCardAnimation(CardAnimation ca);
+
+			void registerCardAnimation(Card c);
+			void unregisterCardAnimation();
 	};
 }

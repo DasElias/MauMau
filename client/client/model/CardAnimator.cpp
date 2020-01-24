@@ -2,6 +2,7 @@
 #include <shared/utils/ThreadUtils.h>
 #include <shared/utils/MathUtils.h>
 #include <stdexcept>
+#include <optional>
 
 namespace card {
 	long long CardAnimator::idCounter = 0;
@@ -9,7 +10,8 @@ namespace card {
 
 	CardAnimator::CardAnimator(std::unique_ptr<CardCollection> wrappedCardCollection) :
 			id(idCounter++),
-			wrappedCardCollection(std::move(wrappedCardCollection)) {
+			wrappedCardCollection(std::move(wrappedCardCollection)),
+			lastRegisteredAnimation() {
 	}
 	bool CardAnimator::arePendingAnimations() {
 		return pendingAnimationsCounter > 0;
@@ -21,7 +23,9 @@ namespace card {
 			return;
 		}
 
+		registerCardAnimation(mutatesTo);
 		threadUtils_invokeIn(delayMs, [this, mutatesTo, &source, durationMs]() {
+			unregisterCardAnimation();
 			this->addFirstCardFromImmediately(mutatesTo, source, durationMs);
 		});
 	}
@@ -46,7 +50,9 @@ namespace card {
 			return;
 		}
 
+		registerCardAnimation(mutatesTo);
 		threadUtils_invokeIn(delayMs, [this, mutatesTo, &source, durationMs]() {
+			unregisterCardAnimation();
 			this->addLastCardFromImmediately(mutatesTo, source, durationMs);
 		});
 	}
@@ -71,7 +77,9 @@ namespace card {
 			return;
 		}
 
+		registerCardAnimation(card);
 		threadUtils_invokeIn(delayMs, [this, card, &source, durationMs]() {
+			unregisterCardAnimation();
 			this->addDeterminedCardFromImmediately(card, source, durationMs);
 		});
 	}
@@ -96,7 +104,9 @@ namespace card {
 			return;
 		}
 	
+		registerCardAnimation(mutatesTo);
 		threadUtils_invokeIn(delayMs, [this, mutatesTo, &source, durationMs]() {
+			unregisterCardAnimation();
 			addRandomCardFromImmediately(mutatesTo, source, durationMs);
 		});
 	}
@@ -125,19 +135,27 @@ namespace card {
 	}
 
 	void CardAnimator::addCardAnimation(CardAnimation ca) {
-		animations.push_back(ca);
+		animations.insert(ca);
 	}
 
 	void CardAnimator::removeCardAnimation(CardAnimation ca) {
 		animations.erase(std::find(animations.begin(), animations.end(), ca));
 	}
 
-	std::vector<CardAnimation> CardAnimator::getCardAnimations() const {
+	void CardAnimator::registerCardAnimation(Card c) {
+		lastRegisteredAnimation = c;
+	}
+
+	void CardAnimator::unregisterCardAnimation() {
+		lastRegisteredAnimation = std::nullopt;
+	}
+
+	std::set<CardAnimation> CardAnimator::getCardAnimations() const {
 		return animations;
 	}
 
 	std::size_t CardAnimator::getSizeInclPendingTransactions() const {
-		return getSize() + animations.size();
+		return getSize() + animations.size() + ((lastRegisteredAnimation.has_value()) ? 1 : 0);
 	}
 
 	bool CardAnimator::isEmptyAndNoPendingTransactions() const {
@@ -157,11 +175,10 @@ namespace card {
 	}
 
 	Card CardAnimator::getLastInclAnimations() const {
-		if(animations.empty()) {
-			return getLast();
-		} else {
-			return animations[animations.size() - 1].mutatesTo;
-		}
+		if(lastRegisteredAnimation.has_value()) return *lastRegisteredAnimation;
+		if(! animations.empty()) return animations.getLast().mutatesTo;
+		return getLast();
+
 	}
 
 
