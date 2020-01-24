@@ -138,13 +138,13 @@ namespace card {
 		renderLocalPlayer();
 		cardRenderer.flush(true);
 		renderPlayerLabels(opponentsOrNoneInCwOrder);
+		renderCardIndexForNextCardIfGameHasntEnded();
 		renderDrawnCardOverlayIfGameHasntEnded();
 		renderChooseColorOverlayIfGameHasntEnded();
 
 		// flush CardRenderer
 		cardRenderer.flush();
 
-		renderCardIndexForNextCardIfGameHasntEnded();
 		renderGameEndScreenIfGameHasEnded(deltaSeconds);
 
 		glEnable(GL_DEPTH_TEST);
