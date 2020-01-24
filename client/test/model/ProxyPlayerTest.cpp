@@ -43,7 +43,7 @@ TEST_CASE("ProxyPlayer can draw and play cards", "[ProxyPlayer]") {
 	SECTION("draw multiple cards after card play time") {
 		std::vector<Card> cardsToDraw = {Card::CLUB_ACE, Card::DIAMOND_SEVEN};
 
-		p.drawMultipleCardsInHandCardsAfterCardPlayTimeLocal(cardsToDraw, drawCardStack);
+		p.drawMultipleCardsInHandCardsAfterDelay(cardsToDraw, drawCardStack, 0);
 
 		REQUIRE(drawCardStack.getSize() == (Card::MAX_CARDS - cardsToDraw.size()));
 		REQUIRE(p.getCardStack().getSize() == cardsToDraw.size());
@@ -62,7 +62,7 @@ TEST_CASE("ProxyPlayer can draw and play cards", "[ProxyPlayer]") {
 		std::vector<Card> handCards = {Card::CLUB_ACE, Card::DIAMOND_SEVEN};
 		p.initHandCards(handCards, drawCardStack, 0);
 
-		p.playCardFromHandCardsAfterDrawTime(Card::CLUB_EIGHT, playCardStack, false);
+		p.playCardFromHandCardsAfterDelay(Card::CLUB_EIGHT, playCardStack, false, 0);
 
 		REQUIRE(playCardStack.getSize() == 1);
 		REQUIRE(playCardStack.get(0) == Card::CLUB_EIGHT);

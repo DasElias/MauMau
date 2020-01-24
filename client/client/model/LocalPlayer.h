@@ -44,7 +44,7 @@ namespace card {
 		public:
 			void drawSingleCardInTempCardStackLocal(Card mutatesTo, CardAnimator& drawCardStack);
 			void playCardFromHandCards(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick) override;
-			void playCardFromHandCardsAfterDrawTime(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick) override;
+			void playCardFromHandCardsAfterDelay(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick, int delayMs) override;
 			void playCardFromTempCardStackLocal(CardAnimator& playCardStack, bool isWaitingForColorPick);
 			void sortDrawnCardIntoHandCardsLocal();
 

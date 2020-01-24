@@ -53,9 +53,9 @@ namespace card {
 			void initHandCards(std::vector<Card> handCards, CardAnimator& drawCardStack, std::size_t playerIndex);
 			void drawSingleCardInHandCardsLocal(Card mutatesTo, CardAnimator& drawCardStack);
 			void drawMultipleCardsInHandCardsLocal(std::vector<Card> mutatesTo, CardAnimator& drawCardStack);
-			void drawMultipleCardsInHandCardsAfterCardPlayTimeLocal(std::vector<Card> mutatesTo, CardAnimator& drawCardStack);
+			void drawMultipleCardsInHandCardsAfterDelay(std::vector<Card> mutatesTo, CardAnimator& drawCardStack, int delayMs);
 			virtual void playCardFromHandCards(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick);
-			virtual void playCardFromHandCardsAfterDrawTime(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick);
+			virtual void playCardFromHandCardsAfterDelay(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick, int delayMs);
 
 			const CardAnimator& getCardStack() const;
 			std::string getUsername() const;

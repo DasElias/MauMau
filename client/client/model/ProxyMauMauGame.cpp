@@ -333,7 +333,7 @@ namespace card {
 
 		if(wasDrawedJustBefore) {
 			player->drawSingleCardInHandCardsLocal(card, drawCardStack);
-			player->playCardFromHandCardsAfterDrawTime(card, playCardStack, canChangeColor(card));
+			player->playCardFromHandCardsAfterDelay(card, playCardStack, canChangeColor(card), DRAW_DURATION_MS + DELAY_BETWEEN_DRAW_AND_PLAY);
 			field_wasCardDrawn = true;
 		} else {
 			player->playCardFromHandCards(card, playCardStack, canChangeColor(card));
@@ -348,7 +348,8 @@ namespace card {
 
 		setNextOrNextButOneOnTurnLocal(card);
 
-		playerHasToDrawCards(userOnTurn, cardsToDraw);
+		int additionalDelayForDraw = (wasDrawedJustBefore) ? DRAW_DURATION_MS + DELAY_BETWEEN_DRAW_AND_PLAY : 0;
+		playerHasToDrawCards(userOnTurn, cardsToDraw, additionalDelayForDraw);
 		updateGameEndFlag();
 	}
 	void ProxyMauMauGame::drawCardAndSetNextPlayerOnTurnLocal(std::string username) {
@@ -416,15 +417,15 @@ namespace card {
 		else return indexForNextCard;
 	}
 	
-	void ProxyMauMauGame::playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, std::size_t amountOfCards) {
+	void ProxyMauMauGame::playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, std::size_t amountOfCards, int additionalDelayMs) {
 		if(amountOfCards == 0) return;
 
 		auto cards = Card::getVectorWithCards(Card::NULLCARD, amountOfCards);
-		playerHasToDrawCards(player, cards);
+		playerHasToDrawCards(player, cards, additionalDelayMs);
 	}
 
-	void ProxyMauMauGame::playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, const std::vector<Card>& cards) {
-		player->drawMultipleCardsInHandCardsAfterCardPlayTimeLocal(cards, drawCardStack);
+	void ProxyMauMauGame::playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, const std::vector<Card>& cards, int additionalDelayMs) {
+		player->drawMultipleCardsInHandCardsAfterDelay(cards, drawCardStack, PLAY_DURATION_MS + additionalDelayMs);
 		tryRebalanceCardStacks();
 	}
 

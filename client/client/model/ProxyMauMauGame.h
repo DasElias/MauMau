@@ -84,8 +84,8 @@ namespace card {
 			void playCardAndSetNextPlayerOnTurnLocal(std::string username, Card card, CardIndex newCardIndex, std::vector<Card> cardsToDraw, bool wasDrawedJustBefore);
 			void drawCardAndSetNextPlayerOnTurnLocal(std::string username);
 			// player has to draw cards after other player has played 7, for instance 
-			void playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, std::size_t amountOfCards);
-			void playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, const std::vector<Card>& cards);
+			void playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, std::size_t amountOfCards, int delayMs = 0);
+			void playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, const std::vector<Card>& cards, int delayMs = 0);
 
 			void setNextOrNextButOneOnTurnLocal(Card playedCard);
 			void setNextPlayerOnTurnLocal();

@@ -38,11 +38,11 @@ namespace card {
 		}
 	}
 
-	void LocalPlayer::playCardFromHandCardsAfterDrawTime(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick) {
+	void LocalPlayer::playCardFromHandCardsAfterDelay(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick, int delayMs) {
 		if(isWaitingForColorPick) isWaitingForColorPick_field = isWaitingForColorPick;
 		this->playedCard = card;
 
-		playCardStack.addDeterminedCardFrom(card, handCardStack, PLAY_DURATION_MS, DRAW_DURATION_MS);
+		playCardStack.addDeterminedCardFrom(card, handCardStack, PLAY_DURATION_MS, delayMs);
 	}
 
 	void LocalPlayer::playCardFromHandCards(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick) {
