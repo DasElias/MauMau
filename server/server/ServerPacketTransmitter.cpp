@@ -1,8 +1,13 @@
 #include "ServerPacketTransmitter.h"
 #include <shared/packet/CTSPacketConstructorFromJson.h>
 #include "ConnectionToClient.h"
+#include "ThreadSynchronizer.h"
+
 namespace card {
 	void ServerPacketTransmitter::onReceive(std::string& msg, std::shared_ptr<ConnectionToClient> sender) {
+		std::mutex& mutex = threadSyncronizer_getMutex();
+		std::lock_guard<std::mutex> lockGuard(mutex);
+
 		constructAndProcessCTSPacketFromJson(msg, [this, sender](ClientToServerPacket& packet) {
 			optionalSuccessAnswerPacket answerPacket = std::nullopt;
 			int packetType = packet.getPacketType();

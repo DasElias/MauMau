@@ -4,6 +4,8 @@
 #include <memory>
 #include "Daemon.h"
 #include <shared/utils/Logger.h>
+#include <shared/utils/ThreadUtils.h>
+#include "ThreadSynchronizer.h"
 
 using namespace card;
 namespace ba = boost::asio;
@@ -11,6 +13,16 @@ using ba::ip::tcp;
 using boost::system::error_code;
 using namespace std::chrono_literals;
 using namespace std::string_literals;
+
+void runThreadUtils() {
+	{
+		std::mutex& mutex = threadSyncronizer_getMutex();
+		std::lock_guard<std::mutex> lockGuard(mutex);
+
+		threadUtils_update();
+	}
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+}
 
 int main() {
 	initDaemon();
@@ -21,6 +33,8 @@ int main() {
 		ba::io_context ioc;
 		RoomManager roomManager(packetTransmitter);
 		Acceptor acceptor(ioc, packetTransmitter, roomManager);
+
+		std::thread threadUtilsThread(&runThreadUtils);
 
 		ioc.run();
 	} catch(boost::system::system_error e) {
