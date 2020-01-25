@@ -38,12 +38,16 @@ namespace card {
 			bool field_wasCardDrawn = false;
 			bool field_wasCardPlayed = false;
 
+			bool field_isWaitingForColorChoose = false;
+			std::optional<Card> premarkedCardToPlayAfterColorChoose;
+
 			// is null, if game hasn't ended yet
 			std::shared_ptr<ProxyPlayer> winner;
 
 			ServerPacketListenerCallback handler_onOtherPlayerHasDrawnCard;
 			ServerPacketListenerCallback handler_onOtherPlayerHasPlayedCard;
 			ServerPacketListenerCallback handler_onLocalPlayerIsOnTurn;
+			ServerPacketListenerCallback handler_onTimeExpires;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
@@ -83,9 +87,11 @@ namespace card {
 
 			void playCardAndSetNextPlayerOnTurnLocal(std::string username, Card card, CardIndex newCardIndex, std::vector<Card> cardsToDraw, bool wasDrawedJustBefore);
 			void drawCardAndSetNextPlayerOnTurnLocal(std::string username);
+			void abortTurnOnTimeExpires(const std::vector<Card>& cardsToDraw);
 			// player has to draw cards after other player has played 7, for instance 
 			void playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, std::size_t amountOfCards, int delayMs = 0);
 			void playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, const std::vector<Card>& cards, int delayMs = 0);
+			
 
 			void setNextOrNextButOneOnTurnLocal(Card playedCard);
 			void setNextPlayerOnTurnLocal();
@@ -117,5 +123,6 @@ namespace card {
 			void listener_onOtherPlayerHasDrawnCard(Packet& p);
 			void listener_onOtherPlayerHasPlayedCard(Packet& p);
 			void listener_onLocalPlayerIsOnTurn(Packet& p);
+			void listener_onTimeExpires(Packet& p);
 	};
 }

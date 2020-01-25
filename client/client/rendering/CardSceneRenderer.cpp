@@ -283,7 +283,7 @@ namespace card {
 		std::optional<Card> drawnCard = localPlayer->getDrawnCard();
 
 		bool isGameRunning = !game->hasGameEnded();
-		if(drawnCard.has_value() && isGameRunning) {
+		if(drawnCard.has_value() && isGameRunning && !localPlayer->hasTimeExpired()) {
 			// if the overlay wasn't displayed in the last frame, we need to ensure that there
 			// are no previous mouse events which are going to fire
 			if(! drawnCardInLastPass.has_value()) drawnCardRenderer.clearPreviousMouseEvents();
@@ -299,7 +299,7 @@ namespace card {
 		auto& localPlayer = game->getLocalPlayer();
 
 		bool isGameRunning = !game->hasGameEnded();
-		if(localPlayer->isWaitingForColorPick() && isGameRunning) {
+		if(game->isWaitingForColorChoose() && isGameRunning) {
 			cardRenderer.flush();
 			chooseCardRenderer.render();
 		}

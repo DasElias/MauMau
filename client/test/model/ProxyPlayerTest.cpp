@@ -52,7 +52,7 @@ TEST_CASE("ProxyPlayer can draw and play cards", "[ProxyPlayer]") {
 		std::vector<Card> handCards = {Card::CLUB_ACE, Card::DIAMOND_SEVEN};
 		p.initHandCards(handCards, drawCardStack, 0);
 
-		p.playCardFromHandCards(Card::CLUB_EIGHT, playCardStack, false);
+		p.playCardFromHandCards(Card::CLUB_EIGHT, playCardStack);
 
 		REQUIRE(playCardStack.getSize() == 1);
 		REQUIRE(playCardStack.get(0) == Card::CLUB_EIGHT);
@@ -62,7 +62,7 @@ TEST_CASE("ProxyPlayer can draw and play cards", "[ProxyPlayer]") {
 		std::vector<Card> handCards = {Card::CLUB_ACE, Card::DIAMOND_SEVEN};
 		p.initHandCards(handCards, drawCardStack, 0);
 
-		p.playCardFromHandCardsAfterDelay(Card::CLUB_EIGHT, playCardStack, false, 0);
+		p.playCardFromHandCardsAfterDelay(Card::CLUB_EIGHT, playCardStack, 0);
 
 		REQUIRE(playCardStack.getSize() == 1);
 		REQUIRE(playCardStack.get(0) == Card::CLUB_EIGHT);

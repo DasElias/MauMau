@@ -56,8 +56,8 @@ namespace card {
 			void drawSingleCardInHandCardsLocal(Card mutatesTo, CardAnimator& drawCardStack);
 			void drawMultipleCardsInHandCardsLocal(std::vector<Card> mutatesTo, CardAnimator& drawCardStack);
 			void drawMultipleCardsInHandCardsAfterDelay(std::vector<Card> mutatesTo, CardAnimator& drawCardStack, int delayMs);
-			virtual void playCardFromHandCards(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick);
-			virtual void playCardFromHandCardsAfterDelay(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick, int delayMs);
+			virtual void playCardFromHandCards(Card card, CardAnimator& playCardStack);
+			virtual void playCardFromHandCardsAfterDelay(Card card, CardAnimator& playCardStack, int delayMs);
 
 			const CardAnimator& getCardStack() const;
 			std::string getUsername() const;
@@ -65,6 +65,7 @@ namespace card {
 			bool isSkipAnimationActive() const;
 			float getPercentOfSkipAnimation() const;
 			std::optional<float> getPercentOfSkipAnimationOrNone() const;
+			bool hasTimeExpired() const;
 			bool isRemainingTimeAnimationActive() const;
 			std::optional<float> getPercentOfRemainingTime() const;
 			std::shared_ptr<ParticipantOnClient> getWrappedParticipiant();

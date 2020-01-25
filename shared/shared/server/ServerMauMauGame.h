@@ -13,11 +13,9 @@ namespace card {
 		// ----------------------------------------------------------------------
 		// ----------------------------STATIC-FIELDS-----------------------------
 		// ----------------------------------------------------------------------
-		public:	
-			static int const MAX_DURATION_OF_TURN_MS = 30 * 1000;
-
 		private:
-			static int const AMOUNT_OF_HAND_CARDS = 2;
+			static int const AMOUNT_OF_HAND_CARDS = 6;
+			static int const CARDS_TO_DRAW_ON_TIME_EXPIRED = 2;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
@@ -92,10 +90,13 @@ namespace card {
 			void callGameEndFunctIfGameHasEnded();
 			bool hasPlayerWon();
 
-			std::vector<int> popCardsToDrawForNextPlayerFromDrawStack(Card playedCardByLastPlayer);
+			std::vector<int> popCardsToDrawForNextPlayerFromDrawStack(int cardAmount);
 
 			// returns false if the player tries to play a card which isn't owned by him
 			bool movePlayedCardToPlayCardStack(Player& p, Card playedCard, bool& out_wasCardDrawnAndPlayed);
+
+			void startTurnAbortTimer(std::string username);
+			void abortTurn();
 
 			std::optional<OperationSuccessful_STCAnswerPacket> listener_onPlayCard(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);
 			std::optional<OperationSuccessful_STCAnswerPacket> listener_onDrawCard(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);

@@ -38,25 +38,19 @@ namespace card {
 		}
 	}
 
-	void LocalPlayer::playCardFromHandCardsAfterDelay(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick, int delayMs) {
-		if(isWaitingForColorPick) isWaitingForColorPick_field = isWaitingForColorPick;
+	void LocalPlayer::playCardFromHandCardsAfterDelay(Card card, CardAnimator& playCardStack, int delayMs) {
 		this->playedCard = card;
-
 		playCardStack.addDeterminedCardFrom(card, handCardStack, PLAY_DURATION_MS, delayMs);
 	}
 
-	void LocalPlayer::playCardFromHandCards(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick) {
-		if(isWaitingForColorPick) isWaitingForColorPick_field = isWaitingForColorPick;
+	void LocalPlayer::playCardFromHandCards(Card card, CardAnimator& playCardStack) {
 		this->playedCard = card;
-
 		playCardStack.addDeterminedCardFromImmediately(card, handCardStack, PLAY_DURATION_MS);
 	}
 
-	void LocalPlayer::playCardFromTempCardStackLocal(CardAnimator& playCardStack, bool isWaitingForColorPick) {
+	void LocalPlayer::playCardFromTempCardStackLocal(CardAnimator& playCardStack) {
 		if(!isCardInTemporaryStack()) throw std::runtime_error("The player hasn't drawn a card yet!");
-		if(isWaitingForColorPick) isWaitingForColorPick_field = isWaitingForColorPick;
 		this->playedCard = getDrawnCard();
-
 		playCardStack.addDeterminedCardFromImmediately(*getDrawnCard(), drawnCardTempStack, PLAY_DURATION_MS);
 	}
 
@@ -85,14 +79,6 @@ namespace card {
 		return drawnCardTempStack;
 	}
 
-	void LocalPlayer::setColorWasPicked() {
-		this->isWaitingForColorPick_field = false;
-	}
-
-	bool LocalPlayer::isWaitingForColorPick() const {
-		return this->isWaitingForColorPick_field;
-	}
-
 	void LocalPlayer::onStartTurn() {
 		ProxyPlayer::onStartTurn();
 
@@ -110,10 +96,7 @@ namespace card {
 		ProxyPlayer::onEndTurn();
 
 		playedCard = std::nullopt;
-		isWaitingForColorPick_field = false;
-		for(int counter = static_cast<int>(drawnCardTempStack.getSize() - 1); counter > 0; counter--) {
-			ProxyPlayer::drawSingleCardInHandCardsLocal(drawnCardTempStack.get(counter), drawnCardTempStack);
-		}
+		drawnCardTempStack.clear();
 		wasCardDrawn_flag = false;
 		
 		log(LogSeverity::DEBUG, "Turn has ended");

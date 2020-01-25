@@ -17,7 +17,6 @@ namespace card {
 
 			PlayVerifier& playVerifier;
 
-			bool isWaitingForColorPick_field = false;
 			std::optional<Card> playedCard = std::nullopt;
 
 			// when a card is drawn, it should appear to the user so that he can
@@ -43,9 +42,9 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			void drawSingleCardInTempCardStackLocal(Card mutatesTo, CardAnimator& drawCardStack);
-			void playCardFromHandCards(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick) override;
-			void playCardFromHandCardsAfterDelay(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick, int delayMs) override;
-			void playCardFromTempCardStackLocal(CardAnimator& playCardStack, bool isWaitingForColorPick);
+			void playCardFromHandCards(Card card, CardAnimator& playCardStack) override;
+			void playCardFromHandCardsAfterDelay(Card card, CardAnimator& playCardStack, int delayMs) override;
+			void playCardFromTempCardStackLocal(CardAnimator& playCardStack);
 			void sortDrawnCardIntoHandCardsLocal();
 
 			std::optional<Card> getPlayedCard() const;
@@ -54,8 +53,6 @@ namespace card {
 			bool isCardInTemporaryStack() const;
 			std::optional<Card> getDrawnCard() const;
 			const CardAnimator& getDrawnCardAsStack() const;
-			void setColorWasPicked();
-			bool isWaitingForColorPick() const;
 
 			void onStartTurn() override;
 			void onEndTurn() override;

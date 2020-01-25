@@ -101,6 +101,10 @@ namespace card {
 		return cardNumber == other.cardNumber;
 	}
 
+	bool Card::operator!=(const Card& other) const {
+		return cardNumber != other.cardNumber;
+	}
+
 	bool Card::operator<(const Card& other) const {
 		return cardNumber < other.cardNumber;
 	}

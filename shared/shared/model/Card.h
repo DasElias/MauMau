@@ -99,6 +99,7 @@ namespace card {
 			CardValue getValue() const;
 
 			bool operator==(const Card&) const;
+			bool operator!=(const Card&) const;
 			bool operator<(const Card&) const;
 			bool operator>(const Card&) const;
 			bool operator<=(const Card&) const;

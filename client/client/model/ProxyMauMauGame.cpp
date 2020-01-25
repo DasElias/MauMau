@@ -7,6 +7,7 @@
 #include <shared/packet/cts/PlayCardRequest_CTSPacket.h>
 #include <shared/packet/cts/DrawCardRequest_CTSPacket.h>
 
+#include <shared/packet/stc/TurnWasAborted_STCPacket.h>
 #include <shared/packet/stc/OtherPlayerHasDrawnCards_STCPacket.h>
 #include <shared/packet/stc/OtherPlayerHasPlayedCard_STCPacket.h>
 #include <shared/packet/stc/LocalPlayerIsOnTurn_STCPacket.h>
@@ -27,7 +28,8 @@ namespace card {
 			winner(nullptr),
 			handler_onOtherPlayerHasDrawnCard(std::bind(&ProxyMauMauGame::listener_onOtherPlayerHasDrawnCard, this, std::placeholders::_1)),
 			handler_onOtherPlayerHasPlayedCard(std::bind(&ProxyMauMauGame::listener_onOtherPlayerHasPlayedCard, this, std::placeholders::_1)),
-			handler_onLocalPlayerIsOnTurn(std::bind(&ProxyMauMauGame::listener_onLocalPlayerIsOnTurn, this, std::placeholders::_1)) {
+			handler_onLocalPlayerIsOnTurn(std::bind(&ProxyMauMauGame::listener_onLocalPlayerIsOnTurn, this, std::placeholders::_1)),
+			handler_onTimeExpires(std::bind(&ProxyMauMauGame::listener_onTimeExpires, this, std::placeholders::_1)) {
 
 		// initialize players
 		for(auto& o : allParticipantsInclLocal) {
@@ -59,12 +61,16 @@ namespace card {
 		packetTransmitter->addListenerForServerPkt(OtherPlayerHasDrawnCards_STCPacket::PACKET_ID, handler_onOtherPlayerHasDrawnCard);
 		packetTransmitter->addListenerForServerPkt(OtherPlayerHasPlayedCard_STCPacket::PACKET_ID, handler_onOtherPlayerHasPlayedCard);
 		packetTransmitter->addListenerForServerPkt(LocalPlayerIsOnTurn_STCPacket::PACKET_ID, handler_onLocalPlayerIsOnTurn);
+		packetTransmitter->addListenerForServerPkt(TurnWasAborted_STCPacket::PACKET_ID, handler_onTimeExpires);
+
 	}
 	
 	ProxyMauMauGame::~ProxyMauMauGame() {
 		packetTransmitter->removeListenerForServerPkt(OtherPlayerHasDrawnCards_STCPacket::PACKET_ID, handler_onOtherPlayerHasDrawnCard);
 		packetTransmitter->removeListenerForServerPkt(OtherPlayerHasPlayedCard_STCPacket::PACKET_ID, handler_onOtherPlayerHasPlayedCard);
 		packetTransmitter->removeListenerForServerPkt(LocalPlayerIsOnTurn_STCPacket::PACKET_ID, handler_onLocalPlayerIsOnTurn);
+		packetTransmitter->removeListenerForServerPkt(TurnWasAborted_STCPacket::PACKET_ID, handler_onTimeExpires);
+
 	}
 
 	void ProxyMauMauGame::initStartCards(const std::vector<int>& handCardNumbersOfLocalPlayer, Card cardOnPlayStack) {
@@ -105,7 +111,7 @@ namespace card {
 	}
 
 	bool ProxyMauMauGame::canPlay(Card card) const {
-		if(! isLocalPlayerOnTurn() || localPlayer->hasPlayedCard() || !areAllPreviousCardTransactionsCompleted() || hasGameEnded()) return false;
+		if(! isLocalPlayerOnTurn() || localPlayer->hasPlayedCard() || !areAllPreviousCardTransactionsCompleted() || hasGameEnded() || localPlayer->hasTimeExpired()) return false;
 
 		Card lastCardOnPlayStack = playCardStack.getLast();
 		if(lastCardOnPlayStack.getValue() == CHANGE_COLOR_VALUE) {
@@ -120,7 +126,7 @@ namespace card {
 	}
 
 	bool ProxyMauMauGame::canDraw() const {
-		if(! isLocalPlayerOnTurn() || !areAllPreviousCardTransactionsCompleted() || isWaitingForColorChoose() || drawCardForNextPlayer == Card::NULLCARD) return false;
+		if(! isLocalPlayerOnTurn() || !areAllPreviousCardTransactionsCompleted() || isWaitingForColorChoose() || drawCardForNextPlayer == Card::NULLCARD || localPlayer->hasTimeExpired()) return false;
 		if(hasGameEnded()) return false;
 
 		// has already drawn a card
@@ -159,7 +165,7 @@ namespace card {
 	}
 
 	bool ProxyMauMauGame::isWaitingForColorChoose() const {
-		return localPlayer->isWaitingForColorPick();
+		return field_isWaitingForColorChoose;
 	}
 
 	std::size_t ProxyMauMauGame::getAmountsOfCardsToDrawForNextPlayer(Card playedCard) const {
@@ -206,45 +212,61 @@ namespace card {
 
 	void ProxyMauMauGame::playCard(Card card) {
 		if(!canPlay(card)) throw std::runtime_error("Can't play card!");
-		field_wasCardPlayed = true;
 
 		bool canChangeColor = this->canChangeColor(card);
-		localPlayer->playCardFromHandCards(card, playCardStack, canChangeColor);
-		updateGameEndFlag();
-
 		if(! canChangeColor || hasGameEnded()) {
+			localPlayer->playCardFromHandCards(card, playCardStack);
+			updateGameEndFlag();
+
 			sendPlayCardPacket();
+		} else {
+			// else packet will be send in chooseColor()
+			field_isWaitingForColorChoose = true;
+			premarkedCardToPlayAfterColorChoose = card;
 		}
 
-		// else packet will be send in chooseColor()
 	}
 
 	void ProxyMauMauGame::playDrawnCard() {
 		if(!canPlayDrawnCard()) throw std::runtime_error("Can't play drawn card!");
-		field_wasCardPlayed = true;
 
 		Card drawnCard = *localPlayer->getDrawnCard();
 		bool canChangeColor = this->canChangeColor(drawnCard);
-		localPlayer->playCardFromTempCardStackLocal(playCardStack, canChangeColor);
-		updateGameEndFlag();
-
 		if(!canChangeColor || hasGameEnded()) {
-			sendPlayCardPacket();
-		}
+			localPlayer->playCardFromTempCardStackLocal(playCardStack);
+			updateGameEndFlag();
 
-		// else packet will be send in chooseColor()
+			sendPlayCardPacket();
+		} else {
+			// else packet will be send in chooseColor()
+			field_isWaitingForColorChoose = true;
+			premarkedCardToPlayAfterColorChoose = drawnCard;
+		}
 	}
 
 
 	void ProxyMauMauGame::chooseColor(CardIndex color) {
 		if(! isWaitingForColorChoose()) throw std::runtime_error("Can't choose color!");
-		localPlayer->setColorWasPicked();
+		field_isWaitingForColorChoose = false;
 
 		this->indexForNextCard = color;
 		sendPlayCardPacket(color);
 	}
 
 	void ProxyMauMauGame::sendPlayCardPacket(CardIndex newCardIndex) {
+		field_wasCardPlayed = true;
+		if(premarkedCardToPlayAfterColorChoose.has_value()) {
+			Card cardToPlay = *premarkedCardToPlayAfterColorChoose;
+
+			std::optional<Card> drawnCard = localPlayer->getDrawnCard();
+			if(drawnCard.has_value()) {
+				if(*drawnCard != cardToPlay) throw std::runtime_error("Can't play card which isn't equal to the drawn card");
+				localPlayer->playCardFromTempCardStackLocal(playCardStack);
+			} else {
+				localPlayer->playCardFromHandCards(cardToPlay, playCardStack);
+			}
+		}
+
 		auto playedCard = *localPlayer->getPlayedCard();
 		PlayCardRequest_CTSPacket p(playedCard.getCardNumber(), static_cast<int>(newCardIndex));
 		packetTransmitter->sendPacketToServer(p);
@@ -252,7 +274,7 @@ namespace card {
 		setNextOrNextButOneOnTurnLocal(playedCard);
 
 		std::size_t cardsToDrawForNextPlayer = getAmountsOfCardsToDrawForNextPlayer(playedCard);
-		playerHasToDrawCards(this->userOnTurn, cardsToDrawForNextPlayer);
+		playerHasToDrawCards(this->userOnTurn, cardsToDrawForNextPlayer, PLAY_DURATION_MS);
 
 		this->drawCardForNextPlayer = Card::NULLCARD;
 	}
@@ -333,10 +355,10 @@ namespace card {
 
 		if(wasDrawedJustBefore) {
 			player->drawSingleCardInHandCardsLocal(card, drawCardStack);
-			player->playCardFromHandCardsAfterDelay(card, playCardStack, canChangeColor(card), DRAW_DURATION_MS + DELAY_BETWEEN_DRAW_AND_PLAY);
+			player->playCardFromHandCardsAfterDelay(card, playCardStack, DRAW_DURATION_MS + DELAY_BETWEEN_DRAW_AND_PLAY);
 			field_wasCardDrawn = true;
 		} else {
-			player->playCardFromHandCards(card, playCardStack, canChangeColor(card));
+			player->playCardFromHandCards(card, playCardStack);
 		}
 
 		if(canChangeColor(card)) {
@@ -349,7 +371,7 @@ namespace card {
 		setNextOrNextButOneOnTurnLocal(card);
 
 		int additionalDelayForDraw = (wasDrawedJustBefore) ? DRAW_DURATION_MS + DELAY_BETWEEN_DRAW_AND_PLAY : 0;
-		playerHasToDrawCards(userOnTurn, cardsToDraw, additionalDelayForDraw);
+		playerHasToDrawCards(userOnTurn, cardsToDraw, PLAY_DURATION_MS + additionalDelayForDraw);
 		updateGameEndFlag();
 	}
 	void ProxyMauMauGame::drawCardAndSetNextPlayerOnTurnLocal(std::string username) {
@@ -359,6 +381,15 @@ namespace card {
 		std::shared_ptr<ProxyPlayer> player = lookupOpponent(username);
 		player->drawSingleCardInHandCardsLocal(Card::NULLCARD, drawCardStack);
 		tryRebalanceCardStacks();
+
+		setNextPlayerOnTurnLocal();
+	}
+	void ProxyMauMauGame::abortTurnOnTimeExpires(const std::vector<Card>& cardsToDraw) {
+		if(isLocalPlayerOnTurn() && cardsToDraw[0] == Card::NULLCARD) {
+			throw std::runtime_error("Local player can't draw NULLCARD on time expire!");
+		}
+
+		playerHasToDrawCards(userOnTurn, cardsToDraw);
 
 		setNextPlayerOnTurnLocal();
 	}
@@ -400,6 +431,8 @@ namespace card {
 
 		field_wasCardDrawn = false;
 		field_wasCardPlayed = false;
+		field_isWaitingForColorChoose = false;
+		premarkedCardToPlayAfterColorChoose = std::nullopt;
 		threadUtils_invokeIn(delayToSetNextPlayerOnTurn, [this, player, lastUserOnTurn]() {			
 			lastUserOnTurn->endRemainingTimeAnimation();
 			this->userOnTurn->onStartTurn();
@@ -414,15 +447,15 @@ namespace card {
 		else return indexForNextCard;
 	}
 	
-	void ProxyMauMauGame::playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, std::size_t amountOfCards, int additionalDelayMs) {
+	void ProxyMauMauGame::playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, std::size_t amountOfCards, int delayMs) {
 		if(amountOfCards == 0) return;
 
 		auto cards = Card::getVectorWithCards(Card::NULLCARD, amountOfCards);
-		playerHasToDrawCards(player, cards, additionalDelayMs);
+		playerHasToDrawCards(player, cards, delayMs);
 	}
 
-	void ProxyMauMauGame::playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, const std::vector<Card>& cards, int additionalDelayMs) {
-		player->drawMultipleCardsInHandCardsAfterDelay(cards, drawCardStack, PLAY_DURATION_MS + additionalDelayMs);
+	void ProxyMauMauGame::playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, const std::vector<Card>& cards, int delayMs) {
+		player->drawMultipleCardsInHandCardsAfterDelay(cards, drawCardStack, delayMs);
 		tryRebalanceCardStacks();
 	}
 
@@ -454,5 +487,13 @@ namespace card {
 		if(nextCardOnDrawStack == Card::NULLCARD) throw std::runtime_error("Can't set NULLCARD as draw card for next player.");
 
 		this->drawCardForNextPlayer = nextCardOnDrawStack;
+	}
+	void ProxyMauMauGame::listener_onTimeExpires(Packet& p) {
+		auto& casted = dynamic_cast<TurnWasAborted_STCPacket&>(p);
+		std::vector<int> cardNumbersToDraw = casted.getCardsToDraw();
+		std::vector<Card> cardsToDraw = Card::getVectorFromCardNumber(cardNumbersToDraw);
+
+		abortTurnOnTimeExpires(cardsToDraw);
+
 	}
 }

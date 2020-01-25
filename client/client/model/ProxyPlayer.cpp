@@ -40,10 +40,10 @@ namespace card {
 			delayMs += DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS;
 		}
 	}
-	void ProxyPlayer::playCardFromHandCards(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick) {
+	void ProxyPlayer::playCardFromHandCards(Card card, CardAnimator& playCardStack) {
 		playCardStack.addRandomCardFromImmediately(card, handCardStack, PLAY_DURATION_MS);
 	}
-	void ProxyPlayer::playCardFromHandCardsAfterDelay(Card card, CardAnimator& playCardStack, bool isWaitingForColorPick, int delayMs) {
+	void ProxyPlayer::playCardFromHandCardsAfterDelay(Card card, CardAnimator& playCardStack, int delayMs) {
 		playCardStack.addRandomCardFrom(card, handCardStack, PLAY_DURATION_MS, delayMs);
 	}
 	const CardAnimator& ProxyPlayer::getCardStack() const {
@@ -66,6 +66,10 @@ namespace card {
 	std::optional<float> ProxyPlayer::getPercentOfSkipAnimationOrNone() const {
 		if(isSkipAnimationActive()) return getPercentOfSkipAnimation();
 		return std::nullopt;
+	}
+	bool ProxyPlayer::hasTimeExpired() const {
+		if(unixTimeOnTurnAnimationStarted == NOT_ON_TURN) return true;
+		else return getMilliseconds() - unixTimeOnTurnAnimationStarted > MAX_TURN_DURATION;
 	}
 	bool ProxyPlayer::isRemainingTimeAnimationActive() const {
 		return getPercentOfRemainingTime().has_value();
