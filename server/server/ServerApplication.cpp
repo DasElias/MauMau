@@ -15,18 +15,21 @@ using namespace std::chrono_literals;
 using namespace std::string_literals;
 
 void runThreadUtils() {
-	{
-		std::mutex& mutex = threadSyncronizer_getMutex();
-		std::lock_guard<std::mutex> lockGuard(mutex);
+	while(true) {
+		{
+			std::mutex& mutex = threadSyncronizer_getMutex();
+			std::lock_guard<std::mutex> lockGuard(mutex);
 
-		threadUtils_update();
-	}
-	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+			threadUtils_update();
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}	
 }
 
 int main() {
-	initDaemon();
+ 	initDaemon();
 	initLogger("~/latest.log", "~/fatal.log");
+
 
 	try {	
 		auto packetTransmitter = std::make_shared<ServerPacketTransmitter>();
