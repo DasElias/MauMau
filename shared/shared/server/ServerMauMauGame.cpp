@@ -21,6 +21,8 @@
 #include "../model/MaxTurnDuration.h"
 
 namespace card {
+	uint64_t ServerMauMauGame::startTurnAbortIdCounter = 0;
+
 	ServerMauMauGame::ServerMauMauGame(std::shared_ptr<STCPacketTransmitter> packetTransmitter, ServerGameEndHandler& gameEndHandler, std::vector<std::shared_ptr<ParticipantOnServer>> participants) :
 			packetTransmitter(packetTransmitter),
 			gameEndHandler(gameEndHandler),
@@ -71,6 +73,9 @@ namespace card {
 	ServerMauMauGame::~ServerMauMauGame() {
 		packetTransmitter->removeListenerForClientPkt(PlayCardRequest_CTSPacket::PACKET_ID, handler_onPlayCard);
 		packetTransmitter->removeListenerForClientPkt(DrawCardRequest_CTSPacket::PACKET_ID, handler_onDrawCard);
+
+		// turn of current player doesn't expire
+		startTurnAbortIdCounter++;
 	}
 
 	void ServerMauMauGame::setInitialPlayerOnTurn() {
@@ -87,8 +92,14 @@ namespace card {
 	}
 
 	bool ServerMauMauGame::playCardAndSetNextPlayerOnTurn(Player& player, Card card, CardIndex chosenIndex) {
-		if(!canPlay(player, card)) return false;
-		if(!canChangeColor(card) && chosenIndex != CardIndex::NULLINDEX) return false;
+		if(!canPlay(player, card)) {
+			log(LogSeverity::ERR, "Player " + player.getUsername() + " tried to play card " + std::to_string(card.getCardNumber()) + " but the game was not in appropriate state");
+			return false;
+		}
+		if(!canChangeColor(card) && chosenIndex != CardIndex::NULLINDEX) {
+			log(LogSeverity::ERR, "Played card " + std::to_string(card.getCardNumber()) + "can't change card index but the chosen card index wasn't NULLINDEX");
+			return false;
+		}
 
 		bool wasCardJustDrawn = false;
 		bool moveSuccess = movePlayedCardToPlayCardStack(player, card, wasCardJustDrawn);
@@ -107,12 +118,7 @@ namespace card {
 			playerOnTurn->addHandCards(cardsToDrawForNextPlayer);
 		}
 
-		// change color
-		if(canChangeColor(card)) {
-			this->indexForNextCard = chosenIndex;
-		} else {
-			this->indexForNextCard = card.getCardIndex();
-		}
+		updateColor(card, chosenIndex);	
 
 		// send packet to all other players
 		auto senderPlayerPtr = lookupPlayerByUsername(player.getUsername());
@@ -153,6 +159,13 @@ namespace card {
 		}
 
 		return true;
+	}
+	void ServerMauMauGame::updateColor(Card playedCard, CardIndex chosenCardIndex) {
+		if(canChangeColor(playedCard)) {
+			this->indexForNextCard = chosenCardIndex;
+		} else {
+			this->indexForNextCard = playedCard.getCardIndex();
+		}
 	}
 	std::vector<int> ServerMauMauGame::popCardsToDrawForNextPlayerFromDrawStack(int cardAmount) {
 		std::vector<int> removedCards;
@@ -228,12 +241,11 @@ namespace card {
 		packetTransmitter->sendPacketToClient(packet, player->getWrappedParticipant());
 	}
 	void ServerMauMauGame::startTurnAbortTimer(std::string username) {
-		static uint64_t turnAbortIdCounter = 0;
-		uint64_t currentTurnAbortId = ++turnAbortIdCounter;
+		uint64_t currentTurnAbortId = ++startTurnAbortIdCounter;
 
 		int delay = MAX_TURN_DURATION + getTimeToSetNextPlayerOnTurn(playCardStack.getSize(), playCardStack.getLast(), wasCardPlayedLastTurn(), wasCardDrawnLastTurn());
 		threadUtils_invokeIn(delay, [this, currentTurnAbortId, username]() {
-			if(turnAbortIdCounter == currentTurnAbortId && !hasPlayerWon()) {
+			if(startTurnAbortIdCounter == currentTurnAbortId) {
 				// startTurnAbortTimer() was not called in meantime
 
 				abortTurn();
@@ -241,7 +253,13 @@ namespace card {
 		});
 	}
 	void ServerMauMauGame::abortTurn() {
+		// if a player has drawn a card, but not finished his turn, the card is put back on the draw card stack
+		// if we wouldn't shuffle the draw card stack, he would draw the same card again
+		drawCardStack.shuffle();
+
 		std::vector<int> cardsToDraw = popCardsToDrawForNextPlayerFromDrawStack(CARDS_TO_DRAW_ON_TIME_EXPIRED);
+		playerOnTurn->addHandCards(cardsToDraw);
+
 		std::vector<int> cardsToDrawAsNullCards = cardsToDraw;
 		std::fill(cardsToDrawAsNullCards.begin(), cardsToDrawAsNullCards.end(), Card::NULLCARD.getCardNumber());
 		

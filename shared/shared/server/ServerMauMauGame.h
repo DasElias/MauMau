@@ -17,6 +17,8 @@ namespace card {
 			static int const AMOUNT_OF_HAND_CARDS = 6;
 			static int const CARDS_TO_DRAW_ON_TIME_EXPIRED = 2;
 
+			static uint64_t startTurnAbortIdCounter;
+
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
@@ -94,6 +96,7 @@ namespace card {
 
 			// returns false if the player tries to play a card which isn't owned by him
 			bool movePlayedCardToPlayCardStack(Player& p, Card playedCard, bool& out_wasCardDrawnAndPlayed);
+			void updateColor(Card playedCard, CardIndex chosenCardIndex);
 
 			void startTurnAbortTimer(std::string username);
 			void abortTurn();
