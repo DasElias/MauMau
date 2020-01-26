@@ -249,8 +249,8 @@ namespace card {
 		if(! isWaitingForColorChoose()) throw std::runtime_error("Can't choose color!");
 		field_isWaitingForColorChoose = false;
 
-		this->indexForNextCard = color;
 		sendPlayCardPacket(color);
+		this->indexForNextCard = color;
 	}
 
 	void ProxyMauMauGame::sendPlayCardPacket(CardIndex newCardIndex) {
@@ -268,6 +268,8 @@ namespace card {
 		}
 
 		auto playedCard = *localPlayer->getPlayedCard();
+		this->indexForNextCard = playedCard.getCardIndex();
+
 		PlayCardRequest_CTSPacket p(playedCard.getCardNumber(), static_cast<int>(newCardIndex));
 		packetTransmitter->sendPacketToServer(p);
 
