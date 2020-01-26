@@ -230,7 +230,7 @@ namespace card {
 		wasCardPlayed_lastTurn = wasCardPlayed_thisTurn;
 		wasCardPlayed_thisTurn = false;
 
-		startTurnAbortTimer(player->getUsername());
+		startTurnAbortTimer();
 
 		this->playerOnTurn->onEndTurn();
 		this->playerOnTurn = player;
@@ -240,11 +240,12 @@ namespace card {
 		LocalPlayerIsOnTurn_STCPacket packet(nextOnDrawStackToSend.getCardNumber());
 		packetTransmitter->sendPacketToClient(packet, player->getWrappedParticipant());
 	}
-	void ServerMauMauGame::startTurnAbortTimer(std::string username) {
+	void ServerMauMauGame::startTurnAbortTimer() {
 		uint64_t currentTurnAbortId = ++startTurnAbortIdCounter;
 
 		int delay = MAX_TURN_DURATION + getTimeToSetNextPlayerOnTurn(playCardStack.getSize(), playCardStack.getLast(), wasCardPlayedLastTurn(), wasCardDrawnLastTurn());
-		threadUtils_invokeIn(delay, [this, currentTurnAbortId, username]() {
+		threadUtils_invokeIn(delay, [this, currentTurnAbortId]() {
+
 			if(startTurnAbortIdCounter == currentTurnAbortId) {
 				// startTurnAbortTimer() was not called in meantime
 

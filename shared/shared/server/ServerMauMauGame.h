@@ -98,7 +98,7 @@ namespace card {
 			[[nodiscard]] bool movePlayedCardToPlayCardStack(Player& p, Card playedCard, bool& out_wasCardDrawnAndPlayed);
 			void updateColor(Card playedCard, CardIndex chosenCardIndex);
 
-			void startTurnAbortTimer(std::string username);
+			void startTurnAbortTimer();
 			void abortTurn();
 
 			std::optional<OperationSuccessful_STCAnswerPacket> listener_onPlayCard(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);
