@@ -5,6 +5,7 @@
 #include "../model/MauMauCardValueMeanings.h"
 #include "../model/CardAnimationDuration.h"
 #include "../model/TimeToSetNextPlayerOnTurnDuration.h"
+#include "../utils/Logger.h"
 
 namespace card {
 	AiPlayer::AiPlayer(std::shared_ptr<ParticipantOnServer> wrappedParticipant, ServerMauMauGame& game, std::vector<Card> handCards) :
@@ -29,7 +30,7 @@ namespace card {
 			Card drawnCard = game.getDrawCardStack().getLast();
 			playCardImpl(drawnCard);
 		} else {
-			game.drawCardAndSetNextPlayerOnTurn(*this);
+			drawCardImpl();
 		}
 	}
 	
@@ -55,7 +56,16 @@ namespace card {
 	}
 	void AiPlayer::playCardImpl(Card card) {
 		CardIndex nextCardIndex = (game.canChangeColor(card)) ? chooseCardIndex() : CardIndex::NULLINDEX;
-		game.playCardAndSetNextPlayerOnTurn(*this, card, nextCardIndex);
+		bool success = game.playCardAndSetNextPlayerOnTurn(*this, card, nextCardIndex);
+		if(!success) {
+			log(LogSeverity::ERR, "AiPlayer " + getUsername() + " couldn't play card!");
+		}
+	}
+	void AiPlayer::drawCardImpl() {
+		bool success = game.drawCardAndSetNextPlayerOnTurn(*this);
+		if(!success) {
+			log(LogSeverity::ERR, "AiPlayer " + getUsername() + " couldn't draw card!");
+		}
 	}
 	CardIndex AiPlayer::chooseCardIndex() {
 		std::map<CardIndex, uint8_t> cardIndexCounter;

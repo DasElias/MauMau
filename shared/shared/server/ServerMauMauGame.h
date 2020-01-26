@@ -54,8 +54,8 @@ namespace card {
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			bool playCardAndSetNextPlayerOnTurn(Player& player, Card card, CardIndex chosenIndex = CardIndex::NULLINDEX);
-			bool drawCardAndSetNextPlayerOnTurn(Player& player);
+			[[nodiscard]] bool playCardAndSetNextPlayerOnTurn(Player& player, Card card, CardIndex chosenIndex = CardIndex::NULLINDEX);
+			[[nodiscard]] bool drawCardAndSetNextPlayerOnTurn(Player& player);
 			void setNextOrNextButOneOnTurnLocal(Card playedCard);
 			void setNextPlayerOnTurn();
 			void setNextButOnePlayerOnTurn();
@@ -90,12 +90,12 @@ namespace card {
 
 			// warning: if game has ended, object will be invalidated after call
 			void callGameEndFunctIfGameHasEnded();
-			bool hasPlayerWon();
+			[[nodiscard]] bool hasPlayerWon();
 
-			std::vector<int> popCardsToDrawForNextPlayerFromDrawStack(int cardAmount);
+			[[nodiscard]] std::vector<int> popCardsToDrawForNextPlayerFromDrawStack(int cardAmount);
 
 			// returns false if the player tries to play a card which isn't owned by him
-			bool movePlayedCardToPlayCardStack(Player& p, Card playedCard, bool& out_wasCardDrawnAndPlayed);
+			[[nodiscard]] bool movePlayedCardToPlayCardStack(Player& p, Card playedCard, bool& out_wasCardDrawnAndPlayed);
 			void updateColor(Card playedCard, CardIndex chosenCardIndex);
 
 			void startTurnAbortTimer(std::string username);

@@ -28,6 +28,7 @@ namespace card {
 			bool tryPlayCard();
 			std::vector<Card> getPlayableCards();
 			void playCardImpl(Card c);
+			void drawCardImpl();
 			CardIndex chooseCardIndex();
 			bool shouldPlayDrawnCard();
 
