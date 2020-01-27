@@ -418,14 +418,15 @@ namespace card {
 
 		setOnTurnLocal(*playerOnTurnIter);
 	}
-	void ProxyMauMauGame::setOnTurnLocal(std::shared_ptr<ProxyPlayer> player) {
-		bool wasCardDrawn = field_wasCardDrawn;
-		if(field_wasCardDrawn && userOnTurn == localPlayer) {
+	void ProxyMauMauGame::setOnTurnLocal(std::shared_ptr<ProxyPlayer> player) {	
+		int delayToSetNextPlayerOnTurn = getTimeToSetNextPlayerOnTurn(playCardStack.getSizeInclPendingTransactions(), playCardStack.getLastInclAnimations(), field_wasCardPlayed, field_wasCardDrawn);
+		int delayToFreezeAnimation = getTimeToEndCurrentTurn(playCardStack.getSizeInclPendingTransactions(), playCardStack.getLastInclAnimations(), field_wasCardPlayed, field_wasCardDrawn);
+		if(field_wasCardDrawn && field_wasCardPlayed && userOnTurn == localPlayer) {
 			// we don't have to take the time for drawing the card into consideration
-			wasCardDrawn = false;
+			delayToFreezeAnimation = 0;
 		}
-		int delayToSetNextPlayerOnTurn = getTimeToSetNextPlayerOnTurn(playCardStack.getSizeInclPendingTransactions(), playCardStack.getLastInclAnimations(), field_wasCardPlayed, wasCardDrawn);
-		int delayToFreezeAnimation = getTimeToEndCurrentTurn(playCardStack.getSizeInclPendingTransactions(), playCardStack.getLastInclAnimations(), field_wasCardPlayed, wasCardDrawn);
+
+
 		std::shared_ptr<ProxyPlayer> lastUserOnTurn = this->userOnTurn;
 
 		this->userOnTurn->onEndTurn();
