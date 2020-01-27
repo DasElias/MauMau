@@ -87,7 +87,7 @@ namespace card {
 			playerOnTurn->onStartTurn();
 		});
 
-		startTurnAbortTimer(newPlayerOnTurn->getUsername());
+		startTurnAbortTimer();
 
 	}
 
