@@ -8,7 +8,6 @@ namespace card {
         // --------------------------------FIELDS--------------------------------
         // ----------------------------------------------------------------------
         private:
-            std::string path;
             TextureMinFilter minFilter;
             TextureMagFilter magFilter;
             TextureWrap wrapS;
@@ -19,7 +18,7 @@ namespace card {
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public: 
-            SimpleTextureFactory(std::string path);
+            SimpleTextureFactory();
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
@@ -31,7 +30,11 @@ namespace card {
             SimpleTextureFactory& setWrapT(TextureWrap wrap);
             SimpleTextureFactory& setAnisotropicFiltering(float a);
 
-            SimpleTexture generateTexture();
+            SimpleTexture loadFromFile(std::string path);
+            SimpleTexture loadFromMemory(const unsigned char* imgData, std::size_t imgDataLength);
 
+        private:
+            SimpleTexture load(unsigned char* stbiHandle, int32_t width, int32_t height);
+            void free(unsigned char* stbiHandle);
 	};
 }

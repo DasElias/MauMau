@@ -30,7 +30,7 @@ namespace card {
 	}
 	ParticleTexture GameEndRenderer::loadTexture(std::string fileName) {
 		return ParticleTexture(
-			SimpleTextureFactory(getApplicationFolder() + "\\resources\\"+ fileName).setMinFilter(TextureMinFilter::NEAREST).setMagFilter(TextureMagFilter::NEAREST).generateTexture(),
+			SimpleTextureFactory().setMinFilter(TextureMinFilter::NEAREST).setMagFilter(TextureMagFilter::NEAREST).loadFromFile(getApplicationFolder() + "\\resources\\" + fileName),
 			8,
 			false
 		);

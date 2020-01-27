@@ -12,7 +12,7 @@ namespace card {
 			eguiRenderer(eguiRenderer),
 			renderer2D(renderer2D),
 			circleSectorRenderer(circleSectorRenderer),
-			textureSkip(SimpleTextureFactory(getApplicationFolder() + "\\resources\\skipPlayer.png").setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).generateTexture()),
+			textureSkip(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromFile(getApplicationFolder() + "\\resources\\skipPlayer.png")),
 			playerLocal(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
 			playerVisAVis(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
 			playerLeft(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),

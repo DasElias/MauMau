@@ -12,10 +12,10 @@ namespace card {
 			renderer2D(renderer2D),
 			cardIndexTextures(cardIndexTextures),
 			letteringTexture(
-				SimpleTextureFactory(getApplicationFolder() + "\\resources\\nextCardIndex.png")
+				SimpleTextureFactory()
 				.setMagFilter(TextureMagFilter::NEAREST)
 				.setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR)
-				.generateTexture()
+				.loadFromFile(getApplicationFolder() + "\\resources\\nextCardIndex.png")
 			){
 
 		parentElement = std::make_shared<egui::VBox>();

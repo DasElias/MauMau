@@ -25,7 +25,7 @@ namespace card {
         // ---------------------------STATIC-METHODS-----------------------------
         // ----------------------------------------------------------------------
         private:
-            static SimpleTexture loadCardIndexTex(std::string texName);
+            static SimpleTexture loadCardIndexTex(const unsigned char* imgData, std::size_t imgDataLength);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------

@@ -9,7 +9,7 @@
 
 namespace card {
 	AvatarTextures::AvatarTextures() :
-			avatarNotFoundTexture(SimpleTextureFactory(getApplicationFolder() + "\\resources\\avatars\\notfound.png").setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).generateTexture()),
+			avatarNotFoundTexture(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromFile(getApplicationFolder() + "\\resources\\avatars\\notfound.png")),
 			width(-1),
 			height(-1) {
 
@@ -23,9 +23,9 @@ namespace card {
 			std::string path = folder + std::to_string(avatar) + ".png";
 			if(! boost::filesystem::exists(path)) continue;
 
-			SimpleTexture tex = SimpleTextureFactory(path)
+			SimpleTexture tex = SimpleTextureFactory()
 				.setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR)
-				.generateTexture();
+				.loadFromFile(path);
 
 			std::int32_t localWidth = tex.getWidth();
 			std::int32_t localHeight = tex.getHeight();

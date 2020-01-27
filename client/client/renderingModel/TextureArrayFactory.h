@@ -4,11 +4,16 @@
 
 namespace card {
     class TextureArrayFactory {
+        struct TextureArrayData {
+           unsigned char* imgData;
+           int32_t width;
+           int32_t height;
+        };
+
         // ----------------------------------------------------------------------
         // --------------------------------FIELDS--------------------------------
         // ----------------------------------------------------------------------
         private:
-            std::vector<std::string> textures;
             TextureMinFilter minFilter;
             TextureMagFilter magFilter;
             TextureWrap wrapS;
@@ -19,7 +24,7 @@ namespace card {
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            TextureArrayFactory(std::vector<std::string> path);
+            TextureArrayFactory();
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
@@ -31,7 +36,13 @@ namespace card {
             TextureArrayFactory& setWrapT(TextureWrap wrap);
             TextureArrayFactory& setAnisotropicFiltering(float a);
 
-            TextureArray generateTexture();
+            TextureArray loadFromFiles(std::vector<std::string> paths);
+            TextureArray loadFromMemory(std::vector<const unsigned char*> imageData, std::vector<std::size_t> imageDataLength);
+
+        private:
+            TextureArray load(const std::vector<TextureArrayData>& texData);
+            void free(const std::vector<TextureArrayData>& texData);
+
 
     };
 }

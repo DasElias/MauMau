@@ -124,14 +124,14 @@ namespace card {
 			renderImpl2d(rendererImpl2d),
 			renderImpl3d(renderImpl3d),
 			tableVao(VertexArrayObject::RenderMode::TRIANGLES, 3, TABLE_VERTICES, TABLE_TEXTURE_COORDS),
-			backgroundTexture(SimpleTextureFactory(getApplicationFolder() + "\\resources\\ingamebackground.png").generateTexture()),
-			tableTopTexture(SimpleTextureFactory(getApplicationFolder() + "\\resources\\tabletop.png")
+			backgroundTexture(SimpleTextureFactory().loadFromFile(getApplicationFolder() + "\\resources\\ingamebackground.png")),
+			tableTopTexture(SimpleTextureFactory()
 				.setMagFilter(TextureMagFilter::LINEAR)
 				.setMinFilter(TextureMinFilter::NEAREST_MIPMAP_LINEAR)
 				.setWrapS(TextureWrap::CLAMP_TO_EDGE)
 				.setWrapT(TextureWrap::CLAMP_TO_EDGE)
 				.setAnisotropicFiltering(2)
-				.generateTexture()
+				.loadFromFile(getApplicationFolder() + "\\resources\\tabletop.png")
 			) {
 	}
 	void CardSceneBackgroundRenderer::render(ProjectionMatrix& projectionMatrix, Viewport& viewport) {

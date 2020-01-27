@@ -2,14 +2,15 @@
 #include "CardIndexTextures.h"
 #include "../utils/FileUtils.h"
 #include "../renderingModel/SimpleTextureFactory.h"
+#include <res/cardIndex/CardIndex.png.h>
 
 namespace card {
 	CardIndexTextures::CardIndexTextures() :
 			textures({
-				loadCardIndexTex("heart.png"),
-				loadCardIndexTex("spade.png"),
-				loadCardIndexTex("diamond.png"),
-				loadCardIndexTex("club.png")
+				loadCardIndexTex(cardIndex_heart, cardIndex_heart_size),
+				loadCardIndexTex(cardIndex_spade, cardIndex_spade_size),
+				loadCardIndexTex(cardIndex_diamond, cardIndex_diamond_size),
+				loadCardIndexTex(cardIndex_club, cardIndex_club_size)
 			}),
 			aspectRatio(-1) {
 		
@@ -29,12 +30,11 @@ namespace card {
 			this->aspectRatio = texAspectRatio;
 		}
 	}
-	SimpleTexture CardIndexTextures::loadCardIndexTex(std::string texName) {
-		std::string const path = getApplicationFolder() + "\\resources\\cards\\" + texName;
-		return SimpleTextureFactory(path)
+	SimpleTexture CardIndexTextures::loadCardIndexTex(const unsigned char* imgData, std::size_t imgDataLength) {
+		return SimpleTextureFactory()
 			.setMagFilter(TextureMagFilter::LINEAR)
 			.setMinFilter(TextureMinFilter::LINEAR)
-			.generateTexture();
+			.loadFromMemory(imgData, imgDataLength);
 	}
 	std::shared_ptr<egui::Image> CardIndexTextures::getImage(CardIndex cardIndex) const {
 		if(cardIndex == CardIndex::NULLINDEX) return nullptr;
