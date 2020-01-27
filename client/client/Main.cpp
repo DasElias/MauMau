@@ -153,7 +153,7 @@ namespace card {
 
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-		glfwWindowHint(GLFW_DEPTH_BITS, 24);
+		glfwWindowHint(GLFW_DEPTH_BITS, 16);
 		glfwWindowHint(GLFW_SAMPLES, 2);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
@@ -199,7 +199,7 @@ namespace card {
 		egui::NvgRenderer nvgRenderer(ctx);
 		egui::Image::setContext(ctx);
 		egui::Font::setDefaultFont(egui::Font::createSystemFont(ctx, "Arial"));
-
+		egui::Font::createSystemFont(ctx, "ariblk");
 		auto theme = std::make_unique<egui::MauMauTheme>(ctx);
 		egui::ThemeManager::getInstance().addTheme(theme.get());
 
@@ -298,9 +298,7 @@ namespace card {
 			threadUtils_update();
 
 			stateManager.updateAndRender(deltaSeconds);
-
 			if(CardAnimator::arePendingAnimations()) {
-				//std::cout << fps << std::endl;
 				glfwSwapInterval(VSYNC);
 			} else {
 				glfwSwapInterval(VSYNC_NO_ANIMATION_PENDING);
