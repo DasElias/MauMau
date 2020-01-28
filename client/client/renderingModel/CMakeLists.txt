@@ -7,4 +7,5 @@ add_library(renderingModel ${renderingModel_source_files})
 target_link_libraries(renderingModel
     res_cards
     res_cardIndex
+    res_avatars
 )
