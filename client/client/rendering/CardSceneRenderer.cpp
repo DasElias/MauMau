@@ -55,6 +55,7 @@ namespace card {
 			cardIndexRenderer(renderer2d, cardIndexTextures),
 			particleRenderer(),
 			fireworkRenderer(particleRenderer, eguiRenderer, renderer2d),
+			mauMauButtonRenderer(eguiRenderer),
 			cardStackIntersectionChecker(projectionMatrix, viewport),
 			handCardIntersectionChecker(projectionMatrix, viewport),
 			onMouseClicked(genOnMouseClickedHandler()) {
@@ -146,6 +147,7 @@ namespace card {
 		cardRenderer.flush();
 
 		renderGameEndScreenIfGameHasEnded(deltaSeconds);
+		mauMauButtonRenderer.render();
 
 		glEnable(GL_DEPTH_TEST);
 
