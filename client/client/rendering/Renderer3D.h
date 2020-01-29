@@ -5,6 +5,7 @@
 #include "../renderingModel/ProjectionMatrix.h"
 #include "../renderingModel/Viewport.h"
 #include "../renderingModel/DataTextureVertexArrayObject.h"
+#include "../renderingModel/DataTextureNormalVertexArrayObject.h"
 
 namespace card {
 	class Renderer3D {
@@ -14,6 +15,8 @@ namespace card {
 			// ----------------------------------------------------------------------
 			private:
 				int location_projectionViewMatrix;
+				int location_cameraPosition;
+				int location_modelMatrix;
 
 			// ----------------------------------------------------------------------
 			// -----------------------------CONSTRUCTORS-----------------------------
@@ -25,7 +28,9 @@ namespace card {
 			// -------------------------------METHODS--------------------------------
 			// ----------------------------------------------------------------------
 			public:
+				void loadCameraPosition(glm::vec3 cameraPosition);
 				void loadProjectionViewMatrix(glm::mat4x4 projectionView);
+				void loadModelMatrix(glm::mat4 modelMatrix);
 		};
 
 
@@ -49,6 +54,6 @@ namespace card {
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			void render(const DataTextureVertexArrayObject& vertexArrayObject, const ProjectionMatrix& projectionMatrix, const Viewport& viewport, glm::mat4x4 modelMatrix = glm::mat4x4(1.0f));
+			void render(const DataTextureNormalVertexArrayObject& vertexArrayObject, const ProjectionMatrix& projectionMatrix, const Viewport& viewport, glm::mat4x4 modelMatrix = glm::mat4x4(1.0f));
 		};
 }

@@ -11,7 +11,7 @@
 #include "../renderingModel/SimpleTextureFactory.h"
 
 namespace card {
-	float const CardSceneBackgroundRenderer::TABLE_MAX_X = 2;
+	float const CardSceneBackgroundRenderer::TABLE_MAX_X = 3;
 	float const Y_TOP = 0;
 	float const Y_BOTTOM = -0.1f;
 	float const Y_BOTTOMEST = -1;
@@ -72,6 +72,55 @@ namespace card {
 		-TABLE_BASE_OUTER_X + TABLE_BASE_WIDTH, Y_BOTTOMEST, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE,
 	};
 
+	std::vector<float> const CardSceneBackgroundRenderer::TABLE_NORMALS = {
+		// top
+		0, 1, 0,
+		0, 1, 0,
+		0, 1, 0,
+		0, 1, 0,
+		0, 1, 0,
+		0, 1, 0,
+
+		// front
+		0, 0, 1,
+		0, 0, 1,
+		0, 0, 1,
+		0, 0, 1,
+		0, 0, 1,
+		0, 0, 1,
+
+		// table base right (front)
+		0, 0, 0,
+		0, 0, 0,
+		0, 0, 0,
+		0, 0, 0,
+		0, 0, 0,
+		0, 0, 0,
+
+		// table base right (side)
+		0, 0, 0,
+		0, 0, 0,
+		0, 0, 0,
+		0, 0, 0,
+		0, 0, 0,
+		0, 0, 0,
+
+		// table base left (front)
+		0, 0, 0,
+		0, 0, 0,
+		0, 0, 0,
+		0, 0, 0,
+		0, 0, 0,
+		0, 0, 0,
+
+		// table base left (side)
+		0, 0, 0,
+		0, 0, 0,
+		0, 0, 0,
+		0, 0, 0,
+		0, 0, 0,
+		0, 0, 0,
+	};
 
 	std::vector<float> const CardSceneBackgroundRenderer::TABLE_TEXTURE_COORDS = {
 		1, 1,
@@ -123,7 +172,7 @@ namespace card {
 			backgroundElement(std::make_shared<egui::UnorganizedParentElement>()),
 			renderImpl2d(rendererImpl2d),
 			renderImpl3d(renderImpl3d),
-			tableVao(VertexArrayObject::RenderMode::TRIANGLES, 3, TABLE_VERTICES, TABLE_TEXTURE_COORDS),
+			tableVao(VertexArrayObject::RenderMode::TRIANGLES, 3, TABLE_VERTICES, TABLE_TEXTURE_COORDS, TABLE_NORMALS),
 			backgroundTexture(SimpleTextureFactory().loadFromFile(getApplicationFolder() + "\\resources\\ingamebackground.png")),
 			tableTopTexture(SimpleTextureFactory()
 				.setMagFilter(TextureMagFilter::LINEAR)

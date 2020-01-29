@@ -5,6 +5,7 @@
 #include <egui/model/nodes/UnorganizedParentElement.h>
 #include "../renderingModel/SimpleTexture.h"
 #include "../renderingModel/DataTextureVertexArrayObject.h"
+#include "../renderingModel/DataTextureNormalVertexArrayObject.h"
 
 namespace card {
 	class CardSceneBackgroundRenderer {
@@ -14,6 +15,7 @@ namespace card {
 		private:
 			static std::vector<float> const TABLE_VERTICES;
 			static std::vector<float> const TABLE_TEXTURE_COORDS;
+			static std::vector<float> const TABLE_NORMALS;
 
 		public:
 			static float const TABLE_MAX_X;
@@ -25,7 +27,7 @@ namespace card {
 		private:
 			Renderer2D& renderImpl2d;
 			Renderer3D& renderImpl3d;
-			DataTextureVertexArrayObject tableVao;
+			DataTextureNormalVertexArrayObject tableVao;
 
 			std::shared_ptr<egui::UnorganizedParentElement> backgroundElement;
 			SimpleTexture backgroundTexture;
