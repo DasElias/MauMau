@@ -5,27 +5,30 @@
 #include "../renderingModel/ProjectionMatrix.h"
 #include "../renderingModel/Viewport.h"
 #include "../renderingModel/DataTextureVertexArrayObject.h"
+#include "../renderingModel/DataTextureNormalVertexArrayObject.h"
 
 namespace card {
-	class Renderer3D {
-		class Renderer3DShader : public VertexFragmentShaderProgram {
+	class TableRenderer {
+		class TableRendererShader : public VertexFragmentShaderProgram {
 			// ----------------------------------------------------------------------
 			// --------------------------------FIELDS--------------------------------
 			// ----------------------------------------------------------------------
 			private:
 				int location_projectionViewMatrix;
+				int location_modelMatrix;
 
 			// ----------------------------------------------------------------------
 			// -----------------------------CONSTRUCTORS-----------------------------
 			// ----------------------------------------------------------------------
 			public:
-				Renderer3DShader(bool discardTransparentFragments);
+				TableRendererShader();
 
 			// ----------------------------------------------------------------------
 			// -------------------------------METHODS--------------------------------
 			// ----------------------------------------------------------------------
 			public:
 				void loadProjectionViewMatrix(glm::mat4x4 projectionView);
+				void loadModelMatrix(glm::mat4 modelMatrix);
 		};
 
 
@@ -35,20 +38,20 @@ namespace card {
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
-			Renderer3DShader shader;
+			TableRendererShader shader;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			Renderer3D(bool discardTransparentFragments = false);
-			Renderer3D(const Renderer3D&) = delete;
-			Renderer3D& operator=(const Renderer3D&) = delete;
+			TableRenderer();
+			TableRenderer(const TableRenderer&) = delete;
+			TableRenderer& operator=(const TableRenderer&) = delete;
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			void render(const DataTextureVertexArrayObject& vertexArrayObject, const ProjectionMatrix& projectionMatrix, const Viewport& viewport, glm::mat4x4 modelMatrix = glm::mat4x4(1.0f));
-	};
+			void render(const DataTextureNormalVertexArrayObject& vertexArrayObject, const ProjectionMatrix& projectionMatrix, const Viewport& viewport, glm::mat4x4 modelMatrix = glm::mat4x4(1.0f));
+		};
 }

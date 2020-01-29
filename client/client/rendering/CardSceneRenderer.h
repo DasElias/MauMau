@@ -45,6 +45,9 @@ namespace card {
 			static glm::vec3 const HAND_CARDS_OPPONENT_RIGHT_ROTATION;
 			static glm::vec3 const HAND_CARDS_OPPONENT_LEFT_ROTATION;
 
+			static float const LEFT_RIGHT_OPPONENT_CARDS_WIDTH;
+			static float const FRONT_BACK_OPPONENT_CARDS_WIDTH;
+
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------

@@ -13,63 +13,19 @@
 namespace card {
 	float const CardSceneBackgroundRenderer::TABLE_MAX_X = 3;
 	float const Y_TOP = 0;
-	float const Y_BOTTOM = -0.1f;
-	float const Y_BOTTOMEST = -1;
-	float const CardSceneBackgroundRenderer::TABLE_MAX_Z = 1;
-
-	float const TABLE_BASE_OUTER_X = 1.5f;
-	float const TABLE_BASE_WIDTH = 0.3f;
-	float const TABLE_BASE_Z_DISTANCE = 0.1f;
-	float const TABLE_BASE_DEPTH = 0.2f;
+	float const CardSceneBackgroundRenderer::TABLE_POS_MAX_Z = 2;
+	float const CardSceneBackgroundRenderer::TABLE_NEG_MAX_Z = -2.5;
 
 	std::vector<float> const CardSceneBackgroundRenderer::TABLE_VERTICES = {
 		// top
-		TABLE_MAX_X, Y_TOP, TABLE_MAX_Z,		
-		TABLE_MAX_X, Y_TOP, -TABLE_MAX_Z,
-		-TABLE_MAX_X, Y_TOP, -TABLE_MAX_Z,
-		-TABLE_MAX_X, Y_TOP, -TABLE_MAX_Z,
-		-TABLE_MAX_X, Y_TOP, TABLE_MAX_Z,
-		TABLE_MAX_X, Y_TOP, TABLE_MAX_Z,
+		TABLE_MAX_X, Y_TOP, TABLE_POS_MAX_Z,
+		TABLE_MAX_X, Y_TOP, TABLE_NEG_MAX_Z,
+		-TABLE_MAX_X, Y_TOP, TABLE_NEG_MAX_Z,
+		-TABLE_MAX_X, Y_TOP, TABLE_NEG_MAX_Z,
+		-TABLE_MAX_X, Y_TOP, TABLE_POS_MAX_Z,
+		TABLE_MAX_X, Y_TOP, TABLE_POS_MAX_Z,
 
-		// front
-		-TABLE_MAX_X, Y_TOP, TABLE_MAX_Z,
-		-TABLE_MAX_X, Y_BOTTOM, TABLE_MAX_Z,
-		TABLE_MAX_X, Y_BOTTOM, TABLE_MAX_Z,
-		-TABLE_MAX_X, Y_TOP, TABLE_MAX_Z,
-		TABLE_MAX_X, Y_BOTTOM, TABLE_MAX_Z,
-		TABLE_MAX_X, Y_TOP, TABLE_MAX_Z,
-
-		// table base right (front)
-		TABLE_BASE_OUTER_X, Y_BOTTOM, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE,
-		TABLE_BASE_OUTER_X - TABLE_BASE_WIDTH, Y_BOTTOMEST, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE,
-		TABLE_BASE_OUTER_X, Y_BOTTOMEST, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE,
-		TABLE_BASE_OUTER_X, Y_BOTTOM, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE,
-		TABLE_BASE_OUTER_X - TABLE_BASE_WIDTH, Y_BOTTOM, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE,
-		TABLE_BASE_OUTER_X - TABLE_BASE_WIDTH, Y_BOTTOMEST, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE,
-
-		// table base right (side)
-		TABLE_BASE_OUTER_X - TABLE_BASE_WIDTH, Y_BOTTOM, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE - TABLE_BASE_DEPTH,
-		TABLE_BASE_OUTER_X - TABLE_BASE_WIDTH, Y_BOTTOMEST, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE - TABLE_BASE_DEPTH,
-		TABLE_BASE_OUTER_X - TABLE_BASE_WIDTH, Y_BOTTOMEST, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE,
-		TABLE_BASE_OUTER_X - TABLE_BASE_WIDTH, Y_BOTTOM, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE - TABLE_BASE_DEPTH,
-		TABLE_BASE_OUTER_X - TABLE_BASE_WIDTH, Y_BOTTOMEST, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE,
-		TABLE_BASE_OUTER_X - TABLE_BASE_WIDTH, Y_BOTTOM, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE,
-
-		// table base left (front)
-		-TABLE_BASE_OUTER_X, Y_BOTTOM, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE,
-		-TABLE_BASE_OUTER_X, Y_BOTTOMEST, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE,
-		-TABLE_BASE_OUTER_X + TABLE_BASE_WIDTH, Y_BOTTOMEST, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE,
-		-TABLE_BASE_OUTER_X, Y_BOTTOM, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE,
-		-TABLE_BASE_OUTER_X + TABLE_BASE_WIDTH, Y_BOTTOMEST, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE,
-		-TABLE_BASE_OUTER_X + TABLE_BASE_WIDTH, Y_BOTTOM, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE,
-
-		// table base left (side)
-		-TABLE_BASE_OUTER_X + TABLE_BASE_WIDTH, Y_BOTTOM, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE - TABLE_BASE_DEPTH,
-		-TABLE_BASE_OUTER_X + TABLE_BASE_WIDTH, Y_BOTTOMEST, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE,
-		-TABLE_BASE_OUTER_X + TABLE_BASE_WIDTH, Y_BOTTOMEST, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE - TABLE_BASE_DEPTH,
-		-TABLE_BASE_OUTER_X + TABLE_BASE_WIDTH, Y_BOTTOM, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE - TABLE_BASE_DEPTH,
-		-TABLE_BASE_OUTER_X + TABLE_BASE_WIDTH, Y_BOTTOM, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE,
-		-TABLE_BASE_OUTER_X + TABLE_BASE_WIDTH, Y_BOTTOMEST, TABLE_MAX_Z - TABLE_BASE_Z_DISTANCE,
+	
 	};
 
 	std::vector<float> const CardSceneBackgroundRenderer::TABLE_NORMALS = {
@@ -81,45 +37,7 @@ namespace card {
 		0, 1, 0,
 		0, 1, 0,
 
-		// front
-		0, 0, 1,
-		0, 0, 1,
-		0, 0, 1,
-		0, 0, 1,
-		0, 0, 1,
-		0, 0, 1,
-
-		// table base right (front)
-		0, 0, 0,
-		0, 0, 0,
-		0, 0, 0,
-		0, 0, 0,
-		0, 0, 0,
-		0, 0, 0,
-
-		// table base right (side)
-		0, 0, 0,
-		0, 0, 0,
-		0, 0, 0,
-		0, 0, 0,
-		0, 0, 0,
-		0, 0, 0,
-
-		// table base left (front)
-		0, 0, 0,
-		0, 0, 0,
-		0, 0, 0,
-		0, 0, 0,
-		0, 0, 0,
-		0, 0, 0,
-
-		// table base left (side)
-		0, 0, 0,
-		0, 0, 0,
-		0, 0, 0,
-		0, 0, 0,
-		0, 0, 0,
-		0, 0, 0,
+		
 	};
 
 	std::vector<float> const CardSceneBackgroundRenderer::TABLE_TEXTURE_COORDS = {
@@ -129,41 +47,6 @@ namespace card {
 		0, 0,
 		0, 1,
 		1, 1,
-
-		0, 1,
-		0, 0,
-		1, 0,
-		0, 1,
-		1, 0,
-		1, 1,
-
-		0, 1,
-		1, 0,
-		0, 0,
-		0, 1,
-		1, 1,
-		1, 0,
-
-		0, 1,
-		0, 0,
-		1, 0,
-		0, 1,
-		1, 0,
-		1, 1,
-
-		0, 1,
-		0, 0,
-		1, 0,
-		0, 1,
-		1, 0,
-		1, 1,
-
-		0, 1,
-		0, 0,
-		1, 0,
-		0, 1,
-		1, 1,
-		1, 0,
 	};
 
 
@@ -192,7 +75,7 @@ namespace card {
 		glDepthMask(GL_TRUE);*/
 
 		glBindTexture(GL_TEXTURE_2D, tableTopTexture.getTexId());
-		renderImpl3d.render(tableVao, projectionMatrix, viewport);
+		tableRenderer.render(tableVao, projectionMatrix, viewport);
 
 	}
 }

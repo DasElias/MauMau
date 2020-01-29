@@ -15,10 +15,10 @@
 namespace card {
 	const glm::vec3 CardSceneRenderer::DRAW_CARDS_POSITION = {-0.5, 0, 0};
 	const glm::vec3 CardSceneRenderer::PLAY_CARDS_POSITION = {0.5, 0, 0};
-	const glm::vec3 CardSceneRenderer::HAND_CARDS_LOCAL_POSITION = {0, -CardRenderer::HEIGHT / 2, CardSceneBackgroundRenderer::TABLE_MAX_Z};
-	const glm::vec3 CardSceneRenderer::HAND_CARDS_OPPONENT_VISAVIS_POSITION = {0, CardRenderer::HEIGHT / 2, -CardSceneBackgroundRenderer::TABLE_MAX_Z};
-	const glm::vec3 CardSceneRenderer::HAND_CARDS_OPPONENT_RIGHT_POSITION = {CardSceneBackgroundRenderer::TABLE_MAX_X, CardRenderer::HEIGHT / 2, 0};
-	const glm::vec3 CardSceneRenderer::HAND_CARDS_OPPONENT_LEFT_POSITION = {-CardSceneBackgroundRenderer::TABLE_MAX_X, CardRenderer::HEIGHT / 2, 0};
+	const glm::vec3 CardSceneRenderer::HAND_CARDS_LOCAL_POSITION = {0, -CardRenderer::HEIGHT / 2, 1};
+	const glm::vec3 CardSceneRenderer::HAND_CARDS_OPPONENT_VISAVIS_POSITION = {0, CardRenderer::HEIGHT / 2, -1};
+	const glm::vec3 CardSceneRenderer::HAND_CARDS_OPPONENT_RIGHT_POSITION = {2, CardRenderer::HEIGHT / 2, 0};
+	const glm::vec3 CardSceneRenderer::HAND_CARDS_OPPONENT_LEFT_POSITION = {-2, CardRenderer::HEIGHT / 2, 0};
 
 	const glm::vec3 CardSceneRenderer::DRAW_CARDS_ROTATION = {PI / 2, 0, 0};
 	const glm::vec3 CardSceneRenderer::PLAY_CARDS_ROTATION = {PI / 2, PI, 0};
@@ -26,6 +26,9 @@ namespace card {
 	const glm::vec3 CardSceneRenderer::HAND_CARDS_OPPONENT_VISAVIS_ROTATION = {PI, 0, 0};
 	const glm::vec3 CardSceneRenderer::HAND_CARDS_OPPONENT_RIGHT_ROTATION = {PI, PI / 2, 0};
 	const glm::vec3 CardSceneRenderer::HAND_CARDS_OPPONENT_LEFT_ROTATION = {PI, -PI / 2, 0};
+
+	const float CardSceneRenderer::LEFT_RIGHT_OPPONENT_CARDS_WIDTH = 2;
+	const float CardSceneRenderer::FRONT_BACK_OPPONENT_CARDS_WIDTH = 4;
 
 	CardSceneRenderer::CardSceneRenderer(ProjectionMatrix& projectionMatrix, Viewport& viewport, egui::MasterRenderer& eguiRenderer) :
 			projectionMatrix(projectionMatrix),
@@ -107,9 +110,9 @@ namespace card {
 		auto opponentsOrNoneInCwOrder = mapOpponentsToTablePositionsInCwOrder(opponents);
 
 		// render opponents
-		renderOpponentIfHasValue(0, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_LEFT_POSITION, HAND_CARDS_OPPONENT_LEFT_ROTATION, 2 * CardSceneBackgroundRenderer::TABLE_MAX_Z, false);
-		renderOpponentIfHasValue(1, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_VISAVIS_POSITION, HAND_CARDS_OPPONENT_VISAVIS_ROTATION, 2 * CardSceneBackgroundRenderer::TABLE_MAX_X, true);
-		renderOpponentIfHasValue(2, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_RIGHT_POSITION, HAND_CARDS_OPPONENT_RIGHT_ROTATION, 2 * CardSceneBackgroundRenderer::TABLE_MAX_Z, false);
+		renderOpponentIfHasValue(0, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_LEFT_POSITION, HAND_CARDS_OPPONENT_LEFT_ROTATION, LEFT_RIGHT_OPPONENT_CARDS_WIDTH, false);
+		renderOpponentIfHasValue(1, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_VISAVIS_POSITION, HAND_CARDS_OPPONENT_VISAVIS_ROTATION, FRONT_BACK_OPPONENT_CARDS_WIDTH, true);
+		renderOpponentIfHasValue(2, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_RIGHT_POSITION, HAND_CARDS_OPPONENT_RIGHT_ROTATION, LEFT_RIGHT_OPPONENT_CARDS_WIDTH, false);
 
 		cardRenderer.flush();
 		glEnable(GL_DEPTH_TEST);
