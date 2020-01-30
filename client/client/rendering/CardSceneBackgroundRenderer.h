@@ -31,8 +31,6 @@ namespace card {
 			TableRenderer tableRenderer;
 			DataTextureNormalVertexArrayObject tableVao;
 
-			std::shared_ptr<egui::UnorganizedParentElement> backgroundElement;
-			SimpleTexture backgroundTexture;
 			SimpleTexture tableTopTexture;
 
 		// ----------------------------------------------------------------------
