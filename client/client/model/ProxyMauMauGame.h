@@ -54,6 +54,7 @@ namespace card {
 			ServerPacketListenerCallback handler_onLocalPlayerIsOnTurn;
 			ServerPacketListenerCallback handler_onTimeExpires;
 			ServerPacketListenerCallback handler_onMauPunishment;
+			ServerPacketListenerCallback handler_onOtherPlayerHasSuccessfullyMaued;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
@@ -137,6 +138,7 @@ namespace card {
 			void listener_onLocalPlayerIsOnTurn(Packet& p);
 			void listener_onTimeExpires(Packet& p);
 			void listener_onMauPunishment(Packet& p);
+			void listener_onOtherPlayerHasSuccessfullyMaued(Packet& p);
 
 	};
 }

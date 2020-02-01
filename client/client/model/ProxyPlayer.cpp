@@ -7,6 +7,7 @@
 
 namespace card {
 	int const ProxyPlayer::SKIP_ANIMATION_DURATION_MS = PLAY_DURATION_MS;
+	int const ProxyPlayer::MAU_ANIMATION_DURATION_MS = PLAY_DURATION_MS;
 
 	ProxyPlayer::ProxyPlayer(std::shared_ptr<ParticipantOnClient> wrappedParticipant, ProxyPlayerGameInformation& gameInformation) :
 			handCardStack(std::make_unique<HandCardStack>()),
@@ -14,6 +15,7 @@ namespace card {
 			unixTimeOnTurnAnimationStarted(NOT_ON_TURN),
 			unixTimeOnTurnAnimationFreezed(ANIMATION_NOT_FREEZED),
 			unixTimePlayerSkipped(0),
+			unixTimePlayerMaued(0),
 			gameInformation(gameInformation) {
 	}
 	void ProxyPlayer::initHandCards(std::vector<Card> handCards, CardAnimator& drawCardStack, std::size_t playerIndex) {
@@ -67,6 +69,18 @@ namespace card {
 		if(isSkipAnimationActive()) return getPercentOfSkipAnimation();
 		return std::nullopt;
 	}
+	bool ProxyPlayer::isMauAnimationActive() const {
+		float x = getMilliseconds() - unixTimePlayerMaued;
+		return x >= 0 && x <= MAU_ANIMATION_DURATION_MS;
+	}
+	float ProxyPlayer::getPercentOfMauAnimation() const {
+		float x = getMilliseconds() - unixTimePlayerMaued;
+		return interpolateLinear(x, 0, 0, MAU_ANIMATION_DURATION_MS, 1);
+	}
+	std::optional<float> ProxyPlayer::getPercentOfMauAnimationOrNone() const {
+		if(isMauAnimationActive()) return getPercentOfMauAnimation();
+		return std::nullopt;
+	}
 	bool ProxyPlayer::hasTimeExpired() const {
 		if(unixTimeOnTurnAnimationStarted == NOT_ON_TURN) return true;
 		else return getMilliseconds() - unixTimeOnTurnAnimationStarted > MAX_TURN_DURATION;
@@ -97,6 +111,9 @@ namespace card {
 	void ProxyPlayer::onSkip() {
 		this->unixTimePlayerSkipped = getMilliseconds();
 		if(gameInformation.wasSingleCardDrawedInHandCardsThisTurn) this->unixTimePlayerSkipped += DRAW_DURATION_MS + DELAY_BETWEEN_DRAW_AND_PLAY;
+	}
+	void ProxyPlayer::onMau() {
+		this->unixTimePlayerMaued = getMilliseconds();
 	}
 	void ProxyPlayer::onStartTurn() {
 		this->unixTimeOnTurnAnimationStarted = getMilliseconds();

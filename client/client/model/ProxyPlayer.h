@@ -26,6 +26,7 @@ namespace card {
 			static long long int const ANIMATION_NOT_FREEZED = -1;
 
 			static int const SKIP_ANIMATION_DURATION_MS;
+			static int const MAU_ANIMATION_DURATION_MS;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
@@ -38,6 +39,7 @@ namespace card {
 			long long int unixTimeOnTurnAnimationStarted;
 			long long int unixTimeOnTurnAnimationFreezed;
 			long long int unixTimePlayerSkipped;
+			long long int unixTimePlayerMaued;
 			ProxyPlayerGameInformation& gameInformation;
 
 		// ----------------------------------------------------------------------
@@ -65,9 +67,11 @@ namespace card {
 			bool isSkipAnimationActive() const;
 			float getPercentOfSkipAnimation() const;
 			std::optional<float> getPercentOfSkipAnimationOrNone() const;
+			bool isMauAnimationActive() const;
+			float getPercentOfMauAnimation() const;
+			std::optional<float> getPercentOfMauAnimationOrNone() const;
 			bool hasTimeExpired() const;
 			bool isRemainingTimeAnimationActive() const;
-			bool isRemainingTimeAnimationActiveAndNotFreezed() const;
 			std::optional<float> getPercentOfRemainingTime() const;
 			std::shared_ptr<ParticipantOnClient> getWrappedParticipiant();
 
@@ -75,6 +79,7 @@ namespace card {
 			void freezeRemainingTimeAnimation();
 
 			void onSkip();
+			void onMau();
 			virtual void onStartTurn();
 			virtual void onEndTurn();
 

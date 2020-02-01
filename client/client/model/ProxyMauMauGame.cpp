@@ -7,6 +7,7 @@
 #include <shared/packet/cts/PlayCardRequest_CTSPacket.h>
 #include <shared/packet/cts/DrawCardRequest_CTSPacket.h>
 
+#include <shared/packet/stc/OtherPlayerHasMauedSuccessfully_STCPacket.h>
 #include <shared/packet/stc/MauPunishment_STCPacket.h>
 #include <shared/packet/stc/TurnWasAborted_STCPacket.h>
 #include <shared/packet/stc/OtherPlayerHasDrawnCards_STCPacket.h>
@@ -31,7 +32,8 @@ namespace card {
 			handler_onOtherPlayerHasPlayedCard(std::bind(&ProxyMauMauGame::listener_onOtherPlayerHasPlayedCard, this, std::placeholders::_1)),
 			handler_onLocalPlayerIsOnTurn(std::bind(&ProxyMauMauGame::listener_onLocalPlayerIsOnTurn, this, std::placeholders::_1)),
 			handler_onTimeExpires(std::bind(&ProxyMauMauGame::listener_onTimeExpires, this, std::placeholders::_1)),
-			handler_onMauPunishment(std::bind(&ProxyMauMauGame::listener_onMauPunishment, this, std::placeholders::_1)) {
+			handler_onMauPunishment(std::bind(&ProxyMauMauGame::listener_onMauPunishment, this, std::placeholders::_1)),
+			handler_onOtherPlayerHasSuccessfullyMaued(std::bind(&ProxyMauMauGame::listener_onOtherPlayerHasSuccessfullyMaued, this, std::placeholders::_1)) {
 
 		// initialize players
 		for(auto& o : allParticipantsInclLocal) {
@@ -66,6 +68,7 @@ namespace card {
 		packetTransmitter->addListenerForServerPkt(LocalPlayerIsOnTurn_STCPacket::PACKET_ID, handler_onLocalPlayerIsOnTurn);
 		packetTransmitter->addListenerForServerPkt(TurnWasAborted_STCPacket::PACKET_ID, handler_onTimeExpires);
 		packetTransmitter->addListenerForServerPkt(MauPunishment_STCPacket::PACKET_ID, handler_onMauPunishment);
+		packetTransmitter->addListenerForServerPkt(OtherPlayerHasMauedSuccessfully_STCPacket::PACKET_ID, handler_onOtherPlayerHasSuccessfullyMaued);
 
 	}
 	
@@ -75,6 +78,7 @@ namespace card {
 		packetTransmitter->removeListenerForServerPkt(LocalPlayerIsOnTurn_STCPacket::PACKET_ID, handler_onLocalPlayerIsOnTurn);
 		packetTransmitter->removeListenerForServerPkt(TurnWasAborted_STCPacket::PACKET_ID, handler_onTimeExpires);
 		packetTransmitter->removeListenerForServerPkt(MauPunishment_STCPacket::PACKET_ID, handler_onMauPunishment);
+		packetTransmitter->removeListenerForServerPkt(OtherPlayerHasMauedSuccessfully_STCPacket::PACKET_ID, handler_onOtherPlayerHasSuccessfullyMaued);
 
 	}
 
@@ -116,7 +120,7 @@ namespace card {
 	}
 
 	bool ProxyMauMauGame::canPlay(Card card) const {
-		if(! isLocalPlayerOnTurn() || !field_hasInitialCardsBeenDistributed || !localPlayer->hasPlayedCard() || !areAllPreviousCardTransactionsCompleted() || hasGameEnded() || localPlayer->hasTimeExpired()) return false;
+		if(! isLocalPlayerOnTurn() || !field_hasInitialCardsBeenDistributed || localPlayer->hasPlayedCard() || !areAllPreviousCardTransactionsCompleted() || hasGameEnded() || localPlayer->hasTimeExpired()) return false;
 
 		Card lastCardOnPlayStack = playCardStack.getLast();
 		if(lastCardOnPlayStack.getValue() == CHANGE_COLOR_VALUE) {
@@ -549,5 +553,10 @@ namespace card {
 		std::vector<Card> cardsToDraw = Card::getVectorFromCardNumber(cardNumbersToDraw);
 
 		onMauPunishment(casted.getConcernedUsername(), cardsToDraw, casted.getCause());
+	}
+	void ProxyMauMauGame::listener_onOtherPlayerHasSuccessfullyMaued(Packet& p) {
+		auto& casted = dynamic_cast<OtherPlayerHasMauedSuccessfully_STCPacket&>(p);
+		auto player = lookupPlayer(casted.getUsername());
+		player->onMau();
 	}
 }
