@@ -6,6 +6,7 @@
 #include <shared\utils\TimeUtils.h>
 #include <shared/model/MaxTurnDuration.h>
 #include <egui/input/IOHandler.h>
+#include <shared/utils/Logger.h>
 
 namespace card {
 	PlayerLabelRenderer::PlayerLabelRenderer(egui::MasterRenderer& eguiRenderer, Renderer2D& renderer2D, CircleSectorRenderer& circleSectorRenderer) :
@@ -13,43 +14,41 @@ namespace card {
 			renderer2D(renderer2D),
 			circleSectorRenderer(circleSectorRenderer),
 			textureSkip(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromFile(getApplicationFolder() + "\\resources\\skipPlayer.png")),
-			playerLocal(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
-			playerVisAVis(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
-			playerLeft(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
-			playerRight(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())) {
+			textureMau(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromFile(getApplicationFolder() + "\\resources\\mau.png")),
+			labelElementForLocal(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
+			labelElementForVisAVis(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
+			labelElementForLeft(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
+			labelElementForRight(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())) {
 
 		auto parentElement = std::make_shared<egui::UnorganizedParentElement>();
-		parentElement->addChildElement(playerLocal);
-		parentElement->addChildElement(playerVisAVis);
-		parentElement->addChildElement(playerLeft);
-		parentElement->addChildElement(playerRight);
+		parentElement->addChildElement(labelElementForLocal);
+		parentElement->addChildElement(labelElementForVisAVis);
+		parentElement->addChildElement(labelElementForLeft);
+		parentElement->addChildElement(labelElementForRight);
 		scene.setRootElement(parentElement);
 
 		updatePositions();
 	}
 	void PlayerLabelRenderer::renderLocal(const std::shared_ptr<ProxyPlayer>& participant) {
-		playerLocal->set(participant->getUsername(), participant->getPercentOfSkipAnimationOrNone());
-		localAvatar = participant->getAvatar();
-
-		if(participant->isRemainingTimeAnimationActive()) renderCircleSector(playerLocal, *participant->getPercentOfRemainingTime());
+		renderImpl(participant, labelElementForLocal, playerLocal);
 	}
 	void PlayerLabelRenderer::renderVisAVis(const std::shared_ptr<ProxyPlayer>& participant) {
-		playerVisAVis->set(participant->getUsername(), participant->getPercentOfSkipAnimationOrNone());
-		visAVisAvatar = participant->getAvatar();
-
-		if(participant->isRemainingTimeAnimationActive()) renderCircleSector(playerVisAVis, *participant->getPercentOfRemainingTime());
+		renderImpl(participant, labelElementForVisAVis, playerVisAVis);
 	}
 	void PlayerLabelRenderer::renderLeft(const std::shared_ptr<ProxyPlayer>& participant) {
-		playerLeft->set(participant->getUsername(), participant->getPercentOfSkipAnimationOrNone());
-		leftAvatar = participant->getAvatar();
-
-		if(participant->isRemainingTimeAnimationActive()) renderCircleSector(playerLeft, *participant->getPercentOfRemainingTime());
+		renderImpl(participant, labelElementForLeft, playerLeft);
 	}
 	void PlayerLabelRenderer::renderRight(const std::shared_ptr<ProxyPlayer>& participant) {
-		playerRight->set(participant->getUsername(), participant->getPercentOfSkipAnimationOrNone());
-		rightAvatar = participant->getAvatar();
-		
-		if(participant->isRemainingTimeAnimationActive()) renderCircleSector(playerRight, *participant->getPercentOfRemainingTime());
+		renderImpl(participant, labelElementForRight, playerRight);
+	}
+	void PlayerLabelRenderer::renderImpl(const std::shared_ptr<ProxyPlayer>& participant, std::shared_ptr<PlayerLabel>& labelElementField, std::shared_ptr<ProxyPlayer>& proxyPlayerField) {
+		proxyPlayerField = participant;
+
+		std::optional<float> animationToUse = participant->getPercentOfSkipAnimationOrNone();
+		if(! animationToUse.has_value()) animationToUse = participant->getPercentOfMauAnimationOrNone();
+		labelElementField->set(participant->getUsername(), animationToUse);
+
+		if(participant->isRemainingTimeAnimationActive()) renderCircleSector(labelElementField, *participant->getPercentOfRemainingTime());
 	}
 	void PlayerLabelRenderer::flush() {
 		flushText();
@@ -77,12 +76,10 @@ namespace card {
 		float const PADDING_LEFT_RIGHT = 0.055f;
 		float const PADDING_TOP = 0.175f;
 
-		playerLocal->setPositionOnScreen(0.25f, 0.65f);
-		playerVisAVis->setPositionOnScreen(0.5f - (PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN/2), 0);
-		playerLeft->setPositionOnScreen(PADDING_LEFT_RIGHT, PADDING_TOP);
-		playerRight->setPositionOnScreen(1 - PADDING_LEFT_RIGHT - PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN, PADDING_TOP);
-		auto imgElem = playerLocal->getImageElement();
-		imgElem->getAbsXMargin();
+		labelElementForLocal->setPositionOnScreen(0.25f, 0.65f);
+		labelElementForVisAVis->setPositionOnScreen(0.5f - (PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN/2), 0);
+		labelElementForLeft->setPositionOnScreen(PADDING_LEFT_RIGHT, PADDING_TOP);
+		labelElementForRight->setPositionOnScreen(1 - PADDING_LEFT_RIGHT - PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN, PADDING_TOP);
 	}
 	void PlayerLabelRenderer::flushText() {
 		eguiRenderer.beginFrame();
@@ -92,26 +89,31 @@ namespace card {
 	void PlayerLabelRenderer::flushImages() {
 		glActiveTexture(GL_TEXTURE0);
 
-		flushImageOfPlayer(playerLocal, localAvatar);
-		flushImageOfPlayer(playerVisAVis, visAVisAvatar);
-		flushImageOfPlayer(playerLeft, leftAvatar);
-		flushImageOfPlayer(playerRight, rightAvatar);
+		flushImageOfPlayer(labelElementForLocal, playerLocal);
+		flushImageOfPlayer(labelElementForVisAVis, playerVisAVis);
+		flushImageOfPlayer(labelElementForLeft, playerLeft);
+		flushImageOfPlayer(labelElementForRight, playerRight);
 	}
-	void PlayerLabelRenderer::flushImageOfPlayer(const std::shared_ptr<PlayerLabel>& element, Avatar avatar) {
+	void PlayerLabelRenderer::flushImageOfPlayer(const std::shared_ptr<PlayerLabel>& element, const std::shared_ptr<ProxyPlayer>& participant) {
 		if(element->isVisible()) {
+			Avatar avatar = participant->getAvatar();
 			avatarTextures.bind(avatar);
 			renderer2D.render(element->getImageElement(), true);
 
-			auto skipElementOrNull = element->getSkipElementIfVisible();
-			if(skipElementOrNull) {
-				textureSkip.bind();
-				renderer2D.render(skipElementOrNull, true);
+			auto animationOverlayElementOrNull = element->getAnimationOverlayElementIfVisible();
+			if(animationOverlayElementOrNull) {
+				if(participant->isSkipAnimationActive()) textureSkip.bind();
+				else if(participant->isMauAnimationActive()) textureMau.bind();
+				else log(LogSeverity::WARNING, "Animation is rendered but no texture was bound");
+
+				renderer2D.render(animationOverlayElementOrNull, true);
 			}
 		}
 	}
 	void PlayerLabelRenderer::endFlush() {
-		playerVisAVis->clear();
-		playerLeft->clear();
-		playerRight->clear();
+		labelElementForLocal->clear();
+		labelElementForLeft->clear();
+		labelElementForRight->clear();
+		labelElementForVisAVis->clear();
 	}
 }

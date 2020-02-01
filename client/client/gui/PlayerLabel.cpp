@@ -17,9 +17,9 @@ namespace card {
 		rootElement->addChildElement(imageElement);
 		imageElement->setMaxWidth({IMAGE_WIDTH_RELATIVE_ON_SCREEN, egui::RelativityMode::RELATIVE_ON_SCREEN});
 
-		skipImageElement = std::make_shared<egui::AspectRatioElement>(1.0f);
-		this->addChildElement(skipImageElement);
-		
+		animationOverlayElement = std::make_shared<egui::AspectRatioElement>(1.0f);
+		this->addChildElement(animationOverlayElement);
+	
 
 		int const TEXT_WIDTH_PIXEL_ADDITION = 100;
 		playerNameLabel = std::make_shared<egui::Label>();
@@ -37,27 +37,29 @@ namespace card {
 		positioning = std::make_shared<egui::RelativePositioningOnScreen>();
 		this->setOwnPositioning(positioning);
 	}
-	void PlayerLabel::set(std::string playerName, std::optional<float> percentSkipAnimationOrNone) {
+	void PlayerLabel::set(std::string playerName, std::optional<float> percentOverlayAnimationOrNone) {
 		this->setVisible(true);
 		playerNameLabel->setText(playerName);
 
-		bool isSkipAnimationActive = percentSkipAnimationOrNone.has_value();
-		skipImageElement->setVisible(isSkipAnimationActive);
+		updateAnimationOverlay(percentOverlayAnimationOrNone);
+	}
+	void PlayerLabel::updateAnimationOverlay(std::optional<float> percentAnimationOverlayOrNone) {
+		bool isSkipAnimationActive = percentAnimationOverlayOrNone.has_value();
+		animationOverlayElement->setVisible(isSkipAnimationActive);
 
 		int computedSkipImageWidthAddition = SKIP_IMAGE_WIDTH_ADDITION;
 		int computedSkipImageYTranslation = 5;
 		if(isSkipAnimationActive) {
-			if(* percentSkipAnimationOrNone > 0.5f) percentSkipAnimationOrNone = (* percentSkipAnimationOrNone - 1) * (-2);
-			else percentSkipAnimationOrNone = (*percentSkipAnimationOrNone) * 2;
+			if(*percentAnimationOverlayOrNone > 0.5f) percentAnimationOverlayOrNone = (*percentAnimationOverlayOrNone - 1) * (-2);
+			else percentAnimationOverlayOrNone = (*percentAnimationOverlayOrNone) * 2;
 
-			computedSkipImageWidthAddition += 10 * (*percentSkipAnimationOrNone);
-			computedSkipImageYTranslation += 10 * (*percentSkipAnimationOrNone);
-		} 
+			computedSkipImageWidthAddition += 10 * (*percentAnimationOverlayOrNone);
+			computedSkipImageYTranslation += 10 * (*percentAnimationOverlayOrNone);
+		}
 
-		skipImageElement->setMaxWidth({{IMAGE_WIDTH_RELATIVE_ON_SCREEN, egui::RelativityMode::RELATIVE_ON_SCREEN}, {2.0f * computedSkipImageWidthAddition, egui::RelativityMode::ABSOLUTE_VALUE}});
-		skipImageElement->setXTranslation(-computedSkipImageWidthAddition);
-		skipImageElement->setYTranslation(-computedSkipImageYTranslation);
-
+		animationOverlayElement->setMaxWidth({{IMAGE_WIDTH_RELATIVE_ON_SCREEN, egui::RelativityMode::RELATIVE_ON_SCREEN}, {2.0f * computedSkipImageWidthAddition, egui::RelativityMode::ABSOLUTE_VALUE}});
+		animationOverlayElement->setXTranslation(-computedSkipImageWidthAddition);
+		animationOverlayElement->setYTranslation(-computedSkipImageYTranslation);
 	}
 	void PlayerLabel::clear() {
 		this->setVisible(false);
@@ -69,13 +71,13 @@ namespace card {
 	std::shared_ptr<egui::AspectRatioElement> PlayerLabel::getImageElement() {
 		return imageElement;
 	}
-	std::shared_ptr<egui::AspectRatioElement> PlayerLabel::getSkipElementIfVisible() {
-		if(skipImageElement->isVisible()) return skipImageElement;
+	std::shared_ptr<egui::AspectRatioElement> PlayerLabel::getAnimationOverlayElementIfVisible() {
+		if(animationOverlayElement->isVisible()) return animationOverlayElement;
 		return nullptr;
 	}
 	void PlayerLabel::setOwnPositioning(std::shared_ptr<egui::Positioning> positioning) {
 		UnorganizedParentElement::setOwnPositioning(positioning);
 		rootElement->setOwnPositioning(positioning);
-		skipImageElement->setOwnPositioning(positioning);
+		animationOverlayElement->setOwnPositioning(positioning);
 	}
 }

@@ -23,7 +23,7 @@ namespace card {
             std::shared_ptr<egui::VBox> rootElement;
             std::shared_ptr<egui::Label> playerNameLabel;
             std::shared_ptr<egui::AspectRatioElement> imageElement;
-            std::shared_ptr<egui::AspectRatioElement> skipImageElement;
+            std::shared_ptr<egui::AspectRatioElement> animationOverlayElement;
             std::shared_ptr<egui::RelativePositioningOnScreen> positioning;
 
         // ----------------------------------------------------------------------
@@ -36,12 +36,16 @@ namespace card {
         // -------------------------------METHODS--------------------------------
         // ----------------------------------------------------------------------
         public:
-            void set(std::string playerName, std::optional<float> percentSkipAnimationOrNone);
+            void set(std::string playerName, std::optional<float> percentAnimationOverlayOrNone);
             void clear();
             void setPositionOnScreen(float x, float y);
             std::shared_ptr<egui::AspectRatioElement> getImageElement(); 
-            std::shared_ptr<egui::AspectRatioElement> getSkipElementIfVisible();
+            std::shared_ptr<egui::AspectRatioElement> getAnimationOverlayElementIfVisible();
 
             void setOwnPositioning(std::shared_ptr<egui::Positioning> positioning) override;
+
+        private:
+            void updateAnimationOverlay(std::optional<float> percentAnimationOverlayOrNone);
+
 	};
 }

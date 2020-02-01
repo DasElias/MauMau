@@ -20,15 +20,19 @@ namespace card {
             CircleSectorRenderer& circleSectorRenderer;
 
             SimpleTexture textureSkip;
+            SimpleTexture textureMau;
             AvatarTextures avatarTextures;
 
             egui::Scene scene;
-            std::shared_ptr<PlayerLabel> playerLocal;
-            std::shared_ptr<PlayerLabel> playerVisAVis;
-            std::shared_ptr<PlayerLabel> playerLeft;
-            std::shared_ptr<PlayerLabel> playerRight;
-
-            Avatar localAvatar, visAVisAvatar, leftAvatar, rightAvatar;
+            std::shared_ptr<PlayerLabel> labelElementForLocal;
+            std::shared_ptr<PlayerLabel> labelElementForVisAVis;
+            std::shared_ptr<PlayerLabel> labelElementForLeft;
+            std::shared_ptr<PlayerLabel> labelElementForRight;
+            
+            std::shared_ptr<ProxyPlayer> playerLocal;
+            std::shared_ptr<ProxyPlayer> playerVisAVis;
+            std::shared_ptr<ProxyPlayer> playerLeft;
+            std::shared_ptr<ProxyPlayer> playerRight;
             
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------
@@ -47,11 +51,12 @@ namespace card {
              void flush();
             
         private:
+            void renderImpl(const std::shared_ptr<ProxyPlayer>& participant, std::shared_ptr<PlayerLabel>& labelElementField, std::shared_ptr<ProxyPlayer>& proxyPlayerField);
             void renderCircleSector(const std::shared_ptr<PlayerLabel>& playerLabel, float percentExpired);
             void updatePositions();
             void flushText();
             void flushImages();
-            void flushImageOfPlayer(const std::shared_ptr<PlayerLabel>& element, Avatar avatar);
+            void flushImageOfPlayer(const std::shared_ptr<PlayerLabel>& element, const std::shared_ptr<ProxyPlayer>& participant);
             void endFlush();
 
 	};
