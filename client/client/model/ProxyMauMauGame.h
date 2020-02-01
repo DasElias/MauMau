@@ -47,6 +47,7 @@ namespace card {
 
 			// is null, if game hasn't ended yet
 			std::shared_ptr<ProxyPlayer> winner;
+			bool field_hasInitialCardsBeenDistributed = false;
 
 			ServerPacketListenerCallback handler_onOtherPlayerHasDrawnCard;
 			ServerPacketListenerCallback handler_onOtherPlayerHasPlayedCard;

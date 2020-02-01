@@ -52,6 +52,7 @@ namespace card {
 		this->userOnTurn = lookupPlayer(usernameOnTurn);
 		threadUtils_invokeIn(getDurationUntilInitialCardsAreDistributed(allPlayers.size(), handCards.size()), [this]() {
 			userOnTurn->onStartTurn();
+			field_hasInitialCardsBeenDistributed = true;
 		});
 		setLocalPlayerAtTheBeginOfPlayersVector();
 
@@ -115,7 +116,7 @@ namespace card {
 	}
 
 	bool ProxyMauMauGame::canPlay(Card card) const {
-		if(! isLocalPlayerOnTurn() || localPlayer->hasPlayedCard() || !areAllPreviousCardTransactionsCompleted() || hasGameEnded() || localPlayer->hasTimeExpired()) return false;
+		if(! isLocalPlayerOnTurn() || !field_hasInitialCardsBeenDistributed || !localPlayer->hasPlayedCard() || !areAllPreviousCardTransactionsCompleted() || hasGameEnded() || localPlayer->hasTimeExpired()) return false;
 
 		Card lastCardOnPlayStack = playCardStack.getLast();
 		if(lastCardOnPlayStack.getValue() == CHANGE_COLOR_VALUE) {
@@ -130,7 +131,7 @@ namespace card {
 	}
 
 	bool ProxyMauMauGame::canDraw() const {
-		if(! isLocalPlayerOnTurn() || !areAllPreviousCardTransactionsCompleted() || isWaitingForColorChoose() || drawCardForNextPlayer == Card::NULLCARD || localPlayer->hasTimeExpired()) return false;
+		if(! isLocalPlayerOnTurn() || !field_hasInitialCardsBeenDistributed || !areAllPreviousCardTransactionsCompleted() || isWaitingForColorChoose() || drawCardForNextPlayer == Card::NULLCARD || localPlayer->hasTimeExpired()) return false;
 		if(hasGameEnded()) return false;
 
 		// has already drawn a card
@@ -146,6 +147,7 @@ namespace card {
 	bool ProxyMauMauGame::canMau() const {
 		if(hasGameEnded()) return false;
 
+		if(!field_hasInitialCardsBeenDistributed) return false;
 		// player has already finished game, no more mau needed
 		if(localPlayer->getCardStack().isEmptyAndNoPendingTransactions()) return false;
 
