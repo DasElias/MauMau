@@ -24,28 +24,33 @@ namespace card {
             std::shared_ptr<egui::Label> playerNameLabel;
             std::shared_ptr<egui::AspectRatioElement> imageElement;
             std::shared_ptr<egui::AspectRatioElement> animationOverlayElement;
+            std::shared_ptr<egui::AspectRatioElement> mauAnimationElement;
             std::shared_ptr<egui::RelativePositioningOnScreen> positioning;
 
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            PlayerLabel(float imageAspectRatio);
+            PlayerLabel(float avatarAspectRatio, float skipAspectRatio, float mauAspectRatio);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
         // ----------------------------------------------------------------------
         public:
-            void set(std::string playerName, std::optional<float> percentAnimationOverlayOrNone);
+            void set(std::string playerName, std::optional<float> percentAnimationOverlayOrNone, std::optional<float> percentMauAnimationOrNone);
             void clear();
             void setPositionOnScreen(float x, float y);
             std::shared_ptr<egui::AspectRatioElement> getImageElement(); 
+            std::shared_ptr<egui::AspectRatioElement> getMauAnimationElementIfVisible();
             std::shared_ptr<egui::AspectRatioElement> getAnimationOverlayElementIfVisible();
 
-            void setOwnPositioning(std::shared_ptr<egui::Positioning> positioning) override;
 
         private:
             void updateAnimationOverlay(std::optional<float> percentAnimationOverlayOrNone);
+            void updateMauAnimation(std::optional<float> percentMauAnimationOrNone);
+
+            void setOwnPositioning(std::shared_ptr<egui::Positioning> positioning) override;
+
 
 	};
 }

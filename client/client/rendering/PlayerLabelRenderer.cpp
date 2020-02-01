@@ -14,11 +14,11 @@ namespace card {
 			renderer2D(renderer2D),
 			circleSectorRenderer(circleSectorRenderer),
 			textureSkip(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromFile(getApplicationFolder() + "\\resources\\skipPlayer.png")),
-			textureMau(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromFile(getApplicationFolder() + "\\resources\\mau.png")),
-			labelElementForLocal(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
-			labelElementForVisAVis(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
-			labelElementForLeft(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
-			labelElementForRight(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())) {
+			textureMau(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromFile("C:\\Users\\Elias\\Downloads\\Bild5.png")),
+			labelElementForLocal(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio(), textureSkip.getAspectRatio(), textureMau.getAspectRatio())),
+			labelElementForVisAVis(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio(), textureSkip.getAspectRatio(), textureMau.getAspectRatio())),
+			labelElementForLeft(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio(), textureSkip.getAspectRatio(), textureMau.getAspectRatio())),
+			labelElementForRight(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio(), textureSkip.getAspectRatio(), textureMau.getAspectRatio())) {
 
 		auto parentElement = std::make_shared<egui::UnorganizedParentElement>();
 		parentElement->addChildElement(labelElementForLocal);
@@ -46,7 +46,7 @@ namespace card {
 
 		std::optional<float> animationToUse = participant->getPercentOfSkipAnimationOrNone();
 		if(! animationToUse.has_value()) animationToUse = participant->getPercentOfMauAnimationOrNone();
-		labelElementField->set(participant->getUsername(), animationToUse);
+		labelElementField->set(participant->getUsername(), participant->getPercentOfSkipAnimationOrNone(), participant->getPercentOfMauAnimationOrNone());
 
 		if(participant->isRemainingTimeAnimationActive()) renderCircleSector(labelElementField, *participant->getPercentOfRemainingTime());
 	}
@@ -73,8 +73,8 @@ namespace card {
 		circleSectorRenderer.renderSector_xDiameter({centerX, centerY}, diameterX, startAngle, endAngle, 500, {0.93f, 0.62f, 0.16f, 0.5f});
 	}
 	void PlayerLabelRenderer::updatePositions() {
-		float const PADDING_LEFT_RIGHT = 0.055f;
-		float const PADDING_TOP = 0.175f;
+		float const PADDING_LEFT_RIGHT = 0.0575f;
+		float const PADDING_TOP = 0.1725f;
 
 		labelElementForLocal->setPositionOnScreen(0.25f, 0.65f);
 		labelElementForVisAVis->setPositionOnScreen(0.5f - (PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN/2), 0);
@@ -100,13 +100,16 @@ namespace card {
 			avatarTextures.bind(avatar);
 			renderer2D.render(element->getImageElement(), true);
 
-			auto animationOverlayElementOrNull = element->getAnimationOverlayElementIfVisible();
-			if(animationOverlayElementOrNull) {
-				if(participant->isSkipAnimationActive()) textureSkip.bind();
-				else if(participant->isMauAnimationActive()) textureMau.bind();
-				else log(LogSeverity::WARNING, "Animation is rendered but no texture was bound");
-
-				renderer2D.render(animationOverlayElementOrNull, true);
+			
+			auto skipElementOrNull = element->getAnimationOverlayElementIfVisible();
+			if(skipElementOrNull) {
+				textureSkip.bind();
+				renderer2D.render(skipElementOrNull, true);
+			}
+			auto mauElementOrNull = element->getMauAnimationElementIfVisible();
+			if(mauElementOrNull) {
+				textureMau.bind();
+				renderer2D.render(mauElementOrNull, true);
 			}
 		}
 	}
