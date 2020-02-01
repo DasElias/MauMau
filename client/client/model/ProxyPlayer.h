@@ -67,6 +67,7 @@ namespace card {
 			std::optional<float> getPercentOfSkipAnimationOrNone() const;
 			bool hasTimeExpired() const;
 			bool isRemainingTimeAnimationActive() const;
+			bool isRemainingTimeAnimationActiveAndNotFreezed() const;
 			std::optional<float> getPercentOfRemainingTime() const;
 			std::shared_ptr<ParticipantOnClient> getWrappedParticipiant();
 

@@ -2,7 +2,7 @@
 #include "AbstractGameFacade.h"
 #include "ProxyRoom.h"
 #include "../network/LocalPacketTransmitter.h"
-#include "../localServer/LocalServer.h"
+#include "LocalServer.h"
 #include "ParticipantOnClient.h"
 
 namespace card {
