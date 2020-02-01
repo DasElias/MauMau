@@ -91,9 +91,9 @@ namespace card {
 		int timeUntilCardsDistributed = getDurationUntilInitialCardsAreDistributed(this->players.size(), AMOUNT_OF_HAND_CARDS);
 		threadUtils_invokeIn(timeUntilCardsDistributed, [this]() {
 			playerOnTurn->onStartTurn();
+			startTurnAbortTimer();
 		});
 
-		startTurnAbortTimer();
 
 	}
 
