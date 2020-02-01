@@ -27,6 +27,7 @@ namespace card {
 			void bind() const override;
 			int32_t getWidth() const;
 			int32_t getHeight() const;
+			float getAspectRatio() const;
 
 			void cleanUp() override;
 	};

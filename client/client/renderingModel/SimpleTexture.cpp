@@ -31,6 +31,10 @@ namespace card {
 		return height;
 	}
 
+	float SimpleTexture::getAspectRatio() const {
+		return float(width) / height;
+	}
+
 	void SimpleTexture::cleanUp() {
 		glDeleteTextures(1, &texId);
 	}
