@@ -5,6 +5,7 @@
 #include "../packet/cts/DrawCardRequest_CTSPacket.h"
 #include "../packet/cts/PlayCardRequest_CTSPacket.h"
 
+#include "../packet/stc/OtherPlayerHasMauedSuccessfully_STCPacket.h"
 #include "../packet/stc/MauPunishment_STCPacket.h"
 #include "../packet/stc/TurnWasAborted_STCPacket.h"
 #include "../packet/stc/LocalPlayerIsOnTurn_STCPacket.h"
@@ -109,6 +110,7 @@ namespace card {
 		}
 
 		wasMauedCorrectly_thisTurn = true;
+		sendSuccessfulMauPacket(player);
 	}
 
 	bool ServerMauMauGame::playCardAndSetNextPlayerOnTurn(Player& player, Card card, CardIndex chosenIndex) {
@@ -297,6 +299,16 @@ namespace card {
 				packetTransmitter->sendPacketToClient(packet, p->getWrappedParticipant());
 			} else {
 				MauPunishment_STCPacket packet(responsiblePlayerUsername, cardsToDrawAsNullCards, cause);
+				packetTransmitter->sendPacketToClient(packet, p->getWrappedParticipant());
+			}
+		}
+	}
+
+	void ServerMauMauGame::sendSuccessfulMauPacket(Player& responsiblePlayer) {
+		std::string responsiblePlayerUsername = responsiblePlayer.getUsername();
+		for(auto& p : players) {
+			if(! (*p == responsiblePlayer)) {
+				OtherPlayerHasMauedSuccessfully_STCPacket packet(responsiblePlayerUsername);
 				packetTransmitter->sendPacketToClient(packet, p->getWrappedParticipant());
 			}
 		}

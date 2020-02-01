@@ -15,7 +15,7 @@ namespace card {
 		// ----------------------------STATIC-FIELDS-----------------------------
 		// ----------------------------------------------------------------------
 		private:
-			static int const AMOUNT_OF_HAND_CARDS = 6;
+			static int const AMOUNT_OF_HAND_CARDS = 2;
 			static int const CARDS_TO_DRAW_ON_TIME_EXPIRED = 2;
 			static int const CARDS_TO_DRAW_MAU_PUNISHMENT = 2;
 
@@ -109,6 +109,7 @@ namespace card {
 			// since the player can't mau if drawn the card just drawn
 			void checkForMauIfNeeded();
 			void sendMauPunishmentPacket(Player& responsiblePlayer, MauPunishmentCause cause);
+			void sendSuccessfulMauPacket(Player& responsiblePlayer);
 
 			void startTurnAbortTimer();
 			void abortTurn();
