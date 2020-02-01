@@ -35,10 +35,10 @@ namespace card {
 		source.remove(0);
 
 		CardAnimation a(getMilliseconds(), durationMs, source, mutatesTo);
-		addCardAnimation(a);
+		animations.insertAnimation(a);
 
 		threadUtils_invokeIn(durationMs, [this, a, mutatesTo] {
-			removeCardAnimation(a);
+			animations.removeAnimation(a);
 			this->addFromPlain(mutatesTo);
 			onAnimationEnd();
 		});
@@ -62,10 +62,10 @@ namespace card {
 		source.removeLast();
 
 		CardAnimation a(getMilliseconds(), durationMs, source, mutatesTo);
-		addCardAnimation(a);
+		animations.insertAnimation(a);
 
 		threadUtils_invokeIn(durationMs, [this, a, mutatesTo] {
-			removeCardAnimation(a);
+			animations.removeAnimation(a);
 			this->addFromPlain(mutatesTo);
 			onAnimationEnd();
 		});
@@ -89,11 +89,11 @@ namespace card {
 		source.remove(card);
 
 		CardAnimation a(getMilliseconds(), durationMs, source, card);
-		addCardAnimation(a);
+		animations.insertAnimation(a);
 
 		threadUtils_invokeIn(durationMs, [this, a, card] {
 			onAnimationEnd();
-			removeCardAnimation(a);
+			animations.removeAnimation(a);
 			this->addFromPlain(card);
 		});
 	}
@@ -117,10 +117,10 @@ namespace card {
 		source.remove(randomInRange<std::size_t>(0, source.getSize() - 1));
 
 		CardAnimation a(getMilliseconds(), durationMs, source, mutatesTo);
-		addCardAnimation(a);
+		animations.insertAnimation(a);
 
 		threadUtils_invokeIn(durationMs, [this, a, mutatesTo] {	
-			removeCardAnimation(a);
+			animations.removeAnimation(a);
 			this->addFromPlain(mutatesTo);
 			onAnimationEnd();
 		});
@@ -134,14 +134,6 @@ namespace card {
 		pendingAnimationsCounter--;
 	}
 
-	void CardAnimator::addCardAnimation(CardAnimation ca) {
-		animations.insert(ca);
-	}
-
-	void CardAnimator::removeCardAnimation(CardAnimation ca) {
-		animations.erase(std::find(animations.begin(), animations.end(), ca));
-	}
-
 	void CardAnimator::registerCardAnimation(Card c) {
 		lastRegisteredAnimation = c;
 	}
@@ -150,7 +142,7 @@ namespace card {
 		lastRegisteredAnimation = std::nullopt;
 	}
 
-	std::set<CardAnimation> CardAnimator::getCardAnimations() const {
+	std::vector<CardAnimation> CardAnimator::getCardAnimations() const {
 		return animations;
 	}
 

@@ -3,12 +3,17 @@
 #include <set>
 
 namespace card {
-	class CardAnimationSet : public std::set<CardAnimation> {
+	class CardAnimationCollection : public std::vector<CardAnimation> {
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
+			void insertAnimation(CardAnimation animationToInsert);
+			void removeAnimation(CardAnimation animationToRemove);
+
+			// would be the last card added to the destination
 			CardAnimation getLast() const;
+			// would be the first card added to the source
 			CardAnimation getFirst() const;
 	};
 }
