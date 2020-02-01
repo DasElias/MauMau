@@ -1,7 +1,7 @@
 #include "TurnWasAborted_STCPacket.h"
 
 namespace card {
-	std::string const TurnWasAborted_STCPacket::CARDS_TO_DRAW_KEY = "26A";
+	std::string const TurnWasAborted_STCPacket::CARDS_TO_DRAW_KEY = "24A";
 
 	TurnWasAborted_STCPacket::TurnWasAborted_STCPacket(std::vector<int>& cardsToDraw) :
 			Packet(PACKET_ID),

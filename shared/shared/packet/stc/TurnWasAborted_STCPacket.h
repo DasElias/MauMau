@@ -6,7 +6,7 @@ namespace card {
 		// ----------------------------STATIC-FIELDS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			static int const PACKET_ID = 206;
+			static int const PACKET_ID = 204;
 
 		private:
 			static std::string const CARDS_TO_DRAW_KEY;
