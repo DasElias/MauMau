@@ -8,6 +8,8 @@
 #include "../utils/Logger.h"
 
 namespace card {
+	float const AiPlayer::MAU_MISS_PROBABILITY = 0.0f;
+
 	AiPlayer::AiPlayer(std::shared_ptr<ParticipantOnServer> wrappedParticipant, ServerMauMauGame& game, std::vector<Card> handCards) :
 			Player(wrappedParticipant, handCards),
 			game(game) {
@@ -39,6 +41,8 @@ namespace card {
 
 		if(playableCards.empty()) return false;
 		else {
+			tryMau();
+
 			std::size_t chosenIndex = randomInRange<std::size_t>(0, playableCards.size() - 1);
 			Card chosenCard = playableCards[chosenIndex];
 			playCardImpl(chosenCard);
@@ -53,6 +57,13 @@ namespace card {
 			}
 		}
 		return playableCards;
+	}
+	void AiPlayer::tryMau() {
+		if(game.canMau(*this)) {
+			if(randomReal<float>() > MAU_MISS_PROBABILITY) {
+				game.mau(*this);
+			}
+		}
 	}
 	void AiPlayer::playCardImpl(Card card) {
 		CardIndex nextCardIndex = (game.canChangeColor(card)) ? chooseCardIndex() : CardIndex::NULLINDEX;

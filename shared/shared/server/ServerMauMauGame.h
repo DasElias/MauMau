@@ -7,6 +7,7 @@
 #include "../model/CardStack.h"
 #include "../model/Direction.h"
 #include "ServerGameEndHandler.h"
+#include "../model/MauPunishmentCause.h"
 
 namespace card {
 	class ServerMauMauGame {
@@ -16,6 +17,7 @@ namespace card {
 		private:
 			static int const AMOUNT_OF_HAND_CARDS = 6;
 			static int const CARDS_TO_DRAW_ON_TIME_EXPIRED = 2;
+			static int const CARDS_TO_DRAW_MAU_PUNISHMENT = 2;
 
 			static uint64_t startTurnAbortIdCounter;
 
@@ -40,8 +42,11 @@ namespace card {
 			bool wasCardPlayed_thisTurn = false;
 			bool wasCardPlayed_lastTurn = false;
 
+			bool wasMauedCorrectly_thisTurn = false;
+
 			ClientPacketListenerCallback handler_onPlayCard;
 			ClientPacketListenerCallback handler_onDrawCard;
+			ClientPacketListenerCallback handler_onMau;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
@@ -54,6 +59,7 @@ namespace card {
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
+			void mau(Player& player);
 			[[nodiscard]] bool playCardAndSetNextPlayerOnTurn(Player& player, Card card, CardIndex chosenIndex = CardIndex::NULLINDEX);
 			[[nodiscard]] bool drawCardAndSetNextPlayerOnTurn(Player& player);
 			void setNextOrNextButOneOnTurnLocal(Card playedCard);
@@ -73,6 +79,7 @@ namespace card {
 			bool wasCardDrawnAndPlayedLastTurn() const;
 			bool checkIfPlayerByParticipant(const std::shared_ptr<ParticipantOnServer>& participant);
 			bool checkIfPlayerByUsername(std::string username);
+			bool checkIfOnTurn(Player& p) const;
 			std::shared_ptr<Player> getPlayerOnTurn();
 			std::shared_ptr<Player> lookupPlayerByParticipant(const std::shared_ptr<ParticipantOnServer>& participant);
 			std::shared_ptr<Player> lookupPlayerByUsername(std::string username);
@@ -92,16 +99,23 @@ namespace card {
 			void callGameEndFunctIfGameHasEnded();
 			[[nodiscard]] bool hasPlayerWon();
 
-			[[nodiscard]] std::vector<int> popCardsToDrawForNextPlayerFromDrawStack(int cardAmount);
+			[[nodiscard]] std::vector<int> popCardsFromDrawStack(int cardAmount);
 
 			// returns false if the player tries to play a card which isn't owned by him
 			[[nodiscard]] bool movePlayedCardToPlayCardStack(Player& p, Card playedCard, bool& out_wasCardDrawnAndPlayed);
 			void updateColor(Card playedCard, CardIndex chosenCardIndex);
+
+			// checks, if the player on turn has only one hand card´and if not both wasCardPlayed_thisTurn and wasCardDrawn_thisTurn are true,
+			// since the player can't mau if drawn the card just drawn
+			void checkForMauIfNeeded();
+			void sendMauPunishmentPacket(Player& responsiblePlayer, MauPunishmentCause cause);
 
 			void startTurnAbortTimer();
 			void abortTurn();
 
 			std::optional<OperationSuccessful_STCAnswerPacket> listener_onPlayCard(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);
 			std::optional<OperationSuccessful_STCAnswerPacket> listener_onDrawCard(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);
+			std::optional<OperationSuccessful_STCAnswerPacket> listener_onMau(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);
+
 	};
 }

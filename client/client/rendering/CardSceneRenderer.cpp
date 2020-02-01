@@ -58,7 +58,12 @@ namespace card {
 			cardIndexRenderer(renderer2d, cardIndexTextures),
 			particleRenderer(),
 			fireworkRenderer(particleRenderer, eguiRenderer, renderer2d),
-			mauMauButtonRenderer(eguiRenderer),
+			mauMauButtonRenderer(eguiRenderer,
+				[this]() {
+					game->mau();
+				}
+			),
+			messageRenderer(eguiRenderer),
 			cardStackIntersectionChecker(projectionMatrix, viewport),
 			handCardIntersectionChecker(projectionMatrix, viewport),
 			onMouseClicked(genOnMouseClickedHandler()) {
@@ -100,6 +105,19 @@ namespace card {
 
 	void CardSceneRenderer::render(float deltaSeconds) {
 		bgRenderer.render(projectionMatrix, viewport);
+
+		static bool flag = true;
+		if(flag && egui::getInputHandler().isKeyDown(KEY_Q)) {
+			game->appendMessage("Zeit ist abgelaufen.");
+			flag = false;
+		}
+		if(flag && egui::getInputHandler().isKeyDown(KEY_W)) {
+			game->appendMessage(u8"\"Lokaler Spieler\" vergaß, den Mau-Knopf zu druecken.");
+			flag = false;
+		}
+		if(egui::getInputHandler().isKeyDown(KEY_E)) {
+			flag = true;
+		}
 
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glDisable(GL_BLEND);
@@ -150,8 +168,8 @@ namespace card {
 		cardRenderer.flush();
 
 		renderGameEndScreenIfGameHasEnded(deltaSeconds);
-		mauMauButtonRenderer.render();
-
+		mauMauButtonRenderer.render(game->canMau());
+		messageRenderer.render(game->getMessageQueue());
 		glEnable(GL_DEPTH_TEST);
 
 	}

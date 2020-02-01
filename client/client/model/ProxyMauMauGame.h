@@ -7,6 +7,8 @@
 #include <shared/model/CardStack.h>
 #include "LocalPlayer.h"
 #include <shared\model\RoomOptions.h>
+#include "MessageQueue.h"
+#include <shared/model/MauPunishmentCause.h>
 
 namespace card {
 	class ProxyMauMauGame : public PlayVerifier {
@@ -28,6 +30,7 @@ namespace card {
 			Card drawCardForNextPlayer;
 			RoomOptions& roomOptions;
 			ProxyPlayerGameInformation gameInformation;
+			MessageQueue messageQueue;
 
 			std::shared_ptr<ProxyPlayer> userOnTurn;
 			std::vector<std::shared_ptr<ProxyPlayer>> allPlayers;
@@ -37,6 +40,7 @@ namespace card {
 
 			bool field_wasCardDrawn = false;
 			bool field_wasCardPlayed = false;
+			bool field_wasMaued = false;
 
 			bool field_isWaitingForColorChoose = false;
 			std::optional<Card> premarkedCardToPlayAfterColorChoose;
@@ -48,6 +52,7 @@ namespace card {
 			ServerPacketListenerCallback handler_onOtherPlayerHasPlayedCard;
 			ServerPacketListenerCallback handler_onLocalPlayerIsOnTurn;
 			ServerPacketListenerCallback handler_onTimeExpires;
+			ServerPacketListenerCallback handler_onMauPunishment;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
@@ -77,7 +82,7 @@ namespace card {
 			bool isWaitingForColorChoose() const;			
 			std::size_t getAmountsOfCardsToDrawForNextPlayer(Card playedCard) const;
 
-
+			void mau();
 			void drawCard();
 			void takeDrawnCardIntoHandCards();
 			void playDrawnCard();
@@ -88,6 +93,7 @@ namespace card {
 			void playCardAndSetNextPlayerOnTurnLocal(std::string username, Card card, CardIndex newCardIndex, std::vector<Card> cardsToDraw, bool wasDrawedJustBefore);
 			void drawCardAndSetNextPlayerOnTurnLocal(std::string username);
 			void abortTurnOnTimeExpires(const std::vector<Card>& cardsToDraw);
+			void onMauPunishment(std::string punishedUsername, std::vector<Card> cardsToDraw, MauPunishmentCause cause);
 			// player has to draw cards after other player has played 7, for instance 
 			void playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, std::size_t amountOfCards, int delayMs = 0);
 			void playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, const std::vector<Card>& cards, int delayMs = 0);
@@ -111,6 +117,9 @@ namespace card {
 			bool hasGameEnded() const;
 			std::shared_ptr<ProxyPlayer> getWinnerOrNull();
 
+			void appendMessage(std::string content);
+			const MessageQueue getMessageQueue() const;
+
 		private:
 			void initStartCards(const std::vector<int>& handCardNumbersOfLocalPlayer, Card cardOnPlayStack);
 			void tryRebalanceCardStacks();
@@ -120,9 +129,13 @@ namespace card {
 			void updateGameEndFlag();
 			void throwIfGameHasEnded();
 
+			void appendMauPunishmentMessage(std::string punishedUsername, MauPunishmentCause cause);
+
 			void listener_onOtherPlayerHasDrawnCard(Packet& p);
 			void listener_onOtherPlayerHasPlayedCard(Packet& p);
 			void listener_onLocalPlayerIsOnTurn(Packet& p);
 			void listener_onTimeExpires(Packet& p);
+			void listener_onMauPunishment(Packet& p);
+
 	};
 }

@@ -20,6 +20,7 @@
 #include "CardIndexRenderer.h"
 #include "GameEndRenderer.h"
 #include "MauMauButtonRenderer.h"
+#include "MessageRenderer.h"
 #include "../renderingModel/CardStackIntersectionChecker.h"
 #include "../renderingModel/HandCardIntersectionChecker.h"
 #include "../renderingModel/MauMauCardStackMisalignmentGenerator.h"
@@ -73,6 +74,7 @@ namespace card {
 			ParticleRenderer particleRenderer;
 			GameEndRenderer fireworkRenderer;
 			MauMauButtonRenderer mauMauButtonRenderer;
+			MessageRenderer messageRenderer;
 			CardStackIntersectionChecker cardStackIntersectionChecker;
 			HandCardIntersectionChecker handCardIntersectionChecker;
 

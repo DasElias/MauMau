@@ -23,13 +23,13 @@ namespace card {
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            MauMauButtonRenderer(egui::MasterRenderer& eguiRenderer);
+            MauMauButtonRenderer(egui::MasterRenderer& eguiRenderer, std::function<void(void)> mauMauFunction);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
         // ----------------------------------------------------------------------
         public:
-            void render();
+            void render(bool canMau);
 
 	};
 }

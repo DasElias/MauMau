@@ -1,43 +1,43 @@
-#pragma once
-#include "Player.h"
-#include "ServerMauMauGame.h"
-
+#include "../Packet.h"
+#include "../../model/MauPunishmentCause.h"
 namespace card {
-	class AiPlayer : public Player {
+	class MauPunishment_STCPacket : public Packet {
 		// ----------------------------------------------------------------------
 		// ----------------------------STATIC-FIELDS-----------------------------
 		// ----------------------------------------------------------------------
+		public:
+			static int const PACKET_ID = 205;
+
 		private:
-			static float const MAU_MISS_PROBABILITY;
+			static std::string const CONCERNED_USERNAME_KEY;
+			static std::string const CARDS_TO_DRAW_KEY;
+			static std::string const PUNISHMENT_CAUSE_KEY;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
-			ServerMauMauGame& game;
+			std::string concernedUsername;
+			std::vector<int> cardsToDraw;
+			MauPunishmentCause cause;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			AiPlayer(std::shared_ptr<ParticipantOnServer> wrappedParticipant, ServerMauMauGame& game, std::vector<Card> handCards = {});
+			MauPunishment_STCPacket(std::string concernedUsername, std::vector<int>& cardsToDraw, MauPunishmentCause cause);
+			MauPunishment_STCPacket(nlohmann::json& jsonHandle);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			void onStartTurn() override;
-			void performTurn();
+			std::vector<int> getCardsToDraw() const;
+			std::string getConcernedUsername() const;
+			MauPunishmentCause getCause() const;
 
-		private:
-			// return true if a card was played
-			bool tryPlayCard();
-			std::vector<Card> getPlayableCards();
-			void tryMau();
-			void playCardImpl(Card c);
-			void drawCardImpl();
-			CardIndex chooseCardIndex();
-			bool shouldPlayDrawnCard();
+		protected:
+			void addJsonProperties(nlohmann::json& jsonHandle) const override;
 
 	};
 }

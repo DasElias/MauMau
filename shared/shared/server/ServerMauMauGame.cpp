@@ -1,9 +1,11 @@
 #include "ServerMauMauGame.h"
 #include "AiPlayer.h"
 
+#include "../packet/cts/MauRequest_CTSPacket.h"
 #include "../packet/cts/DrawCardRequest_CTSPacket.h"
 #include "../packet/cts/PlayCardRequest_CTSPacket.h"
 
+#include "../packet/stc/MauPunishment_STCPacket.h"
 #include "../packet/stc/TurnWasAborted_STCPacket.h"
 #include "../packet/stc/LocalPlayerIsOnTurn_STCPacket.h"
 #include "../packet/stc/OtherPlayerHasDrawnCards_STCPacket.h"
@@ -29,7 +31,8 @@ namespace card {
 			drawCardStack(),
 			playCardStack(),
 			handler_onPlayCard(std::bind(&ServerMauMauGame::listener_onPlayCard, this, std::placeholders::_1, std::placeholders::_2)),
-			handler_onDrawCard(std::bind(&ServerMauMauGame::listener_onDrawCard, this, std::placeholders::_1, std::placeholders::_2)){
+			handler_onDrawCard(std::bind(&ServerMauMauGame::listener_onDrawCard, this, std::placeholders::_1, std::placeholders::_2)),
+			handler_onMau(std::bind(&ServerMauMauGame::listener_onMau, this, std::placeholders::_1, std::placeholders::_2)) {
 
 		drawCardStack.fillWithCardDeckAndShuffle();
 
@@ -68,11 +71,14 @@ namespace card {
 		// init packet listeners
 		packetTransmitter->addListenerForClientPkt(PlayCardRequest_CTSPacket::PACKET_ID, handler_onPlayCard);
 		packetTransmitter->addListenerForClientPkt(DrawCardRequest_CTSPacket::PACKET_ID, handler_onDrawCard);
+		packetTransmitter->addListenerForClientPkt(MauRequest_CTSPacket::PACKET_ID, handler_onMau);
 	}
 	
 	ServerMauMauGame::~ServerMauMauGame() {
 		packetTransmitter->removeListenerForClientPkt(PlayCardRequest_CTSPacket::PACKET_ID, handler_onPlayCard);
 		packetTransmitter->removeListenerForClientPkt(DrawCardRequest_CTSPacket::PACKET_ID, handler_onDrawCard);
+		packetTransmitter->removeListenerForClientPkt(MauRequest_CTSPacket::PACKET_ID, handler_onMau);
+
 
 		// turn of current player doesn't expire
 		startTurnAbortIdCounter++;
@@ -89,6 +95,20 @@ namespace card {
 
 		startTurnAbortTimer();
 
+	}
+
+	void ServerMauMauGame::mau(Player& player) {
+		if(!canMau(player)) {
+			sendMauPunishmentPacket(player, MauPunishmentCause::TOO_EARLY);
+			return;
+		}
+		if(wasMauedCorrectly_thisTurn) {
+			// not a critical error, therefore we only display a warning
+			log(LogSeverity::WARNING, "Player " + player.getUsername() + " has maued twice.");
+			return;
+		}
+
+		wasMauedCorrectly_thisTurn = true;
 	}
 
 	bool ServerMauMauGame::playCardAndSetNextPlayerOnTurn(Player& player, Card card, CardIndex chosenIndex) {
@@ -109,13 +129,16 @@ namespace card {
 		// it's important to compute those before the next player is set on turn,
 		// since afterwards we've send already the last card on draw stack to the new
 		// player on turn
-		std::vector<int> cardsToDrawForNextPlayer = popCardsToDrawForNextPlayerFromDrawStack(getAmountsOfCardsToDrawForNextPlayer(card));
+		std::vector<int> cardsToDrawForNextPlayer = popCardsFromDrawStack(getAmountsOfCardsToDrawForNextPlayer(card));
 
 		if(!hasPlayerWon()) {
+			checkForMauIfNeeded();
+
 			setNextOrNextButOneOnTurnLocal(card);
 
 			// actually draw cardsToDrawForNextPlayer
 			playerOnTurn->addHandCards(cardsToDrawForNextPlayer);
+
 		}
 
 		updateColor(card, chosenIndex);	
@@ -167,7 +190,7 @@ namespace card {
 			this->indexForNextCard = playedCard.getCardIndex();
 		}
 	}
-	std::vector<int> ServerMauMauGame::popCardsToDrawForNextPlayerFromDrawStack(int cardAmount) {
+	std::vector<int> ServerMauMauGame::popCardsFromDrawStack(int cardAmount) {
 		std::vector<int> removedCards;
 		for(int i = 0; i < cardAmount; i++) {
 			Card removed = drawCardStack.removeLast();
@@ -186,6 +209,10 @@ namespace card {
 		Card removed = drawCardStack.removeLast();
 		player.addHandCard(removed);
 		tryRebalanceCardStacks();
+
+		if(wasMauedCorrectly_thisTurn) {
+			sendMauPunishmentPacket(player, MauPunishmentCause::DRAWED_EVEN_THOUGH_MAUED);
+		}
 
 		setNextPlayerOnTurn();
 
@@ -230,6 +257,8 @@ namespace card {
 		wasCardPlayed_lastTurn = wasCardPlayed_thisTurn;
 		wasCardPlayed_thisTurn = false;
 
+		wasMauedCorrectly_thisTurn = false;
+
 		startTurnAbortTimer();
 
 		this->playerOnTurn->onEndTurn();
@@ -240,6 +269,39 @@ namespace card {
 		LocalPlayerIsOnTurn_STCPacket packet(nextOnDrawStackToSend.getCardNumber());
 		packetTransmitter->sendPacketToClient(packet, player->getWrappedParticipant());
 	}
+	void ServerMauMauGame::checkForMauIfNeeded() {
+		if(wasCardDrawn_thisTurn && wasCardPlayed_thisTurn) {
+			// we don't check for mau if the player has drawed and played a card in the same turn
+			return;
+		} else if(wasCardDrawn_thisTurn) {
+			throw std::runtime_error("Logic error. Can't check for mau if the player hasn't played a card-");
+		}
+
+		bool hasJustPlayedLastButOneCard = playerOnTurn->getHandCards().getSize() == 1;
+		bool wasntMaued = !wasMauedCorrectly_thisTurn;
+		if(hasJustPlayedLastButOneCard && wasntMaued) {
+			sendMauPunishmentPacket(*playerOnTurn, MauPunishmentCause::NO_MAU_RECEIVED);
+		}
+	}
+	void ServerMauMauGame::sendMauPunishmentPacket(Player& responsiblePlayer, MauPunishmentCause cause) {
+		std::string responsiblePlayerUsername = responsiblePlayer.getUsername();
+		std::vector<int> cardsToDraw = popCardsFromDrawStack(CARDS_TO_DRAW_MAU_PUNISHMENT);
+		responsiblePlayer.addHandCards(cardsToDraw);
+
+		std::vector<int> cardsToDrawAsNullCards = cardsToDraw;
+		std::fill(cardsToDrawAsNullCards.begin(), cardsToDrawAsNullCards.end(), Card::NULLCARD.getCardNumber());
+
+		for(auto& p : players) {
+			if(*p == responsiblePlayer) {
+				MauPunishment_STCPacket packet(responsiblePlayerUsername, cardsToDraw, cause);
+				packetTransmitter->sendPacketToClient(packet, p->getWrappedParticipant());
+			} else {
+				MauPunishment_STCPacket packet(responsiblePlayerUsername, cardsToDrawAsNullCards, cause);
+				packetTransmitter->sendPacketToClient(packet, p->getWrappedParticipant());
+			}
+		}
+	}
+
 	void ServerMauMauGame::startTurnAbortTimer() {
 		uint64_t currentTurnAbortId = ++startTurnAbortIdCounter;
 
@@ -258,7 +320,7 @@ namespace card {
 		// if we wouldn't shuffle the draw card stack, he would draw the same card again
 		drawCardStack.shuffle();
 
-		std::vector<int> cardsToDraw = popCardsToDrawForNextPlayerFromDrawStack(CARDS_TO_DRAW_ON_TIME_EXPIRED);
+		std::vector<int> cardsToDraw = popCardsFromDrawStack(CARDS_TO_DRAW_ON_TIME_EXPIRED);
 		playerOnTurn->addHandCards(cardsToDraw);
 
 		std::vector<int> cardsToDrawAsNullCards = cardsToDraw;
@@ -304,6 +366,9 @@ namespace card {
 	bool ServerMauMauGame::canSkipPlayer(Card playedCard) const {
 		return playedCard.getValue() == SKIP_VALUE;
 	}
+	bool ServerMauMauGame::canMau(Player& player) const {
+		return checkIfOnTurn(player) && player.getHandCards().getSize() == 2;
+	}
 	bool ServerMauMauGame::wasCardDrawnLastTurn() const {
 		return wasCardDrawn_lastTurn;
 	}
@@ -324,6 +389,9 @@ namespace card {
 			if(p->getUsername() == username) return true;
 		}
 		return false;
+	}
+	bool ServerMauMauGame::checkIfOnTurn(Player& p) const {
+		return *playerOnTurn == p;
 	}
 	std::shared_ptr<Player> ServerMauMauGame::getPlayerOnTurn() {
 		return playerOnTurn;
@@ -393,5 +461,13 @@ namespace card {
 		auto player = lookupPlayerByParticipant(participant);
 		bool wasSuccessful = drawCardAndSetNextPlayerOnTurn(*player);
 		return OperationSuccessful_STCAnswerPacket(wasSuccessful);
+	}
+	std::optional<OperationSuccessful_STCAnswerPacket> ServerMauMauGame::listener_onMau(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant) {
+		if(!checkIfPlayerByParticipant(participant)) return std::nullopt;
+		auto& casted = dynamic_cast<MauRequest_CTSPacket&>(p);
+
+		auto player = lookupPlayerByParticipant(participant);
+		mau(*player);
+		return OperationSuccessful_STCAnswerPacket(true);
 	}
 }

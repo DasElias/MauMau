@@ -6,7 +6,7 @@
 namespace card {
 	float const MauMauButtonRenderer::MAU_MAU_BTN_WIDTH_PERCENT = 0.075f;
 
-	MauMauButtonRenderer::MauMauButtonRenderer(egui::MasterRenderer& eguiRenderer) :
+	MauMauButtonRenderer::MauMauButtonRenderer(egui::MasterRenderer& eguiRenderer, std::function<void(void)> mauMauFunction) :
 			eguiRenderer(eguiRenderer) {
 
 		mauMauButton = std::make_shared<egui::AspectRatioElement>(1.0f);
@@ -15,6 +15,9 @@ namespace card {
 		mauMauButton->setBackground(std::make_shared<egui::TexturedBackground>(
 			egui::Image::loadTexture("C:\\Users\\Elias\\Documents\\PROJECT X\\c.png")
 		));
+		mauMauButton->setDisabledBackground(std::make_shared<egui::TexturedBackground>(
+			egui::Image::loadTexture("C:\\Users\\Elias\\Documents\\PROJECT X\\d.png")
+		), egui::RenderMode::RENDER_EXCLUSIVELY);
 		mauMauButton->getHoverEventManager().addEventHandler({[this](egui::HoverEvent& evt) {
 			int const SIZE_ADDITION_PX = 20;
 		
@@ -27,11 +30,16 @@ namespace card {
 				mauMauButton->setMaxWidth({MAU_MAU_BTN_WIDTH_PERCENT, egui::RelativityMode::RELATIVE_ON_SCREEN});
 			}
 		}});
+		mauMauButton->getMouseClickedEventManager().addEventHandler({[this, mauMauFunction](egui::MouseEvent&) {
+			mauMauFunction();
+		}});
 		mauMauButton->setOwnPositioning(std::make_shared<egui::RelativePositioningOnScreen>(0.7f, 0.6f));
 		std::shared_ptr<egui::UnorganizedParentElement> parent(new egui::UnorganizedParentElement({mauMauButton}));
 		scene.setRootElement(parent);
 	}
-	void MauMauButtonRenderer::render() {
+	void MauMauButtonRenderer::render(bool canMau) {
+		mauMauButton->setDisabled(! canMau);
+		
 		eguiRenderer.beginFrame();
 		scene.render(eguiRenderer);
 		eguiRenderer.endFrame();
