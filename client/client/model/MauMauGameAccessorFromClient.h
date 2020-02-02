@@ -11,7 +11,7 @@ namespace card {
 			ProxyMauMauGameData& gameData;
 			std::shared_ptr<CTSPacketTransmitter> packetTransmitter;
 			
-			bool field_isWaitingForColorChoose = false;
+			std::optional<Card> cardToPlayAfterColorChoose = std::nullopt;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
@@ -38,6 +38,8 @@ namespace card {
 			void playDrawnCard();
 			void playCard(std::size_t index);
 			void chooseColor(CardIndex color);
+
+			void onTurnEnd();
 
 		private:
 			void playPremarkedCardAfterColorChoose(CardIndex newCardIndex);

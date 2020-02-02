@@ -11,12 +11,13 @@
 #include <shared/utils/Logger.h>
 
 namespace card {
-	ProxyMauMauGameData::ProxyMauMauGameData(std::vector<std::shared_ptr<ParticipantOnClient>> allParticipantsInclLocal, std::shared_ptr<ParticipantOnClient> localParticipant, std::string usernameOnTurn, std::vector<int> handCards, int startCard, int nextCardOnDrawStack, RoomOptions& roomOptions) :
+	ProxyMauMauGameData::ProxyMauMauGameData(std::vector<std::shared_ptr<ParticipantOnClient>> allParticipantsInclLocal, std::shared_ptr<ParticipantOnClient> localParticipant, std::string usernameOnTurn, std::vector<int> handCards, int startCard, int nextCardOnDrawStack, RoomOptions& roomOptions, std::function<void(std::shared_ptr<ProxyPlayer>)> onTurnEnd) :
 			drawCardStack(std::make_unique<CardStack>()),
 			playCardStack(std::make_unique<CardStack>()),
 			indexForNextCard(Card(startCard).getCardIndex()),
 			roomOptions(roomOptions),
-			winner(nullptr) {
+			winner(nullptr),
+			onTurnEndCallback(onTurnEnd) {
 
 		// initialize players
 		for(auto& o : allParticipantsInclLocal) {
@@ -288,8 +289,8 @@ namespace card {
 
 
 		std::shared_ptr<ProxyPlayer> lastUserOnTurn = this->userOnTurn;
-
 		this->userOnTurn->onEndTurn();
+		onTurnEndCallback(this->userOnTurn);
 		this->userOnTurn = player;
 
 		field_wasCardDrawnIntoHandCards = false;

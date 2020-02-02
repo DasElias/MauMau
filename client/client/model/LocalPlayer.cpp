@@ -81,18 +81,6 @@ namespace card {
 		return wasMauDemandedThisTurn_flag;
 	}
 
-	void LocalPlayer::setCardToPlayAfterColorChoose(std::optional<Card> cardOrNone) {
-		cardToPlayAfterColorChoose = cardOrNone;
-	}
-
-	std::optional<Card> LocalPlayer::getCardToPlayAfterColorChooseOrNone() const {
-		return cardToPlayAfterColorChoose;
-	}
-
-	bool LocalPlayer::isWaitingForColorPick() const {
-		return cardToPlayAfterColorChoose.has_value();
-	}
-
 	void LocalPlayer::onMauDemand() {
 		wasMauDemandedThisTurn_flag = true;
 	}
@@ -121,7 +109,6 @@ namespace card {
 		drawnCardTempStack.clear();
 		wasCardDrawn_flag = false;
 		wasMauDemandedThisTurn_flag = false;
-		cardToPlayAfterColorChoose = std::nullopt;
 
 		log(LogSeverity::DEBUG, "Turn has ended");
 		

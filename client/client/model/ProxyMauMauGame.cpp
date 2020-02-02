@@ -4,7 +4,11 @@ namespace card {
 	ProxyMauMauGame::ProxyMauMauGame(std::shared_ptr<CTSPacketTransmitter> packetTransmitter, std::vector<std::shared_ptr<ParticipantOnClient>> allParticipantsInclLocal, 
 									std::shared_ptr<ParticipantOnClient> localParticipant, std::string usernameOnTurn, std::vector<int> handCards, 
 									int startCard, int nextCardOnDrawStack, RoomOptions& roomOptions) :
-											gameData(allParticipantsInclLocal, localParticipant, usernameOnTurn, handCards, startCard, nextCardOnDrawStack, roomOptions),
+											gameData(allParticipantsInclLocal, localParticipant, usernameOnTurn, handCards, startCard, nextCardOnDrawStack, roomOptions,
+												[this](std::shared_ptr<ProxyPlayer> turnEndPlayer) {
+													accessorFromClient.onTurnEnd();
+												}
+											),
 											accessorFromClient(gameData, packetTransmitter),
 											accessorFromServer(gameData, packetTransmitter) {
 	}

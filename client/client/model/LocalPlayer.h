@@ -31,7 +31,6 @@ namespace card {
 			// the turn is finished
 			bool wasMauDemandedThisTurn_flag = false;
 
-			std::optional<Card> cardToPlayAfterColorChoose = std::nullopt;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
@@ -56,10 +55,6 @@ namespace card {
 			std::optional<Card> getDrawnCard() const;
 			const CardAnimator& getDrawnCardAsStack() const;
 			bool wasMauDemandedThisTurn() const;
-			void setCardToPlayAfterColorChoose(std::optional<Card> cardOrNone);
-			std::optional<Card> getCardToPlayAfterColorChooseOrNone() const;
-			bool isWaitingForColorPick() const;
-			
 
 			void onMauDemand();
 			void onMauFailure();

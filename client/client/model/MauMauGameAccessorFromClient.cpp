@@ -76,8 +76,7 @@ namespace card {
 		return localPlayer->isCardInTemporaryStack();
 	}
 	bool MauMauGameAccessorFromClient::isWaitingForColorChoose() const {
-		auto localPlayer = gameData.getLocalPlayer();
-		return localPlayer->isWaitingForColorPick();
+		return cardToPlayAfterColorChoose.has_value();
 	}
 	void MauMauGameAccessorFromClient::mau() {
 		auto localPlayer = gameData.getLocalPlayer();
@@ -111,6 +110,11 @@ namespace card {
 		if(!canTakeDrawnCardIntoHandCards()) throw std::runtime_error("Can't pick drawn card!");
 	
 		gameData.drawInHandCardsFromTempCards();
+
+		DrawCardRequest_CTSPacket p;
+		packetTransmitter->sendPacketToServer(p);
+
+		gameData.setNextPlayerOnTurnLocal();
 	}
 
 	void MauMauGameAccessorFromClient::playCard(std::size_t index) {
@@ -123,7 +127,7 @@ namespace card {
 			gameData.playCardFromHandCards(localPlayer, card);
 			sendPlayCardPacket();
 		} else {
-			localPlayer->setCardToPlayAfterColorChoose(card);
+			cardToPlayAfterColorChoose = card;
 		}
 	}
 
@@ -138,7 +142,7 @@ namespace card {
 			gameData.playCardFromLocalPlayerTempCards();
 			sendPlayCardPacket();
 		} else {
-			localPlayer->setCardToPlayAfterColorChoose(card);
+			cardToPlayAfterColorChoose = card;
 		}
 	}
 
@@ -148,15 +152,12 @@ namespace card {
 
 		playPremarkedCardAfterColorChoose(color);
 		sendPlayCardPacket(color);
-
-		localPlayer->setCardToPlayAfterColorChoose(std::nullopt);
 	}
 
 	void MauMauGameAccessorFromClient::playPremarkedCardAfterColorChoose(CardIndex newCardIndex) {
 		auto localPlayer = gameData.getLocalPlayer();
-		std::optional<Card> premarkedToPlayAfterColorChoose = localPlayer->getCardToPlayAfterColorChooseOrNone();
-		if(premarkedToPlayAfterColorChoose.has_value()) {
-			Card cardToPlay = *premarkedToPlayAfterColorChoose;
+		if(cardToPlayAfterColorChoose.has_value()) {
+			Card cardToPlay = *cardToPlayAfterColorChoose;
 
 			std::optional<Card> drawnCard = localPlayer->getDrawnCard();
 			if(drawnCard.has_value()) {
@@ -181,5 +182,10 @@ namespace card {
 		auto newPlayerOnTurn = gameData.getPlayerOnTurn();
 		gameData.playerHasToDrawCards(newPlayerOnTurn, cardsToDrawForNextPlayer, PLAY_DURATION_MS);
 	}
+
+	void MauMauGameAccessorFromClient::onTurnEnd() {
+		cardToPlayAfterColorChoose = std::nullopt;
+	}
+
 
 }

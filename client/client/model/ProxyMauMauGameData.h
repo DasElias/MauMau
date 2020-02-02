@@ -8,6 +8,7 @@
 #include "MessageQueue.h"
 #include <shared/model/MauPunishmentCause.h>
 #include <optional>
+#include <functional>
 
 namespace card {
 	class ProxyMauMauGameData {
@@ -42,6 +43,7 @@ namespace card {
 			std::shared_ptr<ProxyPlayer> winner;
 			bool field_hasInitialCardsBeenDistributed = false;
 
+			std::function<void(std::shared_ptr<ProxyPlayer>)> onTurnEndCallback;
 			
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
@@ -49,7 +51,8 @@ namespace card {
 		public:
 			ProxyMauMauGameData(std::vector<std::shared_ptr<ParticipantOnClient>> allParticipantsInclLocal, 
 				std::shared_ptr<ParticipantOnClient> localParticipant, std::string usernameOnTurn,
-				std::vector<int> handCards, int startCard, int nextCardOnDrawStack, RoomOptions& roomOptions);
+				std::vector<int> handCards, int startCard, int nextCardOnDrawStack, RoomOptions& roomOptions,
+				std::function<void(std::shared_ptr<ProxyPlayer>)> onTurnEnd);
 			ProxyMauMauGameData(const ProxyMauMauGameData&) = delete;
 			ProxyMauMauGameData& operator=(const ProxyMauMauGameData&) = delete;
 
