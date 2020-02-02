@@ -149,6 +149,7 @@ namespace card {
 		cardRenderer.flush(true);
 		renderPlayerLabels(opponentsOrNoneInCwOrder);
 		renderCardIndexForNextCardIfGameHasntEnded();
+		mauMauButtonRenderer.render(game->getAccessorFromClient().canMau());
 		renderDrawnCardOverlayIfGameHasntEnded();
 		renderChooseColorOverlayIfGameHasntEnded();
 
@@ -156,7 +157,6 @@ namespace card {
 		cardRenderer.flush();
 
 		renderGameEndScreenIfGameHasEnded(deltaSeconds);
-		mauMauButtonRenderer.render(game->getAccessorFromClient().canMau());
 		messageRenderer.render(game->getGameData().getMessageQueue());
 		glEnable(GL_DEPTH_TEST);
 
