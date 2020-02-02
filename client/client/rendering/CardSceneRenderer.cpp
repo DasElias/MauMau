@@ -307,8 +307,6 @@ namespace card {
 	}
 
 	void CardSceneRenderer::renderChooseColorOverlayIfGameHasntEnded() {
-		auto& localPlayer = game->getLocalPlayer();
-
 		bool isGameRunning = !game->hasGameEnded();
 		bool isWaitingForColorChoose = game->getAccessorFromClient().isWaitingForColorChoose();
 		if(isWaitingForColorChoose && isGameRunning) {
