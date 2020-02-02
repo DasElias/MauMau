@@ -9,16 +9,22 @@
 #include <shared/utils/Logger.h>
 
 namespace card {
+	float const PlayerLabelRenderer::PADDING_LEFT_RIGHT = 0.0575f;
+	float const PlayerLabelRenderer::PADDING_TOP = 0.1725f;
+
+	glm::vec2 const PlayerLabelRenderer::LOCAL_PLAYER_POSITION = {0.25f, 0.65f};
+	glm::vec2 const PlayerLabelRenderer::VIS_A_VIS_PLAYER_POSITION = {0.5f - (PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN / 2), 0};
+	glm::vec2 const PlayerLabelRenderer::LEFT_PLAYER_POSITION = {PADDING_LEFT_RIGHT, PADDING_TOP};
+	glm::vec2 const PlayerLabelRenderer::RIGHT_PLAYER_POSITION = {1 - PADDING_LEFT_RIGHT - PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN, PADDING_TOP};
+
 	PlayerLabelRenderer::PlayerLabelRenderer(egui::MasterRenderer& eguiRenderer, Renderer2D& renderer2D, CircleSectorRenderer& circleSectorRenderer) :
 			eguiRenderer(eguiRenderer),
 			renderer2D(renderer2D),
 			circleSectorRenderer(circleSectorRenderer),
-			textureSkip(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromFile(getApplicationFolder() + "\\resources\\skipPlayer.png")),
-			textureMau(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromFile("C:\\Users\\Elias\\Downloads\\Bild5.png")),
-			labelElementForLocal(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio(), textureSkip.getAspectRatio(), textureMau.getAspectRatio())),
-			labelElementForVisAVis(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio(), textureSkip.getAspectRatio(), textureMau.getAspectRatio())),
-			labelElementForLeft(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio(), textureSkip.getAspectRatio(), textureMau.getAspectRatio())),
-			labelElementForRight(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio(), textureSkip.getAspectRatio(), textureMau.getAspectRatio())) {
+			labelElementForLocal(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
+			labelElementForVisAVis(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
+			labelElementForLeft(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
+			labelElementForRight(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())) {
 
 		auto parentElement = std::make_shared<egui::UnorganizedParentElement>();
 		parentElement->addChildElement(labelElementForLocal);
@@ -27,7 +33,10 @@ namespace card {
 		parentElement->addChildElement(labelElementForRight);
 		scene.setRootElement(parentElement);
 
-		updatePositions();
+		labelElementForLocal->setPositionOnScreen(LOCAL_PLAYER_POSITION);
+		labelElementForVisAVis->setPositionOnScreen(VIS_A_VIS_PLAYER_POSITION);
+		labelElementForLeft->setPositionOnScreen(LEFT_PLAYER_POSITION);
+		labelElementForRight->setPositionOnScreen(RIGHT_PLAYER_POSITION);
 	}
 	void PlayerLabelRenderer::renderLocal(const std::shared_ptr<ProxyPlayer>& participant) {
 		renderImpl(participant, labelElementForLocal, playerLocal);
@@ -43,10 +52,7 @@ namespace card {
 	}
 	void PlayerLabelRenderer::renderImpl(const std::shared_ptr<ProxyPlayer>& participant, std::shared_ptr<PlayerLabel>& labelElementField, std::shared_ptr<ProxyPlayer>& proxyPlayerField) {
 		proxyPlayerField = participant;
-
-		std::optional<float> animationToUse = participant->getPercentOfSkipAnimationOrNone();
-		if(! animationToUse.has_value()) animationToUse = participant->getPercentOfMauAnimationOrNone();
-		labelElementField->set(participant->getUsername(), participant->getPercentOfSkipAnimationOrNone(), participant->getPercentOfMauAnimationOrNone());
+		labelElementField->set(participant->getUsername());
 
 		if(participant->isRemainingTimeAnimationActive()) renderCircleSector(labelElementField, *participant->getPercentOfRemainingTime());
 	}
@@ -72,15 +78,6 @@ namespace card {
 		float diameterX = playerLabel->getImageElement()->getComputedWidth() / avatarTextures.getWidth() * (CIRCLE_DIAMETER + 25);
 		circleSectorRenderer.renderSector_xDiameter({centerX, centerY}, diameterX, startAngle, endAngle, 500, {0.93f, 0.62f, 0.16f, 0.5f});
 	}
-	void PlayerLabelRenderer::updatePositions() {
-		float const PADDING_LEFT_RIGHT = 0.0575f;
-		float const PADDING_TOP = 0.1725f;
-
-		labelElementForLocal->setPositionOnScreen(0.25f, 0.65f);
-		labelElementForVisAVis->setPositionOnScreen(0.5f - (PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN/2), 0);
-		labelElementForLeft->setPositionOnScreen(PADDING_LEFT_RIGHT, PADDING_TOP);
-		labelElementForRight->setPositionOnScreen(1 - PADDING_LEFT_RIGHT - PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN, PADDING_TOP);
-	}
 	void PlayerLabelRenderer::flushText() {
 		eguiRenderer.beginFrame();
 		scene.render(eguiRenderer);
@@ -99,18 +96,6 @@ namespace card {
 			Avatar avatar = participant->getAvatar();
 			avatarTextures.bind(avatar);
 			renderer2D.render(element->getImageElement(), true);
-
-			
-			auto skipElementOrNull = element->getAnimationOverlayElementIfVisible();
-			if(skipElementOrNull) {
-				textureSkip.bind();
-				renderer2D.render(skipElementOrNull, true);
-			}
-			auto mauElementOrNull = element->getMauAnimationElementIfVisible();
-			if(mauElementOrNull) {
-				textureMau.bind();
-				renderer2D.render(mauElementOrNull, true);
-			}
 		}
 	}
 	void PlayerLabelRenderer::endFlush() {

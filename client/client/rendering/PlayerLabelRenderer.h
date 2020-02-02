@@ -12,6 +12,19 @@
 namespace card {
 	class PlayerLabelRenderer {
         // ----------------------------------------------------------------------
+        // ----------------------------STATIC-FIELDS-----------------------------
+        // ----------------------------------------------------------------------
+        private:
+            static float const PADDING_LEFT_RIGHT;
+            static float const PADDING_TOP;
+
+        public:
+            static glm::vec2 const LOCAL_PLAYER_POSITION;
+            static glm::vec2 const VIS_A_VIS_PLAYER_POSITION;
+            static glm::vec2 const LEFT_PLAYER_POSITION;
+            static glm::vec2 const RIGHT_PLAYER_POSITION;
+
+        // ----------------------------------------------------------------------
         // --------------------------------FIELDS--------------------------------
         // ----------------------------------------------------------------------
         private:
@@ -19,8 +32,6 @@ namespace card {
             Renderer2D& renderer2D;
             CircleSectorRenderer& circleSectorRenderer;
 
-            SimpleTexture textureSkip;
-            SimpleTexture textureMau;
             AvatarTextures avatarTextures;
 
             egui::Scene scene;
@@ -53,7 +64,6 @@ namespace card {
         private:
             void renderImpl(const std::shared_ptr<ProxyPlayer>& participant, std::shared_ptr<PlayerLabel>& labelElementField, std::shared_ptr<ProxyPlayer>& proxyPlayerField);
             void renderCircleSector(const std::shared_ptr<PlayerLabel>& playerLabel, float percentExpired);
-            void updatePositions();
             void flushText();
             void flushImages();
             void flushImageOfPlayer(const std::shared_ptr<PlayerLabel>& element, const std::shared_ptr<ProxyPlayer>& participant);

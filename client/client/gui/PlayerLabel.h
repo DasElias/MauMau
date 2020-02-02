@@ -6,6 +6,7 @@
 #include <egui/model/nodes/AspectRatioElement.h>
 #include <egui/model/positioning/RelativePositioningOnScreen.h>
 #include <optional>
+#include <glm/glm.hpp>
 
 namespace card {
 	class PlayerLabel : public egui::UnorganizedParentElement {
@@ -23,32 +24,25 @@ namespace card {
             std::shared_ptr<egui::VBox> rootElement;
             std::shared_ptr<egui::Label> playerNameLabel;
             std::shared_ptr<egui::AspectRatioElement> imageElement;
-            std::shared_ptr<egui::AspectRatioElement> animationOverlayElement;
-            std::shared_ptr<egui::AspectRatioElement> mauAnimationElement;
             std::shared_ptr<egui::RelativePositioningOnScreen> positioning;
 
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            PlayerLabel(float avatarAspectRatio, float skipAspectRatio, float mauAspectRatio);
+            PlayerLabel(float avatarAspectRatio);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
         // ----------------------------------------------------------------------
         public:
-            void set(std::string playerName, std::optional<float> percentAnimationOverlayOrNone, std::optional<float> percentMauAnimationOrNone);
+            void set(std::string playerName);
             void clear();
             void setPositionOnScreen(float x, float y);
+            void setPositionOnScreen(glm::vec2 pos);
             std::shared_ptr<egui::AspectRatioElement> getImageElement(); 
-            std::shared_ptr<egui::AspectRatioElement> getMauAnimationElementIfVisible();
-            std::shared_ptr<egui::AspectRatioElement> getAnimationOverlayElementIfVisible();
-
 
         private:
-            void updateAnimationOverlay(std::optional<float> percentAnimationOverlayOrNone);
-            void updateMauAnimation(std::optional<float> percentMauAnimationOrNone);
-
             void setOwnPositioning(std::shared_ptr<egui::Positioning> positioning) override;
 
 

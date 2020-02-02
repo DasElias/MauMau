@@ -55,6 +55,7 @@ namespace card {
 			),
 			circleSectorRenderer(),
 			playerLabelRenderer(eguiRenderer, renderer2d, circleSectorRenderer),
+			playerLabelOverlayRenderer(renderer2d, PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN),
 			cardIndexRenderer(renderer2d, cardIndexTextures),
 			particleRenderer(),
 			fireworkRenderer(particleRenderer, eguiRenderer, renderer2d),
@@ -106,18 +107,6 @@ namespace card {
 	void CardSceneRenderer::render(float deltaSeconds) {
 		bgRenderer.render(projectionMatrix, viewport);
 
-		static bool flag = true;
-		if(flag && egui::getInputHandler().isKeyDown(KEY_Q)) {
-			game->appendMessage("Zeit ist abgelaufen.");
-			flag = false;
-		}
-		if(flag && egui::getInputHandler().isKeyDown(KEY_W)) {
-			game->appendMessage(u8"\"Lokaler Spieler\" vergaﬂ, den Mau-Knopf zu druecken.");
-			flag = false;
-		}
-		if(egui::getInputHandler().isKeyDown(KEY_E)) {
-			flag = true;
-		}
 
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glDisable(GL_BLEND);
@@ -235,17 +224,16 @@ namespace card {
 	}
 
 	void CardSceneRenderer::renderPlayerLabels(std::array<std::shared_ptr<ProxyPlayer>, 3>& opponents) {
-		if(opponents[0]) {
-			playerLabelRenderer.renderLeft(opponents[0]);
-		}
-		if(opponents[1]) {
-			playerLabelRenderer.renderVisAVis(opponents[1]);
-		}
-		if(opponents[2]) {
-			playerLabelRenderer.renderRight(opponents[2]);
-		}
+		if(opponents[0]) playerLabelRenderer.renderLeft(opponents[0]);
+		if(opponents[1]) playerLabelRenderer.renderVisAVis(opponents[1]);
+		if(opponents[2]) playerLabelRenderer.renderRight(opponents[2]);
 		playerLabelRenderer.renderLocal(game->getLocalPlayer());
 		playerLabelRenderer.flush();
+
+		if(opponents[0]) playerLabelOverlayRenderer.render(PlayerLabelRenderer::LEFT_PLAYER_POSITION, opponents[0]->getPercentOfSkipAnimationOrNone(), opponents[0]->getPercentOfMauAnimationOrNone());
+		if(opponents[1]) playerLabelOverlayRenderer.render(PlayerLabelRenderer::VIS_A_VIS_PLAYER_POSITION, opponents[1]->getPercentOfSkipAnimationOrNone(), opponents[1]->getPercentOfMauAnimationOrNone());
+		if(opponents[2]) playerLabelOverlayRenderer.render(PlayerLabelRenderer::RIGHT_PLAYER_POSITION, opponents[2]->getPercentOfSkipAnimationOrNone(), opponents[2]->getPercentOfMauAnimationOrNone());
+		playerLabelOverlayRenderer.render(PlayerLabelRenderer::LOCAL_PLAYER_POSITION, game->getLocalPlayer()->getPercentOfSkipAnimationOrNone(), game->getLocalPlayer()->getPercentOfMauAnimationOrNone());
 	}
 
 	void CardSceneRenderer::renderLocalPlayer() {

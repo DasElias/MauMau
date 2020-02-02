@@ -16,6 +16,7 @@
 #include "DrawnCardRenderer.h"
 #include "ChooseCardRenderer.h"
 #include "PlayerLabelRenderer.h"
+#include "MauMauPlayerLabelOverlayRenderer.h"
 #include "CircleSectorRenderer.h"
 #include "CardIndexRenderer.h"
 #include "GameEndRenderer.h"
@@ -70,6 +71,7 @@ namespace card {
 			ChooseCardRenderer chooseCardRenderer;
 			CircleSectorRenderer circleSectorRenderer;
 			PlayerLabelRenderer playerLabelRenderer;
+			MauMauPlayerLabelOverlayRenderer playerLabelOverlayRenderer;
 			CardIndexRenderer cardIndexRenderer;
 			ParticleRenderer particleRenderer;
 			GameEndRenderer fireworkRenderer;
