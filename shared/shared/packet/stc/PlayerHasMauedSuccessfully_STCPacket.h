@@ -2,7 +2,7 @@
 #include "AbstractUsernamePacket_STCPacket.h"
 
 namespace card {
-	class OtherPlayerHasMauedSuccessfully_STCPacket : public AbstractUsernamePacket_STCPacket {
+	class PlayerHasMauedSuccessfully_STCPacket : public AbstractUsernamePacket_STCPacket {
 		// ----------------------------------------------------------------------
 		// ----------------------------STATIC-FIELDS-----------------------------
 		// ----------------------------------------------------------------------
@@ -14,8 +14,8 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			OtherPlayerHasMauedSuccessfully_STCPacket(std::string username);
-			OtherPlayerHasMauedSuccessfully_STCPacket(nlohmann::json& jsonHandle);
+			PlayerHasMauedSuccessfully_STCPacket(std::string username);
+			PlayerHasMauedSuccessfully_STCPacket(nlohmann::json& jsonHandle);
 
 	};
 }

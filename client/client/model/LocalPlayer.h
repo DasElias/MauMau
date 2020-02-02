@@ -1,9 +1,7 @@
 #pragma once
 #include "ProxyPlayer.h"
 #include "ParticipantOnClient.h"
-#include "PlayVerifier.h"
 #include <optional>
-#include <shared/packet/CTSPacketTransmitter.h>
 #include <shared/model/Card.h>
 
 namespace card {
@@ -13,9 +11,6 @@ namespace card {
 		// ----------------------------------------------------------------------
 		private:
 			std::shared_ptr<ParticipantOnClient> const wrappedLocalPlayer;
-			std::shared_ptr<CTSPacketTransmitter> packetTransmitter;
-
-			PlayVerifier& playVerifier;
 
 			std::optional<Card> playedCard = std::nullopt;
 
@@ -31,11 +26,18 @@ namespace card {
 			// this card twice, we have to use a flag
 			bool wasCardDrawn_flag = false;
 
+			// is true when the local player has hit the Mau-Button
+			// gets false when a negative response is received or when
+			// the turn is finished
+			bool wasMauDemandedThisTurn_flag = false;
+
+			std::optional<Card> cardToPlayAfterColorChoose = std::nullopt;
+
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			LocalPlayer(std::shared_ptr<ParticipantOnClient> wrappedLocalPlayer, std::shared_ptr<CTSPacketTransmitter> packetTransmitter, PlayVerifier& playVerifier, ProxyPlayerGameInformation& gameInformation);
+			LocalPlayer(std::shared_ptr<ParticipantOnClient> wrappedLocalPlayer, ProxyPlayerGameInformation& gameInformation);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
@@ -53,7 +55,14 @@ namespace card {
 			bool isCardInTemporaryStack() const;
 			std::optional<Card> getDrawnCard() const;
 			const CardAnimator& getDrawnCardAsStack() const;
+			bool wasMauDemandedThisTurn() const;
+			void setCardToPlayAfterColorChoose(std::optional<Card> cardOrNone);
+			std::optional<Card> getCardToPlayAfterColorChooseOrNone() const;
+			bool isWaitingForColorPick() const;
+			
 
+			void onMauDemand();
+			void onMauFailure();
 			void onStartTurn() override;
 			void onEndTurn() override;
 

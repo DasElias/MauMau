@@ -79,7 +79,7 @@ namespace card {
 			void freezeRemainingTimeAnimation();
 
 			void onSkip();
-			void onMau();
+			void onSuccessfulMau();
 			virtual void onStartTurn();
 			virtual void onEndTurn();
 

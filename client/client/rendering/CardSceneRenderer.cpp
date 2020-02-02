@@ -42,15 +42,15 @@ namespace card {
 			drawnCardRenderer(cardRenderer, eguiRenderer, projectionMatrix, viewport, 
 				[this]() {
 					chooseCardRenderer.resetScene();
-					game->playDrawnCard();
+					game->getAccessorFromClient().playDrawnCard();
 				}, 
 				[this](){
-					game->takeDrawnCardIntoHandCards();
+					game->getAccessorFromClient().takeDrawnCardIntoHandCards();
 				}
 			),
 			chooseCardRenderer(eguiRenderer,cardIndexTextures,
 				[this](CardIndex c) {
-					game->chooseColor(c);
+					game->getAccessorFromClient().chooseColor(c);
 				}
 			),
 			circleSectorRenderer(),
@@ -61,7 +61,7 @@ namespace card {
 			fireworkRenderer(particleRenderer, eguiRenderer, renderer2d),
 			mauMauButtonRenderer(eguiRenderer,
 				[this]() {
-					game->mau();
+					game->getAccessorFromClient().mau();
 				}
 			),
 			messageRenderer(eguiRenderer),
@@ -106,7 +106,6 @@ namespace card {
 
 	void CardSceneRenderer::render(float deltaSeconds) {
 		bgRenderer.render(projectionMatrix, viewport);
-
 
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glDisable(GL_BLEND);
@@ -157,8 +156,8 @@ namespace card {
 		cardRenderer.flush();
 
 		renderGameEndScreenIfGameHasEnded(deltaSeconds);
-		mauMauButtonRenderer.render(game->canMau());
-		messageRenderer.render(game->getMessageQueue());
+		mauMauButtonRenderer.render(game->getAccessorFromClient().canMau());
+		messageRenderer.render(game->getGameData().getMessageQueue());
 		glEnable(GL_DEPTH_TEST);
 
 	}
@@ -288,8 +287,9 @@ namespace card {
 	}
 
 	void CardSceneRenderer::renderDrawnCardOverlayIfGameHasntEnded() {
+		auto& clientGameAccessor = game->getAccessorFromClient();
 		auto& localPlayer = game->getLocalPlayer();
-
+		
 		static std::optional<Card> drawnCardInLastPass = std::nullopt;
 		std::optional<Card> drawnCard = localPlayer->getDrawnCard();
 
@@ -300,7 +300,7 @@ namespace card {
 			if(! drawnCardInLastPass.has_value()) drawnCardRenderer.clearPreviousMouseEvents();
 
 			cardRenderer.flush();
-			drawnCardRenderer.render(*drawnCard, game->canPlayDrawnCard(), game->canTakeDrawnCardIntoHandCards());
+			drawnCardRenderer.render(*drawnCard, clientGameAccessor.canPlayDrawnCard(), clientGameAccessor.canTakeDrawnCardIntoHandCards());
 		}
 
 		drawnCardInLastPass = drawnCard;
@@ -310,7 +310,8 @@ namespace card {
 		auto& localPlayer = game->getLocalPlayer();
 
 		bool isGameRunning = !game->hasGameEnded();
-		if(game->isWaitingForColorChoose() && isGameRunning) {
+		bool isWaitingForColorChoose = game->getAccessorFromClient().isWaitingForColorChoose();
+		if(isWaitingForColorChoose && isGameRunning) {
 			cardRenderer.flush();
 			chooseCardRenderer.render();
 		}
@@ -318,11 +319,12 @@ namespace card {
 	void CardSceneRenderer::handleInput() {
 		// check if player wants to play/draw a card
 		auto intersectedCardInHand = checkIntersectionWithOwnHandCards();
-
-		if(game->canDraw() && checkIntersectionWithDrawCardStack()) {
-			game->drawCard();
-		} else if(intersectedCardInHand.has_value() && game->canPlay(*intersectedCardInHand)) {
-			game->playCard(*intersectedCardInHand);
+		auto& clientGameAccessor = game->getAccessorFromClient();
+		
+		if(clientGameAccessor.canDraw() && checkIntersectionWithDrawCardStack()) {
+			clientGameAccessor.drawCard();
+		} else if(intersectedCardInHand.has_value() && clientGameAccessor.canPlay(*intersectedCardInHand)) {
+			clientGameAccessor.playCard(*intersectedCardInHand);
 		}
 	}
 	bool CardSceneRenderer::checkIntersectionWithDrawCardStack() {
@@ -455,7 +457,7 @@ namespace card {
 	}
 
 	void CardSceneRenderer::renderCardIndexForNextCardIfGameHasntEnded() {	
-		std::optional<CardIndex> cardIndexForNextCardOrNone = game->getCardIndexForNextCardOrNone();
+		std::optional<CardIndex> cardIndexForNextCardOrNone = game->getGameData().getCardIndexForNextCardOrNone();
 
 		bool isGameRunning = !game->hasGameEnded();
 		if(cardIndexForNextCardOrNone.has_value() && isGameRunning) {

@@ -112,7 +112,7 @@ namespace card {
 		this->unixTimePlayerSkipped = getMilliseconds();
 		if(gameInformation.wasSingleCardDrawedInHandCardsThisTurn) this->unixTimePlayerSkipped += DRAW_DURATION_MS + DELAY_BETWEEN_DRAW_AND_PLAY;
 	}
-	void ProxyPlayer::onMau() {
+	void ProxyPlayer::onSuccessfulMau() {
 		this->unixTimePlayerMaued = getMilliseconds();
 	}
 	void ProxyPlayer::onStartTurn() {

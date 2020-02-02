@@ -5,7 +5,7 @@
 #include "../packet/cts/DrawCardRequest_CTSPacket.h"
 #include "../packet/cts/PlayCardRequest_CTSPacket.h"
 
-#include "../packet/stc/OtherPlayerHasMauedSuccessfully_STCPacket.h"
+#include "../packet/stc/PlayerHasMauedSuccessfully_STCPacket.h"
 #include "../packet/stc/MauPunishment_STCPacket.h"
 #include "../packet/stc/TurnWasAborted_STCPacket.h"
 #include "../packet/stc/LocalPlayerIsOnTurn_STCPacket.h"
@@ -306,12 +306,10 @@ namespace card {
 
 	void ServerMauMauGame::sendSuccessfulMauPacket(Player& responsiblePlayer) {
 		std::string responsiblePlayerUsername = responsiblePlayer.getUsername();
-		for(auto& p : players) {
-			if(! (*p == responsiblePlayer)) {
-				OtherPlayerHasMauedSuccessfully_STCPacket packet(responsiblePlayerUsername);
-				packetTransmitter->sendPacketToClient(packet, p->getWrappedParticipant());
-			}
-		}
+
+		PlayerHasMauedSuccessfully_STCPacket packet(responsiblePlayerUsername);
+		std::vector<std::shared_ptr<ParticipantOnServer>> playersAsParticipants = Player::getVectorWithWrappedParticipants(players);
+		packetTransmitter->sendPacketToClients(packet, playersAsParticipants);
 	}
 
 	void ServerMauMauGame::startTurnAbortTimer() {

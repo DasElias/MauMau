@@ -9,11 +9,9 @@
 #include <shared/model/CardAnimationDuration.h>
 
 namespace card {
-	LocalPlayer::LocalPlayer(std::shared_ptr<ParticipantOnClient> wrappedLocalPlayer, std::shared_ptr<CTSPacketTransmitter> packetTransmitter, PlayVerifier& playVerifier, ProxyPlayerGameInformation& gameInformation) :
+	LocalPlayer::LocalPlayer(std::shared_ptr<ParticipantOnClient> wrappedLocalPlayer,  ProxyPlayerGameInformation& gameInformation) :
 			ProxyPlayer(wrappedLocalPlayer, gameInformation),
 			wrappedLocalPlayer(wrappedLocalPlayer),
-			packetTransmitter(packetTransmitter),
-			playVerifier(playVerifier),
 			drawnCardTempStack(std::make_unique<HandCardStack>()) {
 
 	//	if(handCards.empty()) throw std::runtime_error("LocalPlayer needs at least one default hand card");
@@ -79,6 +77,30 @@ namespace card {
 		return drawnCardTempStack;
 	}
 
+	bool LocalPlayer::wasMauDemandedThisTurn() const {
+		return wasMauDemandedThisTurn_flag;
+	}
+
+	void LocalPlayer::setCardToPlayAfterColorChoose(std::optional<Card> cardOrNone) {
+		cardToPlayAfterColorChoose = cardOrNone;
+	}
+
+	std::optional<Card> LocalPlayer::getCardToPlayAfterColorChooseOrNone() const {
+		return cardToPlayAfterColorChoose;
+	}
+
+	bool LocalPlayer::isWaitingForColorPick() const {
+		return cardToPlayAfterColorChoose.has_value();
+	}
+
+	void LocalPlayer::onMauDemand() {
+		wasMauDemandedThisTurn_flag = true;
+	}
+
+	void LocalPlayer::onMauFailure() {
+		wasMauDemandedThisTurn_flag = false;
+	}
+
 	void LocalPlayer::onStartTurn() {
 		ProxyPlayer::onStartTurn();
 
@@ -98,7 +120,9 @@ namespace card {
 		playedCard = std::nullopt;
 		drawnCardTempStack.clear();
 		wasCardDrawn_flag = false;
-		
+		wasMauDemandedThisTurn_flag = false;
+		cardToPlayAfterColorChoose = std::nullopt;
+
 		log(LogSeverity::DEBUG, "Turn has ended");
 		
 	}

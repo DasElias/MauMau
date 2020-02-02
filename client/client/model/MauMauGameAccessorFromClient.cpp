@@ -1,0 +1,185 @@
+#include "MauMauGameAccessorFromClient.h"
+
+#include <shared/packet/cts/MauRequest_CTSPacket.h>
+#include <shared/packet/cts/PlayCardRequest_CTSPacket.h>
+#include <shared/packet/cts/DrawCardRequest_CTSPacket.h>
+#include <shared/model/MauMauCardValueMeanings.h>
+#include <shared/model/CardAnimationDuration.h>
+
+namespace card {
+	MauMauGameAccessorFromClient::MauMauGameAccessorFromClient(ProxyMauMauGameData& gameData, std::shared_ptr<CTSPacketTransmitter> packetTransmitter) :
+			gameData(gameData),
+			packetTransmitter(packetTransmitter) {
+	}
+	bool MauMauGameAccessorFromClient::canMau() const {
+		if(gameData.hasGameEnded() ||
+		   !gameData.hasInitialCardBeenDistributed() ||
+			gameData.getLocalPlayer()->wasMauDemandedThisTurn()) {
+			return false;
+		}
+
+		return true;
+	}
+	bool MauMauGameAccessorFromClient::canPlay(std::size_t indexInLocalPlayerHandCards) const {
+		const CardAnimator& handCardStack = gameData.getLocalPlayer()->getCardStack();
+		Card c = handCardStack.get(indexInLocalPlayerHandCards);
+		return canPlay(c);
+	}
+	bool MauMauGameAccessorFromClient::canPlay(Card card) const {
+		if(!gameData.isLocalPlayerOnTurn() ||
+		   !gameData.hasInitialCardBeenDistributed() ||
+		   gameData.getLocalPlayer()->hasPlayedCard() ||
+		   !gameData.areAllPreviousCardTransactionsCompleted() ||
+		   gameData.hasGameEnded() ||
+		   gameData.getLocalPlayer()->hasTimeExpired()) {
+
+			return false;
+		}
+
+		const CardAnimator& playCardStack = gameData.getPlayStack();
+		Card lastCardOnPlayStack = playCardStack.getLast();
+		CardIndex indexForNextCard = gameData.getCardIndexForNextCard();
+
+		if(lastCardOnPlayStack.getValue() == CHANGE_COLOR_VALUE) {
+			// exception rule
+			// can't play jack onto another jack card
+			if(card.getValue() == CHANGE_COLOR_VALUE) return false;
+		} else if(lastCardOnPlayStack.getCardIndex() != indexForNextCard) {
+			throw std::runtime_error("Inconsistent model state!");
+		}
+
+		return card.getCardIndex() == indexForNextCard || card.getValue() == lastCardOnPlayStack.getValue();
+
+	}
+	bool MauMauGameAccessorFromClient::canDraw() const {
+		if(!gameData.isLocalPlayerOnTurn() ||
+		   !gameData.hasInitialCardBeenDistributed() ||
+		   !gameData.areAllPreviousCardTransactionsCompleted() ||
+		   gameData.getLocalPlayer()->hasTimeExpired() ||
+		   gameData.hasGameEnded() ||
+		   gameData.getLocalPlayer()->hasStartedToDrawCard() ||
+		   gameData.getDrawCardForNextPlayer() == Card::NULLCARD) {
+			
+			return false;
+		}
+
+		return true;
+	}
+	bool MauMauGameAccessorFromClient::canPlayDrawnCard() const {
+		auto localPlayer = gameData.getLocalPlayer();
+
+		if(! localPlayer->isCardInTemporaryStack()) return false;
+		else return canPlay(* localPlayer->getDrawnCard());
+	}
+	bool MauMauGameAccessorFromClient::canTakeDrawnCardIntoHandCards() const {
+		auto localPlayer = gameData.getLocalPlayer();
+		return localPlayer->isCardInTemporaryStack();
+	}
+	bool MauMauGameAccessorFromClient::isWaitingForColorChoose() const {
+		auto localPlayer = gameData.getLocalPlayer();
+		return localPlayer->isWaitingForColorPick();
+	}
+	void MauMauGameAccessorFromClient::mau() {
+		auto localPlayer = gameData.getLocalPlayer();
+		localPlayer->onMauDemand();
+
+		MauRequest_CTSPacket pkt;
+		packetTransmitter->sendPacketToServer(pkt);
+	}
+	void MauMauGameAccessorFromClient::drawCard() {
+		if(!canDraw()) throw std::runtime_error("Can't draw card in the current situation!");
+		
+		Card cardToDraw = gameData.getDrawCardForNextPlayer();
+		if(canPlay(cardToDraw)) {
+			// we don't have to send a packet yet, since we want to let the player choose if he wants
+			// to add the drawn card into it's hand card or play it
+			
+			gameData.drawInLocalPlayerTempCards();
+		} else {
+			auto localPlayer = gameData.getLocalPlayer();
+			gameData.drawInHandCardsFromCardStack(localPlayer, cardToDraw);
+		
+			DrawCardRequest_CTSPacket p;
+			packetTransmitter->sendPacketToServer(p);
+			
+			gameData.setNextPlayerOnTurnLocal();
+		}
+
+		gameData.setDrawCardForNextPlayer(Card::NULLCARD);
+	}
+	void MauMauGameAccessorFromClient::takeDrawnCardIntoHandCards() {
+		if(!canTakeDrawnCardIntoHandCards()) throw std::runtime_error("Can't pick drawn card!");
+	
+		gameData.drawInHandCardsFromTempCards();
+	}
+
+	void MauMauGameAccessorFromClient::playCard(std::size_t index) {
+		auto localPlayer = gameData.getLocalPlayer();
+		Card card = localPlayer->getCardStack().get(index);
+		if(! canPlay(card)) throw std::runtime_error("Can't play card!");
+
+		bool canChangeColor = gameData.canChangeColor(card);
+		if(!canChangeColor || gameData.hasGameEnded()) {
+			gameData.playCardFromHandCards(localPlayer, card);
+			sendPlayCardPacket();
+		} else {
+			localPlayer->setCardToPlayAfterColorChoose(card);
+		}
+	}
+
+
+	void MauMauGameAccessorFromClient::playDrawnCard() {
+		if(! canPlayDrawnCard()) throw std::runtime_error("Can't play drawn card!");
+		auto localPlayer = gameData.getLocalPlayer();
+		Card card = *localPlayer->getDrawnCard();
+
+		bool canChangeColor = gameData.canChangeColor(card);
+		if(!canChangeColor || gameData.hasGameEnded()) {
+			gameData.playCardFromLocalPlayerTempCards();
+			sendPlayCardPacket();
+		} else {
+			localPlayer->setCardToPlayAfterColorChoose(card);
+		}
+	}
+
+	void MauMauGameAccessorFromClient::chooseColor(CardIndex color) {
+		if(!isWaitingForColorChoose()) throw std::runtime_error("Can't choose color!");
+		auto localPlayer = gameData.getLocalPlayer();
+
+		playPremarkedCardAfterColorChoose(color);
+		sendPlayCardPacket(color);
+
+		localPlayer->setCardToPlayAfterColorChoose(std::nullopt);
+	}
+
+	void MauMauGameAccessorFromClient::playPremarkedCardAfterColorChoose(CardIndex newCardIndex) {
+		auto localPlayer = gameData.getLocalPlayer();
+		std::optional<Card> premarkedToPlayAfterColorChoose = localPlayer->getCardToPlayAfterColorChooseOrNone();
+		if(premarkedToPlayAfterColorChoose.has_value()) {
+			Card cardToPlay = *premarkedToPlayAfterColorChoose;
+
+			std::optional<Card> drawnCard = localPlayer->getDrawnCard();
+			if(drawnCard.has_value()) {
+				if(*drawnCard != cardToPlay) throw std::runtime_error("Can't play card which isn't equal to the drawn card");
+				gameData.playCardFromLocalPlayerTempCards(newCardIndex);
+			} else {
+				gameData.playCardFromHandCards(localPlayer, cardToPlay, newCardIndex);
+			}
+		}
+	}
+
+	void MauMauGameAccessorFromClient::sendPlayCardPacket(CardIndex newCardIndex) {
+		auto localPlayer = gameData.getLocalPlayer();
+		Card playedCard = *localPlayer->getPlayedCard();
+
+		PlayCardRequest_CTSPacket p(playedCard.getCardNumber(), static_cast<int>(newCardIndex));
+		packetTransmitter->sendPacketToServer(p);
+
+		gameData.setNextOrNextButOneOnTurnLocal(playedCard);
+
+		std::size_t cardsToDrawForNextPlayer = gameData.getAmountsOfCardsToDrawForNextPlayer(playedCard);
+		auto newPlayerOnTurn = gameData.getPlayerOnTurn();
+		gameData.playerHasToDrawCards(newPlayerOnTurn, cardsToDrawForNextPlayer, PLAY_DURATION_MS);
+	}
+
+}
