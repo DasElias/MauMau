@@ -38,7 +38,6 @@ namespace card {
 				.generateSampler()
 		) {
 
-		const unsigned char* ptr = card_0;
 	}
 	std::vector<std::string> CardTextures::getTexturePaths() {
 		std::vector<std::string> paths;
