@@ -34,7 +34,6 @@ namespace card {
 			std::vector<std::shared_ptr<ProxyPlayer>> allPlayers;
 			std::vector<std::shared_ptr<ProxyPlayer>> opponents;
 			std::shared_ptr<LocalPlayer> localPlayer;
-			std::vector<std::shared_ptr<ProxyPlayer>> skippedPlayers;
 
 			bool field_wasCardDrawnIntoHandCards = false;
 			bool field_wasCardPlayed = false;
