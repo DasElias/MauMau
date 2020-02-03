@@ -8,7 +8,7 @@
 #include "../utils/Logger.h"
 
 namespace card {
-	float const AiPlayer::MAU_MISS_PROBABILITY = 0.0f;
+	float const AiPlayer::MAU_MISS_PROBABILITY = 0.1f;
 
 	AiPlayer::AiPlayer(std::shared_ptr<ParticipantOnServer> wrappedParticipant, ServerMauMauGame& game, std::vector<Card> handCards) :
 			Player(wrappedParticipant, handCards),
