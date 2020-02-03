@@ -334,8 +334,10 @@ namespace card {
 	}
 
 	void ProxyMauMauGameData::tryRebalanceCardStacks() {
-		if(drawCardStack.getSize() <= 3 && playCardStack.getSize() >= 1) {
-			playCardStack.addFirstCardFrom(Card::NULLCARD, drawCardStack, REBALANCE_DURATION, 0);
+		if(drawCardStack.getSize() <= 3) {
+			while(playCardStack.getSize() > 1) {
+				drawCardStack.addFirstCardFrom(Card::NULLCARD, playCardStack, REBALANCE_DURATION, 0);
+			}
 		}
 	}
 	void ProxyMauMauGameData::setLocalPlayerAtTheBeginOfPlayersVector() {
