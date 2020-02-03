@@ -195,7 +195,14 @@ namespace card {
 	std::vector<int> ServerMauMauGame::popCardsFromDrawStack(int cardAmount) {
 		std::vector<int> removedCards;
 		for(int i = 0; i < cardAmount; i++) {
-			Card removed = drawCardStack.removeLast();
+			/*
+			 * We intentionally remove the first card from draw card stack, since we send the last
+			 * card on draw card stack as next card on draw stack to the client (if he has to draw a card).
+			 * If this card is removed (by this method) from the card stack in the meantime (for example 
+			 * due to a mau punishment event), we get an inconsistent data model.
+			 */
+
+			Card removed = drawCardStack.removeFirst();
 			tryRebalanceCardStacks();
 
 			removedCards.push_back(removed.getCardNumber());
@@ -440,7 +447,7 @@ namespace card {
 	}
 	void ServerMauMauGame::tryRebalanceCardStacks() {
 		while(drawCardStack.getSize() <= 3 && playCardStack.getSize() >= 1) {
-			drawCardStack.addFromPlain(playCardStack.remove(0));
+			drawCardStack.addFromPlainAtPosition(0, playCardStack.remove(0));
 		}
 	}
 	void ServerMauMauGame::callGameEndFunctIfGameHasEnded() {
