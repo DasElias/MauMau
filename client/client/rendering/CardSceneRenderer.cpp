@@ -359,10 +359,14 @@ namespace card {
 		auto& drawCardStack = game->getDrawStack();
 		cardStackRenderer.renderCardStack(drawCardStack, DRAW_CARDS_POSITION, DRAW_CARDS_ROTATION, projectionMatrix, viewport);
 
-		for(auto animation : drawCardStack.getCardAnimations()) {
+		auto& animations = drawCardStack.getCardAnimations();
+		for(int i = 0; i < animations.size(); i++) {
+			auto animation = animations[i];
+
+			glm::vec3 heightAddition(0, i * CardStackRenderer::ADDITION_PER_CARD, 0);
 			interpolateAndRender(animation,
-								 PLAY_CARDS_POSITION, PLAY_CARDS_ROTATION,
-								 DRAW_CARDS_POSITION, DRAW_CARDS_ROTATION
+								 PLAY_CARDS_POSITION + heightAddition, DRAW_CARDS_ROTATION,
+								 DRAW_CARDS_POSITION + heightAddition, DRAW_CARDS_ROTATION
 			);
 		}
 	}
