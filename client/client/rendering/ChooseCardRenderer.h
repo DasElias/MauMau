@@ -35,7 +35,7 @@ namespace card {
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			void resetScene();
+			void discardPreviousMouseEvents();
 			void render();
 
 		private:

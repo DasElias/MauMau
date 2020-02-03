@@ -66,7 +66,7 @@ namespace card {
 		rootElem->setBackground(std::make_shared<egui::ColoredBackground>(egui::Color(0, 0, 0, 0.55f)));
 		this->scene.setRootElement(rootElem);
 	}
-	void ChooseCardRenderer::resetScene() {
+	void ChooseCardRenderer::discardPreviousMouseEvents() {
 		scene.discardMouseEvents();
 	}
 	void ChooseCardRenderer::render() {

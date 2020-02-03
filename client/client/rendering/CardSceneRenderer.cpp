@@ -41,7 +41,7 @@ namespace card {
 			bgRenderer(renderer2d, renderer3d),
 			drawnCardRenderer(cardRenderer, eguiRenderer, projectionMatrix, viewport, 
 				[this]() {
-					chooseCardRenderer.resetScene();
+					chooseCardRenderer.discardPreviousMouseEvents();
 					game->getAccessorFromClient().playDrawnCard();
 				}, 
 				[this](){
@@ -149,9 +149,7 @@ namespace card {
 		cardRenderer.flush(true);
 		renderPlayerLabels(opponentsOrNoneInCwOrder);
 		renderCardIndexForNextCardIfGameHasntEnded();
-		mauMauButtonRenderer.render(game->getAccessorFromClient().canMau());
-		renderDrawnCardOverlayIfGameHasntEnded();
-		renderChooseColorOverlayIfGameHasntEnded();
+		renderClickableOverlaysIfGameHasntEnded();
 
 		// flush CardRenderer
 		cardRenderer.flush();
@@ -286,33 +284,58 @@ namespace card {
 		}
 	}
 
-	void CardSceneRenderer::renderDrawnCardOverlayIfGameHasntEnded() {
+	void CardSceneRenderer::renderClickableOverlaysIfGameHasntEnded() {
+		if(game->hasGameEnded()) return;
+
 		auto& clientGameAccessor = game->getAccessorFromClient();
 		auto& localPlayer = game->getLocalPlayer();
-		
-		static std::optional<Card> drawnCardInLastPass = std::nullopt;
-		std::optional<Card> drawnCard = localPlayer->getDrawnCard();
 
-		bool isGameRunning = !game->hasGameEnded();
-		if(drawnCard.has_value() && isGameRunning && !localPlayer->hasTimeExpired()) {
-			// if the overlay wasn't displayed in the last frame, we need to ensure that there
-			// are no previous mouse events which are going to fire
-			if(! drawnCardInLastPass.has_value()) drawnCardRenderer.clearPreviousMouseEvents();
+		bool shouldRenderColorChooseOverlay = clientGameAccessor.isWaitingForColorChoose();
+		bool shouldRenderDrawnCardOverlay = localPlayer->getDrawnCard().has_value();
 
-			cardRenderer.flush();
-			drawnCardRenderer.render(*drawnCard, clientGameAccessor.canPlayDrawnCard(), clientGameAccessor.canTakeDrawnCardIntoHandCards());
-		}
+		bool shouldSuppressMauButtonClick = shouldRenderColorChooseOverlay || shouldRenderDrawnCardOverlay;
+		bool shouldSuppressDrawnCardOverlayClick = shouldRenderColorChooseOverlay;
 
-		drawnCardInLastPass = drawnCard;
+		renderMauButton(shouldSuppressMauButtonClick);
+		tryRenderDrawnCardOverlay(localPlayer->getDrawnCard(), shouldSuppressDrawnCardOverlayClick);
+		tryRenderChooseColorOverlay();
 	}
 
-	void CardSceneRenderer::renderChooseColorOverlayIfGameHasntEnded() {
-		bool isGameRunning = !game->hasGameEnded();
+	void CardSceneRenderer::tryRenderDrawnCardOverlay(std::optional<Card> drawnCardOrNone, bool suppressMouseClick) {
+		auto& clientGameAccessor = game->getAccessorFromClient();
+		static std::optional<Card> drawnCardInLastPass = std::nullopt;
+
+		if(drawnCardOrNone.has_value()) {
+			// if the overlay wasn't displayed in the last frame, we need to ensure that there
+			// are no previous mouse events which are going to fire
+			if(! drawnCardInLastPass.has_value() || suppressMouseClick) drawnCardRenderer.clearPreviousMouseEvents();
+
+			cardRenderer.flush();
+			drawnCardRenderer.render(*drawnCardOrNone, clientGameAccessor.canPlayDrawnCard(), clientGameAccessor.canTakeDrawnCardIntoHandCards());
+		}
+
+		drawnCardInLastPass = drawnCardOrNone;
+	}
+
+	void CardSceneRenderer::tryRenderChooseColorOverlay() {
+		static bool wasWaitingForColorChooseInLastPass = false;
+
 		bool isWaitingForColorChoose = game->getAccessorFromClient().isWaitingForColorChoose();
-		if(isWaitingForColorChoose && isGameRunning) {
+		if(isWaitingForColorChoose) {
+			if(! wasWaitingForColorChooseInLastPass) chooseCardRenderer.discardPreviousMouseEvents();
+
 			cardRenderer.flush();
 			chooseCardRenderer.render();
 		}
+
+		wasWaitingForColorChooseInLastPass = isWaitingForColorChoose;
+	}
+	void CardSceneRenderer::renderMauButton(bool suppressMouseClick) {
+		auto& clientGameAccessor = game->getAccessorFromClient();
+
+		bool canMau = clientGameAccessor.canMau();
+		bool canClickMauButton = canMau && !suppressMouseClick;
+		mauMauButtonRenderer.render(canClickMauButton);
 	}
 	void CardSceneRenderer::handleInput() {
 		// check if player wants to play/draw a card

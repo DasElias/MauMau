@@ -114,8 +114,10 @@ namespace card {
 			void renderDrawedCardAnimationsOfOpponent(const CardAnimator& handCardStack, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, glm::vec3 middlePosition, glm::vec3 middleRotation);
 			void renderPlayerLabels(std::array<std::shared_ptr<ProxyPlayer>, 3>& opponents);
 			void renderLocalPlayer();
-			void renderDrawnCardOverlayIfGameHasntEnded();
-			void renderChooseColorOverlayIfGameHasntEnded();
+			void renderClickableOverlaysIfGameHasntEnded();
+			void tryRenderDrawnCardOverlay(std::optional<Card> drawnCardOrNone, bool suppressMouseClick);
+			void tryRenderChooseColorOverlay();
+			void renderMauButton(bool suppressMouseClick);
 			void renderDrawCardStack();
 			void renderPlayCardStack();
 			void renderAnimationFromDrawToPlayStack(const CardAnimation& cardAnimation, glm::vec3 endPosition, glm::vec3 endRotation);

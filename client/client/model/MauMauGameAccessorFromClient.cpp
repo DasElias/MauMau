@@ -55,6 +55,7 @@ namespace card {
 		if(!gameData.isLocalPlayerOnTurn() ||
 		   !gameData.hasInitialCardBeenDistributed() ||
 		   !gameData.areAllPreviousCardTransactionsCompleted() ||
+		   isWaitingForColorChoose() ||
 		   gameData.getLocalPlayer()->hasTimeExpired() ||
 		   gameData.hasGameEnded() ||
 		   gameData.getLocalPlayer()->hasStartedToDrawCard() ||

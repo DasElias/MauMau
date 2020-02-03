@@ -37,6 +37,9 @@ namespace card {
 		std::shared_ptr<egui::UnorganizedParentElement> parent(new egui::UnorganizedParentElement({mauMauButton}));
 		scene.setRootElement(parent);
 	}
+	void MauMauButtonRenderer::clearPreviousMouseEvents() {
+		scene.discardMouseEvents();
+	}
 	void MauMauButtonRenderer::render(bool canMau) {
 		mauMauButton->setDisabled(! canMau);
 		

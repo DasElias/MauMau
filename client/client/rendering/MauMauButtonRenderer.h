@@ -29,6 +29,7 @@ namespace card {
         // -------------------------------METHODS--------------------------------
         // ----------------------------------------------------------------------
         public:
+            void clearPreviousMouseEvents();
             void render(bool canMau);
 
 	};
