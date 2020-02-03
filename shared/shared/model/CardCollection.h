@@ -34,6 +34,8 @@ namespace card {
 			void addFromPlain(std::vector<Card> cards);
 			void addFromPlain(std::initializer_list<Card> cards);
 			void addFromPlain(const std::vector<int>& cardNumbers);
+			void addFromPlainAtPosition(std::size_t position, Card c, std::size_t amount = 1);
+
 
 
 			Card get(std::size_t index) const;
@@ -51,6 +53,7 @@ namespace card {
 			bool isEmpty() const;
 
 			Card removeLast();
+			Card removeFirst();
 			Card remove(std::size_t index);
 			Card remove(Card card);
 			void clear();

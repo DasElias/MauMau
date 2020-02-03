@@ -37,6 +37,13 @@ namespace card {
 		reorder();
 	}
 
+	void CardCollection::addFromPlainAtPosition(std::size_t position, Card c, std::size_t amount) {
+		for(int i = 0; i < amount; i++) {
+			this->cards.insert(cards.begin() + position, c);
+		}
+		reorder();
+	}
+
 	Card CardCollection::get(std::size_t index) const {
 		return cards.at(index);
 	}
@@ -91,6 +98,10 @@ namespace card {
 
 	Card CardCollection::removeLast() {
 		return remove(getSize() - 1);
+	}
+
+	Card CardCollection::removeFirst() {
+		return remove(0);
 	}
 
 	Card CardCollection::remove(std::size_t index) {
