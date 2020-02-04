@@ -172,11 +172,18 @@ namespace card {
 		return opponents;
 	}
 
-	void ProxyMauMauGameData::removeOpponentLocal(std::shared_ptr<ParticipantOnClient> player) {
+	void ProxyMauMauGameData::removeOpponentLocal(std::shared_ptr<ParticipantOnClient> participant) {
 		if(hasGameEnded()) return;
+		std::string participantUsername = participant->getUsername();
+		auto player = lookupOpponent(participantUsername);
+
+		if(userOnTurn == player) {
+			setNextPlayerOnTurnLocal();
+			appendMessage(participantUsername + u8" verlieﬂ das Spiel.");
+		}
 
 		for(std::size_t i = 0; i < opponents.size(); i++) {
-			if(opponents[i]->getWrappedParticipiant() == player) {
+			if(opponents[i] == player) {
 				opponents.erase(opponents.begin() + i);
 				return;
 			}
