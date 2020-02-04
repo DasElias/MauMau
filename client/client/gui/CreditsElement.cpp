@@ -49,7 +49,7 @@ namespace card {
 
 		appendContent("Karten", "www.svg-cards.sourceforge.net");
 		appendContent("Avatare", "www.getavataaars.com");
-		appendContent("Textur fuer Tisch", "Petr Kovar - www.freeimages.com");
+		appendContent(u8"Textur für Tisch", "Petr Kovar - www.freeimages.com");
 		appendContent("Icons", "Freepik - www.flaticon.com");
 
 	}
