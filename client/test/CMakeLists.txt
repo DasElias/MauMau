@@ -11,7 +11,6 @@ add_executable(client_test ${client_test_files})
 target_link_libraries(client_test
 	${Boost_LIBRARIES}
 	system
-	localServer
 	client_model
 	state
 	rendering
