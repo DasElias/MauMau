@@ -75,6 +75,9 @@ namespace card {
 			case boost::asio::error::connection_refused:
 				errorMsgInPlainText = "Der Server ist zurzeit nicht verfügbar. Bitte versuche es später erneut.";
 				break;
+			case boost::asio::error::timed_out:
+				errorMsgInPlainText = "Der Server benötigte zu lange zum Antworten. Bitte versuche es später erneut.";
+				break;
 			default:
 				errorMsgInPlainText = ec.message();
 		}
