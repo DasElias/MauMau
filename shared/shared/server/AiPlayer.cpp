@@ -30,7 +30,7 @@ namespace card {
 		// player cannot play, therefore no card was played
 		if(shouldPlayDrawnCard()) {
 			Card drawnCard = game.getDrawCardStack().getLast();
-			playCardImpl(drawnCard);
+			playCardImpl(drawnCard, true);
 		} else {
 			drawCardImpl();
 		}
@@ -45,7 +45,7 @@ namespace card {
 
 			std::size_t chosenIndex = randomInRange<std::size_t>(0, playableCards.size() - 1);
 			Card chosenCard = playableCards[chosenIndex];
-			playCardImpl(chosenCard);
+			playCardImpl(chosenCard, false);
 			return true;
 		}
 	}
@@ -65,9 +65,9 @@ namespace card {
 			}
 		}
 	}
-	void AiPlayer::playCardImpl(Card card) {
+	void AiPlayer::playCardImpl(Card card, bool wasCardJustDrawn) {
 		CardIndex nextCardIndex = (game.canChangeColor(card)) ? chooseCardIndex() : CardIndex::NULLINDEX;
-		bool success = game.playCardAndSetNextPlayerOnTurn(*this, card, nextCardIndex);
+		bool success = game.playCardAndSetNextPlayerOnTurn(*this, card, wasCardJustDrawn, nextCardIndex);
 		if(!success) {
 			log(LogSeverity::ERR, "AiPlayer " + getUsername() + " couldn't play card!");
 		}

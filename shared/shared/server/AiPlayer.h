@@ -34,7 +34,7 @@ namespace card {
 			bool tryPlayCard();
 			std::vector<Card> getPlayableCards();
 			void tryMau();
-			void playCardImpl(Card c);
+			void playCardImpl(Card c, bool wasCardJustDrawn);
 			void drawCardImpl();
 			CardIndex chooseCardIndex();
 			bool shouldPlayDrawnCard();

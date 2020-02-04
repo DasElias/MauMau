@@ -260,7 +260,7 @@ namespace card {
 										   DRAW_CARDS_ROTATION - glm::vec3(PI / 2, 0, 0),
 										   HAND_CARDS_LOCAL_POSITION,
 										   HAND_CARDS_LOCAL_ROTATION);
-			} else if(animation.source.get().equalsId(localPlayer->getDrawnCardAsStack())) {
+			} else if(animation.source.get().equalsId(localPlayer->getTempCardStack())) {
 				// render cards from temporary card stack to hand cards
 				this->interpolateAndRender(animation,
 										   DrawnCardRenderer::POSITION,
@@ -272,7 +272,7 @@ namespace card {
 		}
 
 		// render cards from draw card stack to temporary card stack
-		for(auto& animation : localPlayer->getDrawnCardAsStack().getCardAnimations()) {
+		for(auto& animation : localPlayer->getTempCardStack().getCardAnimations()) {
 			this->interpolateAndRender(animation,
 										DRAW_CARDS_POSITION + glm::vec3(0, CardStackRenderer::ADDITION_PER_CARD * (game->getDrawStack().getSize()), 0),
 										DRAW_CARDS_ROTATION,
@@ -291,13 +291,13 @@ namespace card {
 		auto& localPlayer = game->getLocalPlayer();
 
 		bool shouldRenderColorChooseOverlay = clientGameAccessor.isWaitingForColorChoose();
-		bool shouldRenderDrawnCardOverlay = localPlayer->getDrawnCard().has_value();
+		bool shouldRenderDrawnCardOverlay = localPlayer->getCardInTempStack().has_value();
 
 		bool shouldSuppressMauButtonClick = shouldRenderColorChooseOverlay || shouldRenderDrawnCardOverlay;
 		bool shouldSuppressDrawnCardOverlayClick = shouldRenderColorChooseOverlay;
 
 		renderMauButton(shouldSuppressMauButtonClick);
-		tryRenderDrawnCardOverlay(localPlayer->getDrawnCard(), shouldSuppressDrawnCardOverlayClick);
+		tryRenderDrawnCardOverlay(localPlayer->getCardInTempStack(), shouldSuppressDrawnCardOverlayClick);
 		tryRenderChooseColorOverlay();
 	}
 
@@ -407,7 +407,7 @@ namespace card {
 			glm::vec3 positionEnd = PLAY_CARDS_POSITION + glm::vec3(0, cardStack.getSize() * CardStackRenderer::ADDITION_PER_CARD, 0);
 			glm::vec3 rotationEnd = PLAY_CARDS_ROTATION + misalignmentGenerator.computeRotationMisalignment(cardStack.getSize() + animationCounter);
 
-			if(animation.source.get().equalsId(localPlayer->getDrawnCardAsStack())) {
+			if(animation.source.get().equalsId(localPlayer->getTempCardStack())) {
 				interpolateAndRender(animation, 
 									DrawnCardRenderer::POSITION, {PI, PI, 0}, 
 									positionEnd, rotationEnd

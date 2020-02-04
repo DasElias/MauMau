@@ -70,7 +70,7 @@ namespace card {
 		auto localPlayer = gameData.getLocalPlayer();
 
 		if(! localPlayer->isCardInTemporaryStack()) return false;
-		else return canPlay(* localPlayer->getDrawnCard());
+		else return canPlay(* localPlayer->getCardInTempStack());
 	}
 	bool MauMauGameAccessorFromClient::canTakeDrawnCardIntoHandCards() const {
 		auto localPlayer = gameData.getLocalPlayer();
@@ -88,7 +88,8 @@ namespace card {
 	}
 	void MauMauGameAccessorFromClient::drawCard() {
 		if(!canDraw()) throw std::runtime_error("Can't draw card in the current situation!");
-		
+		wasCardDrawnThisTurn = true;
+
 		Card cardToDraw = gameData.getDrawCardForNextPlayer();
 		if(canPlay(cardToDraw)) {
 			// we don't have to send a packet yet, since we want to let the player choose if he wants
@@ -136,7 +137,7 @@ namespace card {
 	void MauMauGameAccessorFromClient::playDrawnCard() {
 		if(! canPlayDrawnCard()) throw std::runtime_error("Can't play drawn card!");
 		auto localPlayer = gameData.getLocalPlayer();
-		Card card = *localPlayer->getDrawnCard();
+		Card card = *localPlayer->getCardInTempStack();
 
 		bool canChangeColor = gameData.canChangeColor(card);
 		if(!canChangeColor || gameData.hasGameEnded()) {
@@ -160,7 +161,7 @@ namespace card {
 		if(cardToPlayAfterColorChoose.has_value()) {
 			Card cardToPlay = *cardToPlayAfterColorChoose;
 
-			std::optional<Card> drawnCard = localPlayer->getDrawnCard();
+			std::optional<Card> drawnCard = localPlayer->getCardInTempStack();
 			if(drawnCard.has_value()) {
 				if(*drawnCard != cardToPlay) throw std::runtime_error("Can't play card which isn't equal to the drawn card");
 				gameData.playCardFromLocalPlayerTempCards(newCardIndex);
@@ -174,7 +175,7 @@ namespace card {
 		auto localPlayer = gameData.getLocalPlayer();
 		Card playedCard = *localPlayer->getPlayedCard();
 
-		PlayCardRequest_CTSPacket p(playedCard.getCardNumber(), static_cast<int>(newCardIndex));
+		PlayCardRequest_CTSPacket p(playedCard.getCardNumber(), wasCardDrawnThisTurn, static_cast<int>(newCardIndex));
 		packetTransmitter->sendPacketToServer(p);
 
 		gameData.setNextOrNextButOneOnTurnLocal(playedCard);
@@ -186,6 +187,7 @@ namespace card {
 
 	void MauMauGameAccessorFromClient::onTurnEnd() {
 		cardToPlayAfterColorChoose = std::nullopt;
+		wasCardDrawnThisTurn = false;
 	}
 
 

@@ -113,7 +113,7 @@ namespace card {
 		sendSuccessfulMauPacket(player);
 	}
 
-	bool ServerMauMauGame::playCardAndSetNextPlayerOnTurn(Player& player, Card card, CardIndex chosenIndex) {
+	bool ServerMauMauGame::playCardAndSetNextPlayerOnTurn(Player& player, Card card, bool wasCardJustDrawn, CardIndex chosenIndex) {
 		if(!canPlay(player, card)) {
 			log(LogSeverity::ERR, "Player " + player.getUsername() + " tried to play card " + std::to_string(card.getCardNumber()) + " but the game was not in appropriate state");
 			return false;
@@ -123,7 +123,6 @@ namespace card {
 			return false;
 		}
 
-		bool wasCardJustDrawn = false;
 		bool moveSuccess = movePlayedCardToPlayCardStack(player, card, wasCardJustDrawn);
 		if(! moveSuccess) return false;
 
@@ -161,27 +160,27 @@ namespace card {
 		return true;
 	}
 
-	bool ServerMauMauGame::movePlayedCardToPlayCardStack(Player& player, Card card, bool& out_wasCardDrawnAndPlayed) {
+	bool ServerMauMauGame::movePlayedCardToPlayCardStack(Player& player, Card card, bool wasCardJustDrawn) {
 		wasCardPlayed_thisTurn = true;
 
-		if(!player.containsHandCard(card) && drawCardStack.getLast() == card) {
-			// player hasn't the drawn card in his hand cards, but it's the last on the drawCardStack, so he must have just drawn it
+		if(wasCardJustDrawn) {
+			if(player.containsHandCard(card)) {
+				log(LogSeverity::ERR, "Player \"" + player.getUsername() + " erroneously pretended to have just drawn the played card");
+				return false;
+			}
 
 			drawCardStack.removeLast();
 			playCardStack.addFromPlain(card);
 			wasCardDrawn_thisTurn = true;
-			out_wasCardDrawnAndPlayed = true;
-		} else if(player.containsHandCard(card)) {
-			// player wants to play a card in his hand card
+		} else {
+			if(!player.containsHandCard(card)) {
+				log(LogSeverity::ERR, "Player \"" + player.getUsername() + " erroneously pretended to haven't just drawn the played card or he tried to play a card which isn't owned by him.");
+				return false;
+			}
 
 			player.removeHandCard(card);
 			playCardStack.addFromPlain(card);
-			out_wasCardDrawnAndPlayed = false;
-		} else {
-			// player tries to play a card which isn't owned by him
-
-			return false;
-		}
+		} 
 
 		return true;
 	}
@@ -468,7 +467,7 @@ namespace card {
 		auto& casted = dynamic_cast<PlayCardRequest_CTSPacket&>(p);
 
 		auto player = lookupPlayerByParticipant(participant);
-		bool wasSuccessful = playCardAndSetNextPlayerOnTurn(*player, Card(casted.getCardNumber()), static_cast<CardIndex>(casted.getNewCardIndex()));
+		bool wasSuccessful = playCardAndSetNextPlayerOnTurn(*player, Card(casted.getCardNumber()), casted.wasJustDrawn(), static_cast<CardIndex>(casted.getNewCardIndex()));
 		return OperationSuccessful_STCAnswerPacket(wasSuccessful);
 	}
 	std::optional<OperationSuccessful_STCAnswerPacket> ServerMauMauGame::listener_onDrawCard(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant) {

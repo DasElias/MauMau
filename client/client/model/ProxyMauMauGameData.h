@@ -69,6 +69,9 @@ namespace card {
 			void onSuccessfulMau(std::shared_ptr<ProxyPlayer> player);
 			void onMauPunishment(std::shared_ptr<ProxyPlayer> punishedPlayer, std::vector<Card> cardsToDraw, MauPunishmentCause cause);
 
+			bool wasCardDrawnIntoHandCardsThisTurn() const;
+			bool wasCardPlayedThisTurn() const;
+
 			void abortTurnOnTimeExpires(const std::vector<Card>& cardsToDraw);
 			// player has to draw cards after other player has played 7, for instance 
 			void playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, std::size_t amountOfCards, int delayMs = 0);

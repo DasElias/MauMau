@@ -12,6 +12,7 @@ namespace card {
 			std::shared_ptr<CTSPacketTransmitter> packetTransmitter;
 			
 			std::optional<Card> cardToPlayAfterColorChoose = std::nullopt;
+			bool wasCardDrawnThisTurn = false;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------

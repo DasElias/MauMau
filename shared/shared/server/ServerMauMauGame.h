@@ -60,7 +60,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			void mau(Player& player);
-			[[nodiscard]] bool playCardAndSetNextPlayerOnTurn(Player& player, Card card, CardIndex chosenIndex = CardIndex::NULLINDEX);
+			[[nodiscard]] bool playCardAndSetNextPlayerOnTurn(Player& player, Card card, bool wasCardJustDrawn, CardIndex chosenIndex = CardIndex::NULLINDEX);
 			[[nodiscard]] bool drawCardAndSetNextPlayerOnTurn(Player& player);
 			void setNextOrNextButOneOnTurnLocal(Card playedCard);
 			void setNextPlayerOnTurn();
@@ -102,7 +102,7 @@ namespace card {
 			[[nodiscard]] std::vector<int> popCardsFromDrawStack(int cardAmount);
 
 			// returns false if the player tries to play a card which isn't owned by him
-			[[nodiscard]] bool movePlayedCardToPlayCardStack(Player& p, Card playedCard, bool& out_wasCardDrawnAndPlayed);
+			[[nodiscard]] bool movePlayedCardToPlayCardStack(Player& p, Card playedCard, bool wasCardJustDrawn);
 			void updateColor(Card playedCard, CardIndex chosenCardIndex);
 
 			// checks, if the player on turn has only one hand card´and if not both wasCardPlayed_thisTurn and wasCardDrawn_thisTurn are true,

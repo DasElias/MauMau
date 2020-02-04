@@ -52,8 +52,8 @@ namespace card {
 			bool hasPlayedCard() const;
 			bool hasStartedToDrawCard() const;
 			bool isCardInTemporaryStack() const;
-			std::optional<Card> getDrawnCard() const;
-			const CardAnimator& getDrawnCardAsStack() const;
+			std::optional<Card> getCardInTempStack() const;
+			const CardAnimator& getTempCardStack() const;
 			bool wasMauDemandedThisTurn() const;
 
 			void onMauDemand();

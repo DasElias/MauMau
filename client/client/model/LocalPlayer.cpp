@@ -48,8 +48,8 @@ namespace card {
 
 	void LocalPlayer::playCardFromTempCardStackLocal(CardAnimator& playCardStack) {
 		if(!isCardInTemporaryStack()) throw std::runtime_error("The player hasn't drawn a card yet!");
-		this->playedCard = getDrawnCard();
-		playCardStack.addDeterminedCardFromImmediately(*getDrawnCard(), drawnCardTempStack, PLAY_DURATION_MS);
+		this->playedCard = getCardInTempStack();
+		playCardStack.addDeterminedCardFromImmediately(*getCardInTempStack(), drawnCardTempStack, PLAY_DURATION_MS);
 	}
 
 	void LocalPlayer::sortDrawnCardIntoHandCardsLocal() {
@@ -67,13 +67,13 @@ namespace card {
 		return ! drawnCardTempStack.isEmpty();
 	}
 
-	std::optional<Card> LocalPlayer::getDrawnCard() const {
+	std::optional<Card> LocalPlayer::getCardInTempStack() const {
 		if(drawnCardTempStack.isEmpty()) return std::nullopt;
 		else if(drawnCardTempStack.getSize() == 1) return drawnCardTempStack.get(0);
 		else throw std::runtime_error("drawnCardTempStack contains more than one card!");
 	}
 
-	const CardAnimator& LocalPlayer::getDrawnCardAsStack() const {
+	const CardAnimator& LocalPlayer::getTempCardStack() const {
 		return drawnCardTempStack;
 	}
 

@@ -11,6 +11,7 @@ namespace card {
 
 		private:
 			static std::string const CARD_NUMBER_KEY;
+			static std::string const WAS_JUST_DRAWN_KEY;
 			static std::string const NEW_CARD_INDEX_KEY;
 
 		// ----------------------------------------------------------------------
@@ -18,13 +19,14 @@ namespace card {
 		// ----------------------------------------------------------------------
 		private:
 			int cardNumber;
+			bool wasJustDrawn_field;
 			int newCardIndex;
-
+			
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			PlayCardRequest_CTSPacket(int cardNumber, int newCardIndex = 0);
+			PlayCardRequest_CTSPacket(int cardNumber, bool wasJustDrawn, int newCardIndex);
 			PlayCardRequest_CTSPacket(nlohmann::json& jsonHandle);
 
 		// ----------------------------------------------------------------------
@@ -32,6 +34,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			int getCardNumber() const;
+			bool wasJustDrawn() const;
 			int getNewCardIndex() const;
 
 		protected:

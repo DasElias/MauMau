@@ -72,7 +72,7 @@ namespace card {
 
 	bool ProxyMauMauGameData::areAllPreviousCardTransactionsCompleted() const {
 		if(! playCardStack.getCardAnimations().empty()) return false;
-		if(! localPlayer->getDrawnCardAsStack().getCardAnimations().empty()) return false;
+		if(! localPlayer->getTempCardStack().getCardAnimations().empty()) return false;
 
 		for(auto& player : this->allPlayers) {
 			if(! player->getCardStack().getCardAnimations().empty()) return false;
@@ -102,7 +102,7 @@ namespace card {
 		updateGameEndFlag();
 	}
 	void ProxyMauMauGameData::playCardFromLocalPlayerTempCards(CardIndex newCardIndex, int delay) {
-		auto drawnCardOrNone = localPlayer->getDrawnCard();
+		auto drawnCardOrNone = localPlayer->getCardInTempStack();
 		if(!drawnCardOrNone.has_value()) {
 			throw std::runtime_error("LocalPlayer hasn't drawn a card in temp cards");
 		}
@@ -246,6 +246,12 @@ namespace card {
 		if(punishedPlayer == localPlayer) {
 			localPlayer->onMauFailure();
 		}
+	}
+	bool ProxyMauMauGameData::wasCardDrawnIntoHandCardsThisTurn() const {
+		return field_wasCardDrawnIntoHandCards;
+	}
+	bool ProxyMauMauGameData::wasCardPlayedThisTurn() const {
+		return field_wasCardPlayed;
 	}
 	void ProxyMauMauGameData::appendMauPunishmentMessage(std::string punishedUsername, MauPunishmentCause cause) {
 		switch(cause) {
