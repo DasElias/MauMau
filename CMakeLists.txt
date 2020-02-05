@@ -1,11 +1,20 @@
 cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 project(card)
+
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if(MSVC)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
 endif(MSVC)
+
+message(${CMAKE_BUILD_TYPE})
+if(CMAKE_BUILD_TYPE STREQUAL "Release")   
+    message("Link runtime statically.")
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
+    set(Boost_USE_STATIC_RUNTIME ON)
+endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 

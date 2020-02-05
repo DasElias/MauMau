@@ -6,7 +6,7 @@ include_directories(${GLFW3_INCLUDE_DIR})
 
 # Boost
 set(Boost_USE_STATIC_LIBS ON) 
-find_package(Boost COMPONENTS filesystem log REQUIRED)
+find_package(Boost COMPONENTS log regex filesystem date_time REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/res/include")
