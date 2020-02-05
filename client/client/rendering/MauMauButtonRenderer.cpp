@@ -2,6 +2,7 @@
 #include <egui/model/nodes/UnorganizedParentElement.h>
 #include <egui/model/nodeComponents/background/TexturedBackground.h>
 #include <egui/model/positioning/RelativePositioningOnScreen.h>
+#include <res/ingame/maubutton.png.h>
 
 namespace card {
 	float const MauMauButtonRenderer::MAU_MAU_BTN_WIDTH_PERCENT = 0.075f;
@@ -13,10 +14,10 @@ namespace card {
 		mauMauButton->setRadius(0.5f, true);
 		mauMauButton->setMaxWidth({MAU_MAU_BTN_WIDTH_PERCENT, egui::RelativityMode::RELATIVE_ON_SCREEN});
 		mauMauButton->setBackground(std::make_shared<egui::TexturedBackground>(
-			egui::Image::loadTexture("C:\\Users\\Elias\\Documents\\PROJECT X\\c.png")
+			egui::Image::loadFromMemory(maubutton, maubutton_size)
 		));
 		mauMauButton->setDisabledBackground(std::make_shared<egui::TexturedBackground>(
-			egui::Image::loadTexture("C:\\Users\\Elias\\Documents\\PROJECT X\\d.png")
+			egui::Image::loadFromMemory(maubuttondisabled, maubuttondisabled_size)
 		), egui::RenderMode::RENDER_EXCLUSIVELY);
 		mauMauButton->getHoverEventManager().addEventHandler({[this](egui::HoverEvent& evt) {
 			int const SIZE_ADDITION_PX = 20;
