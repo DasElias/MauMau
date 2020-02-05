@@ -7,6 +7,7 @@
 #include <egui/model/nodes/VBox.h>
 #include <egui/model/nodes/HBox.h>
 #include <egui/model/nodes/Label.h>
+#include "ColoredButton.h"
 
 namespace card {
 	class CreditsElement : public MenuElement {
@@ -15,6 +16,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		private:
 			std::shared_ptr<egui::Label> content;
+			std::shared_ptr<ColoredButton> backButton;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
@@ -25,6 +27,9 @@ namespace card {
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
+		public:
+			void setOnBackBtn(egui::FunctionWrapper<egui::ActionEvent> handler);
+
 		private:
 			void appendContent(std::string title, std::string content);
 	};

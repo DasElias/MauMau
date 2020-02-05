@@ -6,6 +6,10 @@ namespace card {
 			element(std::make_shared<CreditsElement>()),
 			scene(element),
 			renderer(renderer) {
+
+		element->setOnBackBtn({[this](egui::ActionEvent&) {
+			getStateMananger().changeState("MainMenuState");
+		}});
 	
 	}
 	void CreditsState::updateAndRender(float delta) {

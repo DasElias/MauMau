@@ -3,8 +3,10 @@
 #include <egui/model/nodeComponents/background/TexturedBackground.h>
 #include <egui/model/nodeComponents/border/Border.h>
 #include <egui/model/positioning/RelativePositioningOnScreen.h>
+#include <egui/model/positioning/CenterXInParentWrapper.h>
 #include <array>
 #include "../utils/FileUtils.h"
+#include "ColoredButton.h"
 
 using namespace egui;
 
@@ -52,6 +54,18 @@ namespace card {
 		appendContent(u8"Textur für Tisch", "Petr Kovar - www.freeimages.com");
 		appendContent("Icons", "Freepik - www.flaticon.com");
 
+		backButton = std::make_shared<ColoredButton>(ColoredButtonType::BLUE, u8"Zurück");
+		this->addChildElement(backButton);
+		backButton->setOwnPositioning(std::make_shared<egui::CenterXInParentWrapper>(
+			std::make_shared<egui::RelativePositioningOnScreen>(
+				0.0f, 0.9f
+			)
+		));
+		backButton->setPreferredWidth({400, egui::RelativityMode::ABSOLUTE_VALUE});
+
+	}
+	void CreditsElement::setOnBackBtn(egui::FunctionWrapper<ActionEvent> handler) {
+		backButton->getActionEventManager().addEventHandler(handler);
 	}
 	void CreditsElement::appendContent(std::string titleText, std::string contentText) {
 		this->content->setText(this->content->getText() + titleText + "\n" + contentText + "\n\n");
