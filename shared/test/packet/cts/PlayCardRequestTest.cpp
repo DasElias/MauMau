@@ -6,7 +6,7 @@ TEST_CASE("PlayCardRequest_CTSPacket", "[PlayCardRequest_CTSPacket]") {
 	int const card = 0;
 	int const newCardIndex = 1;
 
-	PlayCardRequest_CTSPacket packet(card, newCardIndex);
+	PlayCardRequest_CTSPacket packet(card, newCardIndex, 0);
 	nlohmann::json json = nlohmann::json::parse(packet.getJson());
 	PlayCardRequest_CTSPacket jsonPacket(json);
 

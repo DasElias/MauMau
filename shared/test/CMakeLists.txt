@@ -11,7 +11,6 @@ add_executable(shared_test ${shared_test_files})
 target_link_libraries(shared_test
 	${Boost_LIBRARIES}
 	system
-	localServer
 	client_model
 	state
 	rendering
