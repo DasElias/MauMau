@@ -39,13 +39,23 @@ namespace card {
 			cardStackRenderer(cardRenderer, misalignmentGenerator),
 			handCardRenderer(cardRenderer),
 			bgRenderer(renderer2d, renderer3d),
-			drawnCardRenderer(cardRenderer, eguiRenderer, projectionMatrix, viewport, 
+			drawnCardRenderer(cardRenderer, eguiRenderer, projectionMatrix, viewport,
 				[this]() {
-					chooseCardRenderer.discardPreviousMouseEvents();
-					game->getAccessorFromClient().playDrawnCard();
-				}, 
-				[this](){
-					game->getAccessorFromClient().takeDrawnCardIntoHandCards();
+					auto& accessor = game->getAccessorFromClient();
+					if(accessor.canPlayDrawnCard()) {
+						chooseCardRenderer.discardPreviousMouseEvents();
+						accessor.playDrawnCard();
+					} else {
+						log(LogSeverity::WARNING, "Card was drawn but can't be played.");
+					}
+				},
+				[this]() {
+					auto& accessor = game->getAccessorFromClient();
+					if(accessor.canTakeDrawnCardIntoHandCards()) {
+						accessor.takeDrawnCardIntoHandCards();
+					} else {
+						log(LogSeverity::WARNING, "Card was drawn but can't be taken into hand cards.");
+					}
 				}
 			),
 			chooseCardRenderer(eguiRenderer,cardIndexTextures,
@@ -302,7 +312,6 @@ namespace card {
 	}
 
 	void CardSceneRenderer::tryRenderDrawnCardOverlay(std::optional<Card> drawnCardOrNone, bool suppressMouseClick) {
-		auto& clientGameAccessor = game->getAccessorFromClient();
 		static std::optional<Card> drawnCardInLastPass = std::nullopt;
 
 		if(drawnCardOrNone.has_value()) {
@@ -311,7 +320,7 @@ namespace card {
 			if(! drawnCardInLastPass.has_value() || suppressMouseClick) drawnCardRenderer.clearPreviousMouseEvents();
 
 			cardRenderer.flush();
-			drawnCardRenderer.render(*drawnCardOrNone, clientGameAccessor.canPlayDrawnCard(), clientGameAccessor.canTakeDrawnCardIntoHandCards());
+			drawnCardRenderer.render(*drawnCardOrNone);
 		}
 
 		drawnCardInLastPass = drawnCardOrNone;

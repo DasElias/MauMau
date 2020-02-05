@@ -46,7 +46,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			void clearPreviousMouseEvents();
-			void render(Card card, bool canPlay, bool canTakeIntoHandCards);
+			void render(Card card);
 
 	};
 }

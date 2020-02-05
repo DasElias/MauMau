@@ -53,10 +53,7 @@ namespace card {
 	void DrawnCardRenderer::clearPreviousMouseEvents() {
 		scene.discardMouseEvents();
 	}
-	void DrawnCardRenderer::render(Card card, bool canPlay, bool canTakeIntoHandCards) {
-		playCardButton->setDisabled(! canPlay);
-		takeIntoHandCardsButton->setDisabled(! canTakeIntoHandCards);
-
+	void DrawnCardRenderer::render(Card card) {
 		eguiRenderer.beginFrame();
 		scene.render(eguiRenderer);
 		eguiRenderer.endFrame();
