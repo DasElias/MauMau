@@ -64,7 +64,19 @@ std::function<void(egui::Node* const)> egui::MauMauTheme::button_coloredButton_a
 
 		switch(p_btn->getButtonType()) {
 			case ColoredButtonType::GREEN:
-				
+				p_btn->setBackground(std::make_shared<ColoredBackground>(
+					Color(0.46f, 0.87f, 0.54f)
+				));
+				p_btn->setHoveredBackground(std::make_shared<LinearGradientBackground>(
+					LinearGradient(
+						Color(0.46f, 0.87f, 0.54f),
+						Color(0.62f, 0.91f, 0.68f),
+						0.5f,
+						0,
+						0.5f,
+						1
+					)
+					), RENDER_EXCLUSIVELY);
 				break;
 			case ColoredButtonType::BLUE:
 				p_btn->setBackground(std::make_shared<ColoredBackground>(
@@ -82,11 +94,10 @@ std::function<void(egui::Node* const)> egui::MauMauTheme::button_coloredButton_a
 					), RENDER_EXCLUSIVELY);
 				break;
 			case ColoredButtonType::RED:
-				float const COLOR_WHITE_ADDITION = 0.1f;
-				float const RED_R = 1.0f;
-				float const RED_G = 0.38f;
-				float const RED_B = 0.29f;
-				p_btn->setBackground(std::make_shared<LinearGradientBackground>(
+				p_btn->setBackground(std::make_shared<ColoredBackground>(
+					Color(0.93f, 0.38f, 0.29f)
+				));
+				p_btn->setHoveredBackground(std::make_shared<LinearGradientBackground>(
 					LinearGradient(
 						Color(0.93f, 0.38f, 0.29f),
 						Color(0.95f, 0.54f, 0.47f),
@@ -95,14 +106,6 @@ std::function<void(egui::Node* const)> egui::MauMauTheme::button_coloredButton_a
 						0.5f,
 						1
 					)
-				));
-				p_btn->setDisabledBackground(std::make_shared<LinearGradientBackground>(
-					LinearGradient(
-						Color(0.93f, 0.38f, 0.29f),
-						Color(0.95f, 0.54f, 0.47f),
-						0.5f, 1,
-						0.5f, 0
-					), 0.5f
 				), RENDER_EXCLUSIVELY);
 				break;
 		}
