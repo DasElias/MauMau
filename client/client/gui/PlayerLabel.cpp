@@ -12,6 +12,7 @@ namespace card {
 	PlayerLabel::PlayerLabel(float avatarAspectRatio) :
 			UnorganizedParentElement() {
 		rootElement = std::make_shared<egui::VBox>();
+		rootElement->setSpaceBetweenElements({3, egui::RelativityMode::ABSOLUTE_VALUE});
 		this->addChildElement(rootElement);
 
 		imageElement = std::make_shared<egui::AspectRatioElement>(avatarAspectRatio);
