@@ -8,7 +8,16 @@ add_subdirectory(rendering)
 add_subdirectory(state)
 
 set(card_source_files Main.h Main.cpp)
-add_executable(card ${card_source_files})
+
+
+if(CMAKE_BUILD_TYPE STREQUAL "Release")   
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ENTRY:mainCRTStartup")
+	add_executable(card WIN32 ${card_source_files})
+else()
+	add_executable(card ${card_source_files})
+endif()
+
+
 
 message("GLFW linked library: \"${GLFW3_LIBRARY}\"")
 target_link_libraries(card
