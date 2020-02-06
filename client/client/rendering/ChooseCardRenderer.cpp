@@ -79,7 +79,7 @@ namespace card {
 	void card::ChooseCardRenderer::adjustButtonBar() {
 		int btnWidthInPixels = egui::x_percentToPixel(indexButtons[0]->getComputedWidth());
 		float aspiredButtonHeightInPercent = egui::y_pixelToPercent(btnWidthInPixels);
-		egui::ValuePart preferredHeight(aspiredButtonHeightInPercent, egui::RelativityMode::RELATIVE_ON_SCREEN);
+		egui::Value preferredHeight(aspiredButtonHeightInPercent, egui::RelativityMode::RELATIVE_ON_SCREEN);
 		for(auto& btn : indexButtons) {
 			btn->setPreferredHeight({preferredHeight});
 		}
