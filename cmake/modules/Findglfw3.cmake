@@ -43,8 +43,10 @@ PATHS ${_glfw3_HEADER_SEARCH_DIRS} )
 
 # Search for the library
 if(CMAKE_BUILD_TYPE STREQUAL "Release")   
+	message("Search for GLFW version with statically linked runtime...")
 	FIND_LIBRARY(GLFW3_LIBRARY NAMES glfw3_s glfw_s PATHS ${_glfw3_LIB_SEARCH_DIRS})
 else()
+	message("Search for GLFW version with dynamically linked runtime...")
 	FIND_LIBRARY(GLFW3_LIBRARY NAMES glfw3 glfw PATHS ${_glfw3_LIB_SEARCH_DIRS})
 endif()
 INCLUDE(FindPackageHandleStandardArgs)
