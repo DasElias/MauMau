@@ -9,7 +9,6 @@ if(MSVC)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
 endif(MSVC)
 
-message(${CMAKE_BUILD_TYPE})
 if(CMAKE_BUILD_TYPE STREQUAL "Release")   
     message("Link runtime statically.")
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
