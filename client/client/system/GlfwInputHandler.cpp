@@ -24,7 +24,11 @@ namespace card {
 		void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 			std::string keyName = instanceMap.at(window)->getKeyName(key, scancode);
 			std::string keyChar = instanceMap.at(window)->getKeyChar(key, scancode);
-			egui::KeyEvent evt(key, keyName, keyChar, scancode, action == GLFW_PRESS);
+
+			egui::KeyEventType type = egui::KeyEventType::RELEASE;
+			if(action == GLFW_PRESS) type = egui::KeyEventType::PRESS;
+			else if(action == GLFW_REPEAT) type = egui::KeyEventType::REPEAT; 
+			egui::KeyEvent evt(key, keyName, keyChar, scancode, type);
 			
 			instanceMap.at(window)->getKeyEventManager().fireEvent(evt);
 		}
@@ -294,7 +298,7 @@ namespace card {
 			case KEY_KP_8:
 				return "8";
 			case KEY_KP_9:
-				return "9";
+				return "9";		
 		}
 
 		const char* stringPtr = glfwGetKeyName(key, scanCode);
