@@ -29,10 +29,6 @@ namespace card {
 			viewport.setPosition(viewport.getPosition() - glm::vec3(0, 0, 0.05f));
 			std::cout << vec3ToString(viewport.getPosition()) << std::endl;
 		}
-		if(egui::getInputHandler().isKeyDown(KEY_3)) {
-			viewport.setPosition(glm::vec3(0, 0, 5));
-			std::cout << vec3ToString(viewport.getPosition()) << std::endl;
-		}
 
 		if(egui::getInputHandler().isKeyDown(KEY_4)) {
 			viewport.setRotation(viewport.getRotation() + glm::vec3(0.01f, 0, 0));
@@ -47,6 +43,7 @@ namespace card {
 			std::cout << vec3ToString(viewport.getRotation()) << std::endl;
 		}
 
+	//	projectionMatrix.update(45);
 		sceneRenderer.render(delta);
 
 	}

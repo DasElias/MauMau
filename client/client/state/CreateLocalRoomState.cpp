@@ -1,24 +1,59 @@
 #include "CreateLocalRoomState.h"
+#include "CreateLocalRoomState.h"
 #include <egui/model/popups/PopupErrorBox.h>
 
 namespace card {
 	CreateLocalRoomState::CreateLocalRoomState(StateManager& stateManager, egui::MasterRenderer& eguiRenderer) :
 			State(stateManager),
-			eguiRenderer(eguiRenderer) {
+			eguiRenderer(eguiRenderer),
+			element(std::make_shared<CreateLocalRoomElement>(FIELDS_MAX_LENGTH)),
+			scene(element) {
+
+		element->addBackBtnEventHandler({[this, &stateManager](egui::ActionEvent&) {
+			stateManager.changeState("MainMenuState");
+		
+		}});
+		element->addContinueBtnEventHandler({[this, &stateManager](egui::ActionEvent&) {
+			std::optional<std::string> errorMsg = getErrorMessage();
+			if(errorMsg.has_value()) {
+				egui::PopupErrorBox eb("Lokaler Raum erstellen", *errorMsg);
+				eb.show();
+			} else {
+				// we have verified the input before
+				std::string username = element->getUsernameInput();
+				int amountOfOpponents = std::stoi(element->getAmountOfOpponentsInput());
+
+				auto gameFacade = std::make_shared<LocalGameFacade>(username, amountOfOpponents, 1);
+				stateManager.setGameFacade(gameFacade);
+				gameFacade->getRoom().requestGameStart();
+				stateManager.changeState("IngameState");
+			}
+			
+		}});
 	}
 	void CreateLocalRoomState::updateAndRender(float delta) {
-		auto gameFacade = std::make_shared<LocalGameFacade>("Lokaler Spieler", 1);
-		stateManager.setGameFacade(gameFacade);
-		gameFacade->getRoom().requestGameStart();
-
-		stateManager.changeState("IngameState");
+		eguiRenderer.beginFrame();
+		scene.render(eguiRenderer);
+		eguiRenderer.endFrame();
 	}
 	void CreateLocalRoomState::onStateEnter() {
 		State::onStateEnter();
-
-		
 	}
 	void CreateLocalRoomState::onStateExit() {
 		State::onStateExit();
+	}
+	std::optional<std::string> CreateLocalRoomState::getErrorMessage() {
+		std::string usernameInput = element->getUsernameInput();
+		std::string amountOfOpponentsInput = element->getAmountOfOpponentsInput();
+
+		if(usernameInput.size() > FIELDS_MAX_LENGTH) return "Dein Nutzername darf maximal " + std::to_string(FIELDS_MAX_LENGTH) + " Zeichen lang sein.";
+		if(usernameInput.size() == 0) return "Dein Nutzername darf nicht nicht leer sein.";
+		if(amountOfOpponentsInput.size() > 1) return "Die maximale Anzahl an Gegnern beträgt " + std::to_string(MAX_OPPONENTS) + ".";
+		if(amountOfOpponentsInput.size() == 0) return "Bitte gib die Anzahl Gegner an, gegen die du spielen möchtest.";
+		int amountOfOpponents = std::stoi(amountOfOpponentsInput);
+
+		if(amountOfOpponents > MAX_OPPONENTS) return "Die maximale Anzahl an Gegnern beträgt " + std::to_string(MAX_OPPONENTS) + ".";
+		if(amountOfOpponents == 0) return "Du musst gegen mindestens einen Gegner spielen.";
+		return std::nullopt;
 	}
 }

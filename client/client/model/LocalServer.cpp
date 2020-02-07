@@ -2,17 +2,17 @@
 
 
 namespace card {
-	LocalServer::LocalServer(std::shared_ptr<STCPacketTransmitter> packetTransmitter, const std::shared_ptr<ParticipantOnServer>& localParticipantOnServer) :
+	LocalServer::LocalServer(std::shared_ptr<STCPacketTransmitter> packetTransmitter, std::size_t amountOfOpponents, const std::shared_ptr<ParticipantOnServer>& localParticipantOnServer) :
 			packetTransmitter(packetTransmitter),
 			localParticipantOnServer(localParticipantOnServer),
 			room(0, packetTransmitter) {		
 	
-		initJoinAiPlayers();
+		initJoinAiPlayers(amountOfOpponents);
 		room.joinRoom(localParticipantOnServer);
 		room.initRoomLeaderWithoutPermissionsChecking(localParticipantOnServer);
 	}
-	void LocalServer::initJoinAiPlayers() {
-		for(int i = 0; i < OPPONENTS_COUNT; i++) {
+	void LocalServer::initJoinAiPlayers(std::size_t amountOfOpponents) {
+		for(int i = 0; i < amountOfOpponents; i++) {
 			// we pass the username of the local participant as reserved username
 			room.joinRoomAiPlayer(localParticipantOnServer->getUsername());
 		}

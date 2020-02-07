@@ -1,33 +1,28 @@
 #pragma once
-#include "AbstractGameFacade.h"
-#include "ProxyRoom.h"
-#include "../network/LocalPacketTransmitter.h"
-#include "LocalServer.h"
-#include "ParticipantOnClient.h"
+#include "BasicRoomJoinElement.h"
+#include "JoinRoomButtonBar.h"
+#include "LabeledInputField.h"
 
 namespace card {
-	class LocalGameFacade : public AbstractGameFacade {
+	class CreateLocalRoomElement : public BasicRoomJoinElement {
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
-			std::shared_ptr<ParticipantOnServer> localParticipantOnServer;
-			std::shared_ptr<LocalPacketTransmitter> packetTransmitter;
-			LocalServer server;
-			ProxyRoom room;
+			std::shared_ptr<LabeledInputField> usernameInputField;
+			std::shared_ptr<LabeledInputField> amountOfOpponentsInputField;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			LocalGameFacade(std::string username, std::size_t amountOfOpponents, Avatar avatar);
+			CreateLocalRoomElement(std::size_t maxFieldLength);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			bool isGameRunning() const override;
-			ProxyMauMauGame& getGame() override;
-			ProxyRoom& getRoom() override;
+			std::string getUsernameInput() const;
+			std::string getAmountOfOpponentsInput() const;
 	};
 }

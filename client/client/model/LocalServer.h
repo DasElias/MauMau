@@ -6,12 +6,6 @@
 namespace card {
 	class LocalServer {
 		// ----------------------------------------------------------------------
-		// ----------------------------STATIC-FIELDS-----------------------------
-		// ----------------------------------------------------------------------
-		private:
-			static int const OPPONENTS_COUNT = 3;
-
-		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
@@ -24,7 +18,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			LocalServer(std::shared_ptr<STCPacketTransmitter> packetTransmitter, const std::shared_ptr<ParticipantOnServer>& localParticipantOnServer);
+			LocalServer(std::shared_ptr<STCPacketTransmitter> packetTransmitter, std::size_t amountOfOpponents, const std::shared_ptr<ParticipantOnServer>& localParticipantOnServer);
 			LocalServer(const LocalServer&) = delete;
 
 		// ----------------------------------------------------------------------
@@ -38,7 +32,7 @@ namespace card {
 			std::vector<Avatar> getOpponentAvatars();
 
 		private:
-			void initJoinAiPlayers();
+			void initJoinAiPlayers(std::size_t amountOfOpponents);
 
 	};
 }

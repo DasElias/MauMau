@@ -1,0 +1,24 @@
+#include "TitledMenuElement.h"
+#include <egui/model/positioning/RelativePositioningOnScreen.h>
+namespace card {
+	float const TitledMenuElement::TITLE_Y_MARGIN_PERCENT_ON_SCREEN = 0.025f;
+
+	TitledMenuElement::TitledMenuElement(std::string titleString) :
+			title(std::make_shared<egui::Label>(titleString, FONT_SIZE_PX, false, egui::Text::HorizontalAlignment::CENTER, egui::Text::VerticalAlignment::MIDDLE, egui::Color(0.36f, 0.6f, 0.83f), egui::Font::getFont("ariblk"))) {
+
+		this->addChildElement(title);
+		title->setPreferredHeight({FONT_SIZE_PX, egui::RelativityMode::ABSOLUTE_VALUE});
+		title->setOwnPositioning(std::make_shared<egui::RelativePositioningOnScreen>(0.0f, TITLE_Y_MARGIN_PERCENT_ON_SCREEN));
+
+		
+	}
+	void TitledMenuElement::setTitle(std::string title) {
+		this->title->setText(title);
+	}
+	egui::Value TitledMenuElement::getYEndOfTitle() {
+		return {
+			{TITLE_Y_MARGIN_PERCENT_ON_SCREEN, egui::RelativityMode::RELATIVE_ON_SCREEN},
+			{FONT_SIZE_PX, egui::RelativityMode::ABSOLUTE_VALUE}
+		};
+	}
+}

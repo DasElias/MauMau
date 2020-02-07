@@ -1,0 +1,34 @@
+#include "CreateLocalRoomElement.h"
+#include <egui/model/nodes/HBox.h>
+#include "JoinRoomButtonBar.h"
+#include <egui/model/positioning/RelativePositioningOnScreen.h>
+#include "LabeledInputField.h"
+#include <algorithm>
+
+namespace card {
+	CreateLocalRoomElement::CreateLocalRoomElement(std::size_t maxFieldLength) :
+			BasicRoomJoinElement("Einzelspieler-Raum erstellen") {
+
+		auto usernameCharVerification = [](char c) {
+			return isalnum(c) || c == '.' || c == '_' || c == '-';
+		};
+		usernameInputField = std::make_shared<LabeledInputField>("Dein Benutzername", egui::Color(1.0f, 1.0f, 1.0f));
+		usernameInputField->getInputFieldImpl()->setCharFilterFunction([this, maxFieldLength, usernameCharVerification](std::string entered) {
+			return usernameInputField->getText().size() + entered.size() > maxFieldLength || std::find_if(entered.begin(), entered.end(), usernameCharVerification) == entered.end();
+		});
+		contentBox->addChildElement(usernameInputField);
+		
+		amountOfOpponentsInputField = std::make_shared<LabeledInputField>("Anzahl Gegner", egui::Color(1.0f, 1.0f, 1.0f));
+		amountOfOpponentsInputField->getInputFieldImpl()->setCharFilterToNumericWithMaxLength(maxFieldLength);
+		contentBox->addChildElement(amountOfOpponentsInputField);
+	}
+
+	std::string CreateLocalRoomElement::getUsernameInput() const {
+		return usernameInputField->getText();
+	}
+
+	std::string CreateLocalRoomElement::getAmountOfOpponentsInput() const {
+		return amountOfOpponentsInputField->getText();
+	}
+	
+}
