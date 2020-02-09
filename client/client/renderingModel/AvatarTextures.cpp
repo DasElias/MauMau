@@ -11,6 +11,7 @@
 namespace card {
 	AvatarTextures::AvatarTextures() :
 			avatarNotFoundTexture(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromMemory(avatar_0, avatar_0_size)),
+			avatarNotFoundImage(egui::Image::loadFromOpenglTexture(avatarNotFoundTexture.getTexId(), avatarNotFoundTexture.getWidth(), avatarNotFoundTexture.getHeight())),
 			width(-1),
 			height(-1) {
 
@@ -65,11 +66,17 @@ namespace card {
 			this->height = localHeight;
 
 			textures.insert(std::pair<Avatar, SimpleTexture>(avatar, tex));
+			auto texAsImg = egui::Image::loadFromOpenglTexture(tex.getTexId(), tex.getWidth(), tex.getHeight());
+			texturesAsImages.insert(std::make_pair(avatar, texAsImg));
 		}
 	}
 	void AvatarTextures::bind(Avatar avatar) const {
 		if(textures.find(avatar) != textures.end()) textures.at(avatar).bind();
 		else avatarNotFoundTexture.bind();
+	}
+	std::shared_ptr<egui::Image> AvatarTextures::getImage(Avatar avatar) const {
+		if(textures.find(avatar) != textures.end()) return texturesAsImages.at(avatar);
+		else return avatarNotFoundImage;
 	}
 	std::int32_t AvatarTextures::getWidth() const {
 		return width;
