@@ -89,7 +89,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			CardSceneRenderer(ProjectionMatrix& projectionMatrix, Viewport& viewport, 
+			CardSceneRenderer(ProjectionMatrix& projectionMatrix, Viewport& viewport, AvatarTextures& avatarTextures,
 					egui::MasterRenderer& eguiRenderer);
 			~CardSceneRenderer();
 

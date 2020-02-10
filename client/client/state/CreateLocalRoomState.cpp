@@ -3,10 +3,10 @@
 #include <egui/model/popups/PopupErrorBox.h>
 
 namespace card {
-	CreateLocalRoomState::CreateLocalRoomState(StateManager& stateManager, egui::MasterRenderer& eguiRenderer) :
+	CreateLocalRoomState::CreateLocalRoomState(StateManager& stateManager, AvatarTextures& avatarTextures, egui::MasterRenderer& eguiRenderer) :
 			State(stateManager),
 			eguiRenderer(eguiRenderer),
-			element(std::make_shared<CreateLocalRoomElement>(FIELDS_MAX_LENGTH)),
+			element(std::make_shared<CreateLocalRoomElement>(avatarTextures, FIELDS_MAX_LENGTH)),
 			scene(element) {
 
 		element->addBackBtnEventHandler({[this, &stateManager](egui::ActionEvent&) {
@@ -22,8 +22,9 @@ namespace card {
 				// we have verified the input before
 				std::string username = element->getUsernameInput();
 				int amountOfOpponents = std::stoi(element->getAmountOfOpponentsInput());
+				Avatar avatar = element->getSelectedAvatar();
 
-				auto gameFacade = std::make_shared<LocalGameFacade>(username, amountOfOpponents, 1);
+				auto gameFacade = std::make_shared<LocalGameFacade>(username, amountOfOpponents, avatar);
 				stateManager.setGameFacade(gameFacade);
 				gameFacade->getRoom().requestGameStart();
 				stateManager.changeState("IngameState");

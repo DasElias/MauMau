@@ -20,7 +20,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			IngameState(StateManager& stateManager, egui::MasterRenderer& eguiRenderer);
+			IngameState(StateManager& stateManager, AvatarTextures& avatarTextures, egui::MasterRenderer& eguiRenderer);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------

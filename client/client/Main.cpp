@@ -1,6 +1,5 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
 #include "Main.h"
 #include <egui/input/IOHandler.h>
 
@@ -195,21 +194,28 @@ namespace card {
 		//glEnable(GL_DEPTH_CLAMP);
 		glClearColor(0, 0, 0, 1);
 
+		const GLubyte* vendor = glGetString(GL_VENDOR);
+		const GLubyte* model = glGetString(GL_RENDERER);
+		std::cout << vendor << std::endl;
+		std::cout << model << std::endl;
+
 		egui::EGuiContext ctx = {};
 		egui::NvgRenderer nvgRenderer(ctx);
 		egui::Image::setContext(ctx);
 		egui::Font::setDefaultFont(egui::Font::createSystemFont(ctx, "Arial"));
 		egui::Font::createSystemFont(ctx, "ariblk");
+		egui::Font::createFont(ctx, "Roboto Condensed", "C:\\Users\\Elias\\Downloads\\roboto-condensed\\RobotoCondensed-Bold.ttf");
 		auto theme = std::make_unique<egui::MauMauTheme>(ctx);
 		egui::ThemeManager::getInstance().addTheme(theme.get());
 
 		MainMenuNetworkErrorHandler errorHandler(stateManager);
+		AvatarTextures avatarTextures;
 
-		IngameState ingameState(stateManager, nvgRenderer);
+		IngameState ingameState(stateManager, avatarTextures, nvgRenderer);
 		MainMenuState mainMenuState(stateManager, nvgRenderer);
 		JoinRoomState joinRoomState(stateManager, nvgRenderer, errorHandler);
 		CreateRoomState createRoomState(stateManager, nvgRenderer, errorHandler);
-		CreateLocalRoomState createLocalRoomState(stateManager, nvgRenderer);
+		CreateLocalRoomState createLocalRoomState(stateManager, avatarTextures, nvgRenderer);
 		ParticipantsOverviewState participantsOverviewState(stateManager, nvgRenderer);
 		CreditsState creditsState(stateManager, nvgRenderer);
 
@@ -297,6 +303,7 @@ namespace card {
 			egui::update(deltaSeconds);
 			threadUtils_update();
 
+			std::cout << fps << std::endl;
 			stateManager.updateAndRender(deltaSeconds);
 			if(CardAnimator::arePendingAnimations()) {
 				glfwSwapInterval(VSYNC);

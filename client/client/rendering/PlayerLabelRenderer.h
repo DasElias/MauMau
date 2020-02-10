@@ -32,7 +32,7 @@ namespace card {
             Renderer2D& renderer2D;
             CircleSectorRenderer& circleSectorRenderer;
 
-            AvatarTextures avatarTextures;
+            AvatarTextures& avatarTextures;
 
             egui::Scene scene;
             std::shared_ptr<PlayerLabel> labelElementForLocal;
@@ -49,7 +49,7 @@ namespace card {
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            PlayerLabelRenderer(egui::MasterRenderer& eguiRenderer, Renderer2D& renderer2D, CircleSectorRenderer& circleSectorRenderer);
+            PlayerLabelRenderer(egui::MasterRenderer& eguiRenderer, AvatarTextures& avatarTextures, Renderer2D& renderer2D, CircleSectorRenderer& circleSectorRenderer);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------

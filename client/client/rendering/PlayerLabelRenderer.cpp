@@ -17,10 +17,11 @@ namespace card {
 	glm::vec2 const PlayerLabelRenderer::LEFT_PLAYER_POSITION = {PADDING_LEFT_RIGHT, PADDING_TOP};
 	glm::vec2 const PlayerLabelRenderer::RIGHT_PLAYER_POSITION = {1 - PADDING_LEFT_RIGHT - PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN, PADDING_TOP};
 
-	PlayerLabelRenderer::PlayerLabelRenderer(egui::MasterRenderer& eguiRenderer, Renderer2D& renderer2D, CircleSectorRenderer& circleSectorRenderer) :
+	PlayerLabelRenderer::PlayerLabelRenderer(egui::MasterRenderer& eguiRenderer, AvatarTextures& avatarTextures, Renderer2D& renderer2D, CircleSectorRenderer& circleSectorRenderer) :
 			eguiRenderer(eguiRenderer),
 			renderer2D(renderer2D),
 			circleSectorRenderer(circleSectorRenderer),
+			avatarTextures(avatarTextures),
 			labelElementForLocal(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
 			labelElementForVisAVis(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
 			labelElementForLeft(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),

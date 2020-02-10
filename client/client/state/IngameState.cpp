@@ -7,12 +7,12 @@
 #include <shared/utils/ThreadUtils.h>
 
 namespace card {
-	IngameState::IngameState(StateManager& stateManager, egui::MasterRenderer& eguiRenderer) :
+	IngameState::IngameState(StateManager& stateManager, AvatarTextures& avatarTextures, egui::MasterRenderer& eguiRenderer) :
 			State(stateManager),
 			projectionMatrix(45, 1, 100),
 			viewport({0, 0.2f, 7.0f}, {-0.5f, 0, 0}),
 			eguiRenderer(eguiRenderer),
-			sceneRenderer(projectionMatrix, viewport, eguiRenderer) {
+			sceneRenderer(projectionMatrix, viewport, avatarTextures, eguiRenderer) {
 	}
 
 	std::string vec3ToString(glm::vec3 vec) {

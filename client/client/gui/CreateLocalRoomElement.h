@@ -2,6 +2,7 @@
 #include "BasicRoomJoinElement.h"
 #include "JoinRoomButtonBar.h"
 #include "LabeledInputField.h"
+#include "AvatarChooser.h"
 
 namespace card {
 	class CreateLocalRoomElement : public BasicRoomJoinElement {
@@ -9,6 +10,7 @@ namespace card {
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
+			std::shared_ptr<AvatarChooser> avatarChooser;
 			std::shared_ptr<LabeledInputField> usernameInputField;
 			std::shared_ptr<LabeledInputField> amountOfOpponentsInputField;
 
@@ -16,7 +18,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			CreateLocalRoomElement(std::size_t maxFieldLength);
+			CreateLocalRoomElement(AvatarTextures& avatarTextures, std::size_t maxFieldLength);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
@@ -24,5 +26,6 @@ namespace card {
 		public:
 			std::string getUsernameInput() const;
 			std::string getAmountOfOpponentsInput() const;
+			Avatar getSelectedAvatar() const;
 	};
 }

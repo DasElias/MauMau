@@ -30,7 +30,7 @@ namespace card {
 	const float CardSceneRenderer::LEFT_RIGHT_OPPONENT_CARDS_WIDTH = 2;
 	const float CardSceneRenderer::FRONT_BACK_OPPONENT_CARDS_WIDTH = 4;
 
-	CardSceneRenderer::CardSceneRenderer(ProjectionMatrix& projectionMatrix, Viewport& viewport, egui::MasterRenderer& eguiRenderer) :
+	CardSceneRenderer::CardSceneRenderer(ProjectionMatrix& projectionMatrix, Viewport& viewport, AvatarTextures& avatarTextures, egui::MasterRenderer& eguiRenderer) :
 			projectionMatrix(projectionMatrix),
 			viewport(viewport),
 			eguiRenderer(eguiRenderer),
@@ -64,7 +64,7 @@ namespace card {
 				}
 			),
 			circleSectorRenderer(),
-			playerLabelRenderer(eguiRenderer, renderer2d, circleSectorRenderer),
+			playerLabelRenderer(eguiRenderer, avatarTextures, renderer2d, circleSectorRenderer),
 			playerLabelOverlayRenderer(renderer2d, PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN),
 			cardIndexRenderer(renderer2d, cardIndexTextures),
 			particleRenderer(),

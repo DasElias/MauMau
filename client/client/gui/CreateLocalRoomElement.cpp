@@ -6,8 +6,12 @@
 #include <algorithm>
 
 namespace card {
-	CreateLocalRoomElement::CreateLocalRoomElement(std::size_t maxFieldLength) :
+	CreateLocalRoomElement::CreateLocalRoomElement(AvatarTextures& avatarTextures, std::size_t maxFieldLength) :
 			BasicRoomJoinElement("Einzelspieler-Raum erstellen") {
+
+		avatarChooser = std::make_shared<AvatarChooser>(avatarTextures, 1);
+		contentBox->addChildElement(avatarChooser);
+		avatarChooser->setMaxWidth({0.1f, egui::RelativityMode::RELATIVE_IN_PARENT});
 
 		auto usernameCharVerification = [](char c) {
 			return isalnum(c) || c == '.' || c == '_' || c == '-';
@@ -29,6 +33,10 @@ namespace card {
 
 	std::string CreateLocalRoomElement::getAmountOfOpponentsInput() const {
 		return amountOfOpponentsInputField->getText();
+	}
+
+	Avatar CreateLocalRoomElement::getSelectedAvatar() const {
+		return avatarChooser->getSelectedAvatar();
 	}
 	
 }

@@ -28,7 +28,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			CreateLocalRoomState(StateManager& stateManager, egui::MasterRenderer& eguiRenderer);
+			CreateLocalRoomState(StateManager& stateManager, AvatarTextures& avatarTextures, egui::MasterRenderer& eguiRenderer);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
