@@ -10,7 +10,7 @@
 
 namespace card {
 	AvatarTextures::AvatarTextures() :
-			avatarNotFoundTexture(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromMemory(avatar_0, avatar_0_size)),
+			avatarNotFoundTexture(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromFile(getApplicationFolder() + "\\resources\\user.png")),
 			avatarNotFoundImage(egui::Image::loadFromOpenglTexture(avatarNotFoundTexture.getTexId(), avatarNotFoundTexture.getWidth(), avatarNotFoundTexture.getHeight())),
 			width(-1),
 			height(-1) {
