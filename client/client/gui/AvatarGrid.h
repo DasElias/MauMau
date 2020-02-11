@@ -31,7 +31,7 @@ namespace card {
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            AvatarGrid(AvatarTextures& avatarTextures, std::vector<Avatar> avatarsInGrid, std::optional<Avatar> selectedAvatar);
+            AvatarGrid(AvatarTextures& avatarTextures, std::vector<Avatar> avatarsInGrid, Avatar selectedAvatar);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------

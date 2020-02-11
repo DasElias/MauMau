@@ -8,9 +8,9 @@
 namespace card {
 	float const AvatarGrid::WIDTH_PER_AVATAR = 1.0f / AvatarGrid::AVATARS_PER_ROW;
 
-	AvatarGrid::AvatarGrid(AvatarTextures& avatarTextures, std::vector<Avatar> avatarsInGrid, std::optional<Avatar> defaultSelectedAvatar) :
+	AvatarGrid::AvatarGrid(AvatarTextures& avatarTextures, std::vector<Avatar> avatarsInGrid, Avatar defaultSelectedAvatar) :
 			avatarTextures(avatarTextures),
-			selectedAvatar(defaultSelectedAvatar) {
+			selectedAvatar(std::nullopt) {
 
 		int amountOfRows = (avatarsInGrid.size() / AVATARS_PER_ROW) + 1;
 		egui::Value avatarMaxWidth = {WIDTH_PER_AVATAR, egui::RelativityMode::RELATIVE_IN_PARENT};
@@ -31,9 +31,10 @@ namespace card {
 		selection->setMaxHeight(avatarMaxHeight);
 		selection->setBackground(std::make_shared<egui::ColoredBackground>(egui::Color(0.62f, 0.62f, 0.62f)));
 		selection->setRadius(0.1f, true);
-		if(std::find(avatarsInGrid.begin(), avatarsInGrid.end(), *defaultSelectedAvatar) == avatarsInGrid.end()) {
+		if(std::find(avatarsInGrid.begin(), avatarsInGrid.end(), defaultSelectedAvatar) == avatarsInGrid.end()) {
 			updateOverlay(std::nullopt, selection);
 		} else {
+			selectedAvatar = defaultSelectedAvatar;
 			updateOverlay(selectedAvatar, selection);
 
 		}
