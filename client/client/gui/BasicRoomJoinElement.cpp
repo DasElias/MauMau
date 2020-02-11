@@ -27,12 +27,12 @@ namespace card {
 					egui::Value(0, egui::RelativityMode::ABSOLUTE_VALUE),
 					egui::Value({
 						TitledMenuElement::getYEndOfTitle(),
-						{0.125f, egui::RelativityMode::RELATIVE_ON_SCREEN}
+						{0.05f, egui::RelativityMode::RELATIVE_ON_SCREEN}
 					})
 				)
 			)
 		);
-		contentBox->setSpaceBetweenElements({0.075f, egui::RelativityMode::RELATIVE_ON_SCREEN});
+		contentBox->setSpaceBetweenElements({0.05f, egui::RelativityMode::RELATIVE_ON_SCREEN});
 		contentBox->setMaxWidth(buttonBar->getMaxWidth());
 	}
 	void BasicRoomJoinElement::addBackBtnEventHandler(egui::FunctionWrapper<egui::ActionEvent> handler) {

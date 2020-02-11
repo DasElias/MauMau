@@ -2,9 +2,11 @@
 #include <egui/model/nodes/AspectRatioElement.h>
 #include "../renderingModel/AvatarTextures.h"
 #include <egui/model/nodeComponents/background/TexturedBackground.h>
+#include <egui/model/nodes/HBox.h>
+#include <egui/model/nodes/VBox.h>
 
 namespace card {
-	class AvatarChooser : public egui::AspectRatioElement {
+	class AvatarChooser : public egui::VBox {
         // ----------------------------------------------------------------------
         // --------------------------------FIELDS--------------------------------
         // ----------------------------------------------------------------------
