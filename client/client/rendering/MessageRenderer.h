@@ -6,7 +6,6 @@
 #include "../model/MessageQueue.h"
 #include <egui/model/nodes/UnorganizedParentElement.h>
 #include <array>
-#include <egui/model/positioning/RelativePositioningOnScreen.h>
 
 namespace card {
     class MessageRenderer {
@@ -14,12 +13,10 @@ namespace card {
             private:
                 std::shared_ptr<egui::Label> text;
                 std::shared_ptr<egui::Label> shadow;
-                std::shared_ptr<egui::RelativePositioningOnScreen> positioning;
 
             public:
                 TextToRender(int fontSizePx);
                 void setText(std::string text);
-                void setY(float yRelativeOnScreen);
         };
 
         typedef std::array<std::shared_ptr<TextToRender>, MessageQueue::MAX_MSG_AMOUNT> TextBoxesArray;
