@@ -1,13 +1,13 @@
 #include "CreateLocalRoomElement.h"
 #include <egui/model/nodes/HBox.h>
-#include "JoinRoomButtonBar.h"
+#include "ContinueOptionsBackButtonBar.h"
 #include <egui/model/positioning/RelativePositioningOnScreen.h>
 #include "LabeledInputField.h"
 #include <algorithm>
 
 namespace card {
 	CreateLocalRoomElement::CreateLocalRoomElement(AvatarTextures& avatarTextures, std::size_t maxFieldLength) :
-			BasicRoomJoinElement("Einzelspieler-Raum erstellen") {
+			BasicRoomCreationElement("Einzelspieler-Raum erstellen") {
 
 		avatarChooser = std::make_shared<AvatarChooser>(avatarTextures, 1);
 		contentBox->addChildElement(avatarChooser);

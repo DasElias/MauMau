@@ -1,4 +1,4 @@
-#include "BasicRoomJoinElement.h"
+#include "BasicRoomCreationElement.h"
 #include <egui/model/positioning/ValuedPositioningOnScreen.h>
 #include <egui/model/positioning/RelativePositioningOnScreen.h>
 #include <egui/model/positioning/CenterXInParentWrapper.h>
@@ -6,10 +6,10 @@
 
 
 namespace card {
-	BasicRoomJoinElement::BasicRoomJoinElement(std::string title) :
+	BasicRoomCreationElement::BasicRoomCreationElement(std::string title) :
 		TitledMenuElement(title) {
 
-		buttonBar = std::make_shared<JoinRoomButtonBar>();
+		buttonBar = std::make_shared<ContinueOptionsBackButtonBar>(u8"Zurück", u8"Tischregeln bearbeiten", "Spiel starten");
 		addChildElement(buttonBar);
 		buttonBar->setOwnPositioning(
 			std::make_shared<egui::CenterXInParentWrapper>(
@@ -33,12 +33,12 @@ namespace card {
 			)
 		);
 		contentBox->setSpaceBetweenElements({0.05f, egui::RelativityMode::RELATIVE_ON_SCREEN});
-		contentBox->setMaxWidth(buttonBar->getMaxWidth());
+		contentBox->setMaxWidth({800, egui::RelativityMode::ABSOLUTE_VALUE});
 	}
-	void BasicRoomJoinElement::addBackBtnEventHandler(egui::FunctionWrapper<egui::ActionEvent> handler) {
+	void BasicRoomCreationElement::addBackBtnEventHandler(egui::FunctionWrapper<egui::ActionEvent> handler) {
 		buttonBar->addBackBtnEventHandler(handler);
 	}
-	void BasicRoomJoinElement::addContinueBtnEventHandler(egui::FunctionWrapper<egui::ActionEvent> handler) {
+	void BasicRoomCreationElement::addContinueBtnEventHandler(egui::FunctionWrapper<egui::ActionEvent> handler) {
 		buttonBar->addContinueBtnEventHandler(handler);
 	}
 }

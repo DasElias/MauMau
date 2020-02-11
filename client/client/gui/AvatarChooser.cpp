@@ -37,7 +37,7 @@ namespace card {
 		labelWrapper->addChildElement(label);
 		// magic constant for width, depends on LABEL_FONT_SIZE_PX
 		label->setPreferredWidth({180, egui::RelativityMode::ABSOLUTE_VALUE});	
-		label->getTextComponent()->setColor(egui::Color(0.4f, 0.79f, 1.0f));
+		label->getTextComponent()->setColor(egui::Color(0.36f, 0.6f, 0.83f));
 
 		auto popup = std::make_shared<AvatarChoosePopup>(avatarTextures);
 		popup->setZIndex(100);

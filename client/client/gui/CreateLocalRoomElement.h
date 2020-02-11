@@ -1,11 +1,10 @@
 #pragma once
-#include "BasicRoomJoinElement.h"
-#include "JoinRoomButtonBar.h"
+#include "BasicRoomCreationElement.h"
 #include "LabeledInputField.h"
 #include "AvatarChooser.h"
 
 namespace card {
-	class CreateLocalRoomElement : public BasicRoomJoinElement {
+	class CreateLocalRoomElement : public BasicRoomCreationElement {
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------

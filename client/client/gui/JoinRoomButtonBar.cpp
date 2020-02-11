@@ -7,7 +7,7 @@ namespace card {
 		float const SPACE_BETWEEN_ELEMS = 0.03f;
 
 		this->backBtn = std::make_shared<ColoredButton>(ColoredButtonType::RED, u8"Zurück");
-		this->continueBtn = std::make_shared<ColoredButton>(ColoredButtonType::GREEN, "Beitreten");
+		this->continueBtn = std::make_shared<ColoredButton>(ColoredButtonType::GREEN, "Spiel starten");
 		setPreferredHeight(backBtn->getPreferredHeight());
 		addChildElement(backBtn);
 		addChildElement(continueBtn);
