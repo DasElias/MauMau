@@ -3,6 +3,7 @@
 #include <egui/model/nodeComponents/background/TexturedBackground.h>
 #include <egui/model/nodeComponents/border/Border.h>
 #include <egui/model/positioning/RelativePositioningOnScreen.h>
+#include <egui/model/positioning/CenterXInParentWrapper.h>
 #include <array>
 #include "../utils/FileUtils.h"
 
@@ -57,6 +58,18 @@ namespace card {
 		infoBtn->setHoveredBackground(std::make_shared<egui::TexturedBackground>(
 			egui::Image::loadTexture(card::getApplicationFolder() + "\\resources\\menu\\informationHover.png")
 		), egui::RenderMode::RENDER_EXCLUSIVELY);
+
+		
+		auto gameTitleImage = egui::Image::loadTexture(getApplicationFolder() + "\\resources\\maumau.png");
+		auto gameTitleImageElement = std::make_shared<egui::AspectRatioElement>(gameTitleImage->getAspectRatio());
+		addChildElement(gameTitleImageElement);
+		gameTitleImageElement->setMaxHeight({0.275f, egui::RelativityMode::RELATIVE_IN_PARENT});
+		gameTitleImageElement->setOwnPositioning(std::make_shared<egui::CenterXInParentWrapper>(
+			std::make_shared<egui::RelativePositioningOnScreen>(
+				0.0f, 0.075f
+			)
+		));
+		gameTitleImageElement->setBackground(std::make_shared<egui::TexturedBackground>(gameTitleImage));
 	}
 	void MainMenuElement::addOnSinglePlayerBtnHandler(egui::FunctionWrapper<egui::ActionEvent> callback) {
 		auto convertedCallback = convertEventHandler(callback);
