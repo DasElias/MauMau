@@ -222,6 +222,10 @@ namespace card {
 	std::shared_ptr<ProxyPlayer> ProxyMauMauGameData::getWinnerOrNull() {
 		return winner;
 	}
+
+	const RoomOptions& ProxyMauMauGameData::getOptions() const {
+		return roomOptions;
+	}
 	
 	void ProxyMauMauGameData::abortTurnOnTimeExpires(const std::vector<Card>& cardsToDraw) {
 		if(isLocalPlayerOnTurn() && cardsToDraw[0] == Card::NULLCARD) {

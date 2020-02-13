@@ -6,6 +6,7 @@ namespace card {
 	RoomOptions::RoomOptions() {
 		setOption(Options::CHOOSE_COLOR_ON_JACK, true);
 		setOption(Options::CAN_PUT_JACK_ON_EVERY_COLOR, false);
+		setOption(Options::CAN_PUT_JACK_ON_JACK, false);
 		setOption(Options::SKIP_ON_EIGHT, true);
 		setOption(Options::PASS_SKIP, false);
 		setOption(Options::DRAW_TWO_ON_SEVEN, true);

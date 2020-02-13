@@ -26,9 +26,10 @@
 namespace card {
 	uint64_t ServerMauMauGame::startTurnAbortIdCounter = 0;
 
-	ServerMauMauGame::ServerMauMauGame(std::shared_ptr<STCPacketTransmitter> packetTransmitter, ServerGameEndHandler& gameEndHandler, std::vector<std::shared_ptr<ParticipantOnServer>> participants) :
+	ServerMauMauGame::ServerMauMauGame(std::shared_ptr<STCPacketTransmitter> packetTransmitter, ServerGameEndHandler& gameEndHandler, std::vector<std::shared_ptr<ParticipantOnServer>> participants, RoomOptions& options) :
 			packetTransmitter(packetTransmitter),
 			gameEndHandler(gameEndHandler),
+			roomOptions(options),
 			drawCardStack(),
 			playCardStack(),
 			handler_onPlayCard(std::bind(&ServerMauMauGame::listener_onPlayCard, this, std::placeholders::_1, std::placeholders::_2)),
@@ -358,12 +359,10 @@ namespace card {
 		if(playerOnTurn->getUsername() != player.getUsername()) return false;
 
 		Card lastCardOnPlayStack = playCardStack.getLast();
-		if(lastCardOnPlayStack.getValue() == CHANGE_COLOR_VALUE) {
-			// exception rule
-			// can't play jack onto another jack card
-			if(card.getValue() == CHANGE_COLOR_VALUE) return false;
-		} else if(lastCardOnPlayStack.getCardIndex() != indexForNextCard) {
-			throw std::runtime_error("Inconsistent model_test state! The only situation when the index for the next card isn't equal to the index of the last card is when the last card played has been a JACK.");
+
+		if(card.getValue() == CHANGE_COLOR_VALUE && roomOptions.getOption(Options::CHOOSE_COLOR_ON_JACK)) {
+			if(! roomOptions.getOption(Options::CAN_PUT_JACK_ON_JACK) && lastCardOnPlayStack.getValue() == CHANGE_COLOR_VALUE) return false;
+			if(roomOptions.getOption(Options::CAN_PUT_JACK_ON_EVERY_COLOR)) return true;
 		}
 
 		return card.getCardIndex() == indexForNextCard || card.getValue() == lastCardOnPlayStack.getValue();
@@ -374,13 +373,14 @@ namespace card {
 		return true;
 	}
 	bool ServerMauMauGame::canChangeColor(Card playedCard) const {
-		return playedCard.getValue() == CHANGE_COLOR_VALUE;
+		return playedCard.getValue() == CHANGE_COLOR_VALUE && roomOptions.getOption(Options::CHOOSE_COLOR_ON_JACK);
 	}
 	int ServerMauMauGame::getAmountsOfCardsToDrawForNextPlayer(Card playedCard) const {
+		if(!roomOptions.getOption(Options::DRAW_TWO_ON_SEVEN)) return false;
 		return (playedCard.getValue() == DRAW_2_VALUE) ? 2 : 0;
 	}
 	bool ServerMauMauGame::canSkipPlayer(Card playedCard) const {
-		return playedCard.getValue() == SKIP_VALUE;
+		return playedCard.getValue() == SKIP_VALUE && roomOptions.getOption(Options::SKIP_ON_EIGHT);
 	}
 	bool ServerMauMauGame::canMau(Player& player) const {
 		return checkIfOnTurn(player) && player.getHandCards().getSize() == 2;

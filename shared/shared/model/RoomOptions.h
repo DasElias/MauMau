@@ -5,6 +5,7 @@ namespace card {
     enum class Options : unsigned int {
         CHOOSE_COLOR_ON_JACK,
         CAN_PUT_JACK_ON_EVERY_COLOR,
+        CAN_PUT_JACK_ON_JACK,
         SKIP_ON_EIGHT,
         PASS_SKIP,
         DRAW_TWO_ON_SEVEN,
@@ -18,7 +19,7 @@ namespace card {
         // ----------------------------STATIC-FIELDS-----------------------------
         // ----------------------------------------------------------------------
         private:
-            static int const OPTIONS_SIZE = 7;
+            static int const OPTIONS_SIZE = 8;
 
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------

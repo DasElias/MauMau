@@ -14,6 +14,7 @@ namespace card {
             
             std::shared_ptr<Option> chooseColorOnJack_option;
             std::shared_ptr<Option> canPutJackOnEveryColor_option;
+            std::shared_ptr<Option> canPutJackOnJack_option;
             std::shared_ptr<Option> skipOnEight_option;
             std::shared_ptr<Option> passSkip_option;
             std::shared_ptr<Option> drawTwoOnSeven_option;

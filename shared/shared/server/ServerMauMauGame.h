@@ -8,6 +8,7 @@
 #include "../model/Direction.h"
 #include "ServerGameEndHandler.h"
 #include "../model/MauPunishmentCause.h"
+#include "../model/RoomOptions.h"
 
 namespace card {
 	class ServerMauMauGame {
@@ -27,6 +28,7 @@ namespace card {
 		private:
 			std::shared_ptr<STCPacketTransmitter> packetTransmitter;
 			ServerGameEndHandler& gameEndHandler;
+			RoomOptions& roomOptions;
 
 			std::shared_ptr<Player> playerOnTurn;
 			std::vector<std::shared_ptr<Player>> players;
@@ -52,7 +54,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			ServerMauMauGame(std::shared_ptr<STCPacketTransmitter> packetTransmitter, ServerGameEndHandler& gameEndHandler, std::vector<std::shared_ptr<ParticipantOnServer>> participants);
+			ServerMauMauGame(std::shared_ptr<STCPacketTransmitter> packetTransmitter, ServerGameEndHandler& gameEndHandler, std::vector<std::shared_ptr<ParticipantOnServer>> participants, RoomOptions& options);
 			~ServerMauMauGame();
 
 		// ----------------------------------------------------------------------

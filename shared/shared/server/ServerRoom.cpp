@@ -191,7 +191,7 @@ namespace card {
 		if(! checkIfLeader(sender) || isGameRunning() || participantsForNextGame.size() <= 1) return false;
 
 		// create game
-		this->game = std::make_unique<ServerMauMauGame>(packetTransmitter, *this, participantsForNextGame);
+		this->game = std::make_unique<ServerMauMauGame>(packetTransmitter, *this, participantsForNextGame, roomOptions);
 
 		// send packets
 		std::vector<std::string> usernameOfAllPlayers = getUsernamesOfParticipants();

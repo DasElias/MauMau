@@ -36,20 +36,16 @@ namespace card {
 			return false;
 		}
 
+		auto& roomOptions = gameData.getOptions();
 		const CardAnimator& playCardStack = gameData.getPlayStack();
 		Card lastCardOnPlayStack = playCardStack.getLast();
-		CardIndex indexForNextCard = gameData.getCardIndexForNextCard();
 
-		if(lastCardOnPlayStack.getValue() == CHANGE_COLOR_VALUE) {
-			// exception rule
-			// can't play jack onto another jack card
-			if(card.getValue() == CHANGE_COLOR_VALUE) return false;
-		} else if(lastCardOnPlayStack.getCardIndex() != indexForNextCard) {
-			throw std::runtime_error("Inconsistent model state!");
+		if(card.getValue() == CHANGE_COLOR_VALUE && roomOptions.getOption(Options::CHOOSE_COLOR_ON_JACK)) {
+			if(!roomOptions.getOption(Options::CAN_PUT_JACK_ON_JACK) && lastCardOnPlayStack.getValue() == CHANGE_COLOR_VALUE) return false;
+			if(roomOptions.getOption(Options::CAN_PUT_JACK_ON_EVERY_COLOR)) return true;
 		}
 
-		return card.getCardIndex() == indexForNextCard || card.getValue() == lastCardOnPlayStack.getValue();
-
+		return card.getCardIndex() == gameData.getCardIndexForNextCard() || card.getValue() == lastCardOnPlayStack.getValue();
 	}
 	bool MauMauGameAccessorFromClient::canDraw() const {
 		if(!gameData.isLocalPlayerOnTurn() ||

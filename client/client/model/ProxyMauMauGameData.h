@@ -107,7 +107,7 @@ namespace card {
 			bool hasGameEnded() const;
 			bool hasInitialCardBeenDistributed() const;
 			std::shared_ptr<ProxyPlayer> getWinnerOrNull();
-
+			const RoomOptions& getOptions() const;
 			void appendMessage(std::string content);
 			const MessageQueue getMessageQueue() const;
 
