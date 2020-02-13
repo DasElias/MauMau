@@ -7,7 +7,7 @@ namespace card {
 	int getTimeToSetNextPlayerOnTurn(std::size_t playCardStackSize, Card lastCardOnPlayCardStack, bool wasCardPlayedThisTurn, bool wasCardDrawedThisTurn) {
 		int delay = getTimeToEndCurrentTurn(playCardStackSize, lastCardOnPlayCardStack, wasCardPlayedThisTurn, wasCardDrawedThisTurn);
 
-		if(playCardStackSize > 1 && lastCardOnPlayCardStack.getValue() == DRAW_2_VALUE) {
+		if(wasCardPlayedThisTurn && playCardStackSize > 1 && lastCardOnPlayCardStack.getValue() == DRAW_2_VALUE) {
 			delay += DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS + DRAW_DURATION_MS;
 		}
 		if(wasCardDrawedThisTurn && !wasCardPlayedThisTurn) {
