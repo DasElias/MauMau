@@ -24,7 +24,7 @@ namespace card {
 			static std::string const AVATARS_OF_OTHER_PARTICIPANTS_KEY;
 			static std::string const ROOM_LEADER_KEY;
 			static std::string const ROOM_CODE_KEY;
-			static std::string const NON_DEFAULT_OPTIONS_KEY;
+			static std::string const OPTIONS_KEY;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
@@ -35,13 +35,13 @@ namespace card {
 			std::vector<Avatar> avatarsOfOtherParticipants;
 			std::string roomLeader;
 			RoomCode roomCode;
-			std::map<std::string, int> nonDefaultOptions;
+			std::map<std::string, int> options;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			EnteringRoomSuccessReport_STCAnswerPacket(int statusCode, std::vector<std::string> usernamesOfOtherParticipants, std::vector<Avatar> avatarsOfOtherParticipants, std::string roomLeader, RoomCode roomCode, std::map<std::string, int> nonDefaultOptions);
+			EnteringRoomSuccessReport_STCAnswerPacket(int statusCode, std::vector<std::string> usernamesOfOtherParticipants, std::vector<Avatar> avatarsOfOtherParticipants, std::string roomLeader, RoomCode roomCode, std::map<std::string, int> options);
 			EnteringRoomSuccessReport_STCAnswerPacket(const EnteringRoomSuccessReport_STCAnswerPacket&) = default;
 			EnteringRoomSuccessReport_STCAnswerPacket(nlohmann::json& jsonHandle);
 
@@ -54,7 +54,7 @@ namespace card {
 			std::vector<Avatar> getAvatarsOfOtherParticipants() const;
 			std::string getRoomLeader() const;
 			RoomCode getRoomCode() const;
-			std::map<std::string, int> getNonDefaultOptions() const;
+			std::map<std::string, int> getOptions() const;
 
 			void addJsonProperties(nlohmann::json& jsonHandle) const override;
 

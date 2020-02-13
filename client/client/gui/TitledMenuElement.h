@@ -1,6 +1,7 @@
 #pragma once
 #include "MenuElement.h"
 #include <egui/model/nodes/Label.h>
+#include <egui/model/nodes/VBox.h>
 
 namespace card {
 	class TitledMenuElement : public MenuElement {
@@ -16,6 +17,9 @@ namespace card {
         // ----------------------------------------------------------------------
         private:    
             std::shared_ptr<egui::Label> title;       
+
+        protected:
+            std::shared_ptr<egui::VBox> contentBox;
 
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------

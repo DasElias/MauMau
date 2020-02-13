@@ -20,7 +20,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			LocalGameFacade(std::string username, std::size_t amountOfOpponents, Avatar avatar);
+			LocalGameFacade(std::string username, std::size_t amountOfOpponents, Avatar avatar, RoomOptions options);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------

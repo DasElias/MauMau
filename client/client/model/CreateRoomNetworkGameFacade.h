@@ -7,12 +7,12 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			CreateRoomNetworkGameFacade(NetworkErrorHandler& errorHandler, std::string username, Avatar avatar);
+			CreateRoomNetworkGameFacade(NetworkErrorHandler& errorHandler, std::string username, Avatar avatar, RoomOptions roomOptions);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
-			void sendRequest(std::string username, Avatar avatar);
+			void sendRequest(std::string username, Avatar avatar, RoomOptions roomOptions);
 	};
 }

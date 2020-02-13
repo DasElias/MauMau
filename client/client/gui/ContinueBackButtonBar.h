@@ -3,7 +3,7 @@
 #include "ColoredButton.h"
 
 namespace card {
-	class JoinRoomButtonBar : public egui::HBox {
+	class ContinueBackButtonBar : public egui::HBox {
         // ----------------------------------------------------------------------
         // --------------------------------FIELDS--------------------------------
         // ----------------------------------------------------------------------
@@ -15,7 +15,7 @@ namespace card {
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            JoinRoomButtonBar();
+            ContinueBackButtonBar(std::string backBtnText, std::string continueBtnText);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------

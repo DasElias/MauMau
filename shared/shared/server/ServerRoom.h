@@ -38,7 +38,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			ServerRoom(RoomCode roomCode, std::shared_ptr<STCPacketTransmitter> packetTransmitter);
+			ServerRoom(RoomCode roomCode, std::shared_ptr<STCPacketTransmitter> packetTransmitter, RoomOptions roomOptions);
 			ServerRoom(const ServerRoom&) = delete;
 			~ServerRoom();
 

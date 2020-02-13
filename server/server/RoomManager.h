@@ -39,7 +39,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			void join(RoomCode roomCode, std::string username, Avatar avatar, const std::shared_ptr<ConnectionToClient>& conn);
-			void createAndJoin(std::string username, Avatar avatar, const std::shared_ptr<ConnectionToClient>& conn);
+			void createAndJoin(std::string username, Avatar avatar, std::map<std::string, int> roomOptions, const std::shared_ptr<ConnectionToClient>& conn);
 			void leave(std::shared_ptr<ConnectionToClient> conn);
 
 		private:

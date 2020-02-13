@@ -6,17 +6,17 @@ namespace card {
 	std::string const EnteringRoomSuccessReport_STCAnswerPacket::AVATARS_OF_OTHER_PARTICIPANTS_KEY = "31C";
 	std::string const EnteringRoomSuccessReport_STCAnswerPacket::ROOM_LEADER_KEY = "31D";
 	std::string const EnteringRoomSuccessReport_STCAnswerPacket::ROOM_CODE_KEY = "31E";
-	std::string const EnteringRoomSuccessReport_STCAnswerPacket::NON_DEFAULT_OPTIONS_KEY = "31F";
+	std::string const EnteringRoomSuccessReport_STCAnswerPacket::OPTIONS_KEY = "31F";
 
 
-	EnteringRoomSuccessReport_STCAnswerPacket::EnteringRoomSuccessReport_STCAnswerPacket(int statusCode, std::vector<std::string> usernamesOfOtherParticipants, std::vector<Avatar> avatarsOfOtherParticipants, std::string roomLeader, RoomCode roomCode, std::map<std::string, int> nonDefaultOptions) :
+	EnteringRoomSuccessReport_STCAnswerPacket::EnteringRoomSuccessReport_STCAnswerPacket(int statusCode, std::vector<std::string> usernamesOfOtherParticipants, std::vector<Avatar> avatarsOfOtherParticipants, std::string roomLeader, RoomCode roomCode, std::map<std::string, int> options) :
 			Packet(PACKET_ID),
 			statusCode(statusCode),
 			usernamesOfOtherParticipants(usernamesOfOtherParticipants),
 			avatarsOfOtherParticipants(avatarsOfOtherParticipants),
 			roomLeader(roomLeader),
 			roomCode(roomCode),
-			nonDefaultOptions(nonDefaultOptions) {
+			options(options) {
 	}
 
 	EnteringRoomSuccessReport_STCAnswerPacket::EnteringRoomSuccessReport_STCAnswerPacket(nlohmann::json& jsonHandle) :
@@ -26,7 +26,7 @@ namespace card {
 			avatarsOfOtherParticipants(jsonHandle.at(AVATARS_OF_OTHER_PARTICIPANTS_KEY).get<std::vector<Avatar>>()),
 			roomLeader(jsonHandle[ROOM_LEADER_KEY]),
 			roomCode(jsonHandle[ROOM_CODE_KEY]),
-			nonDefaultOptions(jsonHandle.at(NON_DEFAULT_OPTIONS_KEY).get<std::map<std::string, int>>()) {
+			options(jsonHandle.at(OPTIONS_KEY).get<std::map<std::string, int>>()) {
 
 		throwErrorIfTypeIsIncorrect(jsonHandle);
 	}
@@ -51,8 +51,8 @@ namespace card {
 		return roomCode;
 	}
 
-	std::map<std::string, int> EnteringRoomSuccessReport_STCAnswerPacket::getNonDefaultOptions() const {
-		return nonDefaultOptions;
+	std::map<std::string, int> EnteringRoomSuccessReport_STCAnswerPacket::getOptions() const {
+		return options;
 	}
 
 	void EnteringRoomSuccessReport_STCAnswerPacket::addJsonProperties(nlohmann::json& jsonHandle) const {
@@ -62,7 +62,7 @@ namespace card {
 		jsonHandle[AVATARS_OF_OTHER_PARTICIPANTS_KEY] = avatarsOfOtherParticipants;
 		jsonHandle[ROOM_LEADER_KEY] = roomLeader;
 		jsonHandle[ROOM_CODE_KEY] = roomCode;
-		jsonHandle[NON_DEFAULT_OPTIONS_KEY] = nonDefaultOptions;
+		jsonHandle[OPTIONS_KEY] = options;
 	}
 
 

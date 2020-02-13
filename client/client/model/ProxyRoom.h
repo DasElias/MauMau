@@ -38,7 +38,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			ProxyRoom(std::shared_ptr<CTSPacketTransmitter> packetTransmitter, std::vector<std::string> opponentsUsernames, std::vector<Avatar> opponentAvatars, std::string localPlayerUsername, Avatar localPlayerAvatar, std::string usernameOfLeader, std::map<std::string, int> options);
+			ProxyRoom(std::shared_ptr<CTSPacketTransmitter> packetTransmitter, std::vector<std::string> opponentsUsernames, std::vector<Avatar> opponentAvatars, std::string localPlayerUsername, Avatar localPlayerAvatar, std::string usernameOfLeader, RoomOptions options);
 			~ProxyRoom();
 
 		// ----------------------------------------------------------------------

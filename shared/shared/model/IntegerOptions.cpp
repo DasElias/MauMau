@@ -29,4 +29,7 @@ namespace card {
 	std::map<std::string, int> IntegerOptions::getData() const {
 		return integerOptions;
 	}
+	std::size_t IntegerOptions::getSize() const {
+		return integerOptions.size();
+	}
 }

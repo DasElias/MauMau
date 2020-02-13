@@ -24,6 +24,22 @@ namespace card {
 		amountOfOpponentsInputField = std::make_shared<LabeledInputField>("Anzahl Gegner", egui::Color(1.0f, 1.0f, 1.0f));
 		amountOfOpponentsInputField->getInputFieldImpl()->setCharFilterToNumericWithMaxLength(maxFieldLength);
 		contentBox->addChildElement(amountOfOpponentsInputField);
+
+		optionsElement = std::make_shared<OptionsElement>();
+		addChildElement(optionsElement);
+		optionsElement->setVisible(false);
+		optionsElement->setConsumeAllMouseEvents(true);
+		BasicRoomCreationElement::addOptionsBtnEventHandler({[this](egui::ActionEvent&) {
+			optionsElement->loadOptions(options);
+			optionsElement->setVisible(true);
+		}});
+		optionsElement->addBackBtnEventHandler({[this](egui::ActionEvent&) {
+			optionsElement->setVisible(false);
+		}});
+		optionsElement->addContinueBtnEventHandler({[this](egui::ActionEvent&) {
+			optionsElement->setVisible(false);
+			this->options = optionsElement->getOptions();
+		}});
 	}
 
 	std::string CreateLocalRoomElement::getUsernameInput() const {
@@ -36,6 +52,10 @@ namespace card {
 
 	Avatar CreateLocalRoomElement::getSelectedAvatar() const {
 		return avatarChooser->getSelectedAvatar();
+	}
+
+	RoomOptions CreateLocalRoomElement::getOptions() const {
+		return options;
 	}
 	
 }

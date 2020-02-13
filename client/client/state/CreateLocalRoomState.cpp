@@ -23,8 +23,9 @@ namespace card {
 				std::string username = element->getUsernameInput();
 				int amountOfOpponents = std::stoi(element->getAmountOfOpponentsInput());
 				Avatar avatar = element->getSelectedAvatar();
+				RoomOptions options = element->getOptions();
 
-				auto gameFacade = std::make_shared<LocalGameFacade>(username, amountOfOpponents, avatar);
+				auto gameFacade = std::make_shared<LocalGameFacade>(username, amountOfOpponents, avatar, options);
 				stateManager.setGameFacade(gameFacade);
 				gameFacade->getRoom().requestGameStart();
 				stateManager.changeState("IngameState");

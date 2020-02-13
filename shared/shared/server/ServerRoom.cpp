@@ -22,8 +22,9 @@
 #include "../model/AvatarUtils.h"
 
 namespace card {
-	ServerRoom::ServerRoom(RoomCode roomCode, std::shared_ptr<STCPacketTransmitter> packetTransmitter) :
+	ServerRoom::ServerRoom(RoomCode roomCode, std::shared_ptr<STCPacketTransmitter> packetTransmitter, RoomOptions roomOptions) :
 			roomCode(roomCode),
+			roomOptions(roomOptions),
 			packetTransmitter(packetTransmitter),
 			handler_onChangeOptions(std::bind(&ServerRoom::listener_onChangeOptions, this, std::placeholders::_1, std::placeholders::_2)),
 			handler_onChangeRoomLeader(std::bind(&ServerRoom::listener_onChangeRoomLeader, this, std::placeholders::_1, std::placeholders::_2)),

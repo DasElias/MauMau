@@ -18,7 +18,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			LocalServer(std::shared_ptr<STCPacketTransmitter> packetTransmitter, std::size_t amountOfOpponents, const std::shared_ptr<ParticipantOnServer>& localParticipantOnServer);
+			LocalServer(std::shared_ptr<STCPacketTransmitter> packetTransmitter, std::size_t amountOfOpponents, const std::shared_ptr<ParticipantOnServer>& localParticipantOnServer, RoomOptions roomOptions);
 			LocalServer(const LocalServer&) = delete;
 
 		// ----------------------------------------------------------------------

@@ -16,7 +16,6 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			IntegerOptions(std::map<std::string, int> integerOptions = {});
-			IntegerOptions(const IntegerOptions&) = delete;
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
@@ -29,6 +28,7 @@ namespace card {
 			int queryOption(std::string key) const;
 			int queryOption(std::string key, int returnIfNotExistant) const;
 			std::map<std::string, int> getData() const;
+			std::size_t getSize() const;
 
 	};
 }

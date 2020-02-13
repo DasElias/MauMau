@@ -51,11 +51,11 @@ namespace card {
 		auto allRoomOptions = concernedRoom->getRoomOptions().getAllOptions();
 		sendEnteringRoomSuccessReport(conn, SuccessReport::SUCCESS_STATUS, usernamesOfOtherParticipants, avatarsOfOtherParticipants, usernameOfRoomLeader, roomCode, allRoomOptions);
 	}
-	void RoomManager::createAndJoin(std::string username, Avatar avatar, const std::shared_ptr<ConnectionToClient>& conn) {
+	void RoomManager::createAndJoin(std::string username, Avatar avatar, std::map<std::string, int> roomOptions, const std::shared_ptr<ConnectionToClient>& conn) {
 		typedef EnteringRoomSuccessReport_STCAnswerPacket SuccessReport;
 		
 		auto newRoomCode = getNewRoomCode();
-		this->rooms.insert(std::make_pair(newRoomCode, std::make_unique<ServerRoom>(newRoomCode, packetTransmitter)));
+		this->rooms.insert(std::make_pair(newRoomCode, std::make_unique<ServerRoom>(newRoomCode, packetTransmitter, roomOptions)));
 		auto& room = this->rooms.at(newRoomCode);
 
 		auto constructedParticipant = std::make_shared<ParticipantOnServer>(username, avatar);
@@ -131,7 +131,7 @@ namespace card {
 	optionalSuccessAnswerPacket RoomManager::listener_onCreateRoom(ClientToServerPacket& p, const std::shared_ptr<ConnectionToClient>& conn) {
 		auto& casted = dynamic_cast<RoomCreationRequest_CTSPacket&>(p);
 
-		createAndJoin(casted.getOwnUsername(), casted.getAvatar(), conn);
+		createAndJoin(casted.getOwnUsername(), casted.getAvatar(), casted.getOptions(), conn);
 		return OperationSuccessful_STCAnswerPacket(true);
 	}
 }

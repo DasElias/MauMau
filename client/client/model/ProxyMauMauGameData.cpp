@@ -82,15 +82,15 @@ namespace card {
 	}
 
 	bool ProxyMauMauGameData::canChangeColor(Card playedCard) const {
-		return !hasGameEnded() && roomOptions.chooseCardIndexOnJack() && playedCard.getValue() == CHANGE_COLOR_VALUE;
+		return !hasGameEnded() && roomOptions.getOption(Options::CHOOSE_COLOR_ON_JACK) && playedCard.getValue() == CHANGE_COLOR_VALUE;
 	}
 
 	bool ProxyMauMauGameData::canSkipPlayer(Card card) const {
-		return roomOptions.skipOnEight() && card.getValue() == SKIP_VALUE;
+		return roomOptions.getOption(Options::SKIP_ON_EIGHT) && card.getValue() == SKIP_VALUE;
 	}
 
 	std::size_t ProxyMauMauGameData::getAmountsOfCardsToDrawForNextPlayer(Card playedCard) const {
-		if(! roomOptions.drawTwoCardsOnSeven()) return false;
+		if(! roomOptions.getOption(Options::DRAW_TWO_ON_SEVEN)) return false;
 		return (playedCard.getValue() == DRAW_2_VALUE) ? 2 : 0;
 	}
 

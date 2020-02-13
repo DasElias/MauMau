@@ -1,13 +1,13 @@
-#include "JoinRoomButtonBar.h"
+#include "ContinueBackButtonBar.h"
 
 namespace card {
-	JoinRoomButtonBar::JoinRoomButtonBar() :
+	ContinueBackButtonBar::ContinueBackButtonBar(std::string backBtnText, std::string continueBtnText) :
 			HBox(){
 		int const BUTTON_WIDTH_PX = 400;
 		float const SPACE_BETWEEN_ELEMS = 0.03f;
 
-		this->backBtn = std::make_shared<ColoredButton>(ColoredButtonType::RED, u8"Zurück");
-		this->continueBtn = std::make_shared<ColoredButton>(ColoredButtonType::GREEN, "Spiel starten");
+		this->backBtn = std::make_shared<ColoredButton>(ColoredButtonType::RED, backBtnText);
+		this->continueBtn = std::make_shared<ColoredButton>(ColoredButtonType::GREEN, continueBtnText);
 		setPreferredHeight(backBtn->getPreferredHeight());
 		addChildElement(backBtn);
 		addChildElement(continueBtn);
@@ -22,10 +22,10 @@ namespace card {
 		});
 
 	}
-	void JoinRoomButtonBar::addBackBtnEventHandler(egui::FunctionWrapper<egui::ActionEvent> handler) {
+	void ContinueBackButtonBar::addBackBtnEventHandler(egui::FunctionWrapper<egui::ActionEvent> handler) {
 		backBtn->getActionEventManager().addEventHandler(handler);
 	}
-	void JoinRoomButtonBar::addContinueBtnEventHandler(egui::FunctionWrapper<egui::ActionEvent> handler) {
+	void ContinueBackButtonBar::addContinueBtnEventHandler(egui::FunctionWrapper<egui::ActionEvent> handler) {
 		continueBtn->getActionEventManager().addEventHandler(handler);
 	}
 }

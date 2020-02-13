@@ -1,12 +1,25 @@
 #include "RoomOptions.h"
+#include <stdexcept>
+#include <assert.h>
 
 namespace card {
-	std::string const RoomOptions::CHOOSE_CARD_INDEX_ON_JACK = "chooseCardIndexOnJack";
-	std::string const RoomOptions::SKIP_ON_EIGHT = "skipOnEight";
-	std::string const RoomOptions::DRAW_TWO_CARDS_ON_SEVEN = "drawTwoCardsOnSeven";
+	RoomOptions::RoomOptions() {
+		setOption(Options::CHOOSE_COLOR_ON_JACK, true);
+		setOption(Options::CAN_PUT_JACK_ON_EVERY_COLOR, false);
+		setOption(Options::SKIP_ON_EIGHT, true);
+		setOption(Options::PASS_SKIP, false);
+		setOption(Options::DRAW_TWO_ON_SEVEN, true);
+		setOption(Options::PASS_DRAW_TWO, false);
+		setOption(Options::DIRECTION_CHANGE_ON_NINE, false);
 
+		assert(getSize() == OPTIONS_SIZE);
+	}
 	RoomOptions::RoomOptions(std::map<std::string, int> integerOptions) :
 			IntegerOptions(integerOptions) {
+
+		if(integerOptions.size() != OPTIONS_SIZE) {
+			throw std::runtime_error("Tried to initialize RoomOptions with an incorrect number of option values!");
+		}
 	}
 	void RoomOptions::setAllOptions(std::map<std::string, int> integerOptions) {
 		IntegerOptions::setAllOptions(integerOptions);
@@ -14,22 +27,16 @@ namespace card {
 	std::map<std::string, int> RoomOptions::getAllOptions() const {
 		return getData();
 	}
-	bool RoomOptions::chooseCardIndexOnJack() const {
-		return queryOption(CHOOSE_CARD_INDEX_ON_JACK, true);
+	bool RoomOptions::getOption(Options key) const {
+		return queryOption(keyToString(key));
 	}
-	void RoomOptions::setChooseCardIndexOnJack(bool flag) {
-		setOption(CHOOSE_CARD_INDEX_ON_JACK, flag);
+	void RoomOptions::setOption(Options key, bool newValue) {
+		IntegerOptions::setOption(keyToString(key), newValue);
 	}
-	bool RoomOptions::skipOnEight() const {
-		return queryOption(SKIP_ON_EIGHT, true);
+	std::size_t RoomOptions::getAmountOfOptions() const {
+		return getSize();
 	}
-	void RoomOptions::setSkipOnEight(bool flag) {
-		setOption(SKIP_ON_EIGHT, flag);
-	}
-	bool RoomOptions::drawTwoCardsOnSeven() const {
-		return queryOption(DRAW_TWO_CARDS_ON_SEVEN, true);
-	}
-	void RoomOptions::setDrawTwoCardsOnSeven(bool flag) {
-		setOption(DRAW_TWO_CARDS_ON_SEVEN, flag);
+	std::string RoomOptions::keyToString(Options key) const {
+		return std::to_string(static_cast<unsigned int>(key));
 	}
 }

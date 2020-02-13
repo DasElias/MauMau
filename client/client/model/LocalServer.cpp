@@ -2,10 +2,10 @@
 
 
 namespace card {
-	LocalServer::LocalServer(std::shared_ptr<STCPacketTransmitter> packetTransmitter, std::size_t amountOfOpponents, const std::shared_ptr<ParticipantOnServer>& localParticipantOnServer) :
+	LocalServer::LocalServer(std::shared_ptr<STCPacketTransmitter> packetTransmitter, std::size_t amountOfOpponents, const std::shared_ptr<ParticipantOnServer>& localParticipantOnServer, RoomOptions roomOptions) :
 			packetTransmitter(packetTransmitter),
 			localParticipantOnServer(localParticipantOnServer),
-			room(0, packetTransmitter) {		
+			room(0, packetTransmitter, roomOptions) {		
 	
 		initJoinAiPlayers(amountOfOpponents);
 		room.joinRoom(localParticipantOnServer);
