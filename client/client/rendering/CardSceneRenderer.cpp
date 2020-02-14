@@ -493,8 +493,10 @@ namespace card {
 	void CardSceneRenderer::renderCardIndexForNextCardIfGameHasntEnded() {	
 		std::optional<CardIndex> cardIndexForNextCardOrNone = game->getGameData().getCardIndexForNextCardOrNone();
 
+		const RoomOptions& options = game->getGameData().getOptions();
+		bool doesColorIndexChangeOnJack = options.getOption(Options::CHOOSE_COLOR_ON_JACK);
 		bool isGameRunning = !game->hasGameEnded();
-		if(cardIndexForNextCardOrNone.has_value() && isGameRunning) {
+		if(cardIndexForNextCardOrNone.has_value() && isGameRunning && doesColorIndexChangeOnJack) {
 			cardIndexRenderer.renderCardIndexForNextCard(*cardIndexForNextCardOrNone);
 		}
 	}

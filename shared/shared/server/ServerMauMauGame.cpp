@@ -127,6 +127,9 @@ namespace card {
 		bool moveSuccess = movePlayedCardToPlayCardStack(player, card, wasCardJustDrawn);
 		if(! moveSuccess) return false;
 
+		updateColor(card, chosenIndex);
+		updateDirection(card);
+
 		// compute cards to draw for next player
 		// it's important to compute those before the next player is set on turn,
 		// since afterwards we've send already the last card on draw stack to the new
@@ -142,8 +145,6 @@ namespace card {
 			playerOnTurn->addHandCards(cardsToDrawForNextPlayer);
 
 		}
-
-		updateColor(card, chosenIndex);	
 
 		// send packet to all other players
 		auto senderPlayerPtr = lookupPlayerByUsername(player.getUsername());
@@ -190,6 +191,12 @@ namespace card {
 			this->indexForNextCard = chosenCardIndex;
 		} else {
 			this->indexForNextCard = playedCard.getCardIndex();
+		}
+	}
+	void ServerMauMauGame::updateDirection(Card playedCard) {
+		if(playedCard.getValue() == CHANGE_DIRECTION_VALUE && roomOptions.getOption(Options::DIRECTION_CHANGE_ON_NINE)) {
+			if(direction == Direction::CW) direction = Direction::CCW;
+			else direction = Direction::CW;
 		}
 	}
 	std::vector<int> ServerMauMauGame::popCardsFromDrawStack(int cardAmount) {
@@ -241,22 +248,29 @@ namespace card {
 	}
 
 	void ServerMauMauGame::setNextPlayerOnTurn() {
-		auto playerOnTurnIter = std::find(players.begin(), players.end(), playerOnTurn);
-		playerOnTurnIter++;
-
-		if(playerOnTurnIter == players.end()) playerOnTurnIter = players.begin();
-		setPlayerOnTurn(*playerOnTurnIter);
+		std::shared_ptr<Player> nextPlayer = getNextPlayer(playerOnTurn);
+		setPlayerOnTurn(nextPlayer);
 	}
 
 	void ServerMauMauGame::setNextButOnePlayerOnTurn() {
+		std::shared_ptr<Player> nextPlayer = getNextPlayer(playerOnTurn);
+		std::shared_ptr<Player> nextButOnePlayer = getNextPlayer(nextPlayer);
+
+		setPlayerOnTurn(nextButOnePlayer);
+	}
+
+	std::shared_ptr<Player> ServerMauMauGame::getNextPlayer(std::shared_ptr<Player> playerOnTurn) {
 		auto playerOnTurnIter = std::find(players.begin(), players.end(), playerOnTurn);
 
-		for(int i = 0; i < 2; i++) {
+		if(direction == Direction::CW) {
 			playerOnTurnIter++;
 			if(playerOnTurnIter == players.end()) playerOnTurnIter = players.begin();
+		} else {
+			if(playerOnTurnIter == players.begin()) playerOnTurnIter = players.end();
+			playerOnTurnIter--;
 		}
 
-		setPlayerOnTurn(*playerOnTurnIter);
+		return *playerOnTurnIter;
 	}
 
 	void ServerMauMauGame::setPlayerOnTurn(std::shared_ptr<Player> player) {
@@ -322,7 +336,7 @@ namespace card {
 	void ServerMauMauGame::startTurnAbortTimer() {
 		uint64_t currentTurnAbortId = ++startTurnAbortIdCounter;
 
-		int delay = MAX_TURN_DURATION + getTimeToSetNextPlayerOnTurn(playCardStack.getSize(), playCardStack.getLast(), wasCardPlayedLastTurn(), wasCardDrawnLastTurn());
+		int delay = MAX_TURN_DURATION + getTimeToSetNextPlayerOnTurn(playCardStack.getSize(), playCardStack.getLast(), wasCardPlayedLastTurn(), wasCardDrawnLastTurn(), roomOptions);
 		threadUtils_invokeIn(delay, [this, currentTurnAbortId]() {
 
 			if(startTurnAbortIdCounter == currentTurnAbortId) {
@@ -437,6 +451,9 @@ namespace card {
 
 		players.erase(std::remove(players.begin(), players.end(), player), players.end());
 
+	}
+	const RoomOptions& ServerMauMauGame::getOptions() const {
+		return roomOptions;
 	}
 	const CardStack& ServerMauMauGame::getPlayCardStack() const {
 		return playCardStack;

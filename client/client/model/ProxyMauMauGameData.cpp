@@ -99,6 +99,7 @@ namespace card {
 		field_wasCardPlayed = true;
 		player->playCardFromHandCardsAfterDelay(card, playCardStack, delay);
 		updateCardIndex(card, newCardIndex);
+		updateDirection(card);
 		updateGameEndFlag();
 	}
 	void ProxyMauMauGameData::playCardFromLocalPlayerTempCards(CardIndex newCardIndex, int delay) {
@@ -112,6 +113,7 @@ namespace card {
 		field_wasCardPlayed = true;
 		localPlayer->playCardFromTempCardStackLocal(playCardStack);
 		updateCardIndex(drawnCard, newCardIndex);
+		updateDirection(drawnCard);
 		updateGameEndFlag();
 	}
 	void ProxyMauMauGameData::updateCardIndex(Card playedCard, CardIndex newCardIndex) {
@@ -119,6 +121,12 @@ namespace card {
 			this->indexForNextCard = playedCard.getCardIndex();
 		} else {
 			this->indexForNextCard = newCardIndex;
+		}
+	}
+	void ProxyMauMauGameData::updateDirection(Card playedCard) {
+		if(playedCard.getValue() == CHANGE_DIRECTION_VALUE && roomOptions.getOption(Options::DIRECTION_CHANGE_ON_NINE)) {
+			if(direction == Direction::CW) direction = Direction::CCW;
+			else direction = Direction::CW;
 		}
 	}
 	void ProxyMauMauGameData::drawInHandCardsFromCardStack(std::shared_ptr<ProxyPlayer> player, Card card) {
@@ -277,26 +285,30 @@ namespace card {
 		else setNextPlayerOnTurnLocal();
 	}
 	void ProxyMauMauGameData::setNextPlayerOnTurnLocal() {
-		auto playerOnTurnIter = std::find(allPlayers.begin(), allPlayers.end(), userOnTurn);
-		playerOnTurnIter++;
-		if(playerOnTurnIter == allPlayers.end()) playerOnTurnIter = allPlayers.begin();
-
-		setOnTurnLocal(*playerOnTurnIter);
+		std::shared_ptr<ProxyPlayer> nextPlayer = getNextPlayer(userOnTurn);
+		setOnTurnLocal(nextPlayer);
 	}
 	void ProxyMauMauGameData::setNextButOnePlayerOnTurnLocal() {
-		auto playerOnTurnIter = std::find(allPlayers.begin(), allPlayers.end(), userOnTurn);
+		std::shared_ptr<ProxyPlayer> nextPlayer = getNextPlayer(userOnTurn);
+		nextPlayer->onSkip();
+		std::shared_ptr<ProxyPlayer> nextButOnePlayer = getNextPlayer(nextPlayer);
+		setOnTurnLocal(nextButOnePlayer);
+	}
+	std::shared_ptr<ProxyPlayer> ProxyMauMauGameData::getNextPlayer(std::shared_ptr<ProxyPlayer> playerOnTurn) {
+		auto playerOnTurnIter = std::find(allPlayers.begin(), allPlayers.end(), playerOnTurn);
 
-		playerOnTurnIter++;
-		if(playerOnTurnIter == allPlayers.end()) playerOnTurnIter = allPlayers.begin();
-		(* playerOnTurnIter)->onSkip();
+		if(direction == Direction::CW) {
+			playerOnTurnIter++;
+			if(playerOnTurnIter == allPlayers.end()) playerOnTurnIter = allPlayers.begin();
+		} else {
+			if(playerOnTurnIter == allPlayers.begin()) playerOnTurnIter = allPlayers.end();
+			playerOnTurnIter--;
+		}	
 
-		playerOnTurnIter++;
-		if(playerOnTurnIter == allPlayers.end()) playerOnTurnIter = allPlayers.begin();
-
-		setOnTurnLocal(*playerOnTurnIter);
+		return *playerOnTurnIter;
 	}
 	void ProxyMauMauGameData::setOnTurnLocal(std::shared_ptr<ProxyPlayer> player) {	
-		int delayToSetNextPlayerOnTurn = getTimeToSetNextPlayerOnTurn(playCardStack.getSizeInclPendingTransactions(), playCardStack.getLastInclAnimations(), field_wasCardPlayed, field_wasCardDrawnIntoHandCards);
+		int delayToSetNextPlayerOnTurn = getTimeToSetNextPlayerOnTurn(playCardStack.getSizeInclPendingTransactions(), playCardStack.getLastInclAnimations(), field_wasCardPlayed, field_wasCardDrawnIntoHandCards, roomOptions);
 		int delayToFreezeAnimation = getTimeToEndCurrentTurn(playCardStack.getSizeInclPendingTransactions(), playCardStack.getLastInclAnimations(), field_wasCardPlayed, field_wasCardDrawnIntoHandCards);
 		// TODO FIX: Wenn Bedingung erfüllt, delayToFreezeAnimation von delayToSetNextPlayerOnTurn abziehen
 		if(field_wasCardDrawnIntoHandCards && field_wasCardPlayed && userOnTurn == localPlayer) {

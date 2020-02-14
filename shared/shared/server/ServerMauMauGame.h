@@ -66,7 +66,9 @@ namespace card {
 			[[nodiscard]] bool drawCardAndSetNextPlayerOnTurn(Player& player);
 			void setNextOrNextButOneOnTurnLocal(Card playedCard);
 			void setNextPlayerOnTurn();
+			std::shared_ptr<Player> getNextPlayer(std::shared_ptr<Player> playerOnTurn);
 			void setNextButOnePlayerOnTurn();
+
 			void setPlayerOnTurn(std::shared_ptr<Player> player);
 
 			bool canPlay(Player& player, Card card) const;
@@ -87,6 +89,7 @@ namespace card {
 			std::shared_ptr<Player> lookupPlayerByUsername(std::string username);
 			std::shared_ptr<Player> getRandomPlayer();
 			void removePlayer(std::shared_ptr<Player> player);
+			const RoomOptions& getOptions() const;
 
 			const CardStack& getPlayCardStack() const;
 			const CardStack& getDrawCardStack() const;
@@ -106,6 +109,7 @@ namespace card {
 			// returns false if the player tries to play a card which isn't owned by him
 			[[nodiscard]] bool movePlayedCardToPlayCardStack(Player& p, Card playedCard, bool wasCardJustDrawn);
 			void updateColor(Card playedCard, CardIndex chosenCardIndex);
+			void updateDirection(Card playedCard);
 
 			// checks, if the player on turn has only one hand card´and if not both wasCardPlayed_thisTurn and wasCardDrawn_thisTurn are true,
 			// since the player can't mau if drawn the card just drawn

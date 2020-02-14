@@ -28,6 +28,7 @@ namespace card {
 			Card drawCardForNextPlayer;
 			RoomOptions& roomOptions;
 			ProxyPlayerGameInformation gameInformation;
+			Direction direction = Direction::CW;
 			MessageQueue messageQueue;
 
 			std::shared_ptr<ProxyPlayer> userOnTurn;
@@ -81,6 +82,7 @@ namespace card {
 			void setNextOrNextButOneOnTurnLocal(Card playedCard);
 			void setNextPlayerOnTurnLocal();
 			void setNextButOnePlayerOnTurnLocal();
+			std::shared_ptr<ProxyPlayer> getNextPlayer(std::shared_ptr<ProxyPlayer> playerOnTurn);
 			void setOnTurnLocal(std::shared_ptr<ProxyPlayer> player);
 
 			bool isLocalPlayerOnTurn() const;
@@ -117,6 +119,7 @@ namespace card {
 			void setLocalPlayerAtTheBeginOfPlayersVector();
 
 			void updateCardIndex(Card playedCard, CardIndex newCardIndex);
+			void updateDirection(Card playedCard);
 			void updateGameEndFlag();
 			void throwIfGameHasEnded();
 
