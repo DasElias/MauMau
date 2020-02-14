@@ -4,3 +4,6 @@ file(GLOB gui_source_files
 )
 
 add_library(gui ${gui_source_files})
+target_link_libraries(gui
+    res_menu
+)

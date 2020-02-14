@@ -2,13 +2,14 @@
 #include "../renderingModel/SimpleTextureFactory.h"
 #include "../utils/FileUtils.h"
 #include "../gui/CombinedPositioning.h"
+#include <res/ingame/mauspeechbubble.h>
 
 namespace card {
 	MauMauPlayerLabelOverlayRenderer::MauMauPlayerLabelOverlayRenderer(Renderer2D& renderer2D, float playerLabelWidthRelativeOnScreen) :
 			renderer2D(renderer2D),
 			playerLabelWidthRelativeOnScreen(playerLabelWidthRelativeOnScreen),
 			textureSkip(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromFile(getApplicationFolder() + "\\resources\\skipPlayer.png")),
-			textureMau(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromFile("C:\\Users\\Elias\\Downloads\\Bild5.png")),
+			textureMau(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromMemory(tex_mauspeechbubble, tex_mauspeechbubble_size)),
 			skipAnimElement(std::make_shared<egui::AspectRatioElement>(textureSkip.getAspectRatio())),
 			mauAnimElement(std::make_shared<egui::AspectRatioElement>(textureMau.getAspectRatio())),
 			basicPositioning(std::make_shared<egui::RelativePositioningOnScreen>(0.0f, 0.0f)) {

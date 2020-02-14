@@ -6,9 +6,9 @@
     #define BIN2ARRAY_ALIGN __attribute__((__aligned__(8)))
 #endif
 
-const size_t maubutton_size = 62323u;
+const size_t tex_maubutton_size = 62323u;
 
-const unsigned char BIN2ARRAY_ALIGN maubutton[maubutton_size] = {
+const unsigned char BIN2ARRAY_ALIGN tex_maubutton[tex_maubutton_size] = {
 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,1,0,
 0,0,1,0,8,6,0,0,0,92,114,168,102,0,0,35,38,122,84,88,
 116,82,97,119,32,112,114,111,102,105,108,101,32,116,121,112,101,32,101,120,

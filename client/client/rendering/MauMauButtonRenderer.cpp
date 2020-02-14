@@ -14,10 +14,10 @@ namespace card {
 		mauMauButton->setRadius(0.5f, true);
 		mauMauButton->setMaxWidth({MAU_MAU_BTN_WIDTH_PERCENT, egui::RelativityMode::RELATIVE_ON_SCREEN});
 		mauMauButton->setBackground(std::make_shared<egui::TexturedBackground>(
-			egui::Image::loadFromMemory(maubutton, maubutton_size)
+			egui::Image::loadFromMemory(tex_maubutton, tex_maubutton_size)
 		));
 		mauMauButton->setDisabledBackground(std::make_shared<egui::TexturedBackground>(
-			egui::Image::loadFromMemory(maubuttondisabled, maubuttondisabled_size)
+			egui::Image::loadFromMemory(tex_maubuttondisabled, tex_maubuttondisabled_size)
 		), egui::RenderMode::RENDER_EXCLUSIVELY);
 		mauMauButton->getHoverEventManager().addEventHandler({[this](egui::HoverEvent& evt) {
 			int const SIZE_ADDITION_PX = 20;
