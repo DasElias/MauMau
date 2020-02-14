@@ -1,33 +1,54 @@
 #include "CreateRoomState.h"
+#include "CreateRoomState.h"
 #include <egui/model/popups/PopupErrorBox.h>
 
 namespace card {
-	CreateRoomState::CreateRoomState(StateManager& stateManager, egui::MasterRenderer& eguiRenderer, NetworkErrorHandler& networkErrorHandler) :
+	CreateRoomState::CreateRoomState(StateManager& stateManager, AvatarTextures& avatarTextures, egui::MasterRenderer& eguiRenderer, NetworkErrorHandler& networkErrorHandler) :
 			State(stateManager),
 			eguiRenderer(eguiRenderer),
-			networkErrorHandler(networkErrorHandler) {
+			networkErrorHandler(networkErrorHandler),
+			element(std::make_shared<CreateOnlineRoomElement>(avatarTextures, 20)),
+			scene(element) {
+
+		element->addBackBtnEventHandler({[this, &stateManager](egui::ActionEvent&) {
+			stateManager.changeState("MainMenuState");
+		}});
+		element->addContinueBtnEventHandler({[this, &stateManager](egui::ActionEvent&) {
+			std::optional<std::string> errorMsg = getLocalVerificationErrorMessage();
+			if(errorMsg.has_value()) {
+				egui::PopupErrorBox eb("Online-Raum erstellen", *errorMsg);
+				eb.show();
+			} else {
+				element->lockInput(true);
+
+				// we have verified the input before
+				std::string username = element->getUsernameInput();
+				Avatar avatar = element->getSelectedAvatar();
+				RoomOptions options = element->getOptions();
+
+				sendRequest(username, avatar, options);
+			}
+		}});
 	}
 	void CreateRoomState::updateAndRender(float delta) {
+		eguiRenderer.beginFrame();
+		scene.render(eguiRenderer);
+		eguiRenderer.endFrame();
+
 		handleResponseIfAvailable();
 	}
 	void CreateRoomState::onStateEnter() {
 		State::onStateEnter();
 		createdGameFacade.reset();
-
-		sendRequest("CreateUser", 1, {});
 	}
-	void CreateRoomState::onStateExit() {
-		State::onStateExit();
-	}
+	
 	void CreateRoomState::sendRequest(std::string username, Avatar avatar, RoomOptions options) {
-		wasResponseReceived = false;
-
 		this->createdGameFacade = std::make_shared<CreateRoomNetworkGameFacade>(networkErrorHandler, username, avatar, options);
 		stateManager.setGameFacade(createdGameFacade);
 	}
 	void CreateRoomState::handleResponseIfAvailable() {		
-		if(!wasResponseReceived && createdGameFacade && !createdGameFacade->isWaitingForResponse()) {
-			this->wasResponseReceived = true;
+		if(createdGameFacade && !createdGameFacade->isWaitingForResponse()) {
+			element->lockInput(false);
 
 			if(createdGameFacade->hasErrorOccuredOnEstablishingConnection()) {
 				std::string errorMsg = *(createdGameFacade->getErrorMsgOnEstablishingConnectionInPlainText());
@@ -42,5 +63,13 @@ namespace card {
 				stateManager.changeState("ParticipantsOverviewState");
 			}
 		}
+	}
+	std::optional<std::string> CreateRoomState::getLocalVerificationErrorMessage() {
+		std::string usernameInput = element->getUsernameInput();
+
+		if(usernameInput.size() > USERNAME_MAX_LENGTH) return "Dein Nutzername darf maximal " + std::to_string(USERNAME_MAX_LENGTH) + " Zeichen lang sein.";
+		if(usernameInput.size() == 0) return "Dein Nutzername darf nicht nicht leer sein.";
+
+		return std::nullopt;
 	}
 }

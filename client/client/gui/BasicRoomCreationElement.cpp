@@ -7,10 +7,10 @@
 
 
 namespace card {
-	BasicRoomCreationElement::BasicRoomCreationElement(std::string title) :
+	BasicRoomCreationElement::BasicRoomCreationElement(std::string title, std::string continueBtnText) :
 		TitledMenuElement(title) {
 
-		buttonBar = std::make_shared<ContinueOptionsBackButtonBar>(u8"Zurück", u8"Tischregeln bearbeiten", "Spiel starten");
+		buttonBar = std::make_shared<ContinueOptionsBackButtonBar>(u8"Zurück", u8"Tischregeln bearbeiten", continueBtnText);
 		addChildElement(buttonBar);
 		buttonBar->setOwnPositioning(
 			std::make_shared<egui::CenterXInParentWrapper>(

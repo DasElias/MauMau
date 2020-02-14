@@ -1,22 +1,22 @@
 #pragma once
 #include "TitledMenuElement.h"
-#include "ContinueOptionsBackButtonBar.h"
+#include "ContinueBackButtonBar.h"
 #include <egui/model/nodes/VBox.h>
 
 namespace card {
-	class BasicRoomCreationElement : public TitledMenuElement {
+	class BasicRoomJoinElement : public TitledMenuElement {
         // ----------------------------------------------------------------------
         // --------------------------------FIELDS--------------------------------
         // ----------------------------------------------------------------------
         private:
-            std::shared_ptr<ContinueOptionsBackButtonBar> buttonBar;
+            std::shared_ptr<ContinueBackButtonBar> buttonBar;
            
 
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            BasicRoomCreationElement(std::string title, std::string continueText);
+            BasicRoomJoinElement(std::string title, std::string continueBtnText);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
@@ -24,9 +24,6 @@ namespace card {
         public:
             void addBackBtnEventHandler(egui::FunctionWrapper<egui::ActionEvent> handler);
             void addContinueBtnEventHandler(egui::FunctionWrapper<egui::ActionEvent> handler);
-
-        protected:
-            void addOptionsBtnEventHandler(egui::FunctionWrapper<egui::ActionEvent> handler);
 
 	};
 }

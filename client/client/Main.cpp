@@ -213,8 +213,8 @@ namespace card {
 
 		IngameState ingameState(stateManager, avatarTextures, nvgRenderer);
 		MainMenuState mainMenuState(stateManager, nvgRenderer);
-		JoinRoomState joinRoomState(stateManager, nvgRenderer, errorHandler);
-		CreateRoomState createRoomState(stateManager, nvgRenderer, errorHandler);
+		JoinRoomState joinRoomState(stateManager, avatarTextures, nvgRenderer, errorHandler);
+		CreateRoomState createRoomState(stateManager, avatarTextures, nvgRenderer, errorHandler);
 		CreateLocalRoomState createLocalRoomState(stateManager, avatarTextures, nvgRenderer);
 		ParticipantsOverviewState participantsOverviewState(stateManager, nvgRenderer);
 		CreditsState creditsState(stateManager, nvgRenderer);

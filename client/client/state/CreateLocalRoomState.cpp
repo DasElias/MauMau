@@ -30,7 +30,6 @@ namespace card {
 				gameFacade->getRoom().requestGameStart();
 				stateManager.changeState("IngameState");
 			}
-			
 		}});
 	}
 	void CreateLocalRoomState::updateAndRender(float delta) {
