@@ -24,7 +24,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			// pass by reference to prevent implicit conversion
-			ChangeRoomLeaderRequest_CTSPacket(std::string& usernameOfNewLeader);
+			ChangeRoomLeaderRequest_CTSPacket(const std::string& usernameOfNewLeader);
 			ChangeRoomLeaderRequest_CTSPacket(nlohmann::json& json);
 
 		// ----------------------------------------------------------------------

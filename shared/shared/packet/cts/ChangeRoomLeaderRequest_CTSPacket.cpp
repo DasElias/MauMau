@@ -3,7 +3,7 @@
 namespace card {
 	std::string const ChangeRoomLeaderRequest_CTSPacket::USERNAME_KEY = "43A";
 
-	ChangeRoomLeaderRequest_CTSPacket::ChangeRoomLeaderRequest_CTSPacket(std::string& usernameOfNewLeader) :
+	ChangeRoomLeaderRequest_CTSPacket::ChangeRoomLeaderRequest_CTSPacket(const std::string& usernameOfNewLeader) :
 			ClientToServerPacket(PACKET_ID),
 			username(usernameOfNewLeader) {
 	}
