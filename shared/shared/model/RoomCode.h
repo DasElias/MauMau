@@ -2,5 +2,5 @@
 #include <cstdint>
 
 namespace card {
-	typedef std::uint8_t RoomCode;
+	typedef std::uint16_t RoomCode;
 }
