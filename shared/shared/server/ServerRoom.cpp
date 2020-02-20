@@ -1,6 +1,5 @@
 #include "ServerRoom.h"
 #include "../packet/stc/GameHasBeenStarted_STCPacket.h"
-#include "../packet/stc/GameHasStartedButNotParticipant_STCPacket.h"
 #include "../packet/stc/OtherPlayerHasJoinedRoom_STCPacket.h"
 #include "../packet/stc/OtherPlayerHasLeavedRoom_STCPacket.h"
 #include "../packet/stc/RoomLeaderHasChanged_STCPacket.h"
@@ -77,9 +76,6 @@ namespace card {
 		}
 		return false;
 	}
-	bool ServerRoom::checkIfParticipantInNextGame(const std::shared_ptr<ParticipantOnServer>& player) {
-		return std::find(participantsForNextGame.begin(), participantsForNextGame.end(), player) != participantsForNextGame.end();
-	}
 	std::shared_ptr<ParticipantOnServer> ServerRoom::lookupParticipantByUsername(std::string username) {
 		for(auto& o : allParticipants) {
 			if(o->getUsername() == username) return o;
@@ -113,7 +109,6 @@ namespace card {
 		packetTransmitter->sendPacketToClients(packet, allParticipants);
 
 		allParticipants.push_back(constructedParticipant);
-		participantsForNextGame.push_back(constructedParticipant);
 
 		return true;
 	}
@@ -131,7 +126,6 @@ namespace card {
 
 		auto newParticipant = std::make_shared<AiParticipant>(username, avatar);
 		allParticipants.push_back(newParticipant);
-		participantsForNextGame.push_back(newParticipant);
 
 		return true;
 	}
@@ -139,7 +133,6 @@ namespace card {
 		if(! checkIfParticipant(participant)) return false;
 
 		allParticipants.erase(std::remove(allParticipants.begin(), allParticipants.end(), participant), allParticipants.end());
-		participantsForNextGame.erase(std::remove(participantsForNextGame.begin(), participantsForNextGame.end(), participant), participantsForNextGame.end());
 		if(isGameRunning() && getGame().checkIfPlayerByParticipant(participant)) {
 			auto& game = getGame();
 			auto player = game.lookupPlayerByParticipant(participant);
@@ -167,10 +160,10 @@ namespace card {
 		this->roomLeader = newLeader;
 	}
 	bool ServerRoom::startGame(const std::shared_ptr<ParticipantOnServer>& sender) {
-		if(! checkIfLeader(sender) || isGameRunning() || participantsForNextGame.size() <= 1) return false;
+		if(! checkIfLeader(sender) || isGameRunning() || allParticipants.size() <= 1) return false;
 
 		// create game
-		this->game = std::make_unique<ServerMauMauGame>(packetTransmitter, *this, participantsForNextGame, roomOptions);
+		this->game = std::make_unique<ServerMauMauGame>(packetTransmitter, *this, allParticipants, roomOptions);
 
 		// send packets
 		std::vector<std::string> usernameOfAllPlayers = getUsernamesOfParticipants();
@@ -179,19 +172,12 @@ namespace card {
 		int cardNumberOfFirstCardOnPlayStack = game->getPlayCardStack().getLast().getCardNumber();
 
 		for(auto& participant : allParticipants) {
-			if(checkIfParticipantInNextGame(participant)) {
-				auto player = game->lookupPlayerByUsername(participant->getUsername());
-				std::vector<int> handCards = player->getHandCards().getCardNumbers();
-				Card nextCardOnDrawStack = (participant->getUsername() == game->getPlayerOnTurn()->getUsername()) ? game->getDrawCardStack().getLast() : Card::NULLCARD;
+			auto player = game->lookupPlayerByUsername(participant->getUsername());
+			std::vector<int> handCards = player->getHandCards().getCardNumbers();
+			Card nextCardOnDrawStack = (participant->getUsername() == game->getPlayerOnTurn()->getUsername()) ? game->getDrawCardStack().getLast() : Card::NULLCARD;
 
-				GameHasBeenStarted_STCPacket packet(usernameOfAllPlayers, usernameOfPlayerOnTurn, handCards, cardNumberOfFirstCardOnPlayStack, nextCardOnDrawStack.getCardNumber());
-				packetTransmitter->sendPacketToClient(packet, participant);
-			} else {
-				GameHasStartedButNotParticipant_STCPacket packet;
-				packetTransmitter->sendPacketToClient(packet, participant);
-			}
-
-			
+			GameHasBeenStarted_STCPacket packet(usernameOfAllPlayers, usernameOfPlayerOnTurn, handCards, cardNumberOfFirstCardOnPlayStack, nextCardOnDrawStack.getCardNumber());
+			packetTransmitter->sendPacketToClient(packet, participant);
 		}
 		return true;
 	}

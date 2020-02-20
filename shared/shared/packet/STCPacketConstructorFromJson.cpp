@@ -9,7 +9,6 @@
 #include "../packet/stc/GameHasBeenStarted_STCPacket.h"
 #include "../packet/stc/OptionsWereChanged_STCPacket.h"
 #include "../packet/stc/EnteringRoomSuccessReport_STCAnswerPacket.h"
-#include "../packet/stc/GameHasStartedButNotParticipant_STCPacket.h"
 #include "../packet/stc/OtherPlayerHasDrawnCards_STCPacket.h"
 #include "../packet/stc/OtherPlayerHasPlayedCard_STCPacket.h"
 #include "../packet/stc/OperationSuccessful_STCAnswerPacket.h"
@@ -37,7 +36,6 @@ namespace card {
 			PACKET_TYPE_CASE(GameHasBeenStarted_STCPacket)
 			PACKET_TYPE_CASE(OptionsWereChanged_STCPacket)
 			PACKET_TYPE_CASE(EnteringRoomSuccessReport_STCAnswerPacket)
-			PACKET_TYPE_CASE(GameHasStartedButNotParticipant_STCPacket)
 			PACKET_TYPE_CASE(OtherPlayerHasDrawnCards_STCPacket)
 			PACKET_TYPE_CASE(OtherPlayerHasPlayedCard_STCPacket)
 			PACKET_TYPE_CASE(OperationSuccessful_STCAnswerPacket)

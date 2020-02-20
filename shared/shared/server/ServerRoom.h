@@ -17,7 +17,6 @@ namespace card {
 
 			std::shared_ptr<STCPacketTransmitter> packetTransmitter;
 			std::vector<std::shared_ptr<ParticipantOnServer>> allParticipants;
-			std::vector<std::shared_ptr<ParticipantOnServer>> participantsForNextGame;
 			std::shared_ptr<ParticipantOnServer> roomLeader;
 
 			std::unique_ptr<ServerMauMauGame> game = nullptr;
@@ -51,7 +50,6 @@ namespace card {
 			bool isRoomFull();
 			bool checkIfParticipant(const std::shared_ptr<ParticipantOnServer>& participant);	
 			bool checkIfParticipantByUsername(std::string username);
-			bool checkIfParticipantInNextGame(const std::shared_ptr<ParticipantOnServer>& player);
 			std::shared_ptr<ParticipantOnServer> lookupParticipantByUsername(std::string username);
 			std::shared_ptr<ParticipantOnServer> getRoomLeader();
 			std::vector<std::shared_ptr<ParticipantOnServer>> getParticipants();
