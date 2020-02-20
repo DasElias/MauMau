@@ -120,13 +120,11 @@ namespace card {
 		return areOtherParticipantsAiPlayers;
 	}
 	RoomCode RoomManager::getNewRoomCode() {
-		/*RoomCode roomCode;
+		RoomCode roomCode;
 		do {
 			roomCode = randomInRange<RoomCode>(MIN_ROOM_CODE, MAX_ROOM_CODE);
 		} while(doesRoomExist(roomCode));
-		return roomCode;*/
-		std::cout << "TODO: fix getNewroomCode()" << std::endl;
-		return 0;
+		return roomCode;
 	}
 	void RoomManager::sendEnteringRoomSuccessReport(const std::shared_ptr<ConnectionToClient>& conn, int statusCode, std::vector<std::string> usernamesOfOtherParticipants, std::vector<Avatar> avatarsOfOtherParticipants, std::vector<bool> areOtherParticipantsAiPlayers, std::string roomLeader, RoomCode roomCode, std::map<std::string, int> nonDefaultOptions) {
 		EnteringRoomSuccessReport_STCAnswerPacket packet(statusCode, usernamesOfOtherParticipants, avatarsOfOtherParticipants, areOtherParticipantsAiPlayers, roomLeader, roomCode, nonDefaultOptions);

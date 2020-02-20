@@ -14,8 +14,8 @@ namespace card {
 		// ----------------------------STATIC-FIELDS-----------------------------
 		// ----------------------------------------------------------------------
 		private:
-			static int const MIN_ROOM_CODE = 1;
-			static int const MAX_ROOM_CODE = std::numeric_limits<RoomCode>::max();
+			static RoomCode const MIN_ROOM_CODE = 101;
+			static RoomCode const MAX_ROOM_CODE = 999;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
