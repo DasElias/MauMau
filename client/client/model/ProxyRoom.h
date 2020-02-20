@@ -3,6 +3,7 @@
 #include "ParticipantOnClient.h"
 #include "ProxyMauMauGame.h"
 #include <shared/model/RoomOptions.h>
+#include <shared/model/RoomCode.h>
 
 namespace card {
 	class ProxyRoom {
@@ -11,6 +12,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		private:
 			std::shared_ptr<CTSPacketTransmitter> packetTransmitter;
+			RoomCode roomCode;
 
 			std::vector<std::shared_ptr<ParticipantOnClient>> allParticipants;
 			std::shared_ptr<ParticipantOnClient> roomLeader;
@@ -32,7 +34,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			ProxyRoom(std::shared_ptr<CTSPacketTransmitter> packetTransmitter, 
+			ProxyRoom(std::shared_ptr<CTSPacketTransmitter> packetTransmitter, RoomCode roomCode,
 					  std::vector<std::string> opponentUsernames, std::vector<Avatar> opponentAvatars, std::vector<bool> areOpponentsAiPlayers, 
 					  std::string localPlayerUsername, Avatar localPlayerAvatar, std::string usernameOfLeader, RoomOptions options);
 			~ProxyRoom();
@@ -54,6 +56,7 @@ namespace card {
 			std::shared_ptr<ParticipantOnClient> getLocalParticipant();
 			std::shared_ptr<ParticipantOnClient> getRoomLeader();
 			const RoomOptions& getOptions() const;
+			RoomCode getRoomCode() const;
 
 			bool canStartGame();
 			void requestGameStart();

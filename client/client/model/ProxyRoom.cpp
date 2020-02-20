@@ -16,8 +16,9 @@
 #include <shared/packet/cts/JoinAiPlayerRequest_CTSPacket.h>
 
 namespace card {
-	ProxyRoom::ProxyRoom(std::shared_ptr<CTSPacketTransmitter> packetTransmitter, std::vector<std::string> opponentUsernames, std::vector<Avatar> opponentAvatars, std::vector<bool> areOpponentsAiPlayers, std::string localPlayerUsername, Avatar localPlayerAvatar, std::string usernameOfLeader, RoomOptions options) :
+	ProxyRoom::ProxyRoom(std::shared_ptr<CTSPacketTransmitter> packetTransmitter, RoomCode roomCode, std::vector<std::string> opponentUsernames, std::vector<Avatar> opponentAvatars, std::vector<bool> areOpponentsAiPlayers, std::string localPlayerUsername, Avatar localPlayerAvatar, std::string usernameOfLeader, RoomOptions options) :
 			packetTransmitter(packetTransmitter),
+			roomCode(roomCode),
 			options(options),
 
 			handler_onPlayerJoinsRoom(std::bind(&ProxyRoom::listener_onPlayerJoinsRoom, this, std::placeholders::_1)),
@@ -114,6 +115,10 @@ namespace card {
 
 	const RoomOptions& ProxyRoom::getOptions() const {
 		return options;
+	}
+
+	RoomCode ProxyRoom::getRoomCode() const {
+		return roomCode;
 	}
 
 	bool ProxyRoom::canStartGame() {

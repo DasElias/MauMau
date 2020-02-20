@@ -5,7 +5,7 @@ namespace card {
 			localParticipantOnServer(std::make_shared<ParticipantOnServer>(username, avatar)),
 			packetTransmitter(std::make_shared<LocalPacketTransmitter>(localParticipantOnServer)),
 			server(packetTransmitter, amountOfOpponents, localParticipantOnServer, options),
-			room(packetTransmitter, server.getOpponentUsernames(), server.getOpponentAvatars(), std::vector<bool>(amountOfOpponents, true), username, avatar, username, options) {
+			room(packetTransmitter, 0, server.getOpponentUsernames(), server.getOpponentAvatars(), std::vector<bool>(amountOfOpponents, true), username, avatar, username, options) {
 	}
 
 	bool LocalGameFacade::isGameRunning() const {
