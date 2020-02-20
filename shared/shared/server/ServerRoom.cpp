@@ -85,6 +85,14 @@ namespace card {
 	std::shared_ptr<ParticipantOnServer> ServerRoom::getRoomLeader() {
 		return roomLeader;
 	}
+	std::shared_ptr<ParticipantOnServer> ServerRoom::getNextParticipant(std::shared_ptr<ParticipantOnServer> participant) {
+		auto playerOnTurnIter = std::find(allParticipants.begin(), allParticipants.end(), participant);
+
+		playerOnTurnIter++;
+		if(playerOnTurnIter == allParticipants.end()) playerOnTurnIter = allParticipants.begin();
+
+		return *playerOnTurnIter;
+	}
 	std::vector<std::shared_ptr<ParticipantOnServer>> ServerRoom::getParticipants() {
 		return allParticipants;
 	}
@@ -132,6 +140,11 @@ namespace card {
 	bool ServerRoom::leaveRoom(std::shared_ptr<ParticipantOnServer> participant, bool wasKickedByOtherPlayer) {
 		if(! checkIfParticipant(participant)) return false;
 
+		if(participant == roomLeader) {
+			auto newRoomLeader = getNextParticipant(roomLeader);
+			changeRoomLeader(newRoomLeader);
+		}
+
 		allParticipants.erase(std::remove(allParticipants.begin(), allParticipants.end(), participant), allParticipants.end());
 		if(isGameRunning() && getGame().checkIfPlayerByParticipant(participant)) {
 			auto& game = getGame();
@@ -148,13 +161,16 @@ namespace card {
 	bool card::ServerRoom::changeRoomLeader(const std::shared_ptr<ParticipantOnServer>& sender, std::string usernameOfNewLeader) {
 		if(! checkIfLeader(sender) || !checkIfParticipantByUsername(usernameOfNewLeader)) return false;
 
-		RoomLeaderHasChanged_STCPacket packet(usernameOfNewLeader);
-		packetTransmitter->sendPacketToClients(packet, allParticipants);
-
 		auto newLeader = lookupParticipantByUsername(usernameOfNewLeader);
-		initRoomLeaderWithoutPermissionsChecking(newLeader);
+		changeRoomLeader(newLeader);
 
 		return true;
+	}
+	void ServerRoom::changeRoomLeader(const std::shared_ptr<ParticipantOnServer>& newRoomLeader) {
+		RoomLeaderHasChanged_STCPacket packet(newRoomLeader->getUsername());
+		packetTransmitter->sendPacketToClients(packet, allParticipants);
+
+		initRoomLeaderWithoutPermissionsChecking(newRoomLeader);
 	}
 	void ServerRoom::initRoomLeaderWithoutPermissionsChecking(const std::shared_ptr<ParticipantOnServer>& newLeader) {
 		this->roomLeader = newLeader;

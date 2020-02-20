@@ -52,6 +52,7 @@ namespace card {
 			bool checkIfParticipantByUsername(std::string username);
 			std::shared_ptr<ParticipantOnServer> lookupParticipantByUsername(std::string username);
 			std::shared_ptr<ParticipantOnServer> getRoomLeader();
+			std::shared_ptr<ParticipantOnServer> getNextParticipant(std::shared_ptr<ParticipantOnServer> participant);
 			std::vector<std::shared_ptr<ParticipantOnServer>> getParticipants();
 			std::vector<std::string> getUsernamesOfParticipants();
 
@@ -61,6 +62,7 @@ namespace card {
 			bool leaveRoom(std::shared_ptr<ParticipantOnServer> participant, bool wasKickedByOtherPlayer);	// we can't pass the ptr by reference since it may be deleted after it was erased from allPlayers
 			void initRoomLeaderWithoutPermissionsChecking(const std::shared_ptr<ParticipantOnServer>& newLeader);
 			bool changeRoomLeader(const std::shared_ptr<ParticipantOnServer>& sender, std::string usernameOfNewLeader);
+			void changeRoomLeader(const std::shared_ptr<ParticipantOnServer>& newRoomLeader);
 			bool startGame(const std::shared_ptr<ParticipantOnServer>& sender);
 
 			void onGameEnd();
