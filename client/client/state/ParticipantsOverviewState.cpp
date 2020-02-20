@@ -15,6 +15,14 @@ namespace card {
 			element(std::make_shared<ParticipantsOverviewElement>(avatarTextures)),
 			scene(element) {
 
+		element->addGameStartHandler([this]() {
+			auto& room = getRoom();
+			if(room.canStartGame()) {
+				room.requestGameStart();
+			} else {
+				log(LogSeverity::WARNING, "Can't start game even though the particular button was pressed.");
+			}
+		});
 		element->addAiPlayerJoinHandler([this]() {
 			auto& room = getRoom();
 			if(room.canAiPlayerJoin()) {
@@ -66,12 +74,10 @@ namespace card {
 		scene.render(eguiRenderer);
 		eguiRenderer.endFrame();
 
-		
-		if(room.canStartGame() && egui::getInputHandler().isKeyDown(KEY_A)) {
-			room.requestGameStart();
-		}
-
-		if(gameFacade->isGameRunning()) {
+		/*
+		 * We know that the local player has to be a participant of the running game, since otherwise the flag wouldn't be set.
+		 */
+		if(room.isGameRunning()) {
 			stateManager.changeState("IngameState");
 		}
 	}
