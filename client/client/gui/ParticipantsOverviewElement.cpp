@@ -105,7 +105,7 @@ namespace card {
 		blackOverlay->setVisible(room.isWaitingForResponse());
 		static std::vector<std::shared_ptr<ParticipantOnClient>> participantsInLastFrame = {};
 		static std::shared_ptr<ParticipantOnClient> roomLeaderInLastFrame = {};
-		static RoomOptions roomOptionsInLastFrame = {};
+		static std::map<std::string, int> roomOptionsInLastFrame = {};
 		auto participants = room.getAllParticipants();
 		if(participants != participantsInLastFrame || room.getRoomLeader() != roomLeaderInLastFrame) {
 			participantsInLastFrame = participants;
@@ -114,8 +114,8 @@ namespace card {
 		}
 
 		auto options = room.getOptions();
-		if(options.getAllOptions() != roomOptionsInLastFrame.getAllOptions()) {
-			roomOptionsInLastFrame = options;
+		if(options.getAllOptions() != roomOptionsInLastFrame) {
+			roomOptionsInLastFrame = options.getAllOptions();
 			editOptionsElement->loadOptions(options);
 			viewOptionsElement->loadOptions(options);
 		}
