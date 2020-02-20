@@ -100,7 +100,7 @@ namespace card {
 		return button;
 	}
 	void ParticipantsOverviewElement::update(ProxyRoom& room) {
-		//roomCodeLabel->setText(room.get)
+		roomCodeLabel->setText(std::to_string(room.getRoomCode()));
 
 		blackOverlay->setVisible(room.isWaitingForResponse());
 		static std::vector<std::shared_ptr<ParticipantOnClient>> participantsInLastFrame = {};
