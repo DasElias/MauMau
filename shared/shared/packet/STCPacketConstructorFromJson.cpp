@@ -5,8 +5,6 @@
 
 #include "../packet/stc/OtherPlayerHasJoinedRoom_STCPacket.h"
 #include "../packet/stc/OtherPlayerHasLeavedRoom_STCPacket.h"
-#include "../packet/stc/PlayerWantsJoinNextGame_STCPacket.h"
-#include "../packet/stc/PlayerWantsLeaveNextGame_STCPacket.h"
 #include "../packet/stc/RoomLeaderHasChanged_STCPacket.h"
 #include "../packet/stc/GameHasBeenStarted_STCPacket.h"
 #include "../packet/stc/OptionsWereChanged_STCPacket.h"
@@ -35,8 +33,6 @@ namespace card {
 		switch(packetType) {
 			PACKET_TYPE_CASE(OtherPlayerHasJoinedRoom_STCPacket)
 			PACKET_TYPE_CASE(OtherPlayerHasLeavedRoom_STCPacket)
-			PACKET_TYPE_CASE(PlayerWantsJoinNextGame_STCPacket)
-			PACKET_TYPE_CASE(PlayerWantsLeaveNextGame_STCPacket)
 			PACKET_TYPE_CASE(RoomLeaderHasChanged_STCPacket)
 			PACKET_TYPE_CASE(GameHasBeenStarted_STCPacket)
 			PACKET_TYPE_CASE(OptionsWereChanged_STCPacket)

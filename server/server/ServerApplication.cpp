@@ -28,7 +28,7 @@ void runThreadUtils() {
 
 int main() {
  	initDaemon();
-	initLogger("~/latest.log", "~/fatal.log");
+//	initLogger("~/latest.log", "~/fatal.log");
 
 
 	try {	

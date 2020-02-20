@@ -8,10 +8,10 @@ using namespace card;
 TEST_CASE("", "[ProxyMauMauGameData]") {
 	threadUtils_setProvider(std::make_unique<InstantExecutionThreadUtilsProvider>());
 	
-	std::shared_ptr<ParticipantOnClient> const localParticipant = std::make_shared<ParticipantOnClient>("Lokaler Spieler", getRandomMaleAvatar());
+	std::shared_ptr<ParticipantOnClient> const localParticipant = std::make_shared<ParticipantOnClient>("Lokaler Spieler", getRandomMaleAvatar(), false);
 	std::vector<int> const handCards = {{1, 2, 3, 4, 5, 6}};
-	std::shared_ptr<ParticipantOnClient> const opponent1 = std::make_shared<ParticipantOnClient>("Opponent1", getRandomMaleAvatar());
-	std::shared_ptr<ParticipantOnClient> const opponent2 = std::make_shared<ParticipantOnClient>("Opponent2", getRandomMaleAvatar());
+	std::shared_ptr<ParticipantOnClient> const opponent1 = std::make_shared<ParticipantOnClient>("Opponent1", getRandomMaleAvatar(), false);
+	std::shared_ptr<ParticipantOnClient> const opponent2 = std::make_shared<ParticipantOnClient>("Opponent2", getRandomMaleAvatar(), false);
 	std::vector<std::shared_ptr<ParticipantOnClient>> const allParticipants{{localParticipant, opponent1, opponent2}};
 	int const lastCardOnPlayStack = 7;
 	int const lastCardOnDrawCardStack = 8;

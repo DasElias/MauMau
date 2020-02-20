@@ -11,13 +11,13 @@ namespace card {
 		private:
 			std::string username;
 			Avatar avatar;
+			bool isAiPlayer_field;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			ParticipantOnClient(std::string username, Avatar avatar);
-			ParticipantOnClient(const ParticipantOnClient&) = delete;
+			ParticipantOnClient(std::string username, Avatar avatar, bool isAiPlayer);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
@@ -25,5 +25,6 @@ namespace card {
 		public:
 			std::string getUsername() const;
 			Avatar getAvatar() const;
+			bool isAiPlayer() const;
 	};
 }

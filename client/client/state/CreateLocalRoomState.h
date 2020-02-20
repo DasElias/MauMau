@@ -14,7 +14,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		private:
 			static std::size_t const FIELDS_MAX_LENGTH = 20;
-			static int const MAX_OPPONENTS = 3;
+			static int const MAX_OPPONENTS;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------

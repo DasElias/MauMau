@@ -1,8 +1,11 @@
 #include "CreateLocalRoomState.h"
 #include "CreateLocalRoomState.h"
 #include <egui/model/popups/PopupErrorBox.h>
+#include <shared/model/MaxParticipants.h>
 
 namespace card {
+	int const CreateLocalRoomState::MAX_OPPONENTS = MAX_PARTICIPANTS - 1;
+
 	CreateLocalRoomState::CreateLocalRoomState(StateManager& stateManager, AvatarTextures& avatarTextures, egui::MasterRenderer& eguiRenderer) :
 			State(stateManager),
 			eguiRenderer(eguiRenderer),

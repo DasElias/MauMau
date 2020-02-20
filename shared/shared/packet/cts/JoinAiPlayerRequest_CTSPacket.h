@@ -2,19 +2,19 @@
 #include "ClientToServerPacket.h"
 
 namespace card {
-	class JoinNextGameRequest_CTSPacket : public ClientToServerPacket {
+	class JoinAiPlayerRequest_CTSPacket : public ClientToServerPacket {
 		// ----------------------------------------------------------------------
 		// ----------------------------STATIC-FIELDS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			static int const PACKET_ID = 405;
+			static int const PACKET_ID = 408;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			JoinNextGameRequest_CTSPacket();
-			JoinNextGameRequest_CTSPacket(nlohmann::json& jsonHandle);
+			JoinAiPlayerRequest_CTSPacket();
+			JoinAiPlayerRequest_CTSPacket(nlohmann::json& jsonHandle);
 
 	};
 }

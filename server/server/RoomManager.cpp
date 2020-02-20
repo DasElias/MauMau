@@ -46,10 +46,11 @@ namespace card {
 		packetTransmitter->registerParticipant(conn, constructedParticipant);
 
 		auto usernamesOfOtherParticipants = getUsernamesOfOtherParticipants(concernedRoom, username);
+		auto areOtherParticipantsAiPlayers = this->areOtherParticipantsAiPlayers(concernedRoom, username);
 		auto avatarsOfOtherParticipants = getAvatarsOfOtherParticipants(concernedRoom, username);
 		auto usernameOfRoomLeader = concernedRoom->getRoomLeader()->getUsername();
 		auto allRoomOptions = concernedRoom->getRoomOptions().getAllOptions();
-		sendEnteringRoomSuccessReport(conn, SuccessReport::SUCCESS_STATUS, usernamesOfOtherParticipants, avatarsOfOtherParticipants, usernameOfRoomLeader, roomCode, allRoomOptions);
+		sendEnteringRoomSuccessReport(conn, SuccessReport::SUCCESS_STATUS, usernamesOfOtherParticipants, avatarsOfOtherParticipants, areOtherParticipantsAiPlayers, usernameOfRoomLeader, roomCode, allRoomOptions);
 	}
 	void RoomManager::createAndJoin(std::string username, Avatar avatar, std::map<std::string, int> roomOptions, const std::shared_ptr<ConnectionToClient>& conn) {
 		typedef EnteringRoomSuccessReport_STCAnswerPacket SuccessReport;
@@ -68,7 +69,7 @@ namespace card {
 		packetTransmitter->registerParticipant(conn, constructedParticipant);
 
 		auto allRoomOptions = room->getRoomOptions().getAllOptions();
-		sendEnteringRoomSuccessReport(conn, SuccessReport::SUCCESS_STATUS, {}, {}, username, newRoomCode, allRoomOptions);
+		sendEnteringRoomSuccessReport(conn, SuccessReport::SUCCESS_STATUS, {}, {}, {}, username, newRoomCode, allRoomOptions);
 	}
 	void RoomManager::leave(std::shared_ptr<ConnectionToClient> conn) {
 		if(packetTransmitter->wasParticipantRegistered(conn)) {
@@ -78,7 +79,7 @@ namespace card {
 				auto& singleRoom = pair.second;
 
 				if(singleRoom->checkIfParticipant(participant)) {
-					singleRoom->leaveRoom(participant);
+					singleRoom->leaveRoom(participant, false);
 					closeRoomIfNoParticipants(singleRoom);
 					break;
 				}
@@ -109,6 +110,15 @@ namespace card {
 		}
 		return avatarsOfOtherParticipants;
 	}
+	std::vector<bool> RoomManager::areOtherParticipantsAiPlayers(const std::unique_ptr<ServerRoom>& room, std::string participantToFilter) {
+		std::vector<bool> areOtherParticipantsAiPlayers;
+		for(auto& participant : room->getParticipants()) {
+			if(participant->getUsername() != participantToFilter) {
+				areOtherParticipantsAiPlayers.push_back(! participant->isRealPlayer());
+			}
+		}
+		return areOtherParticipantsAiPlayers;
+	}
 	RoomCode RoomManager::getNewRoomCode() {
 		/*RoomCode roomCode;
 		do {
@@ -118,8 +128,8 @@ namespace card {
 		std::cout << "TODO: fix getNewroomCode()" << std::endl;
 		return 0;
 	}
-	void RoomManager::sendEnteringRoomSuccessReport(const std::shared_ptr<ConnectionToClient>& conn, int statusCode, std::vector<std::string> usernamesOfOtherParticipants, std::vector<Avatar> avatarsOfOtherParticipants, std::string roomLeader, RoomCode roomCode, std::map<std::string, int> nonDefaultOptions) {
-		EnteringRoomSuccessReport_STCAnswerPacket packet(statusCode, usernamesOfOtherParticipants, avatarsOfOtherParticipants, roomLeader, roomCode, nonDefaultOptions);
+	void RoomManager::sendEnteringRoomSuccessReport(const std::shared_ptr<ConnectionToClient>& conn, int statusCode, std::vector<std::string> usernamesOfOtherParticipants, std::vector<Avatar> avatarsOfOtherParticipants, std::vector<bool> areOtherParticipantsAiPlayers, std::string roomLeader, RoomCode roomCode, std::map<std::string, int> nonDefaultOptions) {
+		EnteringRoomSuccessReport_STCAnswerPacket packet(statusCode, usernamesOfOtherParticipants, avatarsOfOtherParticipants, areOtherParticipantsAiPlayers, roomLeader, roomCode, nonDefaultOptions);
 		packetTransmitter->sendPacketToClient(packet, conn);
 	}
 	optionalSuccessAnswerPacket RoomManager::listener_onJoinRoom(ClientToServerPacket& p, const std::shared_ptr<ConnectionToClient>& conn) {

@@ -30,8 +30,11 @@ namespace card {
 		});
 	}
 	void ServerPacketTransmitter::sendPacketToClient(Packet& pkt, std::shared_ptr<ParticipantOnServer> receiver) {
-		auto& conn = this->participants.right.at(receiver);
-		sendPacketToClient(pkt, conn);
+		if(receiver->isRealPlayer()) {
+			auto& conn = this->participants.right.at(receiver);
+			sendPacketToClient(pkt, conn);
+		}
+		
 	}
 	void ServerPacketTransmitter::sendPacketToClients(Packet& pkt, std::vector<std::shared_ptr<ParticipantOnServer>> receivers) {
 		for(auto& rec : receivers) {

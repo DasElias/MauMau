@@ -9,12 +9,6 @@
 namespace card {
 	class ServerRoom : public ServerGameEndHandler {
 		// ----------------------------------------------------------------------
-		// ----------------------------STATIC-FIELDS-----------------------------
-		// ----------------------------------------------------------------------
-		public:
-			static int const MAX_PARTICIPANTS = 4;
-
-		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
@@ -31,8 +25,8 @@ namespace card {
 			ClientPacketListenerCallback handler_onChangeOptions;
 			ClientPacketListenerCallback handler_onChangeRoomLeader;
 			ClientPacketListenerCallback handler_onStartGame;
-			ClientPacketListenerCallback handler_onJoinNextGame;
-			ClientPacketListenerCallback handler_onLeaveNextGame;
+			ClientPacketListenerCallback handler_onKickPlayer;
+			ClientPacketListenerCallback handler_onAiPlayerJoin;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
@@ -63,12 +57,10 @@ namespace card {
 			std::vector<std::shared_ptr<ParticipantOnServer>> getParticipants();
 			std::vector<std::string> getUsernamesOfParticipants();
 
-			bool changeOptions(const std::shared_ptr<ParticipantOnServer>& sender, std::map<std::string, int> newNonDefaultOptions);
+			bool changeOptions(const std::shared_ptr<ParticipantOnServer>& sender, std::map<std::string, int> options);
 			bool joinRoom(const std::shared_ptr<ParticipantOnServer>& constructedParticipant);
 			bool joinRoomAiPlayer(std::string reservedUsername = "");
-			bool leaveRoom(std::shared_ptr<ParticipantOnServer> participant);	// we can't pass the ptr by reference since it may be deleted after it was erased from allPlayers
-			bool joinNextGame(const std::shared_ptr<ParticipantOnServer>& participant);
-			bool leaveNextGame(const std::shared_ptr<ParticipantOnServer>& participant);
+			bool leaveRoom(std::shared_ptr<ParticipantOnServer> participant, bool wasKickedByOtherPlayer);	// we can't pass the ptr by reference since it may be deleted after it was erased from allPlayers
 			void initRoomLeaderWithoutPermissionsChecking(const std::shared_ptr<ParticipantOnServer>& newLeader);
 			bool changeRoomLeader(const std::shared_ptr<ParticipantOnServer>& sender, std::string usernameOfNewLeader);
 			bool startGame(const std::shared_ptr<ParticipantOnServer>& sender);
@@ -78,8 +70,8 @@ namespace card {
 			optionalSuccessAnswerPacket listener_onChangeOptions(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant); 
 			optionalSuccessAnswerPacket listener_onChangeRoomLeader(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);
 			optionalSuccessAnswerPacket listener_onStartGame(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);
-			optionalSuccessAnswerPacket listener_onJoinNextGame(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);
-			optionalSuccessAnswerPacket listener_onLeaveNextGame(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);
+			optionalSuccessAnswerPacket listener_onKickPlayer(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);
+			optionalSuccessAnswerPacket listener_onAiPlayerJoin(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);
 
 	};
 }

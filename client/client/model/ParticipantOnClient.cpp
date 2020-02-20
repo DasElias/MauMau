@@ -1,9 +1,10 @@
 #include "ParticipantOnClient.h"
 
 namespace card {
-	ParticipantOnClient::ParticipantOnClient(std::string username, Avatar avatar) :
+	ParticipantOnClient::ParticipantOnClient(std::string username, Avatar avatar, bool isAiPlayer) :
 			username(username),
-			avatar(avatar) {
+			avatar(avatar),
+			isAiPlayer_field(isAiPlayer) {
 	}
 
 	std::string ParticipantOnClient::getUsername() const {
@@ -12,6 +13,10 @@ namespace card {
 
 	Avatar ParticipantOnClient::getAvatar() const {
 		return avatar;
+	}
+
+	bool ParticipantOnClient::isAiPlayer() const {
+		return isAiPlayer_field;
 	}
 
 }

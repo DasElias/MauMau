@@ -1,38 +1,39 @@
 #pragma once
-#include "AbstractUsernamePacket_STCPacket.h"
+#include "ClientToServerPacket.h"
+#include <nlohmann/json.hpp>
 
 namespace card {
-	class OtherPlayerHasLeavedRoom_STCPacket : public AbstractUsernamePacket_STCPacket {
+	class KickPlayerRequest_CTSPacket : public ClientToServerPacket {
 		// ----------------------------------------------------------------------
 		// ----------------------------STATIC-FIELDS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			static int const PACKET_ID = 101;
+			static int const PACKET_ID = 407;
 
 		private:
-			static std::string const WAS_KICKED_KEY;
+			static std::string const USERNAME_KEY;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
-			bool wasKicked_field;
+			std::string username;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			OtherPlayerHasLeavedRoom_STCPacket(std::string username, bool wasKicked);
-			OtherPlayerHasLeavedRoom_STCPacket(nlohmann::json& jsonHandle);
+			// pass by reference to prevent implicit conversion
+			KickPlayerRequest_CTSPacket(const std::string& playerToKickUsername);
+			KickPlayerRequest_CTSPacket(nlohmann::json& json);
 
 		// ----------------------------------------------------------------------
-		// --------------------------------FIELDS--------------------------------
+		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			bool wasKicked() const;
+			std::string getUsernameOfPlayerToKick() const;
 
 		protected:
 			void addJsonProperties(nlohmann::json& jsonHandle) const override;
-
 	};
 }

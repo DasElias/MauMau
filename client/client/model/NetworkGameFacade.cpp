@@ -62,7 +62,7 @@ namespace card {
 
 		auto& casted = dynamic_cast<EnteringRoomSuccessReport_STCAnswerPacket&>(p);
 		if(casted.getStatusCode() == EnteringRoomSuccessReport_STCAnswerPacket::SUCCESS_STATUS) {
-			room = std::make_unique<ProxyRoom>(packetTransmitter, casted.getUsernamesOfOtherParticipants(), casted.getAvatarsOfOtherParticipants(), usernameOfLocalPlayer, avatar, casted.getRoomLeader(), casted.getOptions());
+			room = std::make_unique<ProxyRoom>(packetTransmitter, casted.getUsernamesOfOtherParticipants(), casted.getAvatarsOfOtherParticipants(), casted.areOtherParticipantsAiPlayers(),usernameOfLocalPlayer, avatar, casted.getRoomLeader(), casted.getOptions());
 		} else {
 			setErrorMsgForSuccessReport(casted.getStatusCode());
 		}

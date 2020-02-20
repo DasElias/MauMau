@@ -204,6 +204,8 @@ namespace card {
 		egui::Image::setContext(ctx);
 		egui::Font::setDefaultFont(egui::Font::createSystemFont(ctx, "Arial"));
 		egui::Font::createSystemFont(ctx, "ariblk");
+		egui::Font::createSystemFont(ctx, "ariali");
+		egui::Font::createSystemFont(ctx, "arialbd");
 		egui::Font::createFont(ctx, "Roboto Condensed", "C:\\Users\\Elias\\Downloads\\roboto-condensed\\RobotoCondensed-Bold.ttf");
 		auto theme = std::make_unique<egui::MauMauTheme>(ctx);
 		egui::ThemeManager::getInstance().addTheme(theme.get());
@@ -216,7 +218,7 @@ namespace card {
 		JoinRoomState joinRoomState(stateManager, avatarTextures, nvgRenderer, errorHandler);
 		CreateRoomState createRoomState(stateManager, avatarTextures, nvgRenderer, errorHandler);
 		CreateLocalRoomState createLocalRoomState(stateManager, avatarTextures, nvgRenderer);
-		ParticipantsOverviewState participantsOverviewState(stateManager, nvgRenderer);
+		ParticipantsOverviewState participantsOverviewState(stateManager, avatarTextures, nvgRenderer);
 		CreditsState creditsState(stateManager, nvgRenderer);
 
 		stateManager.addState("IngameState", &ingameState);
@@ -303,6 +305,7 @@ namespace card {
 			egui::update(deltaSeconds);
 			threadUtils_update();
 
+			glfwSetWindowTitle(p_window, std::to_string(int(fps)).c_str());
 			std::cout << fps << std::endl;
 			stateManager.updateAndRender(deltaSeconds);
 			if(CardAnimator::arePendingAnimations()) {

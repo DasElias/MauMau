@@ -12,18 +12,20 @@ namespace card {
 
 		private:
 			static std::string const AVATAR_KEY;
+			static std::string const IS_AI_PLAYER_KEY;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
 			Avatar avatar;
+			bool field_isAiPlayer;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			OtherPlayerHasJoinedRoom_STCPacket(std::string username, Avatar avatar);
+			OtherPlayerHasJoinedRoom_STCPacket(std::string username, Avatar avatar, bool isAiPlayer);
 			OtherPlayerHasJoinedRoom_STCPacket(nlohmann::json& jsonHandle);
 
 		// ----------------------------------------------------------------------
@@ -31,6 +33,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			Avatar getAvatar() const;
+			bool isAiPlayer() const;
 
 		protected:
 			void addJsonProperties(nlohmann::json& jsonHandle) const override;

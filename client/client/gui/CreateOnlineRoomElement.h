@@ -2,7 +2,7 @@
 #include "BasicRoomCreationElement.h"
 #include "LabeledInputField.h"
 #include "AvatarChooser.h"
-#include "OptionsElement.h"
+#include "EditOptionsElement.h"
 
 namespace card {
 	class CreateOnlineRoomElement : public BasicRoomCreationElement {
@@ -12,7 +12,7 @@ namespace card {
 		private:
 			std::shared_ptr<egui::UnorganizedParentElement> lockElement;
 			std::shared_ptr<AvatarChooser> avatarChooser;
-			std::shared_ptr<OptionsElement> optionsElement;
+			std::shared_ptr<EditOptionsElement> optionsElement;
 			std::shared_ptr<LabeledInputField> usernameInputField;
 
 			RoomOptions options;

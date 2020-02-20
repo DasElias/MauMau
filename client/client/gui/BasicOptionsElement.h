@@ -5,13 +5,11 @@
 #include <shared/model/RoomOptions.h>
 
 namespace card {
-	class OptionsElement : public TitledMenuElement {
+	class BasicOptionsElement : public TitledMenuElement {
         // ----------------------------------------------------------------------
         // --------------------------------FIELDS--------------------------------
         // ----------------------------------------------------------------------
-        private:
-            std::shared_ptr<ContinueBackButtonBar> buttonBar;
-            
+        private:            
             std::shared_ptr<Option> chooseColorOnJack_option;
             std::shared_ptr<Option> canPutJackOnEveryColor_option;
             std::shared_ptr<Option> canPutJackOnJack_option;
@@ -24,15 +22,13 @@ namespace card {
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
-        public:
-            OptionsElement();
+        protected:
+            BasicOptionsElement(std::string title);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
         // ----------------------------------------------------------------------
         public:
-            void addBackBtnEventHandler(egui::FunctionWrapper<egui::ActionEvent> handler);
-            void addContinueBtnEventHandler(egui::FunctionWrapper<egui::ActionEvent> handler);
             void loadOptions(RoomOptions& roomOptions);
             RoomOptions getOptions();
 

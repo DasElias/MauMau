@@ -11,8 +11,8 @@ namespace card {
 		private:
 			static int const START_WIDTH = 1800;
 			static int const START_HEIGHT = 800;
-			static int const VSYNC = 1;
-			static int const VSYNC_NO_ANIMATION_PENDING = 4;
+			static int const VSYNC = 0;
+			static int const VSYNC_NO_ANIMATION_PENDING = 0;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------

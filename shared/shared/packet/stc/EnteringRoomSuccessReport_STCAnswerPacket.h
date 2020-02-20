@@ -22,6 +22,7 @@ namespace card {
 			static std::string const STATUS_CODE_KEY;
 			static std::string const USERNAMES_OF_OTHER_PARTICIPANTS_KEY;
 			static std::string const AVATARS_OF_OTHER_PARTICIPANTS_KEY;
+			static std::string const ARE_OTHER_PARTICIPANTS_AI_PLAYERS_KEY;
 			static std::string const ROOM_LEADER_KEY;
 			static std::string const ROOM_CODE_KEY;
 			static std::string const OPTIONS_KEY;
@@ -33,6 +34,7 @@ namespace card {
 			int statusCode;
 			std::vector<std::string> usernamesOfOtherParticipants;
 			std::vector<Avatar> avatarsOfOtherParticipants;
+			std::vector<bool> areOtherParticipantsAiPlayers_field;
 			std::string roomLeader;
 			RoomCode roomCode;
 			std::map<std::string, int> options;
@@ -41,7 +43,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			EnteringRoomSuccessReport_STCAnswerPacket(int statusCode, std::vector<std::string> usernamesOfOtherParticipants, std::vector<Avatar> avatarsOfOtherParticipants, std::string roomLeader, RoomCode roomCode, std::map<std::string, int> options);
+			EnteringRoomSuccessReport_STCAnswerPacket(int statusCode, std::vector<std::string> usernamesOfOtherParticipants, std::vector<Avatar> avatarsOfOtherParticipants, std::vector<bool> areOtherParticipantsAiPlayers, std::string roomLeader, RoomCode roomCode, std::map<std::string, int> options);
 			EnteringRoomSuccessReport_STCAnswerPacket(const EnteringRoomSuccessReport_STCAnswerPacket&) = default;
 			EnteringRoomSuccessReport_STCAnswerPacket(nlohmann::json& jsonHandle);
 
@@ -52,6 +54,7 @@ namespace card {
 			int getStatusCode() const;
 			std::vector<std::string> getUsernamesOfOtherParticipants() const;
 			std::vector<Avatar> getAvatarsOfOtherParticipants() const;
+			std::vector<bool> areOtherParticipantsAiPlayers() const;
 			std::string getRoomLeader() const;
 			RoomCode getRoomCode() const;
 			std::map<std::string, int> getOptions() const;

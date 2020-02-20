@@ -25,7 +25,7 @@ namespace card {
 		amountOfOpponentsInputField->getInputFieldImpl()->setCharFilterToNumericWithMaxLength(maxFieldLength);
 		contentBox->addChildElement(amountOfOpponentsInputField);
 
-		optionsElement = std::make_shared<OptionsElement>();
+		optionsElement = std::make_shared<EditOptionsElement>();
 		addChildElement(optionsElement);
 		optionsElement->setVisible(false);
 		optionsElement->setConsumeAllMouseEvents(true);
