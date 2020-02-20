@@ -159,6 +159,11 @@ namespace card {
 			handler();
 		}});
 	}
+	void ParticipantsOverviewElement::addGameStartHandler(std::function<void(void)> handler) {
+		startGameBtn->getMouseClickedEventManager().addEventHandler({[handler](egui::MouseEvent& e) {
+			handler();
+		}});
+	}
 	void ParticipantsOverviewElement::addLeaveRoomHandler(std::function<void(void)> handler) {
 		leaveRoomBtn->getMouseClickedEventManager().addEventHandler({[handler](egui::MouseEvent& e) {
 			handler();
