@@ -67,6 +67,13 @@ namespace card {
 	bool ServerRoom::isRoomFull() {
 		return allParticipants.size() >= MAX_PARTICIPANTS;
 	}
+	bool ServerRoom::shouldCloseRoom() const {
+		unsigned int realParticipants = 0;
+		for(auto& p : allParticipants) {
+			if(p->isRealPlayer()) realParticipants++;
+		}
+		return realParticipants == 0;
+	}
 	bool ServerRoom::checkIfParticipant(const std::shared_ptr<ParticipantOnServer>& participant) {
 		return std::find(allParticipants.begin(), allParticipants.end(), participant) != allParticipants.end();
 	}

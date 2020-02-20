@@ -80,7 +80,9 @@ namespace card {
 
 				if(singleRoom->checkIfParticipant(participant)) {
 					singleRoom->leaveRoom(participant, false);
-					closeRoomIfNoParticipants(singleRoom);
+					if(singleRoom->shouldCloseRoom()) {
+						closeRoom(singleRoom);
+					}
 					break;
 				}
 			}
@@ -88,10 +90,8 @@ namespace card {
 			packetTransmitter->unregisterParticipant(conn);
 		}
 	}
-	void RoomManager::closeRoomIfNoParticipants(const std::unique_ptr<ServerRoom>& room) {
-		if(room->getParticipants().size() == 0) {
-			this->rooms.erase(room->getRoomCode());
-		}
+	void RoomManager::closeRoom(const std::unique_ptr<ServerRoom>& r) {
+		this->rooms.erase(r->getRoomCode());
 	}
 	bool RoomManager::doesRoomExist(RoomCode roomCode) {
 		return rooms.find(roomCode) != rooms.end();

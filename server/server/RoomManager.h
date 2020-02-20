@@ -43,7 +43,7 @@ namespace card {
 			void leave(std::shared_ptr<ConnectionToClient> conn);
 
 		private:
-			void closeRoomIfNoParticipants(const std::unique_ptr<ServerRoom>& room);
+			void closeRoom(const std::unique_ptr<ServerRoom>& room);
 			bool doesRoomExist(RoomCode roomCode);
 			std::vector<std::string> getUsernamesOfOtherParticipants(const std::unique_ptr<ServerRoom>& room, std::string participantToFilter);
 			std::vector<Avatar> getAvatarsOfOtherParticipants(const std::unique_ptr<ServerRoom>& room, std::string participantToFilter);

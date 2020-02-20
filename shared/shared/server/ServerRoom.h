@@ -48,6 +48,7 @@ namespace card {
 			bool checkIfLeaderByUsername(std::string username);
 			bool isUsernameAvailable(std::string username);
 			bool isRoomFull();
+			bool shouldCloseRoom() const;
 			bool checkIfParticipant(const std::shared_ptr<ParticipantOnServer>& participant);	
 			bool checkIfParticipantByUsername(std::string username);
 			std::shared_ptr<ParticipantOnServer> lookupParticipantByUsername(std::string username);
