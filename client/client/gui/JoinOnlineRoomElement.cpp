@@ -14,7 +14,7 @@ namespace card {
 		addChildElement(lockElement);
 		lockElement->setVisible(false);
 
-		avatarChooser = std::make_shared<AvatarChooser>(avatarTextures, 1);
+		avatarChooser = std::make_shared<AvatarChooser>(avatarTextures, 0);
 		contentBox->addChildElement(avatarChooser);
 
 		auto usernameCharVerification = [](char c) {
