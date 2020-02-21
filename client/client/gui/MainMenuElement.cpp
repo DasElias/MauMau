@@ -7,16 +7,7 @@
 #include <array>
 #include "../utils/FileUtils.h"
 
-#include <res/menu/singlePlayer.png.h>
-#include <res/menu/singlePlayerHover.png.h>
-#include <res/menu/createOnlineRoom.png.h>
-#include <res/menu/createOnlineRoomHover.png.h>
-#include <res/menu/information.png.h>
-#include <res/menu/informationHover.png.h>
-#include <res/menu/joinOnlineRoom.png.h>
-#include <res/menu/joinOnlineRoomHover.png.h>
-#include <res/menu/createOnlineRoom.png.h>
-#include <res/menu/createOnlineRoomHover.png.h>
+#include <res/menu/mainMenu.png.h>
 
 using namespace egui;
 
@@ -26,24 +17,24 @@ namespace card {
 
 		this->singlePlayerBtn = std::make_shared<egui::AspectRatioElement>(1.0f);
 		singlePlayerBtn->setBackground(std::make_shared<egui::TexturedBackground>(
-			egui::Image::loadFromMemory(tex_menu_singlePlayer, tex_menu_singlePlayer_size)
+			egui::Image::loadFromMemory(tex_mainMenu_singlePlayer, tex_mainMenu_singlePlayer_size)
 		));
 		singlePlayerBtn->setHoveredBackground(std::make_shared<egui::TexturedBackground>(
-			egui::Image::loadFromMemory(tex_menu_singlePlayerHover, tex_menu_singlePlayerHover_size)
+			egui::Image::loadFromMemory(tex_mainMenu_singlePlayerHover, tex_mainMenu_singlePlayerHover_size)
 		), egui::RenderMode::RENDER_EXCLUSIVELY);
 		this->createOnlineRoomBtn = std::make_shared<egui::AspectRatioElement>(1.0f);
 		createOnlineRoomBtn->setBackground(std::make_shared<egui::TexturedBackground>(
-			egui::Image::loadFromMemory(tex_menu_createOnlineRoom, tex_menu_createOnlineRoom_size)
+			egui::Image::loadFromMemory(tex_mainMenu_createOnlineRoom, tex_mainMenu_createOnlineRoom_size)
 		));
 		createOnlineRoomBtn->setHoveredBackground(std::make_shared<egui::TexturedBackground>(
-			egui::Image::loadFromMemory(tex_menu_createOnlineRoomHover, tex_menu_createOnlineRoomHover_size)
+			egui::Image::loadFromMemory(tex_mainMenu_createOnlineRoomHover, tex_mainMenu_createOnlineRoomHover_size)
 			), egui::RenderMode::RENDER_EXCLUSIVELY);
 		this->joinOnlineRoomBtn = std::make_shared<egui::AspectRatioElement>(1.0f);
 		joinOnlineRoomBtn->setBackground(std::make_shared<egui::TexturedBackground>(
-			egui::Image::loadFromMemory(tex_menu_joinOnlineRoom, tex_menu_joinOnlineRoom_size)
+			egui::Image::loadFromMemory(tex_mainMenu_joinOnlineRoom, tex_mainMenu_joinOnlineRoom_size)
 		));
 		joinOnlineRoomBtn->setHoveredBackground(std::make_shared<egui::TexturedBackground>(
-			egui::Image::loadFromMemory(tex_menu_joinOnlineRoomHover, tex_menu_joinOnlineRoomHover_size)
+			egui::Image::loadFromMemory(tex_mainMenu_joinOnlineRoomHover, tex_mainMenu_joinOnlineRoomHover_size)
 		), egui::RenderMode::RENDER_EXCLUSIVELY);
 
 		std::shared_ptr<egui::HBox> btnBar(new egui::HBox({singlePlayerBtn, joinOnlineRoomBtn,  createOnlineRoomBtn}));
@@ -64,10 +55,10 @@ namespace card {
 		infoBtn->setMaxHeight({0.05f, RelativityMode::RELATIVE_ON_SCREEN});
 		infoBtn->setOwnPositioning(std::make_shared<egui::RelativePositioningOnScreen>(0.005f, 1 - 0.07f));
 		infoBtn->setBackground(std::make_shared<egui::TexturedBackground>(
-			egui::Image::loadFromMemory(tex_menu_information, tex_menu_information_size)
+			egui::Image::loadFromMemory(tex_mainMenu_information, tex_mainMenu_information_size)
 		));
 		infoBtn->setHoveredBackground(std::make_shared<egui::TexturedBackground>(
-			egui::Image::loadFromMemory(tex_menu_informationHover, tex_menu_informationHover_size)
+			egui::Image::loadFromMemory(tex_mainMenu_informationHover, tex_mainMenu_informationHover_size)
 			), egui::RenderMode::RENDER_EXCLUSIVELY);
 
 		

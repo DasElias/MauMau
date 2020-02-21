@@ -1,4 +1,4 @@
-#include "../include/res/menu/singlePlayer.png.h"
+#include "../include/res/menu/mainMenu.png.h"
 
 #if defined(_MSC_VER)
     #define BIN2ARRAY_ALIGN __declspec(align(8))
@@ -6,9 +6,9 @@
     #define BIN2ARRAY_ALIGN __attribute__((__aligned__(8)))
 #endif
 
-const size_t tex_menu_singlePlayer_size = 12476u;
+const size_t tex_mainMenu_singlePlayer_size = 12476u;
 
-const unsigned char BIN2ARRAY_ALIGN tex_menu_singlePlayer[tex_menu_singlePlayer_size] = {
+const unsigned char BIN2ARRAY_ALIGN tex_mainMenu_singlePlayer[tex_mainMenu_singlePlayer_size] = {
 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,1,0,
 0,0,1,0,8,6,0,0,0,92,114,168,102,0,0,19,33,122,84,88,
 116,82,97,119,32,112,114,111,102,105,108,101,32,116,121,112,101,32,101,120,

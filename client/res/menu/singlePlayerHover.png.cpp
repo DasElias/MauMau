@@ -1,4 +1,4 @@
-#include "../include/res/menu/singlePlayerHover.png.h"
+#include "../include/res/menu/mainMenu.png.h"
 
 #if defined(_MSC_VER)
     #define BIN2ARRAY_ALIGN __declspec(align(8))
@@ -6,9 +6,9 @@
     #define BIN2ARRAY_ALIGN __attribute__((__aligned__(8)))
 #endif
 
-const size_t tex_menu_singlePlayerHover_size = 18545u;
+const size_t tex_mainMenu_singlePlayerHover_size = 18545u;
 
-const unsigned char BIN2ARRAY_ALIGN tex_menu_singlePlayerHover[tex_menu_singlePlayerHover_size] = {
+const unsigned char BIN2ARRAY_ALIGN tex_mainMenu_singlePlayerHover[tex_mainMenu_singlePlayerHover_size] = {
 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,1,0,
 0,0,1,0,8,6,0,0,0,92,114,168,102,0,0,32,0,73,68,65,
 84,120,156,237,93,103,152,20,197,214,126,107,54,177,129,13,100,36,35,57,

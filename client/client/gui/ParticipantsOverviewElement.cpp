@@ -5,6 +5,7 @@
 #include <egui/model/nodeComponents/background/TexturedBackground.h>
 
 #include <egui/model/positioning/RelativePositioningInParent.h>
+#include <res/menu/participantsOverview.png.h>
 
 namespace card {
 	ParticipantsOverviewElement::ParticipantsOverviewElement(AvatarTextures& avatarTextures) :
@@ -42,11 +43,26 @@ namespace card {
 		titleBox->addChildElement(roomCodeLabel);
 
 
-		this->leaveRoomBtn = addButton(egui::Image::loadTexture("C:\\Users\\Elias\\Downloads\\quitGame.png"), egui::Image::loadTexture("C:\\Users\\Elias\\Downloads\\quitGameHover.png"));
-		this->editOptionsBtn = addButton(egui::Image::loadTexture("C:\\Users\\Elias\\Downloads\\editOptions.png"), egui::Image::loadTexture("C:\\Users\\Elias\\Downloads\\editOptions.png"));
-		this->viewOptionsBtn = addButton(egui::Image::loadTexture("C:\\Users\\Elias\\Downloads\\viewOptions.png"), egui::Image::loadTexture("C:\\Users\\Elias\\Downloads\\viewOptions.png"));
-		this->addAiPlayerBtn = addButton(egui::Image::loadTexture("C:\\Users\\Elias\\Downloads\\addAiPlayer2.png"), egui::Image::loadTexture("C:\\Users\\Elias\\Downloads\\addAiPlayer2.png"));
-		this->startGameBtn = addButton(egui::Image::loadTexture("C:\\Users\\Elias\\Downloads\\startGame.png"), egui::Image::loadTexture("C:\\Users\\Elias\\Downloads\\startGameHover.png"));
+		this->leaveRoomBtn = addButton(
+			egui::Image::loadFromMemory(tex_participantsOverviewState_quitGame, tex_participantsOverviewState_quitGame_size), 
+			egui::Image::loadFromMemory(tex_participantsOverviewState_quitGameHover, tex_participantsOverviewState_quitGameHover_size)
+		);
+		this->editOptionsBtn = addButton(
+			egui::Image::loadFromMemory(tex_participantsOverviewState_editOptions, tex_participantsOverviewState_editOptions_size),
+			egui::Image::loadFromMemory(tex_participantsOverviewState_editOptionsHover, tex_participantsOverviewState_editOptionsHover_size)
+		);
+		this->viewOptionsBtn = addButton(
+			egui::Image::loadFromMemory(tex_participantsOverviewState_viewOptions, tex_participantsOverviewState_viewOptions_size),
+			egui::Image::loadFromMemory(tex_participantsOverviewState_viewOptionsHover, tex_participantsOverviewState_viewOptionsHover_size)
+		);
+		this->addAiPlayerBtn = addButton(
+			egui::Image::loadFromMemory(tex_participantsOverviewState_addAiPlayer, tex_participantsOverviewState_addAiPlayer_size),
+			egui::Image::loadFromMemory(tex_participantsOverviewState_addAiPlayerHover, tex_participantsOverviewState_addAiPlayerHover_size)
+		);
+		this->startGameBtn = addButton(
+			egui::Image::loadFromMemory(tex_participantsOverviewState_startGame, tex_participantsOverviewState_startGame_size),
+			egui::Image::loadFromMemory(tex_participantsOverviewState_startGameHover, tex_participantsOverviewState_startGameHover_size)
+		);
 
 		participantsBox->setSpaceBetweenElements({5, egui::RelativityMode::ABSOLUTE_VALUE});
 		participantsBox->setShouldCenterElements(true);
