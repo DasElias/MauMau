@@ -36,16 +36,8 @@ namespace card {
 			room.requestOptionChange(options);
 		});
 		element->addLeaveRoomHandler([this]() {
-		/*	auto& room = getRoom();
-			auto localParticipant = room.getLocalParticipant();
-			if(room.canBeKicked(localParticipant)) {
-				room.requestKickPlayer(localParticipant);
-			} else {
-				log(LogSeverity::WARNING, "Can't kick the local player even though the particular button was pressed.");
-			}*/
-			auto& stateManager = getStateMananger();
-			stateManager.setGameFacade(nullptr);
-			stateManager.changeState("MainMenuState");
+			auto& room = getRoom();
+			room.requestLeave();
 		});
 		element->setKickEventHandler([this](std::shared_ptr<ParticipantOnClient> participantToKick) {
 			auto& room = getRoom();

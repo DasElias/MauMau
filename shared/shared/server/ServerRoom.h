@@ -20,7 +20,7 @@ namespace card {
 			std::shared_ptr<ParticipantOnServer> roomLeader;
 
 			std::unique_ptr<ServerMauMauGame> game = nullptr;
-
+			
 			ClientPacketListenerCallback handler_onChangeOptions;
 			ClientPacketListenerCallback handler_onChangeRoomLeader;
 			ClientPacketListenerCallback handler_onStartGame;

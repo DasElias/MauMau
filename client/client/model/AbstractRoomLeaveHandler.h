@@ -1,18 +1,21 @@
 #pragma once
-#include "NetworkGameFacade.h"
 
 namespace card {
-	class CreateRoomNetworkGameFacade : public NetworkGameFacade {
+	class AbstractRoomLeaveHandler {
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
+		protected:
+			AbstractRoomLeaveHandler() = default;
+
 		public:
-			CreateRoomNetworkGameFacade(NetworkErrorHandler& errorHandler, std::unique_ptr<AbstractRoomLeaveHandler> gameEndHandler, std::string username, Avatar avatar, RoomOptions roomOptions);
+			virtual ~AbstractRoomLeaveHandler() = default;
+
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
-		private:
-			void sendRequest(std::string username, Avatar avatar, RoomOptions roomOptions);
+		public:
+			virtual void operator()() =0;
 	};
 }

@@ -30,5 +30,6 @@ namespace card {
 	public:
 		boost::asio::io_context& getIoContext() override;
 		tcp::socket& getSocket() override;
+		void close() override;
 	};
 }

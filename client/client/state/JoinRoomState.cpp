@@ -2,6 +2,7 @@
 #include "JoinRoomState.h"
 #include <egui/model/popups/PopupErrorBox.h>
 #include <shared/utils/TimeUtils.h>
+#include "RoomLeaveHandlerImpl.h"
 
 namespace card {
 	JoinRoomState::JoinRoomState(StateManager& stateManager, AvatarTextures& avatarTextures, egui::MasterRenderer& eguiRenderer, NetworkErrorHandler& networkErrorHandler) :
@@ -49,7 +50,7 @@ namespace card {
 		return std::nullopt;
 	}
 	void JoinRoomState::sendRequest(std::string username, Avatar avatar, RoomCode roomCode) {
-		this->createdGameFacade = std::make_shared<JoinRoomNetworkGameFacade>(networkErrorHandler, username, avatar, roomCode);
+		this->createdGameFacade = std::make_shared<JoinRoomNetworkGameFacade>(networkErrorHandler, std::make_unique<RoomLeaveHandlerImpl>(stateManager), username, avatar, roomCode);
 		stateManager.setGameFacade(createdGameFacade);
 	}
 	void JoinRoomState::handleResponseIfAvailable() {		

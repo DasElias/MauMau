@@ -4,6 +4,7 @@
 #include "ProxyMauMauGame.h"
 #include <shared/model/RoomOptions.h>
 #include <shared/model/RoomCode.h>
+#include "AbstractRoomLeaveHandler.h"
 
 namespace card {
 	class ProxyRoom {
@@ -12,6 +13,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		private:
 			std::shared_ptr<CTSPacketTransmitter> packetTransmitter;
+			AbstractRoomLeaveHandler& roomLeaveHandler;
 			RoomCode roomCode;
 
 			std::vector<std::shared_ptr<ParticipantOnClient>> allParticipants;
@@ -24,7 +26,7 @@ namespace card {
 			bool isWaitingForResponse_field = false;
 
 			ServerPacketListenerCallback handler_onPlayerJoinsRoom;
-			ServerPacketListenerCallback handler_onPlayerLeavesRoom;
+			ServerPacketListenerCallback handler_onOtherPlayerLeavesRoom;
 			ServerPacketListenerCallback handler_onOptionsWereChanged;
 			ServerPacketListenerCallback handler_onRoomLeaderChange;
 			ServerPacketListenerCallback handler_onGameStart;
@@ -34,7 +36,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			ProxyRoom(std::shared_ptr<CTSPacketTransmitter> packetTransmitter, RoomCode roomCode,
+			ProxyRoom(std::shared_ptr<CTSPacketTransmitter> packetTransmitter, AbstractRoomLeaveHandler& roomLeaveHandler, RoomCode roomCode,
 					  std::vector<std::string> opponentUsernames, std::vector<Avatar> opponentAvatars, std::vector<bool> areOpponentsAiPlayers, 
 					  std::string localPlayerUsername, Avatar localPlayerAvatar, std::string usernameOfLeader, RoomOptions options);
 			~ProxyRoom();
@@ -67,16 +69,17 @@ namespace card {
 			void requestOptionChange(RoomOptions options);
 			bool canAiPlayerJoin();
 			void requestAiPlayerJoin();
+			void requestLeave();
 
 			void joinPlayerLocal(std::string username, Avatar avatar, bool isAiPlayer);
-			void kickPlayerLocal(std::string username);
+			void kickOtherPlayerLocal(std::string username);
 			void changeOptionsLocal(RoomOptions options);
 			void changeRoomLeaderLocal(std::string newLeaderUsername);
 			void startGameLocal(std::vector<std::string> usernamesOfAllPlayers, std::string usernameOnTurn, std::vector<int> handCards, int startCard, int nextCardOnDrawStack);
 
 		private:
 			void listener_onPlayerJoinsRoom(Packet& p);
-			void listener_onPlayerLeavesRoom(Packet& p);
+			void listener_onOtherPlayerLeavesRoom(Packet& p);
 			void listener_onOptionsWereChanged(Packet& p);
 			void listener_onRoomLeaderChange(Packet& p);
 			void listener_onGameStart(Packet& p);

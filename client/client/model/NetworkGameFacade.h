@@ -19,6 +19,7 @@ namespace card {
 			std::string usernameOfLocalPlayer;
 			std::shared_ptr<ConnectionToServer> conn;
 			std::shared_ptr<ClientPacketTransmitter> packetTransmitter;
+			std::unique_ptr<AbstractRoomLeaveHandler> gameEndHandler;
 			std::unique_ptr<ProxyRoom> room;
 
 			ServerPacketListenerCallback handler_enteringRoomSuccessReport;
@@ -27,7 +28,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			NetworkGameFacade(NetworkErrorHandler& errorHandler, std::string username, Avatar avatar);
+			NetworkGameFacade(NetworkErrorHandler& errorHandler, std::unique_ptr<AbstractRoomLeaveHandler> gameEndHandler, std::string username, Avatar avatar);
 			~NetworkGameFacade();
 
 		// ----------------------------------------------------------------------

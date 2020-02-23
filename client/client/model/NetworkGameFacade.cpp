@@ -4,11 +4,12 @@
 #include <shared/utils/Logger.h>
 
 namespace card {
-	NetworkGameFacade::NetworkGameFacade(NetworkErrorHandler& errorHandler, std::string username, Avatar avatar) :
+	NetworkGameFacade::NetworkGameFacade(NetworkErrorHandler& errorHandler, std::unique_ptr<AbstractRoomLeaveHandler> gameEndHandler, std::string username, Avatar avatar) :
 			avatar(avatar),
 			isWaitingForResponse_field(true),
 			errorMsgInPlainText(std::nullopt),
 			usernameOfLocalPlayer(username),
+			gameEndHandler(std::move(gameEndHandler)),
 			room(nullptr),
 			handler_enteringRoomSuccessReport(std::bind(&NetworkGameFacade::listener_enteringRoomSuccessReport, this, std::placeholders::_1)) {
 
@@ -24,6 +25,8 @@ namespace card {
 		}
 	}
 	NetworkGameFacade::~NetworkGameFacade() {
+		if(conn) conn->close();
+
 		if(packetTransmitter) {
 			// will fail silently if the packet listener has never been registered due to an exception in the constructor
 			packetTransmitter->removeListenerForServerPkt(EnteringRoomSuccessReport_STCAnswerPacket::PACKET_ID, handler_enteringRoomSuccessReport);
@@ -62,7 +65,7 @@ namespace card {
 
 		auto& casted = dynamic_cast<EnteringRoomSuccessReport_STCAnswerPacket&>(p);
 		if(casted.getStatusCode() == EnteringRoomSuccessReport_STCAnswerPacket::SUCCESS_STATUS) {
-			room = std::make_unique<ProxyRoom>(packetTransmitter, casted.getRoomCode(), casted.getUsernamesOfOtherParticipants(), casted.getAvatarsOfOtherParticipants(), casted.areOtherParticipantsAiPlayers(),usernameOfLocalPlayer, avatar, casted.getRoomLeader(), casted.getOptions());
+			room = std::make_unique<ProxyRoom>(packetTransmitter, *gameEndHandler, casted.getRoomCode(), casted.getUsernamesOfOtherParticipants(), casted.getAvatarsOfOtherParticipants(), casted.areOtherParticipantsAiPlayers(),usernameOfLocalPlayer, avatar, casted.getRoomLeader(), casted.getOptions());
 		} else {
 			setErrorMsgForSuccessReport(casted.getStatusCode());
 		}

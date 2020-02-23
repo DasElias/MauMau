@@ -13,4 +13,10 @@ namespace card {
 	tcp::socket& ConnectionToClient::getSocket() {
 		return socket;
 	}
+	void ConnectionToClient::close() {
+		ioc.post([this]() {
+			socket.shutdown(boost::asio::ip::tcp::socket::shutdown_send);
+			socket.close();
+		});
+	}
 }

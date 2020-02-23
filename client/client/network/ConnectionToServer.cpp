@@ -36,6 +36,13 @@ namespace card {
 	tcp::socket& ConnectionToServer::getSocket() {
 		return socket;
 	}
+	void ConnectionToServer::close() {
+		ioContext.post([this]() {
+			socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
+			socket.close();
+		});
+		networkThread->join();
+	}
 	void ConnectionToServer::connectSocket() {
 		tcp::resolver resolver(ioContext);
 		tcp::resolver::query query(HOST, PORT);

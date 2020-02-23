@@ -16,19 +16,20 @@
 #include <shared/packet/cts/JoinAiPlayerRequest_CTSPacket.h>
 
 namespace card {
-	ProxyRoom::ProxyRoom(std::shared_ptr<CTSPacketTransmitter> packetTransmitter, RoomCode roomCode, std::vector<std::string> opponentUsernames, std::vector<Avatar> opponentAvatars, std::vector<bool> areOpponentsAiPlayers, std::string localPlayerUsername, Avatar localPlayerAvatar, std::string usernameOfLeader, RoomOptions options) :
+	ProxyRoom::ProxyRoom(std::shared_ptr<CTSPacketTransmitter> packetTransmitter, AbstractRoomLeaveHandler& roomLeaveHandler, RoomCode roomCode, std::vector<std::string> opponentUsernames, std::vector<Avatar> opponentAvatars, std::vector<bool> areOpponentsAiPlayers, std::string localPlayerUsername, Avatar localPlayerAvatar, std::string usernameOfLeader, RoomOptions options) :
 			packetTransmitter(packetTransmitter),
+			roomLeaveHandler(roomLeaveHandler),
 			roomCode(roomCode),
 			options(options),
 
 			handler_onPlayerJoinsRoom(std::bind(&ProxyRoom::listener_onPlayerJoinsRoom, this, std::placeholders::_1)),
-			handler_onPlayerLeavesRoom(std::bind(&ProxyRoom::listener_onPlayerLeavesRoom, this, std::placeholders::_1)),
+			handler_onOtherPlayerLeavesRoom(std::bind(&ProxyRoom::listener_onOtherPlayerLeavesRoom, this, std::placeholders::_1)), 
 			handler_onOptionsWereChanged(std::bind(&ProxyRoom::listener_onOptionsWereChanged, this, std::placeholders::_1)),
 			handler_onRoomLeaderChange(std::bind(&ProxyRoom::listener_onRoomLeaderChange, this, std::placeholders::_1)),
 			handler_onGameStart(std::bind(&ProxyRoom::listener_onGameStart, this, std::placeholders::_1)) {
 
 		packetTransmitter->addListenerForServerPkt(OtherPlayerHasJoinedRoom_STCPacket::PACKET_ID, handler_onPlayerJoinsRoom);
-		packetTransmitter->addListenerForServerPkt(OtherPlayerHasLeavedRoom_STCPacket::PACKET_ID, handler_onPlayerLeavesRoom);
+		packetTransmitter->addListenerForServerPkt(OtherPlayerHasLeavedRoom_STCPacket::PACKET_ID, handler_onOtherPlayerLeavesRoom);
 		packetTransmitter->addListenerForServerPkt(OptionsWereChanged_STCPacket::PACKET_ID, handler_onOptionsWereChanged);
 		packetTransmitter->addListenerForServerPkt(RoomLeaderHasChanged_STCPacket::PACKET_ID, handler_onRoomLeaderChange);
 		packetTransmitter->addListenerForServerPkt(GameHasBeenStarted_STCPacket::PACKET_ID, handler_onGameStart);
@@ -50,7 +51,7 @@ namespace card {
 
 	ProxyRoom::~ProxyRoom() {
 		packetTransmitter->removeListenerForServerPkt(OtherPlayerHasJoinedRoom_STCPacket::PACKET_ID, handler_onPlayerJoinsRoom);
-		packetTransmitter->removeListenerForServerPkt(OtherPlayerHasLeavedRoom_STCPacket::PACKET_ID, handler_onPlayerLeavesRoom);
+		packetTransmitter->removeListenerForServerPkt(OtherPlayerHasLeavedRoom_STCPacket::PACKET_ID, handler_onOtherPlayerLeavesRoom);
 		packetTransmitter->removeListenerForServerPkt(OptionsWereChanged_STCPacket::PACKET_ID, handler_onOptionsWereChanged);
 		packetTransmitter->removeListenerForServerPkt(RoomLeaderHasChanged_STCPacket::PACKET_ID, handler_onRoomLeaderChange);
 		packetTransmitter->removeListenerForServerPkt(GameHasBeenStarted_STCPacket::PACKET_ID, handler_onGameStart);
@@ -170,6 +171,13 @@ namespace card {
 		packetTransmitter->sendPacketToServer(packet);
 	}
 
+	void ProxyRoom::requestLeave() {
+		isWaitingForResponse_field = true;
+		roomLeaveHandler();
+/*		RoomLeaveRequest_CTSPacket packet;
+		packetTransmitter->sendPacketToServer(packet);*/
+	}
+
 	void ProxyRoom::requestRoomLeaderChange(std::shared_ptr<ParticipantOnClient> newRoomLeader) {
 		if(! canBeRoomLeader(newRoomLeader)) throw std::runtime_error("Can't change room leader to this player.");
 		isWaitingForResponse_field = true;
@@ -186,7 +194,7 @@ namespace card {
 		if(isAiPlayer) isWaitingForResponse_field = false;
 	}
 
-	void ProxyRoom::kickPlayerLocal(std::string username) {
+	void ProxyRoom::kickOtherPlayerLocal(std::string username) {
 		std::shared_ptr<ParticipantOnClient> player = lookupParticipant(username);
 		allParticipants.erase(std::find(allParticipants.begin(), allParticipants.end(), player));
 
@@ -221,9 +229,9 @@ namespace card {
 		joinPlayerLocal(casted.getUsername(), casted.getAvatar(), casted.isAiPlayer());
 	}
 
-	void ProxyRoom::listener_onPlayerLeavesRoom(Packet& p) {
+	void ProxyRoom::listener_onOtherPlayerLeavesRoom(Packet& p) {
 		auto& casted = dynamic_cast<OtherPlayerHasLeavedRoom_STCPacket&>(p);
-		kickPlayerLocal(casted.getUsername());
+		kickOtherPlayerLocal(casted.getUsername());
 		if(casted.wasKicked()) isWaitingForResponse_field = false;
 	}
 

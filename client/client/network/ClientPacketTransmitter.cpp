@@ -11,7 +11,9 @@ namespace card {
 			onReceiveHandler(jsonMsg);
 		});
 		conn->setOnErrorFunc([this](boost::system::error_code ec) {
-			onErrorHandler(ec);
+			if(ec != boost::asio::error::operation_aborted) {
+				onErrorHandler(ec);
+			}
 		});
 	}
 	void ClientPacketTransmitter::onReceiveHandler(std::string& jsonMsg) {

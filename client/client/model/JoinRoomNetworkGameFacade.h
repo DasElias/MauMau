@@ -8,7 +8,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			JoinRoomNetworkGameFacade(NetworkErrorHandler& errorHandler, std::string username, Avatar avatar, RoomCode roomCode);
+			JoinRoomNetworkGameFacade(NetworkErrorHandler& errorHandler, std::unique_ptr<AbstractRoomLeaveHandler> gameEndHandler, std::string username, Avatar avatar, RoomCode roomCode);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------

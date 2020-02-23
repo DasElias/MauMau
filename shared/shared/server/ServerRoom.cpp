@@ -159,7 +159,6 @@ namespace card {
 			game.removePlayer(player);
 		};
 
-		// packet must be send after the player has been removed
 		OtherPlayerHasLeavedRoom_STCPacket packet(participant->getUsername(), wasKickedByOtherPlayer);
 		packetTransmitter->sendPacketToClients(packet, allParticipants);
 

@@ -32,6 +32,7 @@ namespace card {
 			void start();
 			boost::asio::io_context& getIoContext() override;
 			tcp::socket& getSocket() override;
+			void close() override;
 
 		private:
 			void connectSocket();

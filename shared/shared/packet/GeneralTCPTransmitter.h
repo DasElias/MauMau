@@ -42,6 +42,7 @@ namespace card {
 			virtual tcp::socket& getSocket() =0;
 			void setOnReceiveFunc(receiveFunc callback);
 			void setOnErrorFunc(errorHandlingFunc callback);
+			virtual void close() =0;
 
 		private:
 			bool enqueue(std::string message, bool atFront);
