@@ -1,5 +1,6 @@
 #include "JoinRoomState.h"
 #include "JoinRoomState.h"
+#include "JoinRoomState.h"
 #include <egui/model/popups/PopupErrorBox.h>
 #include <shared/utils/TimeUtils.h>
 #include "RoomLeaveHandlerImpl.h"
@@ -38,6 +39,10 @@ namespace card {
 		eguiRenderer.endFrame();
 
 		handleResponseIfAvailable();
+	}
+	void JoinRoomState::onStateEnter() {
+		State::onStateEnter();
+		scene.discardMouseEvents();
 	}
 	std::optional<std::string> JoinRoomState::getLocalVerificationErrorMessage() {
 		std::string usernameInput = element->getUsernameInput();

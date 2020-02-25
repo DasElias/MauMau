@@ -43,9 +43,7 @@ namespace card {
 	}
 	void CreateLocalRoomState::onStateEnter() {
 		State::onStateEnter();
-	}
-	void CreateLocalRoomState::onStateExit() {
-		State::onStateExit();
+		scene.discardMouseEvents();
 	}
 	std::optional<std::string> CreateLocalRoomState::getErrorMessage() {
 		std::string usernameInput = element->getUsernameInput();

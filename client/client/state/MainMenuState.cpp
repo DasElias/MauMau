@@ -1,4 +1,5 @@
 #include "MainMenuState.h"
+#include "MainMenuState.h"
 
 namespace card {
 	MainMenuState::MainMenuState(StateManager& stateManager, egui::MasterRenderer& renderer) :
@@ -24,5 +25,9 @@ namespace card {
 		renderer.beginFrame();
 		scene.render(renderer);
 		renderer.endFrame();
+	}
+	void MainMenuState::onStateEnter() {
+		State::onStateEnter();
+		scene.discardMouseEvents();
 	}
 }

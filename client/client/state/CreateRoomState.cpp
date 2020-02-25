@@ -40,6 +40,7 @@ namespace card {
 	void CreateRoomState::onStateEnter() {
 		State::onStateEnter();
 		createdGameFacade.reset();
+		scene.discardMouseEvents();
 	}
 	
 	void CreateRoomState::sendRequest(std::string username, Avatar avatar, RoomOptions options) {

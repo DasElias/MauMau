@@ -1,4 +1,5 @@
 #include "CreditsState.h"
+#include "CreditsState.h"
 
 namespace card {
 	CreditsState::CreditsState(StateManager& stateManager, egui::MasterRenderer& renderer) :
@@ -16,5 +17,9 @@ namespace card {
 		renderer.beginFrame();
 		scene.render(renderer);
 		renderer.endFrame();
+	}
+	void CreditsState::onStateEnter() {
+		State::onStateEnter();
+		scene.discardMouseEvents();
 	}
 }

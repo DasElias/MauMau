@@ -24,6 +24,6 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			void updateAndRender(float delta) override;
-
+			void onStateEnter() override;
 	};
 }

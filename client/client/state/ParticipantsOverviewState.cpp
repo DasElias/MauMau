@@ -76,7 +76,7 @@ namespace card {
 
 	void ParticipantsOverviewState::onStateEnter() {
 		State::onStateEnter();
-
+		scene.discardMouseEvents();
 		
 	}
 
