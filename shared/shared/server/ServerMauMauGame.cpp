@@ -22,6 +22,7 @@
 #include "../model/CardAnimationDuration.h"
 #include "../model/TimeToSetNextPlayerOnTurnDuration.h"
 #include "../model/MaxTurnDuration.h"
+#include "../model/MinDrawCardStackSize.h"
 
 namespace card {
 	uint64_t ServerMauMauGame::startTurnAbortIdCounter = 0;
@@ -462,8 +463,13 @@ namespace card {
 		return drawCardStack;
 	}
 	void ServerMauMauGame::tryRebalanceCardStacks() {
-		while(drawCardStack.getSize() <= 3 && playCardStack.getSize() >= 1) {
+		while(drawCardStack.getSize() <= MIN_DRAW_CARD_STACK_SIZE && playCardStack.getSize() > 1) {
 			drawCardStack.addFromPlainAtPosition(0, playCardStack.remove(0));
+		}
+		if(drawCardStack.getSize() <= MIN_DRAW_CARD_STACK_SIZE) {
+			for(int i = 1; i <= Card::MAX_CARDS; i++) {
+				drawCardStack.addFromPlainAtPosition(0, Card(i));
+			}
 		}
 	}
 	void ServerMauMauGame::callGameEndFunctIfGameHasEnded() {

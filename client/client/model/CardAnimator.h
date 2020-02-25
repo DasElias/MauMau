@@ -72,6 +72,7 @@ namespace card {
 			void addFromPlain(Card c, std::size_t amount = 1);
 			void addFromPlain(std::vector<Card> cards);
 			void addFromPlain(std::initializer_list<Card> cards);
+			void addFromPlainAtPosition(std::size_t position, Card c, std::size_t amount = 1);
 
 			Card get(std::size_t index) const;
 			Card getLast() const;

@@ -186,6 +186,9 @@ namespace card {
 	void CardAnimator::addFromPlain(std::initializer_list<Card> cards) {
 		wrappedCardCollection->addFromPlain(cards);
 	}
+	void CardAnimator::addFromPlainAtPosition(std::size_t position, Card c, std::size_t amount) {
+		wrappedCardCollection->addFromPlainAtPosition(position, c, amount);
+	}
 	Card CardAnimator::get(std::size_t index) const {
 		return wrappedCardCollection->get(index);
 	}

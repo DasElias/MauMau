@@ -8,6 +8,7 @@
 #include <shared/model/CardAnimationDuration.h>
 #include <shared/utils/ThreadUtils.h>
 #include <shared/model/TimeToSetNextPlayerOnTurnDuration.h>
+#include <shared/model/MinDrawCardStackSize.h>
 #include <shared/utils/Logger.h>
 
 namespace card {
@@ -363,11 +364,14 @@ namespace card {
 	}
 
 	void ProxyMauMauGameData::tryRebalanceCardStacks() {
-		if(drawCardStack.getSize() <= 3) {
-			while(playCardStack.getSize() > 1) {
-				drawCardStack.addFirstCardFrom(Card::NULLCARD, playCardStack, REBALANCE_DURATION, 0);
-			}
+		while(drawCardStack.getSize() <= MIN_DRAW_CARD_STACK_SIZE && playCardStack.getSize() > 1) {
+			drawCardStack.addFirstCardFrom(Card::NULLCARD, playCardStack, REBALANCE_DURATION, 0);
 		}
+		if(drawCardStack.getSize() < MIN_DRAW_CARD_STACK_SIZE) {
+			for(int i = 1; i <= Card::MAX_CARDS; i++) {
+				drawCardStack.addFromPlainAtPosition(0, Card(i));
+			}
+		} 
 	}
 	void ProxyMauMauGameData::setLocalPlayerAtTheBeginOfPlayersVector() {
 		while(this->allPlayers[0] != localPlayer) {
