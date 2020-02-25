@@ -247,7 +247,7 @@ namespace card {
 		auto& localPlayer = game->getLocalPlayer();
 
 		// render hand cards
-		handCardRenderer.renderCardStackInX(localPlayer->getCardStack(), HAND_CARDS_LOCAL_POSITION, HAND_CARDS_LOCAL_ROTATION, projectionMatrix, viewport, 2 * CardSceneBackgroundRenderer::TABLE_MAX_X);
+		handCardRenderer.renderCardStackInX(localPlayer->getCardStack(), HAND_CARDS_LOCAL_POSITION, HAND_CARDS_LOCAL_ROTATION, projectionMatrix, viewport, FRONT_BACK_OPPONENT_CARDS_WIDTH);
 
 		// render cards to hand cards
 		// please note that we iterate over the set from the end to the begin (we use a reverse-iterator),
@@ -362,7 +362,7 @@ namespace card {
 	}
 
 	std::optional<int> CardSceneRenderer::checkIntersectionWithOwnHandCards() {
-		return handCardIntersectionChecker.getIndexOfIntersectedCardInX(game->getLocalPlayer()->getCardStack(), HAND_CARDS_LOCAL_POSITION, HAND_CARDS_LOCAL_ROTATION, 2 * CardSceneBackgroundRenderer::TABLE_MAX_X, CardRenderer::WIDTH, CardRenderer::HEIGHT);
+		return handCardIntersectionChecker.getIndexOfIntersectedCardInX(game->getLocalPlayer()->getCardStack(), HAND_CARDS_LOCAL_POSITION, HAND_CARDS_LOCAL_ROTATION, FRONT_BACK_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH, CardRenderer::HEIGHT);
 	}
 
 	std::array<std::shared_ptr<ProxyPlayer>, 3> CardSceneRenderer::mapOpponentsToTablePositionsInCwOrder(const std::vector<std::shared_ptr<ProxyPlayer>> opponents) {
