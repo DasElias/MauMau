@@ -26,13 +26,15 @@ namespace card {
 			}) {
 	}
 
-	void GeneralTCPTransmitter::start() {
+	void GeneralTCPTransmitter::startImpl() {
 		readLoop();
+		wasConnectionEtablished = true;
+		if(! tx.empty()) writeLoop();
 	}
 	void GeneralTCPTransmitter::send(std::string msg, bool atFront) {
 		FILTER_DELIMITER_IF_DEBUG(msg);
 		ba::post(getIoContext(), [=] {
-			if(enqueue(msg + DELIMITER, atFront)) {
+			if(enqueue(msg + DELIMITER, atFront) && wasConnectionEtablished) {
 				writeLoop();
 			}
 		});

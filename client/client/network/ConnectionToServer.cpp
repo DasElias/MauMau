@@ -3,6 +3,7 @@
 
 #include <thread>
 #include <stdexcept>
+#include <boost/bind.hpp>
 
 namespace ba = boost::asio;
 using ba::ip::tcp;
@@ -11,20 +12,23 @@ using namespace std::chrono_literals;
 using namespace std::string_literals;
 
 namespace card {
-	std::string const ConnectionToServer::HOST = "5.230.22.72";
+	std::string const ConnectionToServer::HOST = "localhost";
 	std::string const ConnectionToServer::PORT = "6767";
 
 	ConnectionToServer::ConnectionToServer() :
 			ioContext(),
-			socket(ioContext) {
+			socket(ioContext),
+			resolver(ioContext) {
 
-		connectSocket();
+		
 	}
 	void ConnectionToServer::start() {
-		GeneralTCPTransmitter::start();
+		connectSocket();
 		networkThread = std::make_unique<std::thread>([this] {
 			try {
 				ioContext.run();
+			} catch(std::exception& e) {
+				log(LogSeverity::FATAL, "An exception ("+std::string(e.what())+") has happened during ioContext.run().");
 			} catch(...) {
 				log(LogSeverity::FATAL, "An unknown exception has happened during ioContext.run().");
 			}
@@ -43,21 +47,33 @@ namespace card {
 		});
 		networkThread->join();
 	}
-	void ConnectionToServer::connectSocket() {
-		tcp::resolver resolver(ioContext);
+	void ConnectionToServer::connectSocket() {	
 		tcp::resolver::query query(HOST, PORT);
-		tcp::resolver::iterator iterator = resolver.resolve(query);
-		tcp::resolver::iterator end;
-		boost::system::error_code error = boost::asio::error::host_not_found;
-		while(error && iterator != end) {
-			socket.close();
-			socket.connect(*iterator++, error);
-		}
-		if(error) {
-			log(LogSeverity::ERR, "Error during trying to establish connection to server:");
-			log(LogSeverity::ERR, error.message() + "(" + std::to_string(error.value()) + ")");
-			throw boost::system::system_error(error);
-		}
+		resolver.async_resolve(query, [this](const boost::system::error_code& ec, tcp::resolver::iterator endpointIterator) {
+			if(!ec) {
+				tcp::endpoint endpoint = *endpointIterator;
+				socket.async_connect(endpoint, boost::bind(&ConnectionToServer::connectionCallback, this, boost::asio::placeholders::error, ++endpointIterator));
+			} else {
+				log(LogSeverity::ERR, "Error during trying to establish connection to server:");
+				log(LogSeverity::ERR, ec.message() + "(" + std::to_string(ec.value()) + ")");
+				throw boost::system::system_error(ec);
+			}
+		});
+		
 	}
-	
+
+	void ConnectionToServer::connectionCallback(const boost::system::error_code& ec, tcp::resolver::iterator endpointIterator) {
+		if(! ec) {
+			GeneralTCPTransmitter::startImpl();
+		} else if(endpointIterator != tcp::resolver::iterator()) {
+			// try next endpoint
+			socket.close();
+			tcp::endpoint endpoint = *endpointIterator;
+			socket.async_connect(endpoint, boost::bind(&ConnectionToServer::connectionCallback, this, boost::asio::placeholders::error, ++endpointIterator));
+		} else {
+			log(LogSeverity::ERR, "Error during trying to establish connection to server:");
+			log(LogSeverity::ERR, ec.message() + "(" + std::to_string(ec.value()) + ")");
+			throw boost::system::system_error(ec);
+		}
+	}	
 }

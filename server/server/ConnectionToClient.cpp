@@ -7,6 +7,9 @@ namespace card {
 			ioc(ioc),
 			socket(ioc) {
 	}
+	void ConnectionToClient::start() {
+		GeneralTCPTransmitter::startImpl();
+	}
 	boost::asio::io_context& ConnectionToClient::getIoContext() {
 		return ioc;
 	}

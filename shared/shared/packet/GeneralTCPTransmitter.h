@@ -22,6 +22,7 @@ namespace card {
 		private:
 			boost::asio::streambuf rx;
 			std::list<std::string> tx;
+			bool wasConnectionEtablished = false;
 
 			receiveFunc onReceiveFunc;
 			errorHandlingFunc onErrorFunc;
@@ -36,13 +37,15 @@ namespace card {
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			void start();
 			void send(std::string msg, bool atFront = false);
 			virtual boost::asio::io_context& getIoContext() =0;
 			virtual tcp::socket& getSocket() =0;
 			void setOnReceiveFunc(receiveFunc callback);
 			void setOnErrorFunc(errorHandlingFunc callback);
 			virtual void close() =0;
+
+		protected:
+			void startImpl();
 
 		private:
 			bool enqueue(std::string message, bool atFront);

@@ -16,6 +16,7 @@ namespace card {
 		private:
 			boost::asio::io_context ioContext;
 			tcp::socket socket;
+			tcp::resolver resolver;
 
 			std::unique_ptr<std::thread> networkThread;
 
@@ -36,6 +37,7 @@ namespace card {
 
 		private:
 			void connectSocket();
+			void connectionCallback(const boost::system::error_code& ec, tcp::resolver::iterator endpointIterator);
 
 	};
 }
