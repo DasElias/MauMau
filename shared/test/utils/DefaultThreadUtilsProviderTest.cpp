@@ -51,5 +51,17 @@ TEST_CASE("DefaultThreadUtilsProvider", "[DefaultThreadUtilsProvider]") {
 		provider.update();
 		REQUIRE(! wasExecuted);
 	}
+	SECTION("callback with another key isn't deleted") {
+		int keyValue1;
+		int keyValue2;
+		bool wasExecuted = false;
+		provider.invokeIn(0, &keyValue1, [&wasExecuted]() {
+			wasExecuted = true;
+		});
+		provider.invokeIn(0, &keyValue2, []() {});
+		provider.removeCallbacks(&keyValue2);
+		provider.update();
+		REQUIRE(wasExecuted);
+	}
 
 }
