@@ -16,7 +16,14 @@ namespace card {
 		provider->update();
 	}
 	void threadUtils_invokeIn(int delay, std::function<void(void)> callback) {
-		provider->invokeIn(delay, callback);
+		static const int defaultKey = 0;
+		provider->invokeIn(delay, &defaultKey, callback);
+	}
+	void threadUtils_invokeIn(int delay, const void* key, std::function<void(void)> callback) {
+		provider->invokeIn(delay, key, callback);
+	}
+	void threadUtils_removeCallbacksWithKey(const void* key) {
+		provider->removeCallbacks(key);
 	}
 
 }

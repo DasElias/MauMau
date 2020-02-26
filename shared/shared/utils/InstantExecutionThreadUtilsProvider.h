@@ -9,7 +9,8 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			void update() override;
-			void invokeIn(int delay, std::function<void(void)> callback) override;
+			void invokeIn(int delay, const void* key, std::function<void(void)> callback) override;
+			void removeCallbacks(const void* key) override;
 
 	};
 }

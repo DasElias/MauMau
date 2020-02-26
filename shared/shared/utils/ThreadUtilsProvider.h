@@ -23,6 +23,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			virtual void update() =0;
-			virtual void invokeIn(int delay, std::function<void(void)> callback) =0;
+			virtual void invokeIn(int delay, const void* key, std::function<void(void)> callback) =0;
+			virtual void removeCallbacks(const void* key) =0;
 	};
 }

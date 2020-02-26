@@ -9,8 +9,8 @@ namespace card {
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
-			std::vector<Operation> pendingOperations;
-			std::vector<Operation> tempWriteBuffer;
+			std::vector<std::pair<const void*, Operation>> pendingOperations;
+			std::vector<std::pair<const void*, Operation>> tempWriteBuffer;
 			bool useTempWriteBuffer = false;
 			std::mutex invokeInMutex;
 
@@ -19,7 +19,11 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			void update() override;
-			void invokeIn(int delay, std::function<void(void)> callback) override;
+			void invokeIn(int delay, const void* key, std::function<void(void)> callback) override;
+			void removeCallbacks(const void* key) override;
+
+		private:
+			void removeCallbackImpl(std::vector<std::pair<const void*, Operation>>& vector, const void* key);
 
 	};
 }
