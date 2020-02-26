@@ -16,6 +16,7 @@
 #include "../packet/stc/TurnWasAborted_STCPacket.h"
 #include "../packet/stc/MauPunishment_STCPacket.h"
 #include "../packet/stc/PlayerHasMauedSuccessfully_STCPacket.h"
+#include "../packet/stc/InitialPlayerIsOnTurn_STCPacket.h"
 
 #define PACKET_TYPE_CASE(className) case className::PACKET_ID: \
 										{ \
@@ -43,6 +44,7 @@ namespace card {
 			PACKET_TYPE_CASE(TurnWasAborted_STCPacket)
 			PACKET_TYPE_CASE(MauPunishment_STCPacket)
 			PACKET_TYPE_CASE(PlayerHasMauedSuccessfully_STCPacket)
+			PACKET_TYPE_CASE(InitialPlayerIsOnTurn_STCPacket)
 			default:
 				log(LogSeverity::ERR, "Packet with unknown packet id (" + std::to_string(packetType) + ") received!");
 		}

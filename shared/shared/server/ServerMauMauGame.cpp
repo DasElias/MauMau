@@ -5,6 +5,7 @@
 #include "../packet/cts/DrawCardRequest_CTSPacket.h"
 #include "../packet/cts/PlayCardRequest_CTSPacket.h"
 
+#include "../packet/stc/InitialPlayerIsOnTurn_STCPacket.h"
 #include "../packet/stc/PlayerHasMauedSuccessfully_STCPacket.h"
 #include "../packet/stc/MauPunishment_STCPacket.h"
 #include "../packet/stc/TurnWasAborted_STCPacket.h"
@@ -82,22 +83,28 @@ namespace card {
 		packetTransmitter->removeListenerForClientPkt(DrawCardRequest_CTSPacket::PACKET_ID, handler_onDrawCard);
 		packetTransmitter->removeListenerForClientPkt(MauRequest_CTSPacket::PACKET_ID, handler_onMau);
 
+		// all threadUtils callbacks for this object aren't executed after the object is destroyed
+		threadUtils_removeCallbacksWithKey(this);
 
 		// turn of current player doesn't expire
 		startTurnAbortIdCounter++;
 	}
 
 	void ServerMauMauGame::setInitialPlayerOnTurn() {
-		auto newPlayerOnTurn = getRandomPlayer();
-		this->playerOnTurn = newPlayerOnTurn;
-
 		int timeUntilCardsDistributed = getDurationUntilInitialCardsAreDistributed(this->players.size(), AMOUNT_OF_HAND_CARDS);
-		threadUtils_invokeIn(timeUntilCardsDistributed, [this]() {
+		threadUtils_invokeIn(timeUntilCardsDistributed, this, [this]() {
+			auto newPlayerOnTurn = getRandomPlayer();
+			this->playerOnTurn = newPlayerOnTurn;
+
 			playerOnTurn->onStartTurn();
 			startTurnAbortTimer();
+
+			for(auto& p : players) {
+				Card nextCardOnDrawStack = (newPlayerOnTurn->getUsername() == p->getUsername()) ? drawCardStack.getLast() : Card::NULLCARD;
+				InitialPlayerIsOnTurn_STCPacket packet(newPlayerOnTurn->getUsername(), nextCardOnDrawStack.getCardNumber());
+				packetTransmitter->sendPacketToClient(packet, p->getWrappedParticipant());
+			}
 		});
-
-
 	}
 
 	void ServerMauMauGame::mau(Player& player) {
@@ -338,7 +345,7 @@ namespace card {
 		uint64_t currentTurnAbortId = ++startTurnAbortIdCounter;
 
 		int delay = MAX_TURN_DURATION + getTimeToSetNextPlayerOnTurn(playCardStack.getSize(), playCardStack.getLast(), wasCardPlayedLastTurn(), wasCardDrawnLastTurn(), roomOptions);
-		threadUtils_invokeIn(delay, [this, currentTurnAbortId]() {
+		threadUtils_invokeIn(delay, this, [this, currentTurnAbortId]() {
 
 			if(startTurnAbortIdCounter == currentTurnAbortId) {
 				// startTurnAbortTimer() was not called in meantime

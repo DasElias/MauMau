@@ -5,6 +5,7 @@
 #include <shared/packet/stc/OtherPlayerHasDrawnCards_STCPacket.h>
 #include <shared/packet/stc/OtherPlayerHasPlayedCard_STCPacket.h>
 #include <shared/packet/stc/LocalPlayerIsOnTurn_STCPacket.h>
+#include <shared/packet/stc/InitialPlayerIsOnTurn_STCPacket.h>
 
 #include <shared/model/CardAnimationDuration.h>
 
@@ -18,7 +19,8 @@ namespace card {
 			handler_onLocalPlayerIsOnTurn(std::bind(&MauMauGameAccessorFromServer::listener_onLocalPlayerIsOnTurn, this, std::placeholders::_1)),
 			handler_onTimeExpires(std::bind(&MauMauGameAccessorFromServer::listener_onTimeExpires, this, std::placeholders::_1)),
 			handler_onMauPunishment(std::bind(&MauMauGameAccessorFromServer::listener_onMauPunishment, this, std::placeholders::_1)),
-			handler_onOtherPlayerHasSuccessfullyMaued(std::bind(&MauMauGameAccessorFromServer::listener_onOtherPlayerHasSuccessfullyMaued, this, std::placeholders::_1)) {
+			handler_onOtherPlayerHasSuccessfullyMaued(std::bind(&MauMauGameAccessorFromServer::listener_onOtherPlayerHasSuccessfullyMaued, this, std::placeholders::_1)),
+			handler_initialPlayerIsOnTurn(std::bind(&MauMauGameAccessorFromServer::listener_initialPlayerIsOnTurn, this, std::placeholders::_1)) {
 	
 		packetTransmitter->addListenerForServerPkt(OtherPlayerHasDrawnCards_STCPacket::PACKET_ID, handler_onOtherPlayerHasDrawnCard);
 		packetTransmitter->addListenerForServerPkt(OtherPlayerHasPlayedCard_STCPacket::PACKET_ID, handler_onOtherPlayerHasPlayedCard);
@@ -26,6 +28,8 @@ namespace card {
 		packetTransmitter->addListenerForServerPkt(TurnWasAborted_STCPacket::PACKET_ID, handler_onTimeExpires);
 		packetTransmitter->addListenerForServerPkt(MauPunishment_STCPacket::PACKET_ID, handler_onMauPunishment);
 		packetTransmitter->addListenerForServerPkt(PlayerHasMauedSuccessfully_STCPacket::PACKET_ID, handler_onOtherPlayerHasSuccessfullyMaued);
+		packetTransmitter->addListenerForServerPkt(InitialPlayerIsOnTurn_STCPacket::PACKET_ID, handler_initialPlayerIsOnTurn);
+
 	}
 	MauMauGameAccessorFromServer::~MauMauGameAccessorFromServer() {
 		packetTransmitter->removeListenerForServerPkt(OtherPlayerHasDrawnCards_STCPacket::PACKET_ID, handler_onOtherPlayerHasDrawnCard);
@@ -34,6 +38,7 @@ namespace card {
 		packetTransmitter->removeListenerForServerPkt(TurnWasAborted_STCPacket::PACKET_ID, handler_onTimeExpires);
 		packetTransmitter->removeListenerForServerPkt(MauPunishment_STCPacket::PACKET_ID, handler_onMauPunishment);
 		packetTransmitter->removeListenerForServerPkt(PlayerHasMauedSuccessfully_STCPacket::PACKET_ID, handler_onOtherPlayerHasSuccessfullyMaued);
+		packetTransmitter->removeListenerForServerPkt(InitialPlayerIsOnTurn_STCPacket::PACKET_ID, handler_initialPlayerIsOnTurn);
 
 	}
 	void MauMauGameAccessorFromServer::playCardAndSetNextPlayerOnTurnLocal(std::string username, Card card, CardIndex newCardIndex, std::vector<Card> cardsToDraw, bool wasDrawedJustBefore) {
@@ -91,5 +96,11 @@ namespace card {
 
 		auto player = gameData.lookupPlayer(casted.getUsername());
 		gameData.onSuccessfulMau(player);
+	}
+	void MauMauGameAccessorFromServer::listener_initialPlayerIsOnTurn(Packet& p) {
+		auto& casted = dynamic_cast<InitialPlayerIsOnTurn_STCPacket&>(p);
+
+		auto player = gameData.lookupPlayer(casted.getUsername());
+		gameData.setInitialPlayerOnTurnLocal(player, Card(casted.getNextCardOnDrawStack()));
 	}
 }

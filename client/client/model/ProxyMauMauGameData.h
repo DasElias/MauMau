@@ -48,8 +48,8 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			ProxyMauMauGameData(std::vector<std::shared_ptr<ParticipantOnClient>> allParticipantsInclLocal, 
-				std::shared_ptr<ParticipantOnClient> localParticipant, std::string usernameOnTurn,
-				std::vector<int> handCards, int startCard, int nextCardOnDrawStack, RoomOptions& roomOptions,
+				std::shared_ptr<ParticipantOnClient> localParticipant,
+				std::vector<int> handCards, int startCard, RoomOptions& roomOptions,
 				std::function<void(std::shared_ptr<ProxyPlayer>)> onTurnEnd);
 			ProxyMauMauGameData(const ProxyMauMauGameData&) = delete;
 			ProxyMauMauGameData& operator=(const ProxyMauMauGameData&) = delete;
@@ -82,6 +82,7 @@ namespace card {
 			void setNextButOnePlayerOnTurnLocal();
 			std::shared_ptr<ProxyPlayer> getNextPlayer(std::shared_ptr<ProxyPlayer> playerOnTurn);
 			void setOnTurnLocal(std::shared_ptr<ProxyPlayer> player);
+			void setInitialPlayerOnTurnLocal(std::shared_ptr<ProxyPlayer> player, Card nextCardOnDrawStack);
 
 			bool isLocalPlayerOnTurn() const;
 			bool areAllPreviousCardTransactionsCompleted() const;
@@ -102,6 +103,7 @@ namespace card {
 			std::vector<std::shared_ptr<ProxyPlayer>> getOpponents();
 			void removeOpponentLocal(std::shared_ptr<ParticipantOnClient> player);
 			bool checkIfIsOpponent(std::string username) const;
+			bool checkIfIsParticipant(std::string username) const;
 			std::shared_ptr<ProxyPlayer> lookupPlayer(std::string username);
 			std::shared_ptr<ProxyPlayer> lookupOpponent(std::string username);	
 			bool hasGameEnded() const;

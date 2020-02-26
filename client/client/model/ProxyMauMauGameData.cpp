@@ -12,11 +12,12 @@
 #include <shared/utils/Logger.h>
 
 namespace card {
-	ProxyMauMauGameData::ProxyMauMauGameData(std::vector<std::shared_ptr<ParticipantOnClient>> allParticipantsInclLocal, std::shared_ptr<ParticipantOnClient> localParticipant, std::string usernameOnTurn, std::vector<int> handCards, int startCard, int nextCardOnDrawStack, RoomOptions& roomOptions, std::function<void(std::shared_ptr<ProxyPlayer>)> onTurnEnd) :
+	ProxyMauMauGameData::ProxyMauMauGameData(std::vector<std::shared_ptr<ParticipantOnClient>> allParticipantsInclLocal, std::shared_ptr<ParticipantOnClient> localParticipant, std::vector<int> handCards, int startCard, RoomOptions& roomOptions, std::function<void(std::shared_ptr<ProxyPlayer>)> onTurnEnd) :
 			drawCardStack(std::make_unique<CardStack>()),
 			playCardStack(std::make_unique<CardStack>()),
 			indexForNextCard(Card(startCard).getCardIndex()),
 			roomOptions(roomOptions),
+			userOnTurn(nullptr),
 			onTurnEndCallback(onTurnEnd) {
 
 		// initialize players
@@ -34,18 +35,7 @@ namespace card {
 		// initialize other player's hand cards and draw card stack
 		initStartCards(handCards, Card(startCard));
 
-		// initialize player on turn
-		this->userOnTurn = lookupPlayer(usernameOnTurn);
-		threadUtils_invokeIn(getDurationUntilInitialCardsAreDistributed(allPlayers.size(), handCards.size()), [this]() {
-			userOnTurn->onStartTurn();
-			field_hasInitialCardsBeenDistributed = true;
-		});
 		setLocalPlayerAtTheBeginOfPlayersVector();
-
-		// set first draw card
-		if(isLocalPlayerOnTurn() && nextCardOnDrawStack == Card::NULLCARD.getCardNumber()) throw std::runtime_error("Can't set a NULLCARD as next card on draw card stack");
-		this->drawCardForNextPlayer = Card(nextCardOnDrawStack);		
-
 	}
 
 	void ProxyMauMauGameData::initStartCards(const std::vector<int>& handCardNumbersOfLocalPlayer, Card cardOnPlayStack) {
@@ -67,7 +57,7 @@ namespace card {
 	}
 
 	bool ProxyMauMauGameData::isLocalPlayerOnTurn() const {
-		return *userOnTurn == *localPlayer;
+		return userOnTurn == localPlayer;
 	}
 
 	bool ProxyMauMauGameData::areAllPreviousCardTransactionsCompleted() const {
@@ -191,6 +181,13 @@ namespace card {
 		return false;
 	}
 
+	bool ProxyMauMauGameData::checkIfIsParticipant(std::string username) const {
+		for(auto& o : allPlayers) {
+			if(o->getUsername() == username) return true;
+		}
+		return false;
+	}
+
 	std::shared_ptr<ProxyPlayer> ProxyMauMauGameData::lookupPlayer(std::string username) {
 		for(auto& o : allPlayers) {
 			if(o->getUsername() == username) return o;
@@ -214,7 +211,6 @@ namespace card {
 	std::shared_ptr<ProxyPlayer> ProxyMauMauGameData::getWinnerOrNull() const {
 		// if there's only one player ingame, he has won the game
 		if(allPlayers.size() == 1) return allPlayers[0];
-		std::cout << allPlayers.size() << std::endl;
 
 		// if the distribution of the initial cards hasn't been finished, no player can have won 
 		if(! field_hasInitialCardsBeenDistributed) return nullptr;
@@ -327,6 +323,14 @@ namespace card {
 		threadUtils_invokeIn(delayToFreezeAnimation, [this, lastUserOnTurn]() {
 			lastUserOnTurn->freezeRemainingTimeAnimation();
 		});
+	}
+
+	void ProxyMauMauGameData::setInitialPlayerOnTurnLocal(std::shared_ptr<ProxyPlayer> player, Card nextCardOnDrawStack) {
+		this->userOnTurn = player;
+		userOnTurn->onStartTurn();
+
+		this->drawCardForNextPlayer = Card(nextCardOnDrawStack);
+		field_hasInitialCardsBeenDistributed = true;
 	}
 
 	std::optional<CardIndex> ProxyMauMauGameData::getCardIndexForNextCardOrNone() const {

@@ -18,8 +18,8 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			ProxyMauMauGame(std::shared_ptr<CTSPacketTransmitter> packetTransmitter, std::vector<std::shared_ptr<ParticipantOnClient>> allParticipantsInclLocal,
-								std::shared_ptr<ParticipantOnClient> localParticipant, std::string usernameOnTurn,
-								std::vector<int> handCards, int startCard, int nextCardOnDrawStack, RoomOptions& roomOptions);
+								std::shared_ptr<ParticipantOnClient> localParticipant, 
+								std::vector<int> handCards, int startCard, RoomOptions& roomOptions);
 			ProxyMauMauGame(const ProxyMauMauGame&) = delete;
 			ProxyMauMauGame& operator=(const ProxyMauMauGame&) = delete;
 

@@ -213,13 +213,13 @@ namespace card {
 		isWaitingForResponse_field = false;
 	}
 
-	void ProxyRoom::startGameLocal(std::vector<std::string> usernamesOfAllPlayers, std::string usernameOnTurn, std::vector<int> handCards, int startCard, int nextCardOnDrawStack) {
+	void ProxyRoom::startGameLocal(std::vector<std::string> usernamesOfAllPlayers, std::vector<int> handCards, int startCard) {
 		std::vector<std::shared_ptr<ParticipantOnClient>> opponents;
 		for(auto& username : usernamesOfAllPlayers) {
 			opponents.push_back(lookupParticipant(username));
 		}
 
-		this->game = std::make_unique<ProxyMauMauGame>(packetTransmitter, opponents, localParticipant, usernameOnTurn, handCards, startCard, nextCardOnDrawStack, options);
+		this->game = std::make_unique<ProxyMauMauGame>(packetTransmitter, opponents, localParticipant, handCards, startCard, options);
 		
 		isWaitingForResponse_field = false;
 	}
@@ -251,7 +251,7 @@ namespace card {
 		auto& casted = dynamic_cast<GameHasBeenStarted_STCPacket&>(p);
 		isWaitingForResponse_field = false;
 
-		startGameLocal(casted.getUsernamesOfAllParticipants(), casted.getUsernameOnTurn(), casted.getHandCards(), casted.getStartCard(), casted.getNextCardOnDrawStack());
+		startGameLocal(casted.getUsernamesOfAllParticipants(), casted.getHandCards(), casted.getStartCard());
 	}
 
 }

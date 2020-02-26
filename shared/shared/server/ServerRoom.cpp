@@ -190,16 +190,13 @@ namespace card {
 
 		// send packets
 		std::vector<std::string> usernameOfAllPlayers = getUsernamesOfParticipants();
-		auto playerOnTurn = game->getPlayerOnTurn();
-		std::string usernameOfPlayerOnTurn = playerOnTurn->getUsername();
 		int cardNumberOfFirstCardOnPlayStack = game->getPlayCardStack().getLast().getCardNumber();
 
 		for(auto& participant : allParticipants) {
 			auto player = game->lookupPlayerByUsername(participant->getUsername());
 			std::vector<int> handCards = player->getHandCards().getCardNumbers();
-			Card nextCardOnDrawStack = (participant->getUsername() == game->getPlayerOnTurn()->getUsername()) ? game->getDrawCardStack().getLast() : Card::NULLCARD;
 
-			GameHasBeenStarted_STCPacket packet(usernameOfAllPlayers, usernameOfPlayerOnTurn, handCards, cardNumberOfFirstCardOnPlayStack, nextCardOnDrawStack.getCardNumber());
+			GameHasBeenStarted_STCPacket packet(usernameOfAllPlayers, handCards, cardNumberOfFirstCardOnPlayStack);
 			packetTransmitter->sendPacketToClient(packet, participant);
 		}
 		return true;

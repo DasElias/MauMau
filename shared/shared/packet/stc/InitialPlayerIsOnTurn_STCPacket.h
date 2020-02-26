@@ -1,45 +1,38 @@
 #pragma once
-#include "../Packet.h"
-#include <vector>
-#include <nlohmann/json.hpp>
+#include "AbstractUsernamePacket_STCPacket.h"
 
 namespace card {
-	class GameHasBeenStarted_STCPacket : public Packet {
+	class InitialPlayerIsOnTurn_STCPacket : public AbstractUsernamePacket_STCPacket {
 		// ----------------------------------------------------------------------
 		// ----------------------------STATIC-FIELDS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			static int const PACKET_ID = 105;
+			static int const PACKET_ID = 207;
 
 		private:
-			static std::string const ALL_PARTICIPANTS_KEY;
-			static std::string const HAND_CARDS_KEY;
-			static std::string const START_CARD_KEY;
-
+			static std::string const NEXT_CARD_ON_DRAW_STCK;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
-			std::vector<std::string> allParticipants;
-			std::vector<int> handCards;
-			int startCard;
+			int nextCardOnDrawStack;
+
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			GameHasBeenStarted_STCPacket(std::vector<std::string> allParticipants, std::vector<int> handCards, int startCard);
-			GameHasBeenStarted_STCPacket(nlohmann::json& json);
+			InitialPlayerIsOnTurn_STCPacket(std::string username, int nextCardOnDrawStack);
+			InitialPlayerIsOnTurn_STCPacket(nlohmann::json& jsonHandle);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			std::vector<std::string> getUsernamesOfAllParticipants() const;
-			std::vector<int> getHandCards() const;
-			int getStartCard() const;
-			void addJsonProperties(nlohmann::json& jsonHandle) const override;
+			int getNextCardOnDrawStack() const;
 
+		protected:
+			void addJsonProperties(nlohmann::json& jsonHandle) const override;
 	};
 }

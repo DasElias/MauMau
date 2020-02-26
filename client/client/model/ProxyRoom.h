@@ -75,7 +75,7 @@ namespace card {
 			void kickOtherPlayerLocal(std::string username);
 			void changeOptionsLocal(RoomOptions options);
 			void changeRoomLeaderLocal(std::string newLeaderUsername);
-			void startGameLocal(std::vector<std::string> usernamesOfAllPlayers, std::string usernameOnTurn, std::vector<int> handCards, int startCard, int nextCardOnDrawStack);
+			void startGameLocal(std::vector<std::string> usernamesOfAllPlayers, std::vector<int> handCards, int startCard);
 
 		private:
 			void listener_onPlayerJoinsRoom(Packet& p);
