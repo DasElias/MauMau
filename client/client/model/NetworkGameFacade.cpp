@@ -13,16 +13,14 @@ namespace card {
 			room(nullptr),
 			handler_enteringRoomSuccessReport(std::bind(&NetworkGameFacade::listener_enteringRoomSuccessReport, this, std::placeholders::_1)) {
 
-		try {
-			this->conn = std::make_shared<ConnectionToServer>();
-			this->conn->start();
-
-			this->packetTransmitter = std::make_shared<ClientPacketTransmitter>(conn, errorHandler);
-			this->packetTransmitter->addListenerForServerPkt(EnteringRoomSuccessReport_STCAnswerPacket::PACKET_ID, handler_enteringRoomSuccessReport);
-		} catch(boost::system::system_error e) {
+		this->conn = std::make_shared<ConnectionToServer>();
+		this->conn->start([this](boost::system::system_error& e) {
 			setErrorMsgOnConnectionFail(e.code());
 			isWaitingForResponse_field = false;
-		}
+		});
+
+		this->packetTransmitter = std::make_shared<ClientPacketTransmitter>(conn, errorHandler);
+		this->packetTransmitter->addListenerForServerPkt(EnteringRoomSuccessReport_STCAnswerPacket::PACKET_ID, handler_enteringRoomSuccessReport);
 	}
 	NetworkGameFacade::~NetworkGameFacade() {
 		if(conn) conn->close();

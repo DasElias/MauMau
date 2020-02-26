@@ -22,11 +22,14 @@ namespace card {
 
 		
 	}
-	void ConnectionToServer::start() {
+	void ConnectionToServer::start(std::function<void(boost::system::system_error)> errorCallback) {
 		connectSocket();
-		networkThread = std::make_unique<std::thread>([this] {
+		networkThread = std::make_unique<std::thread>([this, errorCallback] {
 			try {
 				ioContext.run();
+			} catch(boost::system::system_error& e) {
+				log(LogSeverity::FATAL, "An exception (" + std::string(e.what()) + ") has happened during ioContext.run().");
+				errorCallback(e);
 			} catch(std::exception& e) {
 				log(LogSeverity::FATAL, "An exception ("+std::string(e.what())+") has happened during ioContext.run().");
 			} catch(...) {
