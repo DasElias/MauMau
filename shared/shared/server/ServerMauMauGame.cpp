@@ -456,6 +456,9 @@ namespace card {
 	const RoomOptions& ServerMauMauGame::getOptions() const {
 		return roomOptions;
 	}
+	std::size_t ServerMauMauGame::getAmountOfParticipants() const {
+		return this->players.size();
+	}
 	const CardStack& ServerMauMauGame::getPlayCardStack() const {
 		return playCardStack;
 	}

@@ -157,6 +157,7 @@ namespace card {
 			auto& game = getGame();
 			auto player = game.lookupPlayerByParticipant(participant);
 			game.removePlayer(player);
+			if(game.getAmountOfParticipants() == 1) this->game.reset();
 		};
 
 		OtherPlayerHasLeavedRoom_STCPacket packet(participant->getUsername(), wasKickedByOtherPlayer);

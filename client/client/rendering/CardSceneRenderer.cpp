@@ -380,8 +380,6 @@ namespace card {
 			orderedOpponents = {
 				opponents[0], opponents[1], opponents[2]
 			};
-		} else {
-			throw std::runtime_error("Invalid size of opponents vector.");
 		}
 		
 		return orderedOpponents;

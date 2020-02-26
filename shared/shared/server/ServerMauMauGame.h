@@ -90,6 +90,7 @@ namespace card {
 			std::shared_ptr<Player> getRandomPlayer();
 			void removePlayer(std::shared_ptr<Player> player);
 			const RoomOptions& getOptions() const;
+			std::size_t getAmountOfParticipants() const;
 
 			const CardStack& getPlayCardStack() const;
 			const CardStack& getDrawCardStack() const;

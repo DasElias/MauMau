@@ -39,8 +39,6 @@ namespace card {
 			bool field_wasCardDrawnIntoHandCards = false;
 			bool field_wasCardPlayed = false;
 
-			// is null, if game hasn't ended yet
-			std::shared_ptr<ProxyPlayer> winner;
 			bool field_hasInitialCardsBeenDistributed = false;
 
 			std::function<void(std::shared_ptr<ProxyPlayer>)> onTurnEndCallback;
@@ -108,7 +106,7 @@ namespace card {
 			std::shared_ptr<ProxyPlayer> lookupOpponent(std::string username);	
 			bool hasGameEnded() const;
 			bool hasInitialCardBeenDistributed() const;
-			std::shared_ptr<ProxyPlayer> getWinnerOrNull();
+			std::shared_ptr<ProxyPlayer> getWinnerOrNull() const;
 			const RoomOptions& getOptions() const;
 			void appendMessage(std::string content);
 			const MessageQueue getMessageQueue() const;
@@ -120,7 +118,6 @@ namespace card {
 
 			void updateCardIndex(Card playedCard, CardIndex newCardIndex);
 			void updateDirection(Card playedCard);
-			void updateGameEndFlag();
 			void throwIfGameHasEnded();
 
 			void appendMauPunishmentMessage(std::string punishedUsername, MauPunishmentCause cause);

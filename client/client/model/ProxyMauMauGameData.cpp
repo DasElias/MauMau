@@ -17,7 +17,6 @@ namespace card {
 			playCardStack(std::make_unique<CardStack>()),
 			indexForNextCard(Card(startCard).getCardIndex()),
 			roomOptions(roomOptions),
-			winner(nullptr),
 			onTurnEndCallback(onTurnEnd) {
 
 		// initialize players
@@ -101,7 +100,6 @@ namespace card {
 		player->playCardFromHandCardsAfterDelay(card, playCardStack, delay);
 		updateCardIndex(card, newCardIndex);
 		updateDirection(card);
-		updateGameEndFlag();
 	}
 	void ProxyMauMauGameData::playCardFromLocalPlayerTempCards(CardIndex newCardIndex, int delay) {
 		auto drawnCardOrNone = localPlayer->getCardInTempStack();
@@ -115,7 +113,6 @@ namespace card {
 		localPlayer->playCardFromTempCardStackLocal(playCardStack);
 		updateCardIndex(drawnCard, newCardIndex);
 		updateDirection(drawnCard);
-		updateGameEndFlag();
 	}
 	void ProxyMauMauGameData::updateCardIndex(Card playedCard, CardIndex newCardIndex) {
 		if(newCardIndex == CardIndex::NULLINDEX) {
@@ -148,14 +145,6 @@ namespace card {
 		localPlayer->drawSingleCardInTempCardStackLocal(cardToDraw, drawCardStack);
 	}
 
-	void ProxyMauMauGameData::updateGameEndFlag() {
-		for(auto& player : allPlayers) {
-			if(player->getCardStack().isEmptyAndNoPendingTransactions()) {
-				winner = player;
-				break;
-			}
-		}
-	}
 	void ProxyMauMauGameData::throwIfGameHasEnded() {
 		if(hasGameEnded()) {
 			throw std::runtime_error("Can't perform action when the game has already ended.");
@@ -191,14 +180,8 @@ namespace card {
 			appendMessage(participantUsername + u8" verlieﬂ das Spiel.");
 		}
 
-		for(std::size_t i = 0; i < opponents.size(); i++) {
-			if(opponents[i] == player) {
-				opponents.erase(opponents.begin() + i);
-				return;
-			}
-		}
-		
-		throw PlayerNotFoundException("Player \"" + player->getUsername() + "\" is not an opponent.");
+		opponents.erase(std::find(opponents.begin(), opponents.end(), player));
+		allPlayers.erase(std::find(allPlayers.begin(), allPlayers.end(), player));		
 	}
 
 	bool ProxyMauMauGameData::checkIfIsOpponent(std::string username) const {
@@ -223,13 +206,25 @@ namespace card {
 		throw PlayerNotFoundException("\"" + username + "\" is not an opponent.");
 	}
 	bool ProxyMauMauGameData::hasGameEnded() const {
-		return winner != nullptr;
+		return getWinnerOrNull() != nullptr;
 	}
 	bool ProxyMauMauGameData::hasInitialCardBeenDistributed() const {
 		return field_hasInitialCardsBeenDistributed;
 	}
-	std::shared_ptr<ProxyPlayer> ProxyMauMauGameData::getWinnerOrNull() {
-		return winner;
+	std::shared_ptr<ProxyPlayer> ProxyMauMauGameData::getWinnerOrNull() const {
+		// if there's only one player ingame, he has won the game
+		if(allPlayers.size() == 1) return allPlayers[0];
+		std::cout << allPlayers.size() << std::endl;
+
+		// if the distribution of the initial cards hasn't been finished, no player can have won 
+		if(! field_hasInitialCardsBeenDistributed) return nullptr;
+
+		for(auto& player : allPlayers) {
+			if(player->getCardStack().isEmptyAndNoPendingTransactions()) {
+				return player;
+			}
+		}
+		return nullptr;
 	}
 
 	const RoomOptions& ProxyMauMauGameData::getOptions() const {
