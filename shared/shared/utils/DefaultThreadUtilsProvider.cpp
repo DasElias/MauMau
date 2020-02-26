@@ -5,6 +5,10 @@ namespace card {
 	void DefaultThreadUtilsProvider::update() {
 		long long ms = getMilliseconds();
 
+		removeCallbacksWithKeysToRemove(pendingOperations);
+		removeCallbacksWithKeysToRemove(tempWriteBuffer);
+		keysToRemoveInNextUpdate.clear();
+
 		useTempWriteBuffer = true;
 		pendingOperations.erase(std::remove_if(pendingOperations.begin(), pendingOperations.end(), [ms](const std::pair<const void*, Operation>& operationWrapper) {
 			const auto& o = operationWrapper.second;
@@ -33,14 +37,13 @@ namespace card {
 	}
 
 	void DefaultThreadUtilsProvider::removeCallbacks(const void* key) {
-		removeCallbackImpl(pendingOperations, key);
-		removeCallbackImpl(tempWriteBuffer, key);
+		keysToRemoveInNextUpdate.push_back(key);
 	}
 
-	void DefaultThreadUtilsProvider::removeCallbackImpl(std::vector<std::pair<const void*, Operation>>& vector, const void* key) {
-		vector.erase(std::remove_if(vector.begin(), vector.end(), [key](const std::pair<const void*, Operation>& operationWrapper) {
+	void DefaultThreadUtilsProvider::removeCallbacksWithKeysToRemove(std::vector<std::pair<const void*, Operation>>& vector) {
+		vector.erase(std::remove_if(vector.begin(), vector.end(), [this](const std::pair<const void*, Operation>& operationWrapper) {
 			const void* operationKey = operationWrapper.first;
-			return key == operationKey;
+			return std::find(keysToRemoveInNextUpdate.begin(), keysToRemoveInNextUpdate.end(), operationKey) != std::end(keysToRemoveInNextUpdate);
 		}), vector.end());
 	}
 	
