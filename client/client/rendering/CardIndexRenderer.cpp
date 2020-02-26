@@ -6,6 +6,7 @@
 #include <egui/model/positioning/CenterXInParentWrapper.h>
 #include <egui/model/positioning/RelativePositioningOnScreen.h>
 #include <egui/model/nodeComponents/background/TexturedBackground.h>
+#include <res/ingame/nextCardIndex.png.h>
 
 namespace card {
 	CardIndexRenderer::CardIndexRenderer(Renderer2D& renderer2D, CardIndexTextures& cardIndexTextures) :
@@ -15,7 +16,7 @@ namespace card {
 				SimpleTextureFactory()
 				.setMagFilter(TextureMagFilter::NEAREST)
 				.setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR)
-				.loadFromFile(getApplicationFolder() + "\\resources\\nextCardIndex.png")
+				.loadFromMemory(tex_nextCardIndex, tex_nextCardIndex_size)
 			){
 
 		parentElement = std::make_shared<egui::VBox>();
