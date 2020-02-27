@@ -48,6 +48,7 @@ namespace card {
 	}
 	void GameEndRenderer::startAnimation() {
 		field_isAnimationActive = true;
+		particleManager.getList().clear();
 
 		element->startAnimation();
 

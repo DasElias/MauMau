@@ -45,7 +45,8 @@ namespace card {
             iterator end();
             const_iterator end() const;
             const_iterator cend() const;
-
+            
+            void clear();
         private:
             void removeParticleTexturesWithNoParticles();
            

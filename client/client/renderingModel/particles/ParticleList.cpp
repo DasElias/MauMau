@@ -65,4 +65,7 @@ namespace card {
 	ParticleList::const_iterator ParticleList::cend() const {
 		return particles.cend();
 	}
+	void ParticleList::clear() {
+		particles.clear();
+	}
 }
