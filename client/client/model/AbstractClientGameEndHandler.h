@@ -1,19 +1,21 @@
 #pragma once
-#include "NetworkGameFacade.h"
-#include <shared/model/RoomCode.h>
 
 namespace card {
-	class JoinRoomNetworkGameFacade : public NetworkGameFacade {
+	class AbstractClientGameEndHandler {
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
+		protected:
+			AbstractClientGameEndHandler() = default;
+
 		public:
-			JoinRoomNetworkGameFacade(NetworkErrorHandler& errorHandler, std::unique_ptr<AbstractRoomLeaveHandler> roomLeaveHandler, std::unique_ptr<AbstractClientGameEndHandler> gameEndHandler, std::string username, Avatar avatar, RoomCode roomCode);
+			virtual ~AbstractClientGameEndHandler() = default;
+
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
-		private:
-			void sendRequest(std::string username, Avatar avatar, RoomCode roomCode);
+		public:
+			virtual void onGameEnd() =0;
 	};
 }

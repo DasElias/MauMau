@@ -12,7 +12,8 @@ namespace card {
 			projectionMatrix(45, 1, 100),
 			viewport({0, 0.2f, 7.0f}, {-0.5f, 0, 0}),
 			eguiRenderer(eguiRenderer),
-			sceneRenderer(projectionMatrix, viewport, avatarTextures, eguiRenderer) {
+			sceneRenderer(projectionMatrix, viewport, avatarTextures, eguiRenderer),
+			unixTimeGameHasEnded(GAME_HASNT_ENDED) {
 	}
 
 	std::string vec3ToString(glm::vec3 vec) {
@@ -20,6 +21,16 @@ namespace card {
 	}
 
 	void IngameState::updateAndRender(float delta) {
+		// change state if game has ended
+		auto& gameFacade = getStateMananger().getGameFacade();
+		auto& game = gameFacade->getGame();
+		if(game.hasGameEnded() && unixTimeGameHasEnded != GAME_HASNT_ENDED) {
+			unixTimeGameHasEnded = getMilliseconds();
+		}
+		if(unixTimeGameHasEnded + 5000 < getMilliseconds()) {
+
+		}
+
 		// render game scene
 		if(egui::getInputHandler().isKeyDown(KEY_1)) {
 			viewport.setPosition(viewport.getPosition() + glm::vec3(0, 0, 0.05f));
@@ -54,6 +65,7 @@ namespace card {
 		auto& gameFacade = getStateMananger().getGameFacade();
 		auto& game = gameFacade->getGame();
 		sceneRenderer.onSceneEnter(game);
+		unixTimeGameHasEnded = GAME_HASNT_ENDED;
 	}
 
 	void IngameState::onStateExit() {

@@ -12,13 +12,14 @@
 #include <shared/utils/Logger.h>
 
 namespace card {
-	ProxyMauMauGameData::ProxyMauMauGameData(std::vector<std::shared_ptr<ParticipantOnClient>> allParticipantsInclLocal, std::shared_ptr<ParticipantOnClient> localParticipant, std::vector<int> handCards, int startCard, RoomOptions& roomOptions, std::function<void(std::shared_ptr<ProxyPlayer>)> onTurnEnd) :
+	ProxyMauMauGameData::ProxyMauMauGameData(std::vector<std::shared_ptr<ParticipantOnClient>> allParticipantsInclLocal, std::shared_ptr<ParticipantOnClient> localParticipant, std::vector<int> handCards, int startCard, RoomOptions& roomOptions, AbstractClientGameEndHandler& gameEndHandler, std::function<void(std::shared_ptr<ProxyPlayer>)> onTurnEnd) :
 			drawCardStack(std::make_unique<CardStack>()),
 			playCardStack(std::make_unique<CardStack>()),
 			indexForNextCard(Card(startCard).getCardIndex()),
 			roomOptions(roomOptions),
 			userOnTurn(nullptr),
-			onTurnEndCallback(onTurnEnd) {
+			onTurnEndCallback(onTurnEnd),
+			gameEndHandler(gameEndHandler) {
 
 		// initialize players
 		for(auto& o : allParticipantsInclLocal) {
@@ -36,6 +37,10 @@ namespace card {
 		initStartCards(handCards, Card(startCard));
 
 		setLocalPlayerAtTheBeginOfPlayersVector();
+	}
+
+	ProxyMauMauGameData::~ProxyMauMauGameData() {
+		threadUtils_removeCallbacksWithKey(this);
 	}
 
 	void ProxyMauMauGameData::initStartCards(const std::vector<int>& handCardNumbersOfLocalPlayer, Card cardOnPlayStack) {
@@ -90,6 +95,7 @@ namespace card {
 		player->playCardFromHandCardsAfterDelay(card, playCardStack, delay);
 		updateCardIndex(card, newCardIndex);
 		updateDirection(card);
+		tryCallGameEndCallback();
 	}
 	void ProxyMauMauGameData::playCardFromLocalPlayerTempCards(CardIndex newCardIndex, int delay) {
 		auto drawnCardOrNone = localPlayer->getCardInTempStack();
@@ -103,6 +109,14 @@ namespace card {
 		localPlayer->playCardFromTempCardStackLocal(playCardStack);
 		updateCardIndex(drawnCard, newCardIndex);
 		updateDirection(drawnCard);
+		tryCallGameEndCallback();
+	}
+	void ProxyMauMauGameData::tryCallGameEndCallback() {
+		if(hasGameEnded()) {
+			threadUtils_invokeIn(GAME_END_DELAY, this, [this]() {
+				gameEndHandler.onGameEnd();
+			});
+		}
 	}
 	void ProxyMauMauGameData::updateCardIndex(Card playedCard, CardIndex newCardIndex) {
 		if(newCardIndex == CardIndex::NULLINDEX) {
@@ -171,7 +185,8 @@ namespace card {
 		}
 
 		opponents.erase(std::find(opponents.begin(), opponents.end(), player));
-		allPlayers.erase(std::find(allPlayers.begin(), allPlayers.end(), player));		
+		allPlayers.erase(std::find(allPlayers.begin(), allPlayers.end(), player));	
+		tryCallGameEndCallback();
 	}
 
 	bool ProxyMauMauGameData::checkIfIsOpponent(std::string username) const {

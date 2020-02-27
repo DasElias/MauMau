@@ -4,11 +4,12 @@
 #include <shared/utils/Logger.h>
 
 namespace card {
-	NetworkGameFacade::NetworkGameFacade(NetworkErrorHandler& errorHandler, std::unique_ptr<AbstractRoomLeaveHandler> gameEndHandler, std::string username, Avatar avatar) :
+	NetworkGameFacade::NetworkGameFacade(NetworkErrorHandler& errorHandler, std::unique_ptr<AbstractRoomLeaveHandler> roomLeaveHandler, std::unique_ptr<AbstractClientGameEndHandler> gameEndHandler, std::string username, Avatar avatar) :
 			avatar(avatar),
 			isWaitingForResponse_field(true),
 			errorMsgInPlainText(std::nullopt),
 			usernameOfLocalPlayer(username),
+			roomLeaveHandler(std::move(roomLeaveHandler)),
 			gameEndHandler(std::move(gameEndHandler)),
 			room(nullptr),
 			handler_enteringRoomSuccessReport(std::bind(&NetworkGameFacade::listener_enteringRoomSuccessReport, this, std::placeholders::_1)) {
@@ -63,7 +64,7 @@ namespace card {
 
 		auto& casted = dynamic_cast<EnteringRoomSuccessReport_STCAnswerPacket&>(p);
 		if(casted.getStatusCode() == EnteringRoomSuccessReport_STCAnswerPacket::SUCCESS_STATUS) {
-			room = std::make_unique<ProxyRoom>(packetTransmitter, *gameEndHandler, casted.getRoomCode(), casted.getUsernamesOfOtherParticipants(), casted.getAvatarsOfOtherParticipants(), casted.areOtherParticipantsAiPlayers(),usernameOfLocalPlayer, avatar, casted.getRoomLeader(), casted.getOptions());
+			room = std::make_unique<ProxyRoom>(packetTransmitter, *roomLeaveHandler, *gameEndHandler, casted.getRoomCode(), casted.getUsernamesOfOtherParticipants(), casted.getAvatarsOfOtherParticipants(), casted.areOtherParticipantsAiPlayers(),usernameOfLocalPlayer, avatar, casted.getRoomLeader(), casted.getOptions());
 		} else {
 			setErrorMsgForSuccessReport(casted.getStatusCode());
 		}

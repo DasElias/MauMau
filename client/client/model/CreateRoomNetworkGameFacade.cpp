@@ -2,8 +2,8 @@
 #include <shared/packet/cts/RoomCreationRequest_CTSPacket.h>
 
 namespace card {
-	CreateRoomNetworkGameFacade::CreateRoomNetworkGameFacade(NetworkErrorHandler& errorHandler, std::unique_ptr<AbstractRoomLeaveHandler> gameEndHandler, std::string username, Avatar avatar, RoomOptions roomOptions) :
-			NetworkGameFacade(errorHandler, std::move(gameEndHandler), username, avatar) {
+	CreateRoomNetworkGameFacade::CreateRoomNetworkGameFacade(NetworkErrorHandler& errorHandler, std::unique_ptr<AbstractRoomLeaveHandler> roomLeaveHandler, std::unique_ptr<AbstractClientGameEndHandler> gameEndHandler, std::string username, Avatar avatar, RoomOptions roomOptions) :
+			NetworkGameFacade(errorHandler, std::move(roomLeaveHandler), std::move(gameEndHandler), username, avatar) {
 
 		if(! hasErrorOccuredOnEstablishingConnection()) sendRequest(username, avatar, roomOptions);
 	}

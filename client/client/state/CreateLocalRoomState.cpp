@@ -3,6 +3,7 @@
 #include <egui/model/popups/PopupErrorBox.h>
 #include <shared/model/MaxParticipants.h>
 #include "RoomLeaveHandlerImpl.h"
+#include "LocalGameEndHandler.h"
 
 namespace card {
 	int const CreateLocalRoomState::MAX_OPPONENTS = MAX_PARTICIPANTS - 1;
@@ -29,7 +30,7 @@ namespace card {
 				Avatar avatar = element->getSelectedAvatar();
 				RoomOptions options = element->getOptions();
 
-				auto gameFacade = std::make_shared<LocalGameFacade>(username, amountOfOpponents, avatar, options, std::make_unique<RoomLeaveHandlerImpl>(stateManager));
+				auto gameFacade = std::make_shared<LocalGameFacade>(username, amountOfOpponents, avatar, options, std::make_unique<RoomLeaveHandlerImpl>(stateManager), std::make_unique<LocalGameEndHandler>(stateManager));
 				stateManager.setGameFacade(gameFacade);
 				gameFacade->getRoom().requestGameStart();
 				stateManager.changeState("IngameState");
