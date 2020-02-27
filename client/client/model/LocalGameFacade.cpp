@@ -7,7 +7,7 @@ namespace card {
 			roomLeaveHandler(std::move(roomLeaveHandler)),
 			gameEndHandler(std::move(gameEndHandler)),
 			server(packetTransmitter, amountOfOpponents, localParticipantOnServer, options),
-			room(packetTransmitter, *roomLeaveHandler, *gameEndHandler, 0, server.getOpponentUsernames(), server.getOpponentAvatars(), std::vector<bool>(amountOfOpponents, true), username, avatar, username, options) {
+			room(packetTransmitter, *(this->roomLeaveHandler), *(this->gameEndHandler), 0, server.getOpponentUsernames(), server.getOpponentAvatars(), std::vector<bool>(amountOfOpponents, true), username, avatar, username, options) {
 	}
 
 	bool LocalGameFacade::isGameRunning() const {
