@@ -11,7 +11,7 @@ namespace card {
 		overlayElement->fitToParentElement();
 		overlayElement->setConsumeAllMouseEvents(true);
 
-		backButton = std::make_shared<ColoredButton>(ColoredButtonType::RED, u8"Änderungen übernehmen");
+		backButton = std::make_shared<ColoredButton>(ColoredButtonType::RED, u8"Zurück");
 		addChildElement(backButton);
 		backButton->setOwnPositioning(
 			std::make_shared<egui::CenterXInParentWrapper>(
