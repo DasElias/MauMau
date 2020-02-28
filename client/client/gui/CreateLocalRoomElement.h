@@ -1,6 +1,7 @@
 #pragma once
 #include "BasicRoomCreationElement.h"
 #include "LabeledInputField.h"
+#include "LabeledIntegerSelector.h"
 #include "AvatarChooser.h"
 #include "EditOptionsElement.h"
 
@@ -13,7 +14,7 @@ namespace card {
 			std::shared_ptr<AvatarChooser> avatarChooser;
 			std::shared_ptr<EditOptionsElement> optionsElement;
 			std::shared_ptr<LabeledInputField> usernameInputField;
-			std::shared_ptr<LabeledInputField> amountOfOpponentsInputField;
+			std::shared_ptr<LabeledIntegerSelector> amountOfOpponentsInputField;
 
 			RoomOptions options;
 
@@ -28,7 +29,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			std::string getUsernameInput() const;
-			std::string getAmountOfOpponentsInput() const;
+			int getAmountOfOpponents() const;
 			Avatar getSelectedAvatar() const;
 			RoomOptions getOptions() const;
 	};

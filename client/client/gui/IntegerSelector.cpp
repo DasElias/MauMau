@@ -14,9 +14,7 @@
 #include <res/integerSelector/topTriangleHover.png.h>
 
 namespace card {
-	float const IntegerSelector::BUTTONS_WIDTH = 0.25f;
-
-	IntegerSelector::IntegerSelector(int value, int minValue, int maxValue) :
+	IntegerSelector::IntegerSelector(int value, int minValue, int maxValue, bool renderButtonsVertically) :
 			HBox(),
 			value(value),
 			minValue(minValue),
@@ -27,17 +25,16 @@ namespace card {
 		if(value > maxValue) throw std::logic_error("value mustn't be greater than maxValue");
 	
 
-		init();
+		init(renderButtonsVertically);
 		updateText();
 	}
-	void IntegerSelector::init() {
+	void IntegerSelector::init(bool renderButtonsVertically) {
 		using namespace egui;
 
 		// apply theme
 		ThemeManager::getInstance().apply(this);
 
 		setPreferredDimension({1, RelativityMode::RELATIVE_IN_PARENT}, {0.065f, RelativityMode::RELATIVE_ON_SCREEN});
-		setSpaceBetweenElements({10, egui::RelativityMode::ABSOLUTE_VALUE});
 		label = std::make_shared<egui::Label>();
 		addChildElement(label);
 		label->setPreferredWidth({1, egui::RelativityMode::RELATIVE_IN_PARENT});
@@ -46,33 +43,43 @@ namespace card {
 		label->getTextComponent()->setColor(Color(1, 1, 1));
 		label->getTextComponent()->setVerticalAlignment(Text::VerticalAlignment::MIDDLE);
 		label->getTextComponent()->setHorizontalAlignment(Text::HorizontalAlignment::CENTER);
-
 		label->setBackground(std::make_shared<ColoredBackground>(Color()));
 		int const BORDER_WIDTH = 2;
 		label->setBorder(std::make_shared<Border>(Color(0.627f, 0.627f, 0.627f), SOLID, BORDER_WIDTH));
 
-		auto buttonBox = std::make_shared<egui::HBox>();
-		buttonBox->setSpaceBetweenElements({2, egui::RelativityMode::ABSOLUTE_VALUE});
-		buttonBox->setPreferredWidth({2 * BUTTONS_WIDTH, egui::RelativityMode::RELATIVE_IN_PARENT});
-		buttonBox->setXTranslation(BORDER_WIDTH / 2);
-		buttonBox->setYTranslation(BORDER_WIDTH / 2);
-		addChildElement(buttonBox);
-		createBtn(
-			incrementButton, 
-			egui::Image::loadFromMemory(tex_integerSelector_topTriangle, tex_integerSelector_topTriangle_size), 
-			egui::Image::loadFromMemory(tex_integerSelector_topTriangleHover, tex_integerSelector_topTriangleHover_size),
-			egui::Image::loadFromMemory(tex_integerSelector_topTriangleClick, tex_integerSelector_topTriangleClick_size)
-		);
-		buttonBox->addChildElement(incrementButton);
-		incrementButton->setPreferredDimension({0.5, egui::RelativityMode::RELATIVE_IN_PARENT}, {{1, egui::RelativityMode::RELATIVE_IN_PARENT}, {-BORDER_WIDTH/2, egui::RelativityMode::ABSOLUTE_VALUE}});
-		createBtn(
-			decrementButton,
-			egui::Image::loadFromMemory(tex_integerSelector_bottomTriangle, tex_integerSelector_bottomTriangle_size),
-			egui::Image::loadFromMemory(tex_integerSelector_bottomTriangleHover, tex_integerSelector_bottomTriangleHover_size),
-			egui::Image::loadFromMemory(tex_integerSelector_bottomTriangleClick, tex_integerSelector_bottomTriangleClick_size)
-		);
-		buttonBox->addChildElement(decrementButton);
-		decrementButton->setPreferredDimension({0.5, egui::RelativityMode::RELATIVE_IN_PARENT}, {{1, egui::RelativityMode::RELATIVE_IN_PARENT}, {-BORDER_WIDTH/2, egui::RelativityMode::ABSOLUTE_VALUE}});
+		createBtn(incrementButton);
+		createBtn(decrementButton);
+
+		if(renderButtonsVertically) {
+			float const BUTTONS_WIDTH = 0.05f;
+			setSpaceBetweenElements({5, egui::RelativityMode::ABSOLUTE_VALUE});
+
+			auto buttonBox = std::make_shared<egui::VBox>();
+			addChildElement(buttonBox);
+			buttonBox->addChildElement(incrementButton);
+			buttonBox->addChildElement(decrementButton);
+			buttonBox->setPreferredWidth({{BUTTONS_WIDTH, egui::RelativityMode::RELATIVE_IN_PARENT}, {-BORDER_WIDTH/2, egui::RelativityMode::ABSOLUTE_VALUE}});
+			buttonBox->setXTranslation(BORDER_WIDTH/2);
+			incrementButton->setPreferredDimension({1, egui::RelativityMode::RELATIVE_IN_PARENT}, {0.5f, egui::RelativityMode::RELATIVE_IN_PARENT});
+			decrementButton->setPreferredDimension({1, egui::RelativityMode::RELATIVE_IN_PARENT}, {0.5f, egui::RelativityMode::RELATIVE_IN_PARENT});
+		} else {
+			float const BUTTONS_WIDTH = 0.25f;
+			setSpaceBetweenElements({10, egui::RelativityMode::ABSOLUTE_VALUE});
+
+			auto buttonBox = std::make_shared<egui::HBox>();
+			addChildElement(buttonBox);
+			buttonBox->addChildElement(incrementButton);
+			buttonBox->addChildElement(decrementButton);
+			buttonBox->setPreferredWidth({2 * BUTTONS_WIDTH, egui::RelativityMode::RELATIVE_IN_PARENT});
+
+			buttonBox->setSpaceBetweenElements({2, egui::RelativityMode::ABSOLUTE_VALUE});
+			buttonBox->setMaxWidth({35, egui::RelativityMode::ABSOLUTE_VALUE});
+			buttonBox->setXTranslation(BORDER_WIDTH / 2);
+			buttonBox->setYTranslation(BORDER_WIDTH / 2);
+			incrementButton->setPreferredDimension({0.5, egui::RelativityMode::RELATIVE_IN_PARENT}, {{1, egui::RelativityMode::RELATIVE_IN_PARENT}, {-BORDER_WIDTH / 2, egui::RelativityMode::ABSOLUTE_VALUE}});
+			decrementButton->setPreferredDimension({0.5, egui::RelativityMode::RELATIVE_IN_PARENT}, {{1, egui::RelativityMode::RELATIVE_IN_PARENT}, {-BORDER_WIDTH / 2, egui::RelativityMode::ABSOLUTE_VALUE}});
+
+		}
 
 		incrementButton->getMouseClickedEventManager().addEventHandler({[this](egui::MouseEvent&) {
 			this->increment();
@@ -80,7 +87,14 @@ namespace card {
 		decrementButton->getMouseClickedEventManager().addEventHandler({[this](egui::MouseEvent&) {
 			this->decrement();
 		}});
+		incrementButton->setBackground(std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_integerSelector_topTriangle, tex_integerSelector_topTriangle_size)));
+		incrementButton->setHoveredBackground(std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_integerSelector_topTriangleHover, tex_integerSelector_topTriangleHover_size)), egui::RenderMode::RENDER_EXCLUSIVELY);
+		incrementButton->setPressedBackground(std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_integerSelector_topTriangleClick, tex_integerSelector_topTriangleClick_size)), egui::RenderMode::RENDER_EXCLUSIVELY);
+		decrementButton->setBackground(std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_integerSelector_bottomTriangle, tex_integerSelector_bottomTriangle_size)));
+		decrementButton->setHoveredBackground(std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_integerSelector_bottomTriangleHover, tex_integerSelector_bottomTriangleHover_size)), egui::RenderMode::RENDER_EXCLUSIVELY);
+		decrementButton->setPressedBackground(std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_integerSelector_bottomTriangleClick, tex_integerSelector_bottomTriangleClick_size)), egui::RenderMode::RENDER_EXCLUSIVELY);
 	}
+
 	void IntegerSelector::updateText() {
 		label->setText(std::to_string(value));
 	}
@@ -113,12 +127,8 @@ namespace card {
 	void IntegerSelector::setFontSize(float fontSize, bool isRelative) const {
 		label->getTextComponent()->setFontSize(fontSize, isRelative);
 	}
-	void IntegerSelector::createBtn(std::shared_ptr<egui::Button>& button, std::shared_ptr<egui::Image> bgImage, std::shared_ptr<egui::Image> hoverImage, std::shared_ptr<egui::Image> clickImage) {
+	void IntegerSelector::createBtn(std::shared_ptr<egui::Button>& button) {
 		button = std::make_shared<egui::Button>();
-		button->setBackground(std::make_shared<egui::ColoredBackground>(egui::Color(1)));
-		if(bgImage) button->setBackground(std::make_shared<egui::TexturedBackground>(bgImage));
-		button->setHoveredBackground(std::make_shared<egui::TexturedBackground>(hoverImage), egui::RenderMode::RENDER_EXCLUSIVELY);
-		button->setPressedBackground(std::make_shared<egui::TexturedBackground>(clickImage), egui::RenderMode::RENDER_EXCLUSIVELY);
 		button->setBorder(nullptr);
 		button->setRadius(0, false);
 	}

@@ -9,12 +9,6 @@
 namespace card {
 	class IntegerSelector : public egui::HBox {
 		// ----------------------------------------------------------------------
-		// ----------------------------STATIC-FIELDS-----------------------------
-		// ----------------------------------------------------------------------
-		private:
-			static float const BUTTONS_WIDTH;
-
-		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
@@ -30,7 +24,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			IntegerSelector(int value = 0, int minValue = std::numeric_limits<int>::min(), int maxValue = std::numeric_limits<int>::max());
+			IntegerSelector(int value = 0, int minValue = std::numeric_limits<int>::min(), int maxValue = std::numeric_limits<int>::max(), bool renderButtonsVertically = true);
 
 		// ----------------------------------------------------------------------
 		// ---------------------------STATIC-METHODS-----------------------------
@@ -51,8 +45,8 @@ namespace card {
 			void setFontSize(float fontSize, bool isRelative) const;
 
 		private:
-			void init();
+			void init(bool renderButtonsVertically);
 			void updateText();
-			void createBtn(std::shared_ptr<egui::Button>& button, std::shared_ptr<egui::Image> bgImage, std::shared_ptr<egui::Image> hoverImage, std::shared_ptr<egui::Image> clickImage);
+			void createBtn(std::shared_ptr<egui::Button>& button);
 	};
 }

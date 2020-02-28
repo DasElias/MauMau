@@ -26,7 +26,7 @@ namespace card {
 			} else {
 				// we have verified the input before
 				std::string username = element->getUsernameInput();
-				int amountOfOpponents = std::stoi(element->getAmountOfOpponentsInput());
+				int amountOfOpponents = element->getAmountOfOpponents();
 				Avatar avatar = element->getSelectedAvatar();
 				RoomOptions options = element->getOptions();
 
@@ -48,16 +48,10 @@ namespace card {
 	}
 	std::optional<std::string> CreateLocalRoomState::getErrorMessage() {
 		std::string usernameInput = element->getUsernameInput();
-		std::string amountOfOpponentsInput = element->getAmountOfOpponentsInput();
 
 		if(usernameInput.size() > FIELDS_MAX_LENGTH) return "Dein Nutzername darf maximal " + std::to_string(FIELDS_MAX_LENGTH) + " Zeichen lang sein.";
 		if(usernameInput.size() == 0) return "Dein Nutzername darf nicht nicht leer sein.";
-		if(amountOfOpponentsInput.size() > 1) return "Die maximale Anzahl an Gegnern beträgt " + std::to_string(MAX_OPPONENTS) + ".";
-		if(amountOfOpponentsInput.size() == 0) return "Bitte gib die Anzahl Gegner an, gegen die du spielen möchtest.";
-		int amountOfOpponents = std::stoi(amountOfOpponentsInput);
 
-		if(amountOfOpponents > MAX_OPPONENTS) return "Die maximale Anzahl an Gegnern beträgt " + std::to_string(MAX_OPPONENTS) + ".";
-		if(amountOfOpponents == 0) return "Du musst gegen mindestens einen Gegner spielen.";
 		return std::nullopt;
 	}
 }

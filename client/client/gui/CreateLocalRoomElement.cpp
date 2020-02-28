@@ -21,8 +21,7 @@ namespace card {
 		});
 		contentBox->addChildElement(usernameInputField);
 		
-		amountOfOpponentsInputField = std::make_shared<LabeledInputField>("Anzahl Gegner", egui::Color(1.0f, 1.0f, 1.0f));
-		amountOfOpponentsInputField->getInputFieldImpl()->setCharFilterToNumericWithMaxLength(maxFieldLength);
+		amountOfOpponentsInputField = std::make_shared<LabeledIntegerSelector>("Anzahl Gegner", 1, 1, 3, egui::Color(1.0f, 1.0f, 1.0f));
 		contentBox->addChildElement(amountOfOpponentsInputField);
 
 		optionsElement = std::make_shared<EditOptionsElement>();
@@ -46,8 +45,8 @@ namespace card {
 		return usernameInputField->getText();
 	}
 
-	std::string CreateLocalRoomElement::getAmountOfOpponentsInput() const {
-		return amountOfOpponentsInputField->getText();
+	int CreateLocalRoomElement::getAmountOfOpponents() const {
+		return amountOfOpponentsInputField->getValue();
 	}
 
 	Avatar CreateLocalRoomElement::getSelectedAvatar() const {

@@ -12,7 +12,7 @@ namespace card {
 		addChildElement(label);
 		label->setPreferredWidth({{1, egui::RelativityMode::RELATIVE_IN_PARENT}, {-SLIDER_WIDTH_PX, egui::RelativityMode::ABSOLUTE_VALUE}});
 
-		selector = std::make_shared<IntegerSelector>(defaultValue, minValue, maxValue);
+		selector = std::make_shared<IntegerSelector>(defaultValue, minValue, maxValue, false);
 		selector->setFontSize(0.75f, true);
 		addChildElement(selector);
 		selector->setPreferredWidth({SLIDER_WIDTH_PX, egui::RelativityMode::ABSOLUTE_VALUE});
