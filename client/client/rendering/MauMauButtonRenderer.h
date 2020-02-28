@@ -16,7 +16,8 @@ namespace card {
         // ----------------------------------------------------------------------
         private:
             egui::MasterRenderer& eguiRenderer;
-            std::shared_ptr<egui::AspectRatioElement> mauMauButton;
+            std::shared_ptr<egui::AspectRatioElement> mauMauButtonBgElement;
+            std::shared_ptr<egui::AspectRatioElement> mauMauButtonClickable;
             egui::Scene scene;
 
         // ----------------------------------------------------------------------
