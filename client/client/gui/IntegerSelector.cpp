@@ -26,7 +26,7 @@ namespace card {
 	
 
 		init(renderButtonsVertically);
-		updateText();
+		update();
 	}
 	void IntegerSelector::init(bool renderButtonsVertically) {
 		using namespace egui;
@@ -90,13 +90,19 @@ namespace card {
 		incrementButton->setBackground(std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_integerSelector_topTriangle, tex_integerSelector_topTriangle_size)));
 		incrementButton->setHoveredBackground(std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_integerSelector_topTriangleHover, tex_integerSelector_topTriangleHover_size)), egui::RenderMode::RENDER_EXCLUSIVELY);
 		incrementButton->setPressedBackground(std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_integerSelector_topTriangleClick, tex_integerSelector_topTriangleClick_size)), egui::RenderMode::RENDER_EXCLUSIVELY);
+		incrementButton->setDisabledBackground(std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_integerSelector_topTriangle, tex_integerSelector_topTriangle_size), 0.85f), egui::RenderMode::RENDER_EXCLUSIVELY);
 		decrementButton->setBackground(std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_integerSelector_bottomTriangle, tex_integerSelector_bottomTriangle_size)));
 		decrementButton->setHoveredBackground(std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_integerSelector_bottomTriangleHover, tex_integerSelector_bottomTriangleHover_size)), egui::RenderMode::RENDER_EXCLUSIVELY);
 		decrementButton->setPressedBackground(std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_integerSelector_bottomTriangleClick, tex_integerSelector_bottomTriangleClick_size)), egui::RenderMode::RENDER_EXCLUSIVELY);
+		decrementButton->setDisabledBackground(std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_integerSelector_bottomTriangle, tex_integerSelector_bottomTriangle_size), 0.85f), egui::RenderMode::RENDER_EXCLUSIVELY);
+
+
 	}
 
-	void IntegerSelector::updateText() {
+	void IntegerSelector::update() {
 		label->setText(std::to_string(value));
+		incrementButton->setDisabled(value == maxValue);
+		decrementButton->setDisabled(value == minValue);
 	}
 	std::string IntegerSelector::getClassName_static() {
 		return "EGUI_IntegerSelector";
@@ -104,13 +110,13 @@ namespace card {
 	bool IntegerSelector::increment() {
 		if(value == maxValue) return false;
 		value++;
-		updateText();
+		update();
 		return true;
 	}
 	bool IntegerSelector::decrement() {
 		if(value == minValue) return false;
 		value--;
-		updateText();
+		update();
 		return true;
 	}
 	std::string IntegerSelector::getClassName() const {
@@ -122,7 +128,7 @@ namespace card {
 	void IntegerSelector::setValue(int newValue) {
 		if(newValue < minValue || newValue > maxValue) throw std::logic_error("Value must been between minVlaue and maxValue");
 		this->value = newValue;
-		updateText();
+		update();
 	}
 	void IntegerSelector::setFontSize(float fontSize, bool isRelative) const {
 		label->getTextComponent()->setFontSize(fontSize, isRelative);

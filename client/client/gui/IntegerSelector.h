@@ -46,7 +46,7 @@ namespace card {
 
 		private:
 			void init(bool renderButtonsVertically);
-			void updateText();
+			void update();
 			void createBtn(std::shared_ptr<egui::Button>& button);
 	};
 }
