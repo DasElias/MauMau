@@ -71,5 +71,9 @@ namespace card {
 		assert(options.getAmountOfOptions() == 9);
 		return options;
 	}
+
+	void BasicOptionsElement::disableIntegerOptions(bool disabledState) {
+		amountOfStartCards_option->setDisabled(disabledState);
+	}
 	
 }

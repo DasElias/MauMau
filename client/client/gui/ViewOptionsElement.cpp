@@ -10,6 +10,7 @@ namespace card {
 		addChildElement(overlayElement);
 		overlayElement->fitToParentElement();
 		overlayElement->setConsumeAllMouseEvents(true);
+		disableIntegerOptions(true);
 
 		backButton = std::make_shared<ColoredButton>(ColoredButtonType::RED, u8"Zurück");
 		addChildElement(backButton);

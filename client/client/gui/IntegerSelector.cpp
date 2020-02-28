@@ -1,4 +1,5 @@
 #include "IntegerSelector.h"
+#include "IntegerSelector.h"
 #include <stdexcept>
 #include <egui/model/positioning/RelativePositioningInParent.h>
 #include <egui/model/positioning/ValuedPositioningInParent.h>
@@ -132,6 +133,11 @@ namespace card {
 	}
 	void IntegerSelector::setFontSize(float fontSize, bool isRelative) const {
 		label->getTextComponent()->setFontSize(fontSize, isRelative);
+	}
+	void IntegerSelector::impl_setDisabled(bool isDisabled) {
+		HBox::impl_setDisabled(isDisabled);
+		incrementButton->setVisible(! isDisabled);
+		decrementButton->setVisible(! isDisabled);
 	}
 	void IntegerSelector::createBtn(std::shared_ptr<egui::Button>& button) {
 		button = std::make_shared<egui::Button>();

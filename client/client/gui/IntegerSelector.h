@@ -43,7 +43,7 @@ namespace card {
 			void setValue(int value);
 
 			void setFontSize(float fontSize, bool isRelative) const;
-
+			void impl_setDisabled(bool isDisabled) override;
 		private:
 			void init(bool renderButtonsVertically);
 			void update();

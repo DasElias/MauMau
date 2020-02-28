@@ -34,6 +34,9 @@ namespace card {
             void loadOptions(RoomOptions& roomOptions);
             RoomOptions getOptions();
 
+        protected:
+            void disableIntegerOptions(bool isDisabled);
+
         private:
             void addStandaloneOption(std::shared_ptr<BoolOptionElement> o);
             void addOptionGroup(std::shared_ptr<BoolOptionElement> rootOption, std::initializer_list<std::shared_ptr<BoolOptionElement>> children);
