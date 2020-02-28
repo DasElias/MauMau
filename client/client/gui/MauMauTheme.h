@@ -24,5 +24,7 @@ namespace egui {
 			std::function<void(Node* const)> button_coloredButton_apply();
 			std::function<void(Node* const)> button_keySelectButton_apply();
 			std::function<void(Node* const)> inputField_apply();
+			std::function<void(Node* const)> integerSelector_apply();
+
 	};
 }

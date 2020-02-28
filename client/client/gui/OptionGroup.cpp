@@ -14,7 +14,7 @@ namespace card {
 	int const OptionGroup::SPACE_BETWEEN_ELEMS_PX = 5;
 
 
-	OptionGroup::OptionGroup(std::shared_ptr<Option> rootOption, ShouldDisableChildFunction shouldDisableChildFunc) :
+	OptionGroup::OptionGroup(std::shared_ptr<BoolOptionElement> rootOption, ShouldDisableChildFunction shouldDisableChildFunc) :
 			VBox(),
 			rootOption(rootOption),
 			shouldDisableChildFunc(shouldDisableChildFunc) {
@@ -29,7 +29,7 @@ namespace card {
 		}});
 		updatePreferredHeight();
 	}
-	void OptionGroup::addChildOption(std::shared_ptr<Option> childOption) {
+	void OptionGroup::addChildOption(std::shared_ptr<BoolOptionElement> childOption) {
 		children.push_back(childOption);
 		this->addChildElement(childOption);
 
@@ -40,10 +40,10 @@ namespace card {
 		updateDisabledStateOfChild(childOption);
 		updatePreferredHeight();
 	}
-	void OptionGroup::updateDisabledStateOfChild(std::shared_ptr<Option> childOption) {
+	void OptionGroup::updateDisabledStateOfChild(std::shared_ptr<BoolOptionElement> childOption) {
 		updateDisabledStateOfChild(childOption, rootOption->isToggled());
 	}
-	void OptionGroup::updateDisabledStateOfChild(std::shared_ptr<Option> childOption, bool isToggled) {
+	void OptionGroup::updateDisabledStateOfChild(std::shared_ptr<BoolOptionElement> childOption, bool isToggled) {
 		bool shouldDisable = shouldDisableChildFunc(isToggled);
 		childOption->setVisible(! shouldDisable);
 	}

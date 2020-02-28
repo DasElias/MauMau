@@ -1,5 +1,5 @@
 #include "BasicOptionsElement.h"
-#include "Option.h"
+#include "BoolOptionElement.h"
 #include "OptionGroup.h"
 #include <egui/model/positioning/ValuedPositioningOnScreen.h>
 #include <egui/model/positioning/RelativePositioningOnScreen.h>
@@ -10,28 +10,31 @@ namespace card {
 	BasicOptionsElement::BasicOptionsElement(std::string title) :
 			TitledMenuElement(title) {
 
-		chooseColorOnJack_option = std::make_shared<Option>("Farbwahl bei Bube");
-		canPutJackOnEveryColor_option = std::make_shared<Option>("Kann Bube auf jede Farbe gelegt werden?");
-		canPutJackOnJack_option = std::make_shared<Option>("Kann Bube auf Bube gelegt werden?");
+		chooseColorOnJack_option = std::make_shared<BoolOptionElement>("Farbwahl bei Bube");
+		canPutJackOnEveryColor_option = std::make_shared<BoolOptionElement>("Kann Bube auf jede Farbe gelegt werden?");
+		canPutJackOnJack_option = std::make_shared<BoolOptionElement>("Kann Bube auf Bube gelegt werden?");
 		addOptionGroup(chooseColorOnJack_option, {canPutJackOnEveryColor_option, canPutJackOnJack_option});
 
-		skipOnEight_option = std::make_shared<Option>("Aussetzen bei 8");
-		passSkip_option = std::make_shared<Option>("Aussetzen weitergeben");
+		skipOnEight_option = std::make_shared<BoolOptionElement>("Aussetzen bei 8");
+		passSkip_option = std::make_shared<BoolOptionElement>("Aussetzen weitergeben");
 		addOptionGroup(skipOnEight_option, {passSkip_option});
 
-		drawTwoOnSeven_option = std::make_shared<Option>("zwei Karten ziehen bei 7");
-		passDrawTwo_option = std::make_shared<Option>("+2 weitergeben");
+		drawTwoOnSeven_option = std::make_shared<BoolOptionElement>("zwei Karten ziehen bei 7");
+		passDrawTwo_option = std::make_shared<BoolOptionElement>("+2 weitergeben");
 		addOptionGroup(drawTwoOnSeven_option, {passDrawTwo_option});
 
-		directionChangeOnNine_option = std::make_shared<Option>("Richtungswechsel bei 9");
+		directionChangeOnNine_option = std::make_shared<BoolOptionElement>("Richtungswechsel bei 9");
 		addStandaloneOption(directionChangeOnNine_option);
+
+		amountOfStartCards_option = std::make_shared<IntegerOptionElement>("Anzahl Startkarten", 6, 1, 9);
+		contentBox->addChildElement(amountOfStartCards_option);
 		
 		contentBox->setSpaceBetweenElements({0.05f, egui::RelativityMode::RELATIVE_IN_PARENT});
 	}
-	void BasicOptionsElement::addStandaloneOption(std::shared_ptr<Option> o) {
+	void BasicOptionsElement::addStandaloneOption(std::shared_ptr<BoolOptionElement> o) {
 		contentBox->addChildElement(o);
 	}
-	void BasicOptionsElement::addOptionGroup(std::shared_ptr<Option> rootOption, std::initializer_list<std::shared_ptr<Option>> children) {
+	void BasicOptionsElement::addOptionGroup(std::shared_ptr<BoolOptionElement> rootOption, std::initializer_list<std::shared_ptr<BoolOptionElement>> children) {
 		auto group = std::make_shared<OptionGroup>(rootOption, OptionGroup::DISABLE_WHEN_PARENT_IS_NOT_TOGGLED);
 		for(auto& c : children) {
 			group->addChildOption(c);
@@ -48,8 +51,9 @@ namespace card {
 		drawTwoOnSeven_option->set(roomOptions.getOption(Options::DRAW_TWO_ON_SEVEN));
 		passDrawTwo_option->set(roomOptions.getOption(Options::PASS_DRAW_TWO));
 		directionChangeOnNine_option->set(roomOptions.getOption(Options::DIRECTION_CHANGE_ON_NINE));
+		amountOfStartCards_option->setValue(roomOptions.getOption(Options::AMOUNT_OF_START_CARDS));
 
-		assert(roomOptions.getAmountOfOptions() == 8);
+		assert(roomOptions.getAmountOfOptions() == 9);
 	}
 
 	RoomOptions BasicOptionsElement::getOptions() {
@@ -62,8 +66,9 @@ namespace card {
 		options.setOption(Options::DRAW_TWO_ON_SEVEN, drawTwoOnSeven_option->isToggled());
 		options.setOption(Options::PASS_DRAW_TWO, passDrawTwo_option->isToggled());
 		options.setOption(Options::DIRECTION_CHANGE_ON_NINE, directionChangeOnNine_option->isToggled());
+		options.setOption(Options::AMOUNT_OF_START_CARDS, amountOfStartCards_option->getValue());
 
-		assert(options.getAmountOfOptions() == 8);
+		assert(options.getAmountOfOptions() == 9);
 		return options;
 	}
 	

@@ -1,9 +1,9 @@
-#include "Option.h"
+#include "BoolOptionElement.h"
 #include <egui/model/nodes/Label.h>
 #include <egui/model/nodeComponents/background/ColoredBackground.h>
 
 namespace card {
-	Option::Option(std::string labelText) :
+	BoolOptionElement::BoolOptionElement(std::string labelText) :
 			HBox() {
 		int const HEIGHT_PX = 30;
 		int const SLIDER_WIDTH_PX = 100;
@@ -18,13 +18,13 @@ namespace card {
 
 		setPreferredHeight({HEIGHT_PX, egui::RelativityMode::ABSOLUTE_VALUE});
 	}
-	bool Option::isToggled() const {
+	bool BoolOptionElement::isToggled() const {
 		return switchElement->isToggled();
 	}
-	void Option::set(bool isToggled) {
+	void BoolOptionElement::set(bool isToggled) {
 		switchElement->set(isToggled);
 	}
-	egui::EventManager<egui::ToggleEvent>& Option::getToggleEventManager() {
+	egui::EventManager<egui::ToggleEvent>& BoolOptionElement::getToggleEventManager() {
 		return switchElement->getToggleEventManager();
 	}
 }

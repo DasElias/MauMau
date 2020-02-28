@@ -1,10 +1,13 @@
 #pragma once
-#include <egui/model/nodes/Labeled.h>
+#include <egui/model/nodes/Label.h>
 #include <egui/model/nodes/Button.h>
 #include <egui/model/utils/Image.h>
+#include <egui/model/nodes/HBox.h>
+#include <egui/model/nodes/VBox.h>
+#include <egui/model/nodes/InputField.h>
 
 namespace card {
-	class IntegerSelector : public egui::Labeled {
+	class IntegerSelector : public egui::HBox {
 		// ----------------------------------------------------------------------
 		// ----------------------------STATIC-FIELDS-----------------------------
 		// ----------------------------------------------------------------------
@@ -19,6 +22,7 @@ namespace card {
 			int minValue;
 			int maxValue;
 
+			std::shared_ptr<egui::Label> label;
 			std::shared_ptr<egui::Button> incrementButton;
 			std::shared_ptr<egui::Button> decrementButton;
 
@@ -42,9 +46,13 @@ namespace card {
 			bool decrement();
 			std::string getClassName() const override;
 			int getValue() const;
+			void setValue(int value);
+
+			void setFontSize(float fontSize, bool isRelative) const;
 
 		private:
 			void init();
-			void createBtn(std::shared_ptr<egui::Button>& button, std::shared_ptr<egui::Image> bgImage);
+			void updateText();
+			void createBtn(std::shared_ptr<egui::Button>& button, std::shared_ptr<egui::Image> bgImage, std::shared_ptr<egui::Image> hoverImage, std::shared_ptr<egui::Image> clickImage);
 	};
 }

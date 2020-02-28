@@ -1,6 +1,6 @@
 #pragma once
 #include <egui/model/nodes/VBox.h>
-#include "Option.h"
+#include "BoolOptionElement.h"
 
 namespace card {
     class OptionGroup : public egui::VBox {
@@ -25,25 +25,25 @@ namespace card {
         // --------------------------------FIELDS--------------------------------
         // ----------------------------------------------------------------------
         private:
-            std::shared_ptr<Option> rootOption;
+            std::shared_ptr<BoolOptionElement> rootOption;
             ShouldDisableChildFunction shouldDisableChildFunc;
-            std::vector<std::shared_ptr<Option>> children;
+            std::vector<std::shared_ptr<BoolOptionElement>> children;
 
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            OptionGroup(std::shared_ptr<Option> rootOption, ShouldDisableChildFunction shouldDisableChildFunc);
+            OptionGroup(std::shared_ptr<BoolOptionElement> rootOption, ShouldDisableChildFunction shouldDisableChildFunc);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
         // ----------------------------------------------------------------------
         public:
-            void addChildOption(std::shared_ptr<Option> childOption);
+            void addChildOption(std::shared_ptr<BoolOptionElement> childOption);
 
         private:
-            void updateDisabledStateOfChild(std::shared_ptr<Option> childOption);
-            void updateDisabledStateOfChild(std::shared_ptr<Option> childOption, bool isToggled);
+            void updateDisabledStateOfChild(std::shared_ptr<BoolOptionElement> childOption);
+            void updateDisabledStateOfChild(std::shared_ptr<BoolOptionElement> childOption, bool isToggled);
             void updatePreferredHeight();
 
 	};

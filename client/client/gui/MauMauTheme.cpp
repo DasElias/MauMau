@@ -1,4 +1,5 @@
 #include "MauMauTheme.h"
+#include "MauMauTheme.h"
 
 #include "../utils/FileUtils.h"
 #include <egui/model\nodes\Labeled.h>
@@ -7,6 +8,7 @@
 #include <egui/model/nodes/KeySelectButton.h>
 #include <egui/model\nodes\Slider.h>
 #include "ColoredButton.h"
+#include "IntegerSelector.h"
 
 #include <egui/model/utils/LinearGradient.h>
 #include <egui/model/nodeComponents/background/ColoredBackground.h>
@@ -43,6 +45,9 @@ egui::MauMauTheme::MauMauTheme(EGuiContext& context) :
 
 		// InputField
 		AbstractTheme::addComponent(InputField::getClassName_static(), inputField_apply());
+
+		// integerSelector
+		AbstractTheme::addComponent(card::IntegerSelector::getClassName_static(), integerSelector_apply());
 
 	}) {
 }
@@ -177,6 +182,30 @@ std::function<void(egui::Node* const)> egui::MauMauTheme::inputField_apply() {
 
 		p_btn->getTextComponent()->setVerticalAlignment(Text::VerticalAlignment::MIDDLE);
 		p_btn->getTextComponent()->setHorizontalAlignment(Text::HorizontalAlignment::CENTER);
+	};
+}
+
+std::function<void(egui::Node* const)> egui::MauMauTheme::integerSelector_apply() {
+	return[this](Node* const p_node) {
+		card::IntegerSelector* p_btn = dynamic_cast<card::IntegerSelector*>(p_node);
+		if(!p_btn) throw std::logic_error("Component is not of type IntegerSelector!");
+/*
+		// set dimensions
+		p_btn->setPreferredDimension({1, RelativityMode::RELATIVE_IN_PARENT}, {BTN_HEIGHT, RelativityMode::RELATIVE_ON_SCREEN});
+
+		p_btn->getTextComponent()->setForceOneLine(true);
+		p_btn->getTextComponent()->setFontSize(0.5f, true);
+		p_btn->getTextComponent()->setColor(Color(1, 1, 1));
+
+		std::shared_ptr<Background> bg(new ColoredBackground(Color(0, 0, 0)));
+		p_btn->setBackground(bg);
+
+		std::shared_ptr<Border> border(new Border(Color(0.627f, 0.627f, 0.627f), SOLID));
+		border->setWidth(2);
+		p_btn->setBorder(border);
+
+		p_btn->getTextComponent()->setVerticalAlignment(Text::VerticalAlignment::MIDDLE);
+		p_btn->getTextComponent()->setHorizontalAlignment(Text::HorizontalAlignment::CENTER);*/
 	};
 }
 

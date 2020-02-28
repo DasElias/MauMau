@@ -12,6 +12,7 @@ namespace card {
 		setOption(Options::DRAW_TWO_ON_SEVEN, true);
 		setOption(Options::PASS_DRAW_TWO, false);
 		setOption(Options::DIRECTION_CHANGE_ON_NINE, false);
+		setOption(Options::AMOUNT_OF_START_CARDS, 6);
 
 		assert(getSize() == OPTIONS_SIZE);
 	}
@@ -28,10 +29,10 @@ namespace card {
 	std::map<std::string, int> RoomOptions::getAllOptions() const {
 		return getData();
 	}
-	bool RoomOptions::getOption(Options key) const {
+	int RoomOptions::getOption(Options key) const {
 		return queryOption(keyToString(key));
 	}
-	void RoomOptions::setOption(Options key, bool newValue) {
+	void RoomOptions::setOption(Options key, int newValue) {
 		IntegerOptions::setOption(keyToString(key), newValue);
 	}
 	std::size_t RoomOptions::getAmountOfOptions() const {

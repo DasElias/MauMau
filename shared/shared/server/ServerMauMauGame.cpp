@@ -61,7 +61,8 @@ namespace card {
 			auto constructedPlayer = (p->isRealPlayer()) ? std::make_shared<Player>(p) : std::make_shared<AiPlayer>(p, *this);
 			this->players.push_back(constructedPlayer);
 
-			for(int i = 0; i < AMOUNT_OF_HAND_CARDS; i++) {
+			int startCardsPerPlayer = options.getOption(Options::AMOUNT_OF_START_CARDS);
+			for(int i = 0; i < startCardsPerPlayer; i++) {
 				Card removed = drawCardStack.removeLast();
 				constructedPlayer->addHandCard(removed);
 			}
@@ -91,7 +92,8 @@ namespace card {
 	}
 
 	void ServerMauMauGame::setInitialPlayerOnTurn() {
-		int timeUntilCardsDistributed = getDurationUntilInitialCardsAreDistributed(this->players.size(), AMOUNT_OF_HAND_CARDS);
+		int startCardsPerPlayer = roomOptions.getOption(Options::AMOUNT_OF_START_CARDS);
+		int timeUntilCardsDistributed = getDurationUntilInitialCardsAreDistributed(this->players.size(), startCardsPerPlayer);
 		threadUtils_invokeIn(timeUntilCardsDistributed, this, [this]() {
 			auto newPlayerOnTurn = getRandomPlayer();
 			this->playerOnTurn = newPlayerOnTurn;

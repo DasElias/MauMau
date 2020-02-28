@@ -10,7 +10,8 @@ namespace card {
         PASS_SKIP,
         DRAW_TWO_ON_SEVEN,
         PASS_DRAW_TWO,
-        DIRECTION_CHANGE_ON_NINE
+        DIRECTION_CHANGE_ON_NINE,
+        AMOUNT_OF_START_CARDS
     };
     
 	// composition
@@ -19,7 +20,7 @@ namespace card {
         // ----------------------------STATIC-FIELDS-----------------------------
         // ----------------------------------------------------------------------
         private:
-            static int const OPTIONS_SIZE = 8;
+            static int const OPTIONS_SIZE = 9;
 
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------
@@ -35,8 +36,8 @@ namespace card {
             void setAllOptions(std::map<std::string, int> integerOptions);
             std::map<std::string, int> getAllOptions() const;
 
-            bool getOption(Options key) const;
-            void setOption(Options key, bool newValue);
+            int getOption(Options key) const;
+            void setOption(Options key, int newValue);
             std::size_t getAmountOfOptions() const;
 
         private:

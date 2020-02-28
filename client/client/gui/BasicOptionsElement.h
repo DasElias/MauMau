@@ -1,6 +1,7 @@
 #pragma once
 #include "TitledMenuElement.h"
-#include "Option.h"
+#include "BoolOptionElement.h"
+#include "IntegerOptionElement.h"
 #include "ContinueBackButtonBar.h"
 #include <shared/model/RoomOptions.h>
 
@@ -10,14 +11,15 @@ namespace card {
         // --------------------------------FIELDS--------------------------------
         // ----------------------------------------------------------------------
         private:            
-            std::shared_ptr<Option> chooseColorOnJack_option;
-            std::shared_ptr<Option> canPutJackOnEveryColor_option;
-            std::shared_ptr<Option> canPutJackOnJack_option;
-            std::shared_ptr<Option> skipOnEight_option;
-            std::shared_ptr<Option> passSkip_option;
-            std::shared_ptr<Option> drawTwoOnSeven_option;
-            std::shared_ptr<Option> passDrawTwo_option;
-            std::shared_ptr<Option> directionChangeOnNine_option;
+            std::shared_ptr<BoolOptionElement> chooseColorOnJack_option;
+            std::shared_ptr<BoolOptionElement> canPutJackOnEveryColor_option;
+            std::shared_ptr<BoolOptionElement> canPutJackOnJack_option;
+            std::shared_ptr<BoolOptionElement> skipOnEight_option;
+            std::shared_ptr<BoolOptionElement> passSkip_option;
+            std::shared_ptr<BoolOptionElement> drawTwoOnSeven_option;
+            std::shared_ptr<BoolOptionElement> passDrawTwo_option;
+            std::shared_ptr<BoolOptionElement> directionChangeOnNine_option;
+            std::shared_ptr<IntegerOptionElement> amountOfStartCards_option;
 
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------
@@ -33,8 +35,8 @@ namespace card {
             RoomOptions getOptions();
 
         private:
-            void addStandaloneOption(std::shared_ptr<Option> o);
-            void addOptionGroup(std::shared_ptr<Option> rootOption, std::initializer_list<std::shared_ptr<Option>> children);
+            void addStandaloneOption(std::shared_ptr<BoolOptionElement> o);
+            void addOptionGroup(std::shared_ptr<BoolOptionElement> rootOption, std::initializer_list<std::shared_ptr<BoolOptionElement>> children);
 
 	};
 }
