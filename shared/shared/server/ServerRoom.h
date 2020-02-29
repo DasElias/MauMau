@@ -24,7 +24,6 @@ namespace card {
 			ClientPacketListenerCallback handler_onChangeOptions;
 			ClientPacketListenerCallback handler_onChangeRoomLeader;
 			ClientPacketListenerCallback handler_onStartGame;
-			ClientPacketListenerCallback handler_onKickPlayer;
 			ClientPacketListenerCallback handler_onAiPlayerJoin;
 
 		// ----------------------------------------------------------------------
@@ -71,7 +70,6 @@ namespace card {
 			optionalSuccessAnswerPacket listener_onChangeOptions(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant); 
 			optionalSuccessAnswerPacket listener_onChangeRoomLeader(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);
 			optionalSuccessAnswerPacket listener_onStartGame(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);
-			optionalSuccessAnswerPacket listener_onKickPlayer(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);
 			optionalSuccessAnswerPacket listener_onAiPlayerJoin(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);
 
 	};

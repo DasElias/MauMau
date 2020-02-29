@@ -61,6 +61,10 @@ namespace card {
 
 		return participants.left.at(conn);
 	}
+	std::shared_ptr<ConnectionToClient> ServerPacketTransmitter::getConnectionOrNull(const std::shared_ptr<ParticipantOnServer>& participant) {
+		if(participants.right.find(participant) == participants.right.end()) return nullptr;
+		return participants.right.at(participant);
+	}
 	void ServerPacketTransmitter::registerParticipant(const std::shared_ptr<ConnectionToClient>& conn, const std::shared_ptr<ParticipantOnServer>& newParticipant) {
 		if(!conn || !newParticipant) throw std::runtime_error("Can't register a participiant where he or the connection is null");
 		if(participants.left.find(conn) != participants.left.end() || participants.right.find(newParticipant) != participants.right.end()) {

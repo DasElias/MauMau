@@ -21,6 +21,7 @@ namespace card {
         // ----------------------------------------------------------------------
         public:
             void resetAndShowError(std::string errorMessage, std::string title) override;
+            void onKick() override;
 
 	};
 }

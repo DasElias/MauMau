@@ -34,6 +34,7 @@ namespace card {
 
 			bool wasParticipantRegistered(const std::shared_ptr<ConnectionToClient>& conn);
 			std::shared_ptr<ParticipantOnServer> getRegisteredParticipant(const std::shared_ptr<ConnectionToClient>& conn);
+			std::shared_ptr<ConnectionToClient> getConnectionOrNull(const std::shared_ptr<ParticipantOnServer>& participant);
 			void registerParticipant(const std::shared_ptr<ConnectionToClient>& conn, const std::shared_ptr<ParticipantOnServer>& newParticipant);
 			void unregisterParticipant(std::shared_ptr<ConnectionToClient> conn);
 	};

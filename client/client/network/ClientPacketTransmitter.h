@@ -28,6 +28,7 @@ namespace card {
 		private:
 			void onReceiveHandler(std::string& msg);
 			void onErrorHandler(boost::system::error_code ec);
+			void onKickHandler();
 
 
 	};

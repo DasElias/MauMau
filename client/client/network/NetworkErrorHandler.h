@@ -17,5 +17,6 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			virtual void resetAndShowError(std::string errorMessage, std::string title) =0;
+			virtual void onKick() =0;
 	};
 }

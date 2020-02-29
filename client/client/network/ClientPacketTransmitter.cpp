@@ -12,7 +12,11 @@ namespace card {
 		});
 		conn->setOnErrorFunc([this](boost::system::error_code ec) {
 			if(ec != boost::asio::error::operation_aborted) {
-				onErrorHandler(ec);
+				if(ec == boost::asio::error::eof) {
+					onKickHandler();
+				} else {
+					onErrorHandler(ec);
+				}
 			}
 		});
 	}
@@ -26,6 +30,9 @@ namespace card {
 	}
 	void ClientPacketTransmitter::onErrorHandler(boost::system::error_code ec) {
 		errorHandler.resetAndShowError(ec.message(), "Netzwerkfehler");
+	}
+	void ClientPacketTransmitter::onKickHandler() {
+		errorHandler.onKick();
 	}
 	void ClientPacketTransmitter::sendPacketToServer(ClientToServerPacket& p) {
 		std::string msg = p.getJson();

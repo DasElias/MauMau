@@ -2,6 +2,7 @@
 #include "RoomManager.h"
 #include <shared/packet/cts/RoomJoinRequest_CTSPacket.h>
 #include <shared/packet/cts/RoomCreationRequest_CTSPacket.h>
+#include <shared/packet/cts/KickPlayerRequest_CTSPacket.h>
 #include <shared/packet/stc/EnteringRoomSuccessReport_STCAnswerPacket.h>
 #include <shared/utils/MathUtils.h>
 #include <iostream>
@@ -10,14 +11,17 @@ namespace card {
 	RoomManager::RoomManager(std::shared_ptr<ServerPacketTransmitter> packetTransmitter) :
 			packetTransmitter(packetTransmitter),
 			handler_onJoinRoom(std::bind(&RoomManager::listener_onJoinRoom, this, std::placeholders::_1, std::placeholders::_2)),
-			handler_onCreateRoom(std::bind(&RoomManager::listener_onCreateRoom, this, std::placeholders::_1, std::placeholders::_2)) {
+			handler_onCreateRoom(std::bind(&RoomManager::listener_onCreateRoom, this, std::placeholders::_1, std::placeholders::_2)),
+			handler_onKickPlayer(std::bind(&RoomManager::listener_onKickPlayer, this, std::placeholders::_1, std::placeholders::_2)) {
 
 		packetTransmitter->addListenerForClientPkt(RoomJoinRequest_CTSPacket::PACKET_ID, handler_onJoinRoom);
 		packetTransmitter->addListenerForClientPkt(RoomCreationRequest_CTSPacket::PACKET_ID, handler_onCreateRoom);
+		packetTransmitter->addListenerForClientPkt(KickPlayerRequest_CTSPacket::PACKET_ID, handler_onKickPlayer);
 	}
 	RoomManager::~RoomManager() {
 		packetTransmitter->removeListenerForClientPkt(RoomJoinRequest_CTSPacket::PACKET_ID, handler_onJoinRoom);
 		packetTransmitter->removeListenerForClientPkt(RoomCreationRequest_CTSPacket::PACKET_ID, handler_onCreateRoom);
+		packetTransmitter->removeListenerForClientPkt(KickPlayerRequest_CTSPacket::PACKET_ID, handler_onKickPlayer);
 	}
 	void RoomManager::join(RoomCode roomCode, std::string username, Avatar avatar, const std::shared_ptr<ConnectionToClient>& conn) {
 		typedef EnteringRoomSuccessReport_STCAnswerPacket SuccessReport;
@@ -90,6 +94,34 @@ namespace card {
 			packetTransmitter->unregisterParticipant(conn);
 		}
 	}
+	bool RoomManager::kick(std::string usernameOfPlayerToKick, std::shared_ptr<ConnectionToClient> requester) {
+		if(packetTransmitter->wasParticipantRegistered(requester)) {
+			std::shared_ptr<ParticipantOnServer> requesterParticipant = packetTransmitter->getRegisteredParticipant(requester);
+			for(auto& pair : this->rooms) {
+				auto& singleRoom = pair.second;
+
+				if(singleRoom->checkIfParticipant(requesterParticipant)) {
+					if(! singleRoom->checkIfLeader(requesterParticipant)) return false;
+					if(! singleRoom->checkIfParticipantByUsername(usernameOfPlayerToKick)) return false;
+					std::shared_ptr<ParticipantOnServer> participantToKick = singleRoom->lookupParticipantByUsername(usernameOfPlayerToKick);
+					std::shared_ptr<ConnectionToClient> connOfParticipantToKick = packetTransmitter->getConnectionOrNull(participantToKick);
+					if(! connOfParticipantToKick) return false;
+
+					singleRoom->leaveRoom(participantToKick, true);
+					closeRoomIfNecessary(singleRoom);
+
+					connOfParticipantToKick->close();
+					packetTransmitter->unregisterParticipant(connOfParticipantToKick);
+
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	void RoomManager::closeRoomIfNecessary(const std::unique_ptr<ServerRoom>& room) {
+		if(room->shouldCloseRoom()) closeRoom(room);
+	}
 	void RoomManager::closeRoom(const std::unique_ptr<ServerRoom>& r) {
 		this->rooms.erase(r->getRoomCode());
 	}
@@ -141,5 +173,11 @@ namespace card {
 
 		createAndJoin(casted.getOwnUsername(), casted.getAvatar(), casted.getOptions(), conn);
 		return OperationSuccessful_STCAnswerPacket(true);
+	}
+	optionalSuccessAnswerPacket RoomManager::listener_onKickPlayer(ClientToServerPacket& p, const std::shared_ptr<ConnectionToClient>& requester) {
+		auto& casted = dynamic_cast<KickPlayerRequest_CTSPacket&>(p);
+		bool wasSuccessful = kick(casted.getUsernameOfPlayerToKick(), requester);
+		return OperationSuccessful_STCAnswerPacket(wasSuccessful);
+
 	}
 }

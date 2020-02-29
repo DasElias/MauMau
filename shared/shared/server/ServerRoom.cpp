@@ -27,20 +27,17 @@ namespace card {
 			handler_onChangeOptions(std::bind(&ServerRoom::listener_onChangeOptions, this, std::placeholders::_1, std::placeholders::_2)),
 			handler_onChangeRoomLeader(std::bind(&ServerRoom::listener_onChangeRoomLeader, this, std::placeholders::_1, std::placeholders::_2)),
 			handler_onStartGame(std::bind(&ServerRoom::listener_onStartGame, this, std::placeholders::_1, std::placeholders::_2)),
-			handler_onKickPlayer(std::bind(&ServerRoom::listener_onKickPlayer, this, std::placeholders::_1, std::placeholders::_2)), 
 			handler_onAiPlayerJoin(std::bind(&ServerRoom::listener_onAiPlayerJoin, this, std::placeholders::_1, std::placeholders::_2)) {
 
 		packetTransmitter->addListenerForClientPkt(ChangeOptionsRequest_CTSPacket::PACKET_ID, handler_onChangeOptions);
 		packetTransmitter->addListenerForClientPkt(ChangeRoomLeaderRequest_CTSPacket::PACKET_ID, handler_onChangeRoomLeader);
 		packetTransmitter->addListenerForClientPkt(GameStartRequest_CTSPacket::PACKET_ID, handler_onStartGame);
-		packetTransmitter->addListenerForClientPkt(KickPlayerRequest_CTSPacket::PACKET_ID, handler_onKickPlayer);
 		packetTransmitter->addListenerForClientPkt(JoinAiPlayerRequest_CTSPacket::PACKET_ID, handler_onAiPlayerJoin);
 	}
 	ServerRoom::~ServerRoom() {
 		packetTransmitter->removeListenerForClientPkt(ChangeOptionsRequest_CTSPacket::PACKET_ID, handler_onChangeOptions);
 		packetTransmitter->removeListenerForClientPkt(ChangeRoomLeaderRequest_CTSPacket::PACKET_ID, handler_onChangeRoomLeader);
 		packetTransmitter->removeListenerForClientPkt(GameStartRequest_CTSPacket::PACKET_ID, handler_onStartGame);
-		packetTransmitter->removeListenerForClientPkt(KickPlayerRequest_CTSPacket::PACKET_ID, handler_onKickPlayer);
 		packetTransmitter->removeListenerForClientPkt(JoinAiPlayerRequest_CTSPacket::PACKET_ID, handler_onAiPlayerJoin);
 	}
 	RoomCode card::ServerRoom::getRoomCode() const {
@@ -223,14 +220,6 @@ namespace card {
 		auto& casted = dynamic_cast<GameStartRequest_CTSPacket&>(p);
 
 		bool wasSuccessful = startGame(participant);
-		return OperationSuccessful_STCAnswerPacket(wasSuccessful);
-	}
-	optionalSuccessAnswerPacket ServerRoom::listener_onKickPlayer(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& sender) {
-		if(! checkIfParticipant(sender)) return std::nullopt;
-		auto& casted = dynamic_cast<KickPlayerRequest_CTSPacket&>(p);
-		auto participantToKick = lookupParticipantByUsername(casted.getUsernameOfPlayerToKick());
-
-		bool wasSuccessful = leaveRoom(participantToKick, true);
 		return OperationSuccessful_STCAnswerPacket(wasSuccessful);
 	}
 	optionalSuccessAnswerPacket ServerRoom::listener_onAiPlayerJoin(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant) {
