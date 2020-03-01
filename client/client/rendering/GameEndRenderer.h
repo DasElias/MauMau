@@ -32,7 +32,7 @@ namespace card {
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            GameEndRenderer(ParticleRenderer& particleRenderer, egui::MasterRenderer& eguiRenderer, Renderer2D& renderer2D);
+            GameEndRenderer(ParticleRenderer& particleRenderer, egui::MasterRenderer& eguiRenderer, Renderer2D& renderer2D, std::function<void(void)> continueHandler);
 
         // ----------------------------------------------------------------------
         // ---------------------------STATIC-METHODS-----------------------------

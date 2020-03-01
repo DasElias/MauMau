@@ -9,7 +9,6 @@
 #include <shared/model/MauPunishmentCause.h>
 #include <optional>
 #include <functional>
-#include "AbstractClientGameEndHandler.h"
 
 namespace card {
 	class ProxyMauMauGameData {
@@ -18,7 +17,6 @@ namespace card {
 		// ----------------------------------------------------------------------
 		private:
 			static int const REBALANCE_DURATION = 750;
-			static int const GAME_END_DELAY = 10000;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
@@ -44,7 +42,6 @@ namespace card {
 			bool field_hasInitialCardsBeenDistributed = false;
 
 			std::function<void(std::shared_ptr<ProxyPlayer>)> onTurnEndCallback;
-			AbstractClientGameEndHandler& gameEndHandler;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
@@ -53,7 +50,7 @@ namespace card {
 			ProxyMauMauGameData(std::vector<std::shared_ptr<ParticipantOnClient>> allParticipantsInclLocal, 
 				std::shared_ptr<ParticipantOnClient> localParticipant,
 				std::vector<int> handCards, int startCard, RoomOptions& roomOptions,
-				AbstractClientGameEndHandler& gameEndHandler, std::function<void(std::shared_ptr<ProxyPlayer>)> onTurnEnd);
+				std::function<void(std::shared_ptr<ProxyPlayer>)> onTurnEnd);
 			ProxyMauMauGameData(const ProxyMauMauGameData&) = delete;
 			ProxyMauMauGameData& operator=(const ProxyMauMauGameData&) = delete;
 			~ProxyMauMauGameData();
@@ -122,7 +119,6 @@ namespace card {
 			void tryRebalanceCardStacks();
 			void setLocalPlayerAtTheBeginOfPlayersVector();
 
-			void tryCallGameEndCallback();
 			void updateCardIndex(Card playedCard, CardIndex newCardIndex);
 			void updateDirection(Card playedCard);
 			void throwIfGameHasEnded();

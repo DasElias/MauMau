@@ -63,8 +63,8 @@ namespace card {
 		State::onStateEnter();
 
 		auto& gameFacade = getStateMananger().getGameFacade();
-		auto& game = gameFacade->getGame();
-		sceneRenderer.onSceneEnter(game);
+		auto& room = gameFacade->getRoom();
+		sceneRenderer.onSceneEnter(room);
 		unixTimeGameHasEnded = GAME_HASNT_ENDED;
 	}
 

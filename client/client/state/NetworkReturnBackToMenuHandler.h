@@ -1,9 +1,9 @@
 #pragma once
 #include "StateManager.h"
-#include "../model/AbstractClientGameEndHandler.h"
+#include "../model/AbstractReturnBackToMenuHandler.h"
 
 namespace card {
-	class NetworkGameEndHandler : public AbstractClientGameEndHandler {
+	class NetworkReturnBackToMenuHandler : public AbstractReturnBackToMenuHandler {
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
@@ -14,13 +14,13 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			NetworkGameEndHandler(StateManager& stateManager);
+			NetworkReturnBackToMenuHandler(StateManager& stateManager);
 
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			void onGameEnd() override;
+			void returnBackToMenu() override;
 	};
 }

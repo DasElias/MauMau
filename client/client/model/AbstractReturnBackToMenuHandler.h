@@ -1,26 +1,21 @@
 #pragma once
-#include "StateManager.h"
-#include "../model/AbstractClientGameEndHandler.h"
 
 namespace card {
-	class LocalGameEndHandler : public AbstractClientGameEndHandler {
-		// ----------------------------------------------------------------------
-		// --------------------------------FIELDS--------------------------------
-		// ----------------------------------------------------------------------
-		private:
-			StateManager& stateManager;
-
+	class AbstractReturnBackToMenuHandler {
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
+		protected:
+			AbstractReturnBackToMenuHandler() = default;
+
 		public:
-			LocalGameEndHandler(StateManager& stateManager);
+			virtual ~AbstractReturnBackToMenuHandler() = default;
 
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			void onGameEnd() override;
+			virtual void returnBackToMenu() =0;
 	};
 }

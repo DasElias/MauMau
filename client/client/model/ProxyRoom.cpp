@@ -16,7 +16,7 @@
 #include <shared/packet/cts/JoinAiPlayerRequest_CTSPacket.h>
 
 namespace card {
-	ProxyRoom::ProxyRoom(std::shared_ptr<CTSPacketTransmitter> packetTransmitter, AbstractRoomLeaveHandler& roomLeaveHandler, AbstractClientGameEndHandler& gameEndHandler, RoomCode roomCode, std::vector<std::string> opponentUsernames, std::vector<Avatar> opponentAvatars, std::vector<bool> areOpponentsAiPlayers, std::string localPlayerUsername, Avatar localPlayerAvatar, std::string usernameOfLeader, RoomOptions options) :
+	ProxyRoom::ProxyRoom(std::shared_ptr<CTSPacketTransmitter> packetTransmitter, AbstractRoomLeaveHandler& roomLeaveHandler, AbstractReturnBackToMenuHandler& gameEndHandler, RoomCode roomCode, std::vector<std::string> opponentUsernames, std::vector<Avatar> opponentAvatars, std::vector<bool> areOpponentsAiPlayers, std::string localPlayerUsername, Avatar localPlayerAvatar, std::string usernameOfLeader, RoomOptions options) :
 			packetTransmitter(packetTransmitter),
 			roomLeaveHandler(roomLeaveHandler),
 			gameEndHandler(gameEndHandler),
@@ -220,13 +220,13 @@ namespace card {
 			opponents.push_back(lookupParticipant(username));
 		}
 
-		this->game = std::make_unique<ProxyMauMauGame>(packetTransmitter, opponents, localParticipant, handCards, startCard, options, *this);
+		this->game = std::make_unique<ProxyMauMauGame>(packetTransmitter, opponents, localParticipant, handCards, startCard, options);
 		
 		isWaitingForResponse_field = false;
 	}
 
-	void ProxyRoom::onGameEnd() {
-		gameEndHandler.onGameEnd();
+	void ProxyRoom::returnBackToMenu() {
+		gameEndHandler.returnBackToMenu();
 		game = nullptr;
 	}
 

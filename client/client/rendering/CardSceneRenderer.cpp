@@ -68,7 +68,9 @@ namespace card {
 			playerLabelOverlayRenderer(renderer2d, PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN),
 			cardIndexRenderer(renderer2d, cardIndexTextures),
 			particleRenderer(),
-			fireworkRenderer(particleRenderer, eguiRenderer, renderer2d),
+			fireworkRenderer(particleRenderer, eguiRenderer, renderer2d, [this]() {
+				room->returnBackToMenu();
+			}),
 			mauMauButtonRenderer(eguiRenderer,
 				[this]() {
 					game->getAccessorFromClient().mau();
@@ -98,8 +100,9 @@ namespace card {
 		cardTextures.cleanUp();
 	}
 
-	void CardSceneRenderer::onSceneEnter(ProxyMauMauGame& game) {
-		this->game = game;
+	void CardSceneRenderer::onSceneEnter(ProxyRoom& room) {
+		this->game = room.getGame();
+		this->room = room;
 		shouldRenderGameEndScreen = false;
 		egui::getInputHandler().getMouseBtnEventManager().addEventHandler(onMouseClicked);
 	}
@@ -110,8 +113,9 @@ namespace card {
 		shouldRenderGameEndScreen = false;
 	}
 
-	void CardSceneRenderer::setGame(ProxyMauMauGame& game) {
-		this->game = game;
+	void CardSceneRenderer::setGame(ProxyRoom& room) {
+		this->game = room.getGame();
+		this->room = room;
 	}
 
 	void CardSceneRenderer::render(float deltaSeconds) {
@@ -166,6 +170,7 @@ namespace card {
 
 		renderGameEndScreenIfGameHasEnded(deltaSeconds);
 		messageRenderer.render(game->getGameData().getMessageQueue());
+
 		glEnable(GL_DEPTH_TEST);
 
 	}

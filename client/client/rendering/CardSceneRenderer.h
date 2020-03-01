@@ -1,5 +1,6 @@
 #pragma once
 #include "../model/ProxyMauMauGame.h"
+#include "../model/ProxyRoom.h"
 
 #include "../renderingModel/CardTextures.h"
 #include "../renderingModel/ProjectionMatrix.h"
@@ -79,6 +80,7 @@ namespace card {
 			CardStackIntersectionChecker cardStackIntersectionChecker;
 			HandCardIntersectionChecker handCardIntersectionChecker;
 
+			boost::optional<ProxyRoom&> room;
 			boost::optional<ProxyMauMauGame&> game;
 			bool shouldRenderGameEndScreen = false;
 
@@ -96,10 +98,9 @@ namespace card {
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			void onSceneEnter(ProxyMauMauGame& game);
+			void onSceneEnter(ProxyRoom& room);
 			void onSceneExit();
-			[[deprecated]]
-			void setGame(ProxyMauMauGame& game);
+			[[deprecated]] void setGame(ProxyRoom& room);
 			void render(float deltaSeconds);
 
 		private:

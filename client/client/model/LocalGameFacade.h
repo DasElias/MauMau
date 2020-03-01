@@ -14,7 +14,7 @@ namespace card {
 			std::shared_ptr<ParticipantOnServer> localParticipantOnServer;
 			std::shared_ptr<LocalPacketTransmitter> packetTransmitter;
 			std::unique_ptr<AbstractRoomLeaveHandler> roomLeaveHandler;
-			std::unique_ptr<AbstractClientGameEndHandler> gameEndHandler;
+			std::unique_ptr<AbstractReturnBackToMenuHandler> gameEndHandler;
 			LocalServer server;
 			ProxyRoom room;
 
@@ -22,7 +22,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			LocalGameFacade(std::string username, std::size_t amountOfOpponents, Avatar avatar, RoomOptions options, std::unique_ptr<AbstractRoomLeaveHandler> roomLeaveHandler, std::unique_ptr<AbstractClientGameEndHandler> gameEndHandler);
+			LocalGameFacade(std::string username, std::size_t amountOfOpponents, Avatar avatar, RoomOptions options, std::unique_ptr<AbstractRoomLeaveHandler> roomLeaveHandler, std::unique_ptr<AbstractReturnBackToMenuHandler> gameEndHandler);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------

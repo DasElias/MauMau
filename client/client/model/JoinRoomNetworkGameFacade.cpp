@@ -2,7 +2,7 @@
 #include <shared/packet/cts/RoomJoinRequest_CTSPacket.h>
 
 namespace card {
-	JoinRoomNetworkGameFacade::JoinRoomNetworkGameFacade(NetworkErrorHandler& errorHandler, std::unique_ptr<AbstractRoomLeaveHandler> roomLeaveHandler, std::unique_ptr<AbstractClientGameEndHandler> gameEndHandler, std::string username, Avatar avatar, RoomCode roomCode) :
+	JoinRoomNetworkGameFacade::JoinRoomNetworkGameFacade(NetworkErrorHandler& errorHandler, std::unique_ptr<AbstractRoomLeaveHandler> roomLeaveHandler, std::unique_ptr<AbstractReturnBackToMenuHandler> gameEndHandler, std::string username, Avatar avatar, RoomCode roomCode) :
 			NetworkGameFacade(errorHandler, std::move(roomLeaveHandler), std::move(gameEndHandler), username, avatar) {
 
 		if(! hasErrorOccuredOnEstablishingConnection()) sendRequest(username, avatar, roomCode);

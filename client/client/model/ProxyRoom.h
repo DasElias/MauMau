@@ -5,16 +5,17 @@
 #include <shared/model/RoomOptions.h>
 #include <shared/model/RoomCode.h>
 #include "AbstractRoomLeaveHandler.h"
+#include "AbstractReturnBackToMenuHandler.h"
 
 namespace card {
-	class ProxyRoom : public AbstractClientGameEndHandler {
+	class ProxyRoom : public AbstractReturnBackToMenuHandler {
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
 			std::shared_ptr<CTSPacketTransmitter> packetTransmitter;
 			AbstractRoomLeaveHandler& roomLeaveHandler;
-			AbstractClientGameEndHandler& gameEndHandler;
+			AbstractReturnBackToMenuHandler& gameEndHandler;
 			RoomCode roomCode;
 
 			std::vector<std::shared_ptr<ParticipantOnClient>> allParticipants;
@@ -37,7 +38,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			ProxyRoom(std::shared_ptr<CTSPacketTransmitter> packetTransmitter, AbstractRoomLeaveHandler& roomLeaveHandler, AbstractClientGameEndHandler& gameEndHandler, RoomCode roomCode,
+			ProxyRoom(std::shared_ptr<CTSPacketTransmitter> packetTransmitter, AbstractRoomLeaveHandler& roomLeaveHandler, AbstractReturnBackToMenuHandler& gameEndHandler, RoomCode roomCode,
 					  std::vector<std::string> opponentUsernames, std::vector<Avatar> opponentAvatars, std::vector<bool> areOpponentsAiPlayers, 
 					  std::string localPlayerUsername, Avatar localPlayerAvatar, std::string usernameOfLeader, RoomOptions options);
 			~ProxyRoom();
@@ -78,7 +79,7 @@ namespace card {
 			void changeRoomLeaderLocal(std::string newLeaderUsername);
 			void startGameLocal(std::vector<std::string> usernamesOfAllPlayers, std::vector<int> handCards, int startCard);
 
-			void onGameEnd() override;
+			void returnBackToMenu() override;
 
 		private:
 			void listener_onPlayerJoinsRoom(Packet& p);

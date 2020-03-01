@@ -4,7 +4,7 @@
 #include <shared/utils/Logger.h>
 
 namespace card {
-	NetworkGameFacade::NetworkGameFacade(NetworkErrorHandler& errorHandler, std::unique_ptr<AbstractRoomLeaveHandler> roomLeaveHandler, std::unique_ptr<AbstractClientGameEndHandler> gameEndHandler, std::string username, Avatar avatar) :
+	NetworkGameFacade::NetworkGameFacade(NetworkErrorHandler& errorHandler, std::unique_ptr<AbstractRoomLeaveHandler> roomLeaveHandler, std::unique_ptr<AbstractReturnBackToMenuHandler> gameEndHandler, std::string username, Avatar avatar) :
 			avatar(avatar),
 			isWaitingForResponse_field(true),
 			errorMsgInPlainText(std::nullopt),

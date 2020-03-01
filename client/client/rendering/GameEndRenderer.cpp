@@ -12,7 +12,7 @@
 #include <algorithm>
 
 namespace card {
-	GameEndRenderer::GameEndRenderer(ParticleRenderer& particleRenderer, egui::MasterRenderer& eguiRenderer, Renderer2D& renderer2D) :
+	GameEndRenderer::GameEndRenderer(ParticleRenderer& particleRenderer, egui::MasterRenderer& eguiRenderer, Renderer2D& renderer2D, std::function<void(void)> continueHandler) :
 			fireworkViewport(glm::vec3(0, 0, 10.0f), {0, 0, 0}),
 			particleRenderer(particleRenderer),
 			particleManager(),
@@ -24,6 +24,14 @@ namespace card {
 			field_isAnimationActive(false),
 			element(std::make_shared<GameEndElement>()),
 			scene(element) {
+
+		element->getMouseClickedEventManager().addEventHandler({[continueHandler](egui::MouseEvent& e) {
+			// we don't want that the callback is executed immediately, since afterwards references on the ProxyMauMauGame object in the rendering code
+			// are invalid
+			threadUtils_invokeIn(0, [continueHandler]() {
+				continueHandler();
+			});
+		}});
 
 		particleManager.add(redParticleSystem);
 		particleManager.add(greenParticleSystem);
@@ -53,6 +61,7 @@ namespace card {
 		particleManager.getList().clear();
 
 		element->startAnimation();
+		scene.discardMouseEvents();
 
 		int fireworkDelay = GameEndElement::ANIMATIONS_COMPLETED_DURATION;
 		threadUtils_invokeIn(fireworkDelay, [this]() {

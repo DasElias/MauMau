@@ -1,7 +1,7 @@
 #include "CreateRoomState.h"
 #include <egui/model/popups/PopupErrorBox.h>
 #include "RoomLeaveHandlerImpl.h"
-#include "NetworkGameEndHandler.h"
+#include "NetworkReturnBackToMenuHandler.h"
 
 
 namespace card {
@@ -46,7 +46,7 @@ namespace card {
 	}
 	
 	void CreateRoomState::sendRequest(std::string username, Avatar avatar, RoomOptions options) {
-		this->createdGameFacade = std::make_shared<CreateRoomNetworkGameFacade>(networkErrorHandler, std::make_unique<RoomLeaveHandlerImpl>(stateManager), std::make_unique<NetworkGameEndHandler>(stateManager), username, avatar, options);
+		this->createdGameFacade = std::make_shared<CreateRoomNetworkGameFacade>(networkErrorHandler, std::make_unique<RoomLeaveHandlerImpl>(stateManager), std::make_unique<NetworkReturnBackToMenuHandler>(stateManager), username, avatar, options);
 		stateManager.setGameFacade(createdGameFacade);
 	}
 	void CreateRoomState::handleResponseIfAvailable() {		
