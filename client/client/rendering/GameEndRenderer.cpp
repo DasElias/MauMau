@@ -18,6 +18,7 @@ namespace card {
 			particleManager(),
 			redParticleSystem(std::make_shared<FireworkParticleSystem>(loadTexture("fireworkRed.png"))),
 			greenParticleSystem(std::make_shared<FireworkParticleSystem>(loadTexture("fireworkGreen.png"))),
+			blueParticleSystem(std::make_shared<FireworkParticleSystem>(loadTexture("fireworkBlue.png"))),
 			eguiRenderer(eguiRenderer),
 			renderer2D(renderer2D),
 			field_isAnimationActive(false),
@@ -26,6 +27,7 @@ namespace card {
 
 		particleManager.add(redParticleSystem);
 		particleManager.add(greenParticleSystem);
+		particleManager.add(blueParticleSystem);
 
 	}
 	ParticleTexture GameEndRenderer::loadTexture(std::string fileName) {
@@ -68,16 +70,16 @@ namespace card {
 
 		int delay = 0;
 		generateParticlesInMs(redParticleSystem, {-0.4, 0.65}, delay);
-		generateParticlesInMs(redParticleSystem, {0.6, 0.7}, delay);
-		generateParticlesInMs(redParticleSystem, {-0.67, 0.14}, delay);
+		generateParticlesInMs(blueParticleSystem, {0.6, 0.7}, delay);
+		generateParticlesInMs(greenParticleSystem, {-0.67, 0.14}, delay);
 		generateParticlesInMs(redParticleSystem, {0.85, 0.3}, delay);
 		generateParticlesInMs(greenParticleSystem, {-0.55, -0.17}, delay);
-		generateParticlesInMs(redParticleSystem, {0.7, -0.5}, delay);
+		generateParticlesInMs(blueParticleSystem, {0.7, -0.5}, delay);
 		generateParticlesInMs(greenParticleSystem, {-0.4, -0.55}, delay);
 		generateParticlesInMs(redParticleSystem, {0.4, -0.25}, delay);
-		generateParticlesInMs(redParticleSystem, {-0.8, 0.8}, delay);
+		generateParticlesInMs(blueParticleSystem, {-0.8, 0.8}, delay);
 		generateParticlesInMs(redParticleSystem, {0.35, 0.8}, delay);
-		generateParticlesInMs(redParticleSystem, {-0.1, 0.8}, delay);
+		generateParticlesInMs(greenParticleSystem, {-0.1, 0.8}, delay);
 
 		threadUtils_invokeIn(delay, [this]() {
 			generateParticlesRecursive();
@@ -89,7 +91,7 @@ namespace card {
 		systemCenter.y += randomRealInRange<float>(-MAX_CENTER_SHIFT, MAX_CENTER_SHIFT);
 
 		threadUtils_invokeIn(delayMs, [this, systemCenter, ps]() {
-			float radiusMultiplicator = randomRealInRange<float>(0.75, 1.15);
+			float radiusMultiplicator = randomRealInRange<float>(0.5, 1.35);
 			ps->explode(systemCenter, particleManager.getList(), radiusMultiplicator);
 		});
 
