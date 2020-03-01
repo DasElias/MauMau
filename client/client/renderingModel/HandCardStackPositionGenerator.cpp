@@ -52,6 +52,8 @@ namespace card {
 	}
 
 	glm::vec3 HandCardStackPositionGenerator::getPositionOfCard_cardStackX(int index, std::size_t cardStackLength, glm::vec3 centerPosition, float maxWidthOfCardStack, float widthOfSingleCard) {
+		if(cardStackLength == 0) return centerPosition;
+
 		float computedWidth = 0;
 		float computedOverlappingFactor = 0;
 		computeCardStackWidth(cardStackLength, maxWidthOfCardStack, widthOfSingleCard, computedWidth, computedOverlappingFactor);
@@ -61,6 +63,8 @@ namespace card {
 	}
 
 	glm::vec3 HandCardStackPositionGenerator::getPositionOfCard_cardStackZ(int index, std::size_t cardStackLength, glm::vec3 centerPosition, float maxWidthOfCardStack, float widthOfSingleCard) {
+		if(cardStackLength == 0) return centerPosition;
+
 		float computedWidth = 0;
 		float computedOverlappingFactor = 0;
 		computeCardStackWidth(cardStackLength, maxWidthOfCardStack, widthOfSingleCard, computedWidth, computedOverlappingFactor);
@@ -82,4 +86,4 @@ namespace card {
 		} while(true);
 
 	}
-}
+} 
