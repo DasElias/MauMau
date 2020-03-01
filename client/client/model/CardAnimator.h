@@ -47,12 +47,12 @@ namespace card {
 			//
 			void addFirstCardFrom(Card mutatesTo, CardAnimator& source, int durationMs, int delayMs);
 			void addLastCardFrom(Card mutatesTo, CardAnimator& source, int durationMs, int delayMs);
-			void addDeterminedCardFrom(Card card, CardAnimator& source, int durationMs, int delayMs);
+			void addDeterminedCardFrom(std::size_t indexOfCardToAddInSource, CardAnimator& source, int durationMs, int delayMs);
 			void addRandomCardFrom(Card mutatesTo, CardAnimator& source, int durationMs, int delayMs);
 
 			void addFirstCardFromImmediately(Card mutatesTo, CardAnimator& source, int durationMs);
 			void addLastCardFromImmediately(Card mutatesTo, CardAnimator& source, int durationMs);
-			void addDeterminedCardFromImmediately(Card card, CardAnimator& source, int durationMs);
+			void addDeterminedCardFromImmediately(std::size_t indexOfCardToAddInSource, CardAnimator& source, int durationMs);
 			void addRandomCardFromImmediately(Card mutatesTo, CardAnimator& source, int durationMs);
 
 			std::vector<CardAnimation> getCardAnimations() const;
@@ -85,6 +85,7 @@ namespace card {
 			std::vector<int> getCardNumbers() const;
 			bool contains(Card c) const;
 
+			std::size_t find(Card c) const;
 			std::size_t getSize() const;
 			bool isEmpty() const;
 

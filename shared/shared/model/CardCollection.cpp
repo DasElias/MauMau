@@ -88,6 +88,12 @@ namespace card {
 		return std::find(cards.begin(), cards.end(), c) != cards.end();
 	}
 
+	int CardCollection::find(Card c) const {
+		auto it = std::find(cards.begin(), cards.end(), c);
+		if(it == cards.end()) return -1;
+		return static_cast<int>(std::distance(cards.begin(), it));
+	}
+
 	std::size_t CardCollection::getSize() const {
 		return cards.size();
 	}

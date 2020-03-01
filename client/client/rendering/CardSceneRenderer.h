@@ -56,7 +56,6 @@ namespace card {
 		private:
 			ProjectionMatrix& projectionMatrix;
 			Viewport& viewport;
-
 			egui::MasterRenderer& eguiRenderer;
 			CardTextures cardTextures;
 			CardIndexTextures cardIndexTextures;

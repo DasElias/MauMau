@@ -348,13 +348,13 @@ namespace card {
 	}
 	void CardSceneRenderer::handleInput() {
 		// check if player wants to play/draw a card
-		auto intersectedCardInHand = checkIntersectionWithOwnHandCards();
+		auto intersectedCardIndex = checkIntersectionWithOwnHandCards();
 		auto& clientGameAccessor = game->getAccessorFromClient();
 		
 		if(clientGameAccessor.canDraw() && checkIntersectionWithDrawCardStack()) {
 			clientGameAccessor.drawCard();
-		} else if(intersectedCardInHand.has_value() && clientGameAccessor.canPlay(*intersectedCardInHand)) {
-			clientGameAccessor.playCard(*intersectedCardInHand);
+		} else if(intersectedCardIndex.has_value() && clientGameAccessor.canPlay(*intersectedCardIndex)) {
+			clientGameAccessor.playCard(*intersectedCardIndex);
 		}
 	}
 	bool CardSceneRenderer::checkIntersectionWithDrawCardStack() {
@@ -402,6 +402,7 @@ namespace card {
 	}
 
 	void CardSceneRenderer::renderPlayCardStack() {
+		HandCardStackPositionGenerator handCardStackPositionGenerator;
 		auto& cardStack = game->getPlayStack();
 		auto& localPlayer = game->getLocalPlayer();
 		auto& opponents = game->getOpponents();
@@ -413,43 +414,48 @@ namespace card {
 		for(auto animation : cardStack.getCardAnimations()) {
 			glm::vec3 positionEnd = PLAY_CARDS_POSITION + glm::vec3(0, cardStack.getSize() * CardStackRenderer::ADDITION_PER_CARD, 0);
 			glm::vec3 rotationEnd = PLAY_CARDS_ROTATION + misalignmentGenerator.computeRotationMisalignment(cardStack.getSize() + animationCounter);
+			CardAnimator& sourceStack = animation.source.get();
 
-			if(animation.source.get().equalsId(localPlayer->getTempCardStack())) {
+			if(sourceStack.equalsId(localPlayer->getTempCardStack())) {
 				interpolateAndRender(animation, 
 									DrawnCardRenderer::POSITION, {PI, PI, 0}, 
 									positionEnd, rotationEnd
 				);
-			} else if(animation.source.get().equalsId(localPlayer->getCardStack())) {
+			} else if(sourceStack.equalsId(localPlayer->getCardStack())) {
+				glm::vec3 startPosition = handCardStackPositionGenerator.getPositionOfCard_cardStackX(animation.indexInSourceStack - 1, sourceStack.getSize(), HAND_CARDS_LOCAL_POSITION, FRONT_BACK_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
 				interpolateAndRender(animation,
-									 HAND_CARDS_LOCAL_POSITION, HAND_CARDS_LOCAL_ROTATION + glm::vec3(PI, PI, 0),
-									 HAND_CARDS_LOCAL_POSITION + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), HAND_CARDS_LOCAL_ROTATION + glm::vec3(PI, PI, 0),
+									 startPosition, HAND_CARDS_LOCAL_ROTATION + glm::vec3(PI, PI, 0),
+									 startPosition + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), HAND_CARDS_LOCAL_ROTATION + glm::vec3(PI, PI, 0),
 									 positionEnd, rotationEnd
 				);
-			} else if(cardStacksOrNoneInCwOrder[0] && animation.source.get().equalsId(cardStacksOrNoneInCwOrder[0]->getCardStack())) {
+			} else if(cardStacksOrNoneInCwOrder[0] && sourceStack.equalsId(cardStacksOrNoneInCwOrder[0]->getCardStack())) {
+				glm::vec3 startPosition = handCardStackPositionGenerator.getPositionOfCard_cardStackZ(animation.indexInSourceStack - 1, sourceStack.getSize(), HAND_CARDS_OPPONENT_LEFT_POSITION, LEFT_RIGHT_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
 				interpolateAndRender(animation,
-									 HAND_CARDS_OPPONENT_LEFT_POSITION, glm::vec3(PI, -PI / 2, 0),
-									 HAND_CARDS_OPPONENT_LEFT_POSITION + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), glm::vec3(PI, -PI / 2, 0),
+									 startPosition, glm::vec3(PI, -PI / 2, 0),
+									 startPosition + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), glm::vec3(PI, -PI / 2, 0),
 									 DRAW_CARDS_POSITION + glm::vec3(0, CardRenderer::HEIGHT * 0.25f + CardStackRenderer::ADDITION_PER_CARD * (game->getDrawStack().getSize()), 0), {1.5f * PI / 2, -PI, rotationEnd.z},
 									 positionEnd, {rotationEnd.x, -PI, rotationEnd.z}
 				);
-			} else if(cardStacksOrNoneInCwOrder[1] && animation.source.get().equalsId(cardStacksOrNoneInCwOrder[1]->getCardStack())) {
+			} else if(cardStacksOrNoneInCwOrder[1] && sourceStack.equalsId(cardStacksOrNoneInCwOrder[1]->getCardStack())) {
+				glm::vec3 startPosition = handCardStackPositionGenerator.getPositionOfCard_cardStackX(animation.indexInSourceStack - 1, sourceStack.getSize(), HAND_CARDS_OPPONENT_VISAVIS_POSITION, FRONT_BACK_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
 				interpolateAndRender(animation,
-									 HAND_CARDS_OPPONENT_VISAVIS_POSITION, HAND_CARDS_OPPONENT_VISAVIS_ROTATION + glm::vec3(-PI, PI, 0),
-									 HAND_CARDS_OPPONENT_VISAVIS_POSITION + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), HAND_CARDS_OPPONENT_VISAVIS_ROTATION + glm::vec3(-PI, PI, 0),
+									 startPosition, HAND_CARDS_OPPONENT_VISAVIS_ROTATION + glm::vec3(-PI, PI, 0),
+									 startPosition + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), HAND_CARDS_OPPONENT_VISAVIS_ROTATION + glm::vec3(-PI, PI, 0),
 									 positionEnd, rotationEnd
 				);
-			} else if(cardStacksOrNoneInCwOrder[2] && animation.source.get().equalsId(cardStacksOrNoneInCwOrder[2]->getCardStack())) {
+			} else if(cardStacksOrNoneInCwOrder[2] && sourceStack.equalsId(cardStacksOrNoneInCwOrder[2]->getCardStack())) {
+				glm::vec3 startPosition = handCardStackPositionGenerator.getPositionOfCard_cardStackZ(animation.indexInSourceStack - 1, sourceStack.getSize(), HAND_CARDS_OPPONENT_RIGHT_POSITION, LEFT_RIGHT_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
 				interpolateAndRender(animation,
 									 HAND_CARDS_OPPONENT_RIGHT_POSITION, HAND_CARDS_OPPONENT_RIGHT_ROTATION,
 									 HAND_CARDS_OPPONENT_RIGHT_POSITION + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), HAND_CARDS_OPPONENT_RIGHT_ROTATION,
 									 positionEnd, rotationEnd
 				);
-			} else if (animation.source.get().equalsId(game->getDrawStack())) {
+			} else if (sourceStack.equalsId(game->getDrawStack())) {
 				renderAnimationFromDrawToPlayStack(animation, positionEnd, rotationEnd);
-			}else {
+			} else {
 				throw std::runtime_error("Card isn't from an user card stack.");
 			}
-
+			
 			animationCounter++;
 		}
 	}

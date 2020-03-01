@@ -36,20 +36,32 @@ namespace card {
 		}
 	}
 
-	void LocalPlayer::playCardFromHandCardsAfterDelay(Card card, CardAnimator& playCardStack, int delayMs) {
-		this->playedCard = card;
-		playCardStack.addDeterminedCardFrom(card, handCardStack, PLAY_DURATION_MS, delayMs);
+	void LocalPlayer::playCardFromHandCards(Card card, CardAnimator& playCardStack) {
+		std::size_t index = handCardStack.find(card);
+		playCardFromHandCards(index, playCardStack);
 	}
 
-	void LocalPlayer::playCardFromHandCards(Card card, CardAnimator& playCardStack) {
+	void LocalPlayer::playCardFromHandCardsAfterDelay(Card card, CardAnimator& playCardStack, int delayMs) {
+		std::size_t index = handCardStack.find(card);
+		playCardFromHandCardsAfterDelay(index, playCardStack, delayMs);
+	}
+
+	void LocalPlayer::playCardFromHandCardsAfterDelay(std::size_t indexInHandCards, CardAnimator& playCardStack, int delayMs) {
+		Card card = handCardStack.get(indexInHandCards);
 		this->playedCard = card;
-		playCardStack.addDeterminedCardFromImmediately(card, handCardStack, PLAY_DURATION_MS);
+		playCardStack.addDeterminedCardFrom(indexInHandCards, handCardStack, PLAY_DURATION_MS, delayMs);
+	}
+
+	void LocalPlayer::playCardFromHandCards(std::size_t indexInHandCards, CardAnimator& playCardStack) {
+		Card card = handCardStack.get(indexInHandCards);
+		this->playedCard = card;
+		playCardStack.addDeterminedCardFromImmediately(indexInHandCards, handCardStack, PLAY_DURATION_MS);
 	}
 
 	void LocalPlayer::playCardFromTempCardStackLocal(CardAnimator& playCardStack) {
 		if(!isCardInTemporaryStack()) throw std::runtime_error("The player hasn't drawn a card yet!");
 		this->playedCard = getCardInTempStack();
-		playCardStack.addDeterminedCardFromImmediately(*getCardInTempStack(), drawnCardTempStack, PLAY_DURATION_MS);
+		playCardStack.addDeterminedCardFromImmediately(0, drawnCardTempStack, PLAY_DURATION_MS);
 	}
 
 	void LocalPlayer::sortDrawnCardIntoHandCardsLocal() {

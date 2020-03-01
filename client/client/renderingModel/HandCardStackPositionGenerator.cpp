@@ -51,6 +51,24 @@ namespace card {
 		return cards;
 	}
 
+	glm::vec3 HandCardStackPositionGenerator::getPositionOfCard_cardStackX(int index, std::size_t cardStackLength, glm::vec3 centerPosition, float maxWidthOfCardStack, float widthOfSingleCard) {
+		float computedWidth = 0;
+		float computedOverlappingFactor = 0;
+		computeCardStackWidth(cardStackLength, maxWidthOfCardStack, widthOfSingleCard, computedWidth, computedOverlappingFactor);
+		float cardCenterX = centerPosition.x - (computedWidth / 2) + widthOfSingleCard / 2;
+		cardCenterX += index * widthOfSingleCard * (1 - computedOverlappingFactor);
+		return {cardCenterX, centerPosition.y, centerPosition.z};
+	}
+
+	glm::vec3 HandCardStackPositionGenerator::getPositionOfCard_cardStackZ(int index, std::size_t cardStackLength, glm::vec3 centerPosition, float maxWidthOfCardStack, float widthOfSingleCard) {
+		float computedWidth = 0;
+		float computedOverlappingFactor = 0;
+		computeCardStackWidth(cardStackLength, maxWidthOfCardStack, widthOfSingleCard, computedWidth, computedOverlappingFactor);
+		float cardCenterZ = centerPosition.z - (computedWidth / 2) + widthOfSingleCard / 2;
+		cardCenterZ += index * widthOfSingleCard * (1 - computedOverlappingFactor);
+		return {centerPosition.x, centerPosition.y, cardCenterZ};
+	}
+
 	void HandCardStackPositionGenerator::computeCardStackWidth(std::size_t amountOfCards, float maxWidthOfCardStack, float widthOfSingleCard, float& output_finalWidth, float& output_overlappingFactor) {
 		output_finalWidth = 0;
 		output_overlappingFactor = CARD_OVERLAPPING_FACTOR;

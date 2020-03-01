@@ -49,6 +49,7 @@ namespace card {
 			std::vector<int> getCardNumbers() const;
 			bool contains(Card c) const;
 			
+			int find(Card c) const;
 			std::size_t getSize() const;
 			bool isEmpty() const;
 

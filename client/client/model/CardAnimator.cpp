@@ -31,10 +31,11 @@ namespace card {
 	}
 
 	void card::CardAnimator::addFirstCardFromImmediately(Card mutatesTo, CardAnimator& source, int durationMs) {
+		std::size_t const indexToRemove = 0;
 		onAnimationStart();
-		source.remove(0);
+		source.remove(indexToRemove);
 
-		CardAnimation a(getMilliseconds(), durationMs, source, mutatesTo);
+		CardAnimation a(getMilliseconds(), durationMs, source, mutatesTo, indexToRemove);
 		animations.insertAnimation(a);
 
 		threadUtils_invokeIn(durationMs, [this, a, mutatesTo] {
@@ -58,10 +59,11 @@ namespace card {
 	}
 
 	void CardAnimator::addLastCardFromImmediately(Card mutatesTo, CardAnimator& source, int durationMs) {
+		std::size_t const indexToRemove = source.getSize() - 1;
 		onAnimationStart();
 		source.removeLast();
 
-		CardAnimation a(getMilliseconds(), durationMs, source, mutatesTo);
+		CardAnimation a(getMilliseconds(), durationMs, source, mutatesTo, indexToRemove);
 		animations.insertAnimation(a);
 
 		threadUtils_invokeIn(durationMs, [this, a, mutatesTo] {
@@ -71,24 +73,26 @@ namespace card {
 		});
 	}
 
-	void CardAnimator::addDeterminedCardFrom(Card card, CardAnimator& source, int durationMs, int delayMs) {
+	void CardAnimator::addDeterminedCardFrom(std::size_t indexOfCardToAddInSource, CardAnimator& source, int durationMs, int delayMs) {
 		if(delayMs == 0) {
-			this->addDeterminedCardFromImmediately(card, source, durationMs);
+			this->addDeterminedCardFromImmediately(indexOfCardToAddInSource, source, durationMs);
 			return;
 		}
 
+		Card card = source.get(indexOfCardToAddInSource);
 		registerCardAnimation(card);
-		threadUtils_invokeIn(delayMs, [this, card, &source, durationMs]() {
+		threadUtils_invokeIn(delayMs, [this, indexOfCardToAddInSource, &source, durationMs]() {
 			unregisterCardAnimation();
-			this->addDeterminedCardFromImmediately(card, source, durationMs);
+			this->addDeterminedCardFromImmediately(indexOfCardToAddInSource, source, durationMs);
 		});
 	}
 
-	void CardAnimator::addDeterminedCardFromImmediately(Card card, CardAnimator& source, int durationMs) {
+	void CardAnimator::addDeterminedCardFromImmediately(std::size_t indexOfCardToAddInSource, CardAnimator& source, int durationMs) {
 		onAnimationStart();
-		source.remove(card);
+		Card card = source.get(indexOfCardToAddInSource);
+		source.remove(indexOfCardToAddInSource);
 
-		CardAnimation a(getMilliseconds(), durationMs, source, card);
+		CardAnimation a(getMilliseconds(), durationMs, source, card, indexOfCardToAddInSource);
 		animations.insertAnimation(a);
 
 		threadUtils_invokeIn(durationMs, [this, a, card] {
@@ -113,10 +117,11 @@ namespace card {
 
 	void CardAnimator::addRandomCardFromImmediately(Card mutatesTo, CardAnimator& source, int durationMs) {
 		if(source.isEmpty()) throw std::runtime_error("Can't add card from an empty card stack.");
+		std::size_t const indexToRemove = randomInRange<std::size_t>(0, source.getSize() - 1);
 		onAnimationStart();
-		source.remove(randomInRange<std::size_t>(0, source.getSize() - 1));
+		source.remove(indexToRemove);
 
-		CardAnimation a(getMilliseconds(), durationMs, source, mutatesTo);
+		CardAnimation a(getMilliseconds(), durationMs, source, mutatesTo, indexToRemove);
 		animations.insertAnimation(a);
 
 		threadUtils_invokeIn(durationMs, [this, a, mutatesTo] {	
@@ -218,6 +223,9 @@ namespace card {
 	}
 	bool CardAnimator::contains(Card c) const {
 		return wrappedCardCollection->contains(c);
+	}
+	std::size_t CardAnimator::find(Card c) const {
+		return wrappedCardCollection->find(c);
 	}
 	std::size_t CardAnimator::getSize() const {
 		return wrappedCardCollection->getSize();
