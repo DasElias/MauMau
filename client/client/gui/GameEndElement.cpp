@@ -14,8 +14,8 @@ namespace card {
 	float const GameEndElement::FONT_MAX_OPACITY = 1.0f;
 
 	GameEndElement::GameEndElement() :
-			bgOpacity(0),
-			fontOpacity(0) {
+			bgOpacity(BG_MIN_OPACITY),
+			fontOpacity(FONT_MIN_OPACITY) {
 		// init fonts
 		int const TITLE_FONT_SIZE = 110;
 		this->titleLabel = std::make_shared<egui::Label>(
@@ -69,6 +69,7 @@ namespace card {
 	}
 	void GameEndElement::startAnimation() {
 		bgOpacity = BG_MIN_OPACITY;
+		fontOpacity = FONT_MIN_OPACITY;
 
 		continueBtn->setVisible(false);
 		threadUtils_invokeIn(BG_OPACITY_ANIMATION_DURATION_MS, [this]() {
