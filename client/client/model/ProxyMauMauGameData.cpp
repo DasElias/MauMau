@@ -165,13 +165,14 @@ namespace card {
 	}
 
 	void ProxyMauMauGameData::removeOpponentLocal(std::shared_ptr<ParticipantOnClient> participant) {
-		if(hasGameEnded()) return;
 		std::string participantUsername = participant->getUsername();
+		appendMessage(participantUsername + u8" verlieﬂ das Spiel.");
+
+		if(hasGameEnded()) return;
 		auto player = lookupOpponent(participantUsername);
 
 		if(userOnTurn == player) {
 			setNextPlayerOnTurnLocal();
-			appendMessage(participantUsername + u8" verlieﬂ das Spiel.");
 		}
 
 		opponents.erase(std::find(opponents.begin(), opponents.end(), player));
