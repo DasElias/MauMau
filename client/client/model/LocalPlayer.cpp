@@ -101,28 +101,12 @@ namespace card {
 		wasMauDemandedThisTurn_flag = false;
 	}
 
-	void LocalPlayer::onStartTurn() {
-		ProxyPlayer::onStartTurn();
-
-		//TODO: REMOVE INCORRECT COMMENT
-		// we clear the temporary draw stack only when the player is on turn again
-		// this is because of threading issues (the card is moved out of the temporary
-		// card stack in the next frame, so during rendering we would have the situation that
-		// the flag is false but the card stack isn't empty
-	
-
-		log(LogSeverity::DEBUG, "LocalPlayer is on turn.");
-	}
-
 	void LocalPlayer::onEndTurn() {
 		ProxyPlayer::onEndTurn();
 
 		playedCard = std::nullopt;
 		drawnCardTempStack.clear();
 		wasCardDrawn_flag = false;
-		wasMauDemandedThisTurn_flag = false;
-
-		log(LogSeverity::DEBUG, "Turn has ended");
-		
+		wasMauDemandedThisTurn_flag = false;		
 	}
 }

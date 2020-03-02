@@ -60,7 +60,6 @@ namespace card {
 
 			void onMauDemand();
 			void onMauFailure();
-			void onStartTurn() override;
 			void onEndTurn() override;
 
 	};
