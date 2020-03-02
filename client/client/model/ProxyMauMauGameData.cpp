@@ -117,6 +117,7 @@ namespace card {
 	}
 	void ProxyMauMauGameData::updateDirection(Card playedCard) {
 		if(playedCard.getValue() == CHANGE_DIRECTION_VALUE && roomOptions.getOption(Options::DIRECTION_CHANGE_ON_NINE)) {
+			appendMessage("Richtungswechsel!");
 			if(direction == Direction::CW) direction = Direction::CCW;
 			else direction = Direction::CW;
 		}
