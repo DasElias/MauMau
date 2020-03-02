@@ -11,7 +11,7 @@ TEST_CASE("ProxyPlayer can draw and play cards", "[ProxyPlayer]") {
 	threadUtils_setProvider(std::make_unique<InstantExecutionThreadUtilsProvider>());
 
 	const std::string username = "Testnutzer";
-	auto wrappedParticipant = std::make_shared<ParticipantOnClient>(username, 0);
+	auto wrappedParticipant = std::make_shared<ParticipantOnClient>(username, 0, false);
 	ProxyPlayerGameInformation gameInformation;
 	ProxyPlayer p(wrappedParticipant, gameInformation);
 	CardAnimator drawCardStack(std::make_unique<CardStack>());

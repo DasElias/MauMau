@@ -14,13 +14,13 @@ TEST_CASE("CardAnimationCollection", "[CardAnimationCollection]") {
 		REQUIRE_THROWS(set.getLast());
 	}
 	SECTION("insertAnimation should add elements") {
-		CardAnimation anim = {0, 0, source, Card(0)};
+		CardAnimation anim = {0, 0, source, Card(0), 0};
 		set.insertAnimation(anim);
 		set.insertAnimation(anim);
 		REQUIRE(set.size() == 2);
 	}
 	SECTION("removeAnimation() should remove only one single animation") {
-		CardAnimation anim = {0, 0, source, Card(0)};
+		CardAnimation anim = {0, 0, source, Card(0), 0};
 		set.insertAnimation(anim);
 		set.insertAnimation(anim);
 		set.removeAnimation(anim);
@@ -32,8 +32,8 @@ TEST_CASE("CardAnimationCollection", "[CardAnimationCollection]") {
 		int duration0 = 2000;
 		int duration1 = 100;
 
-		set.insertAnimation({startTime0, duration0, source, Card(0)});
-		set.insertAnimation({startTime1, duration1, source, Card(0)});
+		set.insertAnimation({startTime0, duration0, source, Card(0), 0});
+		set.insertAnimation({startTime1, duration1, source, Card(0), 0});
 
 		SECTION("getFirst") {
 			// animation 0 would be added first to playCardStack

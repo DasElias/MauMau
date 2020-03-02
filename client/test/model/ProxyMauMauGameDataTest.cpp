@@ -18,11 +18,12 @@ TEST_CASE("", "[ProxyMauMauGameData]") {
 	RoomOptions options;
 
 	bool wasTurnEndCallbackInvoked = false;
-	ProxyMauMauGameData gameData(allParticipants, localParticipant, localParticipant->getUsername(), handCards, lastCardOnPlayStack, lastCardOnDrawCardStack, options,
+	ProxyMauMauGameData gameData(allParticipants, localParticipant, handCards, lastCardOnPlayStack, options,
 		[&wasTurnEndCallbackInvoked](std::shared_ptr<ProxyPlayer> playerTurnEnd) {
 			wasTurnEndCallbackInvoked = true;
 		}
 	);
+	gameData.setInitialPlayerOnTurnLocal(gameData.lookupPlayer(localParticipant->getUsername()), Card(7));
 
 	SECTION("getPlayStack") {
 		auto& playCardStack = gameData.getPlayStack();
@@ -92,7 +93,7 @@ TEST_CASE("", "[ProxyMauMauGameData]") {
 		SECTION("remove opponent") {
 			REQUIRE_THROWS(gameData.removeOpponentLocal(localParticipant));
 			REQUIRE_THROWS(gameData.removeOpponentLocal(
-				std::make_shared<ParticipantOnClient>("abc", 1)
+				std::make_shared<ParticipantOnClient>("abc", 1, false)
 			));
 			
 			auto opponent1Player = gameData.lookupOpponent(opponent1->getUsername());
