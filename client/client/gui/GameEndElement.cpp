@@ -10,7 +10,7 @@
 namespace card {
 	float const GameEndElement::BG_MIN_OPACITY = 0;
 	float const GameEndElement::BG_MAX_OPACITY = 0.9f;
-	float const GameEndElement::FONT_MIN_OPACITY = 0.5;
+	float const GameEndElement::FONT_MIN_OPACITY = 0;
 	float const GameEndElement::FONT_MAX_OPACITY = 1.0f;
 
 	GameEndElement::GameEndElement() :
