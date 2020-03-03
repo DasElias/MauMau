@@ -8,12 +8,15 @@ namespace card {
 		// ----------------------------------------------------------------------
 		private:
 			ParticleTexture tex;
+			int particlesPerExplosion;
+			float lifeLengthSeconds;
+			float velocity;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			FireworkParticleSystem(ParticleTexture tex);
+			FireworkParticleSystem(ParticleTexture tex, int particlesPerExplosion, float lifeLengthSeconds, float velocity);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------

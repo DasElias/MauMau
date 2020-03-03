@@ -20,6 +20,7 @@ namespace card {
             std::shared_ptr<FireworkParticleSystem> redParticleSystem;
             std::shared_ptr<FireworkParticleSystem> greenParticleSystem;
             std::shared_ptr<FireworkParticleSystem> blueParticleSystem;
+            std::shared_ptr<FireworkParticleSystem> whiteParticleSystem;
 
             egui::MasterRenderer& eguiRenderer;
             Renderer2D& renderer2D;

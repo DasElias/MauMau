@@ -16,9 +16,10 @@ namespace card {
 			fireworkViewport(glm::vec3(0, 0, 10.0f), {0, 0, 0}),
 			particleRenderer(particleRenderer),
 			particleManager(),
-			redParticleSystem(std::make_shared<FireworkParticleSystem>(loadTexture("fireworkRed.png"))),
-			greenParticleSystem(std::make_shared<FireworkParticleSystem>(loadTexture("fireworkGreen.png"))),
-			blueParticleSystem(std::make_shared<FireworkParticleSystem>(loadTexture("fireworkBlue.png"))),
+			redParticleSystem(std::make_shared<FireworkParticleSystem>(loadTexture("fireworkRed.png"), 20, 1.5f, 2.0f)),
+			greenParticleSystem(std::make_shared<FireworkParticleSystem>(loadTexture("fireworkGreen.png"), 20, 1.5f, 2.0f)),
+			blueParticleSystem(std::make_shared<FireworkParticleSystem>(loadTexture("fireworkBlue.png"), 20, 1.5f, 2.0f)),
+			whiteParticleSystem(std::make_shared<FireworkParticleSystem>(loadTexture("fireworkWhite.png"), 20, 1.5f, 1.75f)),
 			eguiRenderer(eguiRenderer),
 			renderer2D(renderer2D),
 			field_isAnimationActive(false),
@@ -36,6 +37,7 @@ namespace card {
 		particleManager.add(redParticleSystem);
 		particleManager.add(greenParticleSystem);
 		particleManager.add(blueParticleSystem);
+		particleManager.add(whiteParticleSystem);
 
 	}
 	ParticleTexture GameEndRenderer::loadTexture(std::string fileName) {
@@ -78,17 +80,13 @@ namespace card {
 		if(! isAnimationActive()) return;
 
 		int delay = 0;
-		generateParticlesInMs(redParticleSystem, {-0.4, 0.65}, delay);
+		generateParticlesInMs(whiteParticleSystem, {-0.4, 0.65}, delay);
 		generateParticlesInMs(blueParticleSystem, {0.6, 0.7}, delay);
-		generateParticlesInMs(greenParticleSystem, {-0.67, 0.14}, delay);
-		generateParticlesInMs(redParticleSystem, {0.85, 0.3}, delay);
-		generateParticlesInMs(greenParticleSystem, {-0.55, -0.17}, delay);
-		generateParticlesInMs(blueParticleSystem, {0.7, -0.5}, delay);
-		generateParticlesInMs(greenParticleSystem, {-0.4, -0.55}, delay);
-		generateParticlesInMs(redParticleSystem, {0.4, -0.25}, delay);
-		generateParticlesInMs(blueParticleSystem, {-0.8, 0.8}, delay);
-		generateParticlesInMs(redParticleSystem, {0.35, 0.8}, delay);
-		generateParticlesInMs(greenParticleSystem, {-0.1, 0.8}, delay);
+		generateParticlesInMs(redParticleSystem, {-0.67, 0.14}, delay);
+		generateParticlesInMs(greenParticleSystem, {0.85, 0.3}, delay);
+		generateParticlesInMs(greenParticleSystem, {-0.8, 0.8}, delay);
+		generateParticlesInMs(whiteParticleSystem, {0.35, 0.8}, delay);
+		generateParticlesInMs(redParticleSystem, {-0.1, 0.8}, delay);
 
 		threadUtils_invokeIn(delay, [this]() {
 			generateParticlesRecursive();
