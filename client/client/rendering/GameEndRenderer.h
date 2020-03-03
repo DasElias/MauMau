@@ -21,6 +21,7 @@ namespace card {
             std::shared_ptr<FireworkParticleSystem> greenParticleSystem;
             std::shared_ptr<FireworkParticleSystem> blueParticleSystem;
             std::shared_ptr<FireworkParticleSystem> whiteParticleSystem;
+            std::vector<std::shared_ptr<FireworkParticleSystem>> allParticleSystems;
 
             egui::MasterRenderer& eguiRenderer;
             Renderer2D& renderer2D;
@@ -51,6 +52,7 @@ namespace card {
             bool isAnimationActive() const;
 
         private:
+            std::shared_ptr<FireworkParticleSystem> getRandomParticleSystem();
             void generateParticlesRecursive();
             void generateParticlesInMs(std::shared_ptr<FireworkParticleSystem> ps, glm::vec2 systemCenter, int& delay);
 

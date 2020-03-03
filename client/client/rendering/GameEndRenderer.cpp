@@ -20,6 +20,7 @@ namespace card {
 			greenParticleSystem(std::make_shared<FireworkParticleSystem>(loadTexture("fireworkGreen.png"), 20, 1.5f, 2.0f)),
 			blueParticleSystem(std::make_shared<FireworkParticleSystem>(loadTexture("fireworkBlue.png"), 20, 1.5f, 2.0f)),
 			whiteParticleSystem(std::make_shared<FireworkParticleSystem>(loadTexture("fireworkWhite.png"), 20, 1.5f, 1.75f)),
+			allParticleSystems({redParticleSystem, greenParticleSystem, blueParticleSystem, whiteParticleSystem}),
 			eguiRenderer(eguiRenderer),
 			renderer2D(renderer2D),
 			field_isAnimationActive(false),
@@ -80,17 +81,21 @@ namespace card {
 		if(! isAnimationActive()) return;
 
 		int delay = 0;
-		generateParticlesInMs(whiteParticleSystem, {-0.4, 0.65}, delay);
-		generateParticlesInMs(blueParticleSystem, {0.6, 0.7}, delay);
-		generateParticlesInMs(redParticleSystem, {-0.67, 0.14}, delay);
-		generateParticlesInMs(greenParticleSystem, {0.85, 0.3}, delay);
-		generateParticlesInMs(greenParticleSystem, {-0.8, 0.8}, delay);
-		generateParticlesInMs(whiteParticleSystem, {0.35, 0.8}, delay);
-		generateParticlesInMs(redParticleSystem, {-0.1, 0.8}, delay);
+		generateParticlesInMs(getRandomParticleSystem(), {-0.4, 0.65}, delay);
+		generateParticlesInMs(getRandomParticleSystem(), {0.6, 0.7}, delay);
+		generateParticlesInMs(getRandomParticleSystem(), {-0.67, 0.14}, delay);
+		generateParticlesInMs(getRandomParticleSystem(), {0.85, 0.3}, delay);
+		generateParticlesInMs(getRandomParticleSystem(), {-0.8, 0.8}, delay);
+		generateParticlesInMs(getRandomParticleSystem(), {0.35, 0.8}, delay);
+		generateParticlesInMs(getRandomParticleSystem(), {-0.1, 0.8}, delay);
 
 		threadUtils_invokeIn(delay, [this]() {
 			generateParticlesRecursive();
 		});
+	}
+	std::shared_ptr<FireworkParticleSystem> GameEndRenderer::getRandomParticleSystem() {
+		std::size_t index = randomInRange<std::size_t>(0, allParticleSystems.size() - 1);
+		return allParticleSystems[index];
 	}
 	void GameEndRenderer::generateParticlesInMs(std::shared_ptr<FireworkParticleSystem> ps, glm::vec2 systemCenter, int& delayMs) {
 		float const MAX_CENTER_SHIFT = 0.1f;
