@@ -4,6 +4,7 @@
 #include <egui/model/nodes/Label.h>
 #include "../utils/FileUtils.h"
 #include <egui/model/nodeComponents/background/ColoredBackground.h>
+#include <res/menu/userhover.png.h>
 
 namespace card {
 	AvatarChooser::AvatarChooser(AvatarTextures& avatarTextures_local, Avatar defaultAvatar) :
@@ -22,8 +23,9 @@ namespace card {
 		auto backgroundElement = std::make_shared<egui::AspectRatioElement>(avatarTextures_local.getAspectRatio());
 		backgroundElementWrapper->addChildElement(backgroundElement);
 		backgroundElement->setMaxHeight({1, egui::RelativityMode::RELATIVE_IN_PARENT});
+		static std::shared_ptr<egui::Image> hoveredImage = egui::Image::loadFromMemory(tex_userHover, tex_userHover_size);
 		backgroundElement->setHoveredBackground(std::make_shared<egui::TexturedBackground>(
-			egui::Image::loadTexture(getApplicationFolder() + "\\resources\\userhover.png")
+			hoveredImage
 		), egui::RENDER_EXCLUSIVELY);
 		this->avatarBackground = std::make_shared<egui::TexturedBackground>(avatarTextures.getImage(chosenAvatar));
 		backgroundElement->setBackground(avatarBackground);
