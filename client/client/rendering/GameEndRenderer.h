@@ -17,10 +17,6 @@ namespace card {
             Viewport fireworkViewport;
             ParticleRenderer& particleRenderer;
             ParticleManager particleManager;
-            std::shared_ptr<FireworkParticleSystem> redParticleSystem;
-            std::shared_ptr<FireworkParticleSystem> greenParticleSystem;
-            std::shared_ptr<FireworkParticleSystem> blueParticleSystem;
-            std::shared_ptr<FireworkParticleSystem> whiteParticleSystem;
             std::vector<std::shared_ptr<FireworkParticleSystem>> allParticleSystems;
 
             egui::MasterRenderer& eguiRenderer;

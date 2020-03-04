@@ -5,11 +5,12 @@
 #include <egui\input\IOHandler.h>
 
 namespace card {
-	FireworkParticleSystem::FireworkParticleSystem(ParticleTexture tex, int particlesPerExplosion, float lifeLengthSeconds, float velocity) :
+	FireworkParticleSystem::FireworkParticleSystem(ParticleTexture tex, int particlesPerExplosion, float lifeLengthSeconds, float velocity, float scale) :
 			tex(tex),
 			particlesPerExplosion(particlesPerExplosion),
 			lifeLengthSeconds(lifeLengthSeconds),
-			velocity(velocity) {
+			velocity(velocity),
+			scale(scale) {
 	}
 	void FireworkParticleSystem::update(float delta, ParticleList& particleList) {
 	}
@@ -42,7 +43,7 @@ namespace card {
 				velocityAdditionPerSecond /= lifeLengthSeconds;
 
 				float rot = randomRealInRange<float>(0, 2*PI);
-				Particle p({0,0,0}, velocity, velocityAdditionPerSecond, lifeLengthSeconds, rot, 0.075f, tex, center);
+				Particle p({0,0,0}, velocity, velocityAdditionPerSecond, lifeLengthSeconds, rot, scale, tex, center);
 				particleList.add(p);
 
 				arcXY += 2* ARC_PER_PARTICLE;

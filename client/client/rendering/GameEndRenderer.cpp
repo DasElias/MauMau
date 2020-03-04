@@ -16,11 +16,16 @@ namespace card {
 			fireworkViewport(glm::vec3(0, 0, 10.0f), {0, 0, 0}),
 			particleRenderer(particleRenderer),
 			particleManager(),
-			redParticleSystem(std::make_shared<FireworkParticleSystem>(loadTexture("fireworkRed.png"), 20, 1.5f, 2.0f)),
-			greenParticleSystem(std::make_shared<FireworkParticleSystem>(loadTexture("fireworkGreen.png"), 20, 1.5f, 2.0f)),
-			blueParticleSystem(std::make_shared<FireworkParticleSystem>(loadTexture("fireworkBlue.png"), 20, 1.5f, 2.0f)),
-			whiteParticleSystem(std::make_shared<FireworkParticleSystem>(loadTexture("fireworkWhite.png"), 20, 1.5f, 1.75f)),
-			allParticleSystems({redParticleSystem, greenParticleSystem, blueParticleSystem, whiteParticleSystem}),
+			allParticleSystems({
+				std::make_shared<FireworkParticleSystem>(loadTexture("fireworkGreen.png"), 20, 1.75f, 1.8f, 0.055f),
+				std::make_shared<FireworkParticleSystem>(loadTexture("fireworkBlue.png"), 20, 1.5f, 2.0f),
+				std::make_shared<FireworkParticleSystem>(loadTexture("fireworkGold.png"), 20, 1.5f, 2.0f),
+				std::make_shared<FireworkParticleSystem>(loadTexture("fireworkWhite.png"), 20, 1.5f, 2.0f),
+				std::make_shared<FireworkParticleSystem>(loadTexture("fireworkPurple.png"), 20, 1.5f, 2.0f),
+				std::make_shared<FireworkParticleSystem>(loadTexture("fireworkRed.png"), 20, 1.5f, 2.0f),
+				std::make_shared<FireworkParticleSystem>(loadTexture("fireworkOrange.png"), 20, 1.5f, 2.0f)
+
+			}),
 			eguiRenderer(eguiRenderer),
 			renderer2D(renderer2D),
 			field_isAnimationActive(false),
@@ -35,15 +40,13 @@ namespace card {
 			});
 		}});
 
-		particleManager.add(redParticleSystem);
-		particleManager.add(greenParticleSystem);
-		particleManager.add(blueParticleSystem);
-		particleManager.add(whiteParticleSystem);
-
+		for(auto& ps : allParticleSystems) {
+			particleManager.add(ps);
+		}
 	}
 	ParticleTexture GameEndRenderer::loadTexture(std::string fileName) {
 		return ParticleTexture(
-			SimpleTextureFactory().setMinFilter(TextureMinFilter::NEAREST).setMagFilter(TextureMagFilter::NEAREST).loadFromFile(getApplicationFolder() + "\\resources\\" + fileName),
+			SimpleTextureFactory().setMinFilter(TextureMinFilter::NEAREST).setMagFilter(TextureMagFilter::NEAREST).loadFromFile(getApplicationFolder() + "\\resources\\firework\\" + fileName),
 			8,
 			false
 		);
@@ -108,7 +111,7 @@ namespace card {
 		});
 
 		int const MIN_RAND_DELAY_ADDITION = 250;
-		int const MAX_RAND_DELAY_ADDITION = 500;
+		int const MAX_RAND_DELAY_ADDITION = 600;
 		delayMs += randomInRange(MIN_RAND_DELAY_ADDITION, MAX_RAND_DELAY_ADDITION);
 	}
 }

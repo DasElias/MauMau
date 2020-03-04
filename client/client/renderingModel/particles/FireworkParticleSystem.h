@@ -11,12 +11,13 @@ namespace card {
 			int particlesPerExplosion;
 			float lifeLengthSeconds;
 			float velocity;
+			float scale;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			FireworkParticleSystem(ParticleTexture tex, int particlesPerExplosion, float lifeLengthSeconds, float velocity);
+			FireworkParticleSystem(ParticleTexture tex, int particlesPerExplosion, float lifeLengthSeconds, float velocity, float scale = 0.075f);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
