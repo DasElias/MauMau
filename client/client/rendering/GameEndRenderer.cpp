@@ -19,6 +19,7 @@ namespace card {
 			allParticleSystems({
 				std::make_shared<FireworkParticleSystem>(loadTexture("fireworkGreen.png"), 20, 1.75f, 1.8f, 0.055f),
 				std::make_shared<FireworkParticleSystem>(loadTexture("fireworkBlue.png"), 20, 1.5f, 2.0f),
+				std::make_shared<FireworkParticleSystem>(loadTexture("fireworkTurquoise.png"), 20, 1.5f, 2.0f),
 				std::make_shared<FireworkParticleSystem>(loadTexture("fireworkGold.png"), 20, 1.5f, 2.0f),
 				std::make_shared<FireworkParticleSystem>(loadTexture("fireworkWhite.png"), 20, 1.5f, 2.0f),
 				std::make_shared<FireworkParticleSystem>(loadTexture("fireworkPurple.png"), 20, 1.5f, 2.0f),
