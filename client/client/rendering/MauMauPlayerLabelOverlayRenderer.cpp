@@ -3,12 +3,13 @@
 #include "../utils/FileUtils.h"
 #include "../gui/CombinedPositioning.h"
 #include <res/ingame/mauspeechbubble.h>
+#include <res/ingame/skipPlayer.png.h>
 
 namespace card {
 	MauMauPlayerLabelOverlayRenderer::MauMauPlayerLabelOverlayRenderer(Renderer2D& renderer2D, float playerLabelWidthRelativeOnScreen) :
 			renderer2D(renderer2D),
 			playerLabelWidthRelativeOnScreen(playerLabelWidthRelativeOnScreen),
-			textureSkip(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromFile(getApplicationFolder() + "\\resources\\skipPlayer.png")),
+			textureSkip(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromMemory(tex_skipPlayer, tex_skipPlayer_size)),
 			textureMau(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromMemory(tex_mauspeechbubble, tex_mauspeechbubble_size)),
 			skipAnimElement(std::make_shared<egui::AspectRatioElement>(textureSkip.getAspectRatio())),
 			mauAnimElement(std::make_shared<egui::AspectRatioElement>(textureMau.getAspectRatio())),
@@ -43,15 +44,15 @@ namespace card {
 		bool isAnimationActive = percentSkipAnimOrNone.has_value();
 		skipAnimElement->setVisible(isAnimationActive);
 
-		int computedXTranslation = 30;
+		int computedXTranslation = 25;
 		int computedYTranslation = 5;
 		if(isAnimationActive) {
 			// interpolation
 			if(*percentSkipAnimOrNone > 0.5f) percentSkipAnimOrNone = (*percentSkipAnimOrNone - 1) * (-2);
 			else percentSkipAnimOrNone = (*percentSkipAnimOrNone) * 2;
 
-			computedXTranslation += 10 * (*percentSkipAnimOrNone);
-			computedYTranslation += 10 * (*percentSkipAnimOrNone);
+			computedXTranslation += 7 * (*percentSkipAnimOrNone);
+			computedYTranslation += 7 * (*percentSkipAnimOrNone);
 		}
 
 		skipAnimElement->setMaxWidth({{playerLabelWidthRelativeOnScreen, egui::RelativityMode::RELATIVE_ON_SCREEN}, {2.0f * computedXTranslation, egui::RelativityMode::ABSOLUTE_VALUE}});
