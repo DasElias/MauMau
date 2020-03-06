@@ -43,7 +43,7 @@ namespace card {
 			element(std::make_shared<GameEndElement>()),
 			scene(element) {
 
-		element->getMouseClickedEventManager().addEventHandler({[continueHandler](egui::MouseEvent& e) {
+		element->setOnContinueBtn({[continueHandler](egui::ActionEvent& e) {
 			// we don't want that the callback is executed immediately, since afterwards references on the ProxyMauMauGame object in the rendering code
 			// are invalid
 			threadUtils_invokeIn(0, [continueHandler]() {
