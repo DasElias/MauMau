@@ -21,6 +21,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			AiPlayer(std::shared_ptr<ParticipantOnServer> wrappedParticipant, ServerMauMauGame& game, std::vector<Card> handCards = {});
+			~AiPlayer();
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
