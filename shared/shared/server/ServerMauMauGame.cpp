@@ -39,7 +39,7 @@ namespace card {
 			handler_onMau(std::bind(&ServerMauMauGame::listener_onMau, this, std::placeholders::_1, std::placeholders::_2)) {
 
 		drawCardStack.fillWithCardDeckAndShuffle();
-
+	
 		Card firstCardOnPlayStack;
 
 		// init play card stack
@@ -146,15 +146,11 @@ namespace card {
 		// player on turn
 		std::vector<int> cardsToDrawForNextPlayer = popCardsFromDrawStack(getAmountsOfCardsToDrawForNextPlayer(card));
 
-		if(!hasPlayerWon()) {
-			checkForMauIfNeeded();
+		checkForMauIfNeeded();
+		setNextOrNextButOneOnTurnLocal(card);
 
-			setNextOrNextButOneOnTurnLocal(card);
-
-			// actually draw cardsToDrawForNextPlayer
-			playerOnTurn->addHandCards(cardsToDrawForNextPlayer);
-
-		}
+		// actually draw cardsToDrawForNextPlayer
+		playerOnTurn->addHandCards(cardsToDrawForNextPlayer);
 
 		// send packet to all other players
 		auto senderPlayerPtr = lookupPlayerByUsername(player.getUsername());
