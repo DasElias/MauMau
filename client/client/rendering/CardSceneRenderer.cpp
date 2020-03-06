@@ -41,7 +41,8 @@ namespace card {
 			bgRenderer(renderer2d, renderer3d),
 			drawnCardRenderer(cardRenderer, eguiRenderer, projectionMatrix, viewport,
 				[this]() {
-					auto& accessor = game->getAccessorFromClient();
+					auto& game = room->getGame();
+					auto& accessor = game.getAccessorFromClient();
 					if(accessor.canPlayDrawnCard()) {
 						chooseCardRenderer.discardPreviousMouseEvents();
 						accessor.playDrawnCard();
@@ -50,7 +51,8 @@ namespace card {
 					}
 				},
 				[this]() {
-					auto& accessor = game->getAccessorFromClient();
+					auto& game = room->getGame();
+					auto& accessor = game.getAccessorFromClient();
 					if(accessor.canTakeDrawnCardIntoHandCards()) {
 						accessor.takeDrawnCardIntoHandCards();
 					} else {
@@ -60,7 +62,8 @@ namespace card {
 			),
 			chooseCardRenderer(eguiRenderer,cardIndexTextures,
 				[this](CardIndex c) {
-					game->getAccessorFromClient().chooseColor(c);
+					auto& game = room->getGame();
+					game.getAccessorFromClient().chooseColor(c);
 				}
 			),
 			circleSectorRenderer(),
@@ -73,7 +76,8 @@ namespace card {
 			}),
 			mauMauButtonRenderer(eguiRenderer,
 				[this]() {
-					game->getAccessorFromClient().mau();
+					auto& game = room->getGame();
+					game.getAccessorFromClient().mau();
 				}
 			),
 			messageRenderer(eguiRenderer),
@@ -101,7 +105,6 @@ namespace card {
 	}
 
 	void CardSceneRenderer::onSceneEnter(ProxyRoom& room) {
-		this->game = room.getGame();
 		this->room = room;
 		shouldRenderGameEndScreen = false;
 		egui::getInputHandler().getMouseBtnEventManager().addEventHandler(onMouseClicked);
@@ -113,11 +116,6 @@ namespace card {
 		shouldRenderGameEndScreen = false;
 	}
 
-	void CardSceneRenderer::setGame(ProxyRoom& room) {
-		this->game = room.getGame();
-		this->room = room;
-	}
-
 	void CardSceneRenderer::render(float deltaSeconds) {
 		bgRenderer.render(projectionMatrix, viewport);
 
@@ -126,7 +124,8 @@ namespace card {
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 
-		auto opponents = game->getOpponents();
+		auto& game = room->getGame();
+		auto opponents = game.getOpponents();
 		auto opponentsOrNoneInCwOrder = mapOpponentsToTablePositionsInCwOrder(opponents);
 
 		// render opponents
@@ -169,7 +168,7 @@ namespace card {
 		cardRenderer.flush();
 
 		renderGameEndScreenIfGameHasEnded(deltaSeconds);
-		messageRenderer.render(game->getGameData().getMessageQueue());
+		messageRenderer.render(game.getGameData().getMessageQueue());
 
 		glEnable(GL_DEPTH_TEST);
 
@@ -198,8 +197,10 @@ namespace card {
 	}
 
 	void CardSceneRenderer::renderDrawedCardAnimationsOfOpponent(const CardAnimator& handCardStack, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation) {
+		auto& game = room->getGame();
+		const auto& drawStack = game.getDrawStack();
 		for(auto animation : handCardStack.getCardAnimations()) {
-			float cardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * (game->getDrawStack().getSize());
+			float cardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * (drawStack.getSize());
 			this->interpolateAndRender(animation,
 									   DRAW_CARDS_POSITION + glm::vec3(0, cardStackHeightAddition, 0),
 									   DRAW_CARDS_ROTATION,
@@ -219,8 +220,10 @@ namespace card {
 	}
 
 	void CardSceneRenderer::renderDrawedCardAnimationsOfOpponent(const CardAnimator& handCardStack, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, glm::vec3 middlePosition, glm::vec3 middleRotation) {
+		auto& game = room->getGame();
+		const auto& drawStack = game.getDrawStack();
 		for(auto animation : handCardStack.getCardAnimations()) {
-			float cardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * (game->getDrawStack().getSize());
+			float cardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * (drawStack.getSize());
 			this->interpolateAndRender(animation,
 									   DRAW_CARDS_POSITION + glm::vec3(0, cardStackHeightAddition, 0),
 									   DRAW_CARDS_ROTATION,
@@ -236,20 +239,25 @@ namespace card {
 	}
 
 	void CardSceneRenderer::renderPlayerLabels(std::array<std::shared_ptr<ProxyPlayer>, 3>& opponents) {
+		auto& game = room->getGame();
+		const auto& localPlayer = game.getLocalPlayer();
+
 		if(opponents[0]) playerLabelRenderer.renderLeft(opponents[0]);
 		if(opponents[1]) playerLabelRenderer.renderVisAVis(opponents[1]);
 		if(opponents[2]) playerLabelRenderer.renderRight(opponents[2]);
-		playerLabelRenderer.renderLocal(game->getLocalPlayer());
+		playerLabelRenderer.renderLocal(game.getLocalPlayer());
 		playerLabelRenderer.flush();
 
 		if(opponents[0]) playerLabelOverlayRenderer.render(PlayerLabelRenderer::LEFT_PLAYER_POSITION, opponents[0]->getPercentOfSkipAnimationOrNone(), opponents[0]->getPercentOfMauAnimationOrNone());
 		if(opponents[1]) playerLabelOverlayRenderer.render(PlayerLabelRenderer::VIS_A_VIS_PLAYER_POSITION, opponents[1]->getPercentOfSkipAnimationOrNone(), opponents[1]->getPercentOfMauAnimationOrNone());
 		if(opponents[2]) playerLabelOverlayRenderer.render(PlayerLabelRenderer::RIGHT_PLAYER_POSITION, opponents[2]->getPercentOfSkipAnimationOrNone(), opponents[2]->getPercentOfMauAnimationOrNone());
-		playerLabelOverlayRenderer.render(PlayerLabelRenderer::LOCAL_PLAYER_POSITION, game->getLocalPlayer()->getPercentOfSkipAnimationOrNone(), game->getLocalPlayer()->getPercentOfMauAnimationOrNone());
+		playerLabelOverlayRenderer.render(PlayerLabelRenderer::LOCAL_PLAYER_POSITION, localPlayer->getPercentOfSkipAnimationOrNone(), localPlayer->getPercentOfMauAnimationOrNone());
 	}
 
 	void CardSceneRenderer::renderLocalPlayer() {
-		auto& localPlayer = game->getLocalPlayer();
+		auto& game = room->getGame();
+		auto& localPlayer = game.getLocalPlayer();
+		const auto& drawStack = game.getDrawStack();
 
 		// render hand cards
 		handCardRenderer.renderCardStackInX(localPlayer->getCardStack(), HAND_CARDS_LOCAL_POSITION, HAND_CARDS_LOCAL_ROTATION, projectionMatrix, viewport, FRONT_BACK_OPPONENT_CARDS_WIDTH);
@@ -263,9 +271,9 @@ namespace card {
 		for(auto it = localPlayerAnimations.rbegin(); it != localPlayerAnimations.rend(); ++it) {
 			auto& animation = *it;
 
-			if(animation.source.get().equalsId(game->getDrawStack())) {
+			if(animation.source.get().equalsId(drawStack)) {
 				// render cards from draw card stack to hand cards
-				float cardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * (game->getDrawStack().getSize());
+				float cardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * (drawStack.getSize());
 				this->interpolateAndRender(animation,
 										   DRAW_CARDS_POSITION + glm::vec3(0, cardStackHeightAddition, 0),
 										   DRAW_CARDS_ROTATION,
@@ -289,9 +297,9 @@ namespace card {
 		// render cards from draw card stack to temporary card stack
 		for(auto& animation : localPlayer->getTempCardStack().getCardAnimations()) {
 			this->interpolateAndRender(animation,
-										DRAW_CARDS_POSITION + glm::vec3(0, CardStackRenderer::ADDITION_PER_CARD * (game->getDrawStack().getSize()), 0),
+										DRAW_CARDS_POSITION + glm::vec3(0, CardStackRenderer::ADDITION_PER_CARD * (drawStack.getSize()), 0),
 										DRAW_CARDS_ROTATION,
-										DRAW_CARDS_POSITION + glm::vec3(0, CardStackRenderer::ADDITION_PER_CARD * (game->getDrawStack().getSize()), CardRenderer::HEIGHT),
+										DRAW_CARDS_POSITION + glm::vec3(0, CardStackRenderer::ADDITION_PER_CARD * (drawStack.getSize()), CardRenderer::HEIGHT),
 										DRAW_CARDS_ROTATION - glm::vec3(PI / 4, 0, 0),
 										DrawnCardRenderer::POSITION,
 										DrawnCardRenderer::ROTATION
@@ -300,10 +308,11 @@ namespace card {
 	}
 
 	void CardSceneRenderer::renderClickableOverlaysIfGameHasntEnded() {
-		if(game->hasGameEnded()) return;
+		auto& game = room->getGame();
+		if(game.hasGameEnded()) return;
 
-		auto& clientGameAccessor = game->getAccessorFromClient();
-		auto& localPlayer = game->getLocalPlayer();
+		auto& clientGameAccessor = game.getAccessorFromClient();
+		auto& localPlayer = game.getLocalPlayer();
 
 		bool shouldRenderColorChooseOverlay = clientGameAccessor.isWaitingForColorChoose();
 		bool shouldRenderDrawnCardOverlay = localPlayer->getCardInTempStack().has_value();
@@ -334,7 +343,8 @@ namespace card {
 	void CardSceneRenderer::tryRenderChooseColorOverlay() {
 		static bool wasWaitingForColorChooseInLastPass = false;
 
-		bool isWaitingForColorChoose = game->getAccessorFromClient().isWaitingForColorChoose();
+		auto& game = room->getGame();
+		bool isWaitingForColorChoose = game.getAccessorFromClient().isWaitingForColorChoose();
 		if(isWaitingForColorChoose) {
 			if(! wasWaitingForColorChooseInLastPass) chooseCardRenderer.discardPreviousMouseEvents();
 
@@ -345,7 +355,8 @@ namespace card {
 		wasWaitingForColorChooseInLastPass = isWaitingForColorChoose;
 	}
 	void CardSceneRenderer::renderMauButton(bool suppressMouseClick) {
-		auto& clientGameAccessor = game->getAccessorFromClient();
+		auto& game = room->getGame();
+		auto& clientGameAccessor = game.getAccessorFromClient();
 
 		bool canMau = clientGameAccessor.canMau();
 		bool canClickMauButton = canMau && !suppressMouseClick;
@@ -354,7 +365,8 @@ namespace card {
 	void CardSceneRenderer::handleInput() {
 		// check if player wants to play/draw a card
 		auto intersectedCardIndex = checkIntersectionWithOwnHandCards();
-		auto& clientGameAccessor = game->getAccessorFromClient();
+		auto& game = room->getGame();
+		auto& clientGameAccessor = game.getAccessorFromClient();
 		
 		if(clientGameAccessor.canDraw() && checkIntersectionWithDrawCardStack()) {
 			clientGameAccessor.drawCard();
@@ -363,11 +375,13 @@ namespace card {
 		}
 	}
 	bool CardSceneRenderer::checkIntersectionWithDrawCardStack() {
-		return cardStackIntersectionChecker.doesIntersect(game->getDrawStack(), DRAW_CARDS_POSITION, DRAW_CARDS_ROTATION, CardStackRenderer::ADDITION_PER_CARD, CardRenderer::WIDTH, CardRenderer::HEIGHT);
+		auto& game = room->getGame();
+		return cardStackIntersectionChecker.doesIntersect(game.getDrawStack(), DRAW_CARDS_POSITION, DRAW_CARDS_ROTATION, CardStackRenderer::ADDITION_PER_CARD, CardRenderer::WIDTH, CardRenderer::HEIGHT);
 	}
 
 	std::optional<int> CardSceneRenderer::checkIntersectionWithOwnHandCards() {
-		return handCardIntersectionChecker.getIndexOfIntersectedCardInX(game->getLocalPlayer()->getCardStack(), HAND_CARDS_LOCAL_POSITION, HAND_CARDS_LOCAL_ROTATION, FRONT_BACK_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH, CardRenderer::HEIGHT);
+		auto& game = room->getGame();
+		return handCardIntersectionChecker.getIndexOfIntersectedCardInX(game.getLocalPlayer()->getCardStack(), HAND_CARDS_LOCAL_POSITION, HAND_CARDS_LOCAL_ROTATION, FRONT_BACK_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH, CardRenderer::HEIGHT);
 	}
 
 	std::array<std::shared_ptr<ProxyPlayer>, 3> CardSceneRenderer::mapOpponentsToTablePositionsInCwOrder(const std::vector<std::shared_ptr<ProxyPlayer>> opponents) {
@@ -391,7 +405,8 @@ namespace card {
 	}
 
 	void CardSceneRenderer::renderDrawCardStack() {
-		auto& drawCardStack = game->getDrawStack();
+		auto& game = room->getGame();
+		auto& drawCardStack = game.getDrawStack();
 		cardStackRenderer.renderCardStack(drawCardStack, DRAW_CARDS_POSITION, DRAW_CARDS_ROTATION, projectionMatrix, viewport);
 
 		auto& animations = drawCardStack.getCardAnimations();
@@ -408,17 +423,19 @@ namespace card {
 
 	void CardSceneRenderer::renderPlayCardStack() {
 		HandCardStackPositionGenerator handCardStackPositionGenerator;
-		auto& cardStack = game->getPlayStack();
-		auto& localPlayer = game->getLocalPlayer();
-		auto& opponents = game->getOpponents();
+		auto& game = room->getGame();
+		auto& playCardStack = game.getPlayStack();
+		auto& drawCardStack = game.getDrawStack();
+		auto& localPlayer = game.getLocalPlayer();
+		auto& opponents = game.getOpponents();
 		auto cardStacksOrNoneInCwOrder = mapOpponentsToTablePositionsInCwOrder(opponents);
 
-		cardStackRenderer.renderCardStackWithMisalignment(cardStack, PLAY_CARDS_POSITION, PLAY_CARDS_ROTATION, projectionMatrix, viewport);
+		cardStackRenderer.renderCardStackWithMisalignment(playCardStack, PLAY_CARDS_POSITION, PLAY_CARDS_ROTATION, projectionMatrix, viewport);
 
 		int animationCounter = 0;
-		for(auto animation : cardStack.getCardAnimations()) {
-			glm::vec3 positionEnd = PLAY_CARDS_POSITION + glm::vec3(0, cardStack.getSize() * CardStackRenderer::ADDITION_PER_CARD, 0);
-			glm::vec3 rotationEnd = PLAY_CARDS_ROTATION + misalignmentGenerator.computeRotationMisalignment(cardStack.getSize() + animationCounter);
+		for(auto animation : playCardStack.getCardAnimations()) {
+			glm::vec3 positionEnd = PLAY_CARDS_POSITION + glm::vec3(0, playCardStack.getSize() * CardStackRenderer::ADDITION_PER_CARD, 0);
+			glm::vec3 rotationEnd = PLAY_CARDS_ROTATION + misalignmentGenerator.computeRotationMisalignment(playCardStack.getSize() + animationCounter);
 			CardAnimator& sourceStack = animation.source.get();
 
 			if(sourceStack.equalsId(localPlayer->getTempCardStack())) {
@@ -438,7 +455,7 @@ namespace card {
 				interpolateAndRender(animation,
 									 startPosition, glm::vec3(PI, -PI / 2, 0),
 									 startPosition + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), glm::vec3(PI, -PI / 2, 0),
-									 DRAW_CARDS_POSITION + glm::vec3(0, CardRenderer::HEIGHT * 0.25f + CardStackRenderer::ADDITION_PER_CARD * (game->getDrawStack().getSize()), 0), {1.5f * PI / 2, -PI, rotationEnd.z},
+									 DRAW_CARDS_POSITION + glm::vec3(0, CardRenderer::HEIGHT * 0.25f + CardStackRenderer::ADDITION_PER_CARD * (drawCardStack.getSize()), 0), {1.5f * PI / 2, -PI, rotationEnd.z},
 									 positionEnd, {rotationEnd.x, -PI, rotationEnd.z}
 				);
 			} else if(cardStacksOrNoneInCwOrder[1] && sourceStack.equalsId(cardStacksOrNoneInCwOrder[1]->getCardStack())) {
@@ -455,7 +472,7 @@ namespace card {
 									 HAND_CARDS_OPPONENT_RIGHT_POSITION + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), HAND_CARDS_OPPONENT_RIGHT_ROTATION,
 									 positionEnd, rotationEnd
 				);
-			} else if (sourceStack.equalsId(game->getDrawStack())) {
+			} else if (sourceStack.equalsId(drawCardStack)) {
 				renderAnimationFromDrawToPlayStack(animation, positionEnd, rotationEnd);
 			} else {
 				throw std::runtime_error("Card isn't from an user card stack.");
@@ -471,7 +488,8 @@ namespace card {
 		CardAnimation secondAnimationPart = firstAnimationPart;
 		secondAnimationPart.animationStartTime += firstAnimationPart.duration;
 
-		float drawCardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * (game->getDrawStack().getSize());
+		auto& game = room->getGame();
+		float drawCardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * (game.getDrawStack().getSize());
 
 		float x = float(getMilliseconds() - firstAnimationPart.animationStartTime);
 		float x1 = 0;
@@ -500,11 +518,12 @@ namespace card {
 	}
 
 	void CardSceneRenderer::renderCardIndexForNextCardIfGameHasntEnded() {	
-		std::optional<CardIndex> cardIndexForNextCardOrNone = game->getGameData().getCardIndexForNextCardOrNone();
+		auto& game = room->getGame();
+		std::optional<CardIndex> cardIndexForNextCardOrNone = game.getGameData().getCardIndexForNextCardOrNone();
 
-		const RoomOptions& options = game->getGameData().getOptions();
+		const RoomOptions& options = game.getGameData().getOptions();
 		bool doesColorIndexChangeOnJack = options.getOption(Options::CHOOSE_COLOR_ON_JACK);
-		bool isGameRunning = !game->hasGameEnded();
+		bool isGameRunning = !game.hasGameEnded();
 		if(cardIndexForNextCardOrNone.has_value() && isGameRunning && doesColorIndexChangeOnJack) {
 			cardIndexRenderer.renderCardIndexForNextCard(*cardIndexForNextCardOrNone);
 		}
@@ -514,9 +533,15 @@ namespace card {
 		updateRenderGameEndScreenFlag();
 
 		if(shouldRenderGameEndScreen) {
-			auto winner = game->getWinnerOrNull();
-			assert(winner);
-
+			auto& game = room->getGame();
+			auto winner = game.getWinnerOrNull();
+			if(! winner) {
+				// if there is no winner, but the game end screen should be rendered,
+				// we can conclude that a new game must have been started
+				onSceneExit();
+				onSceneEnter(*room);
+				return;
+			}
 			std::string winnerUsername = winner->getUsername();
 			fireworkRenderer.updateAndRender(delta, winnerUsername, projectionMatrix);
 		}
@@ -524,7 +549,8 @@ namespace card {
 
 	void CardSceneRenderer::updateRenderGameEndScreenFlag() {
 		static bool hasGameEndedLastFrame = false;
-		bool hasGameEnded = game->hasGameEnded();
+		auto& game = room->getGame();
+		bool hasGameEnded = game.hasGameEnded();
 
 		if(hasGameEnded && !hasGameEndedLastFrame) {
 			threadUtils_invokeIn(DRAW_DURATION_MS, [this]() {

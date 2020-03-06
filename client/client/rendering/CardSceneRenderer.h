@@ -81,7 +81,6 @@ namespace card {
 			HandCardIntersectionChecker handCardIntersectionChecker;
 
 			boost::optional<ProxyRoom&> room;
-			boost::optional<ProxyMauMauGame&> game;
 			bool shouldRenderGameEndScreen = false;
 
 			egui::FunctionWrapper<egui::MouseEvent> onMouseClicked;
@@ -100,7 +99,6 @@ namespace card {
 		public:
 			void onSceneEnter(ProxyRoom& room);
 			void onSceneExit();
-			[[deprecated]] void setGame(ProxyRoom& room);
 			void render(float deltaSeconds);
 
 		private:
