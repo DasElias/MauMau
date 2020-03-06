@@ -36,7 +36,7 @@ namespace card {
         // ---------------------------STATIC-METHODS-----------------------------
         // ----------------------------------------------------------------------
         private:   
-            static ParticleTexture loadTexture(std::string fileName);
+            static ParticleTexture loadTexture(const unsigned char* data, std::size_t size);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
