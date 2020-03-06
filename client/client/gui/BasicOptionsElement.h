@@ -15,9 +15,7 @@ namespace card {
             std::shared_ptr<BoolOptionElement> canPutJackOnEveryColor_option;
             std::shared_ptr<BoolOptionElement> canPutJackOnJack_option;
             std::shared_ptr<BoolOptionElement> skipOnEight_option;
-            std::shared_ptr<BoolOptionElement> passSkip_option;
             std::shared_ptr<BoolOptionElement> drawTwoOnSeven_option;
-            std::shared_ptr<BoolOptionElement> passDrawTwo_option;
             std::shared_ptr<BoolOptionElement> directionChangeOnNine_option;
             std::shared_ptr<IntegerOptionElement> amountOfStartCards_option;
 
