@@ -39,7 +39,7 @@ namespace card {
 			Text::HorizontalAlignment::CENTER,
 			Text::VerticalAlignment::TOP,
 			Color(1, 1, 1)
-			);
+		);
 		auto box = std::make_shared<egui::VBox>();
 		box->addChildElement(title);
 		box->addChildElement(subtitle);
@@ -53,6 +53,7 @@ namespace card {
 		appendContent("Avatare", "www.getavataaars.com");
 		appendContent(u8"Textur für Tisch", "Petr Kovar - www.freeimages.com");
 		appendContent("Icons", "Freepik - www.flaticon.com");
+		appendContent("Verwendete Libraries", "GLFW/GLAD\nNanoVG\nBoost.Asio\nLoguru");
 
 		backButton = std::make_shared<ColoredButton>(ColoredButtonType::BLUE, u8"Zurück");
 		this->addChildElement(backButton);
