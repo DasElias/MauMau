@@ -8,6 +8,7 @@
 #include "../utils/FileUtils.h"
 
 #include <res/menu/mainMenu.png.h>
+#include <res/menu/title.png.h>
 
 using namespace egui;
 
@@ -62,7 +63,7 @@ namespace card {
 			), egui::RenderMode::RENDER_EXCLUSIVELY);
 
 		
-		auto gameTitleImage = egui::Image::loadTexture(getApplicationFolder() + "\\resources\\maumau.png");
+		auto gameTitleImage = egui::Image::loadFromMemory(tex_title, tex_title_size);
 		auto gameTitleImageElement = std::make_shared<egui::AspectRatioElement>(gameTitleImage->getAspectRatio());
 		addChildElement(gameTitleImageElement);
 		gameTitleImageElement->setMaxHeight({0.275f, egui::RelativityMode::RELATIVE_IN_PARENT});
