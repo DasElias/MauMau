@@ -5,7 +5,6 @@
 #include <egui/model\nodes\Labeled.h>
 #include <egui/model\nodes\Button.h>
 #include <egui/model\nodes\InputField.h>
-#include <egui/model/nodes/KeySelectButton.h>
 #include <egui/model\nodes\Slider.h>
 #include "ColoredButton.h"
 #include "IntegerSelector.h"
@@ -38,10 +37,7 @@ egui::MauMauTheme::MauMauTheme(EGuiContext& context) :
 		AbstractTheme::addComponent(card::ColoredButton::getClassName_static(), button_coloredButton_apply());
 
 		// Button
-		AbstractTheme::addComponent(Button::getClassName_static(), button_keySelectButton_apply());
-
-		// KeySelectButton
-		AbstractTheme::addComponent(KeySelectButton::getClassName_static(), button_keySelectButton_apply());
+		AbstractTheme::addComponent(Button::getClassName_static(), button_apply());
 
 		// InputField
 		AbstractTheme::addComponent(InputField::getClassName_static(), inputField_apply());
@@ -117,7 +113,7 @@ std::function<void(egui::Node* const)> egui::MauMauTheme::button_coloredButton_a
 	};
 }
 
-std::function<void(egui::Node* const)> egui::MauMauTheme::button_keySelectButton_apply() {
+std::function<void(egui::Node* const)> egui::MauMauTheme::button_apply() {
 	return [this](Node* const p_node) {
 		Labeled* p_btn = dynamic_cast<Labeled*>(p_node);
 		if(!p_btn) throw std::logic_error("Component is not of type Button or KeySelectButton!");

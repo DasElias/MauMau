@@ -16,7 +16,6 @@
 #include "system/GlfwCursorHandler.h"
 #include "system/GlfwDisplayHandler.h"
 #include "system/GlfwInputHandler.h"
-#include "system/KeyAssignmentsImpl.h"
 
 
 #include <boost/filesystem.hpp>
@@ -168,10 +167,9 @@ namespace card {
 		GlfwDisplayHandler displayHandler(p_window, START_WIDTH, START_HEIGHT);
 		GlfwInputHandler inputHandler(p_window);
 		GlfwCursorHandler cursorHandler(p_window);
-		KeyAssignmentsImpl keyAssignments;
 
 		cursorHandler.setCursorPosition(START_WIDTH / 2.0f, START_HEIGHT / 2.0f);
-		egui::init(displayHandler, inputHandler, cursorHandler, keyAssignments);
+		egui::init(displayHandler, inputHandler, cursorHandler);
 
 		glfwMakeContextCurrent(p_window);
 		gladLoadGL();		
