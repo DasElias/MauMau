@@ -23,6 +23,8 @@
 #include "GameEndRenderer.h"
 #include "MauMauButtonRenderer.h"
 #include "MessageRenderer.h"
+#include "LocalPlayerRenderer.h"
+#include "CardInterpolator.h"
 #include "../renderingModel/CardStackIntersectionChecker.h"
 #include "../renderingModel/HandCardIntersectionChecker.h"
 #include "../renderingModel/MauMauCardStackMisalignmentGenerator.h"
@@ -30,27 +32,6 @@
 
 namespace card {
 	class CardSceneRenderer {
-		// ----------------------------------------------------------------------
-		// ----------------------------STATIC-FIELDS-----------------------------
-		// ----------------------------------------------------------------------
-		private:
-			static glm::vec3 const DRAW_CARDS_POSITION;
-			static glm::vec3 const PLAY_CARDS_POSITION;
-			static glm::vec3 const HAND_CARDS_LOCAL_POSITION;
-			static glm::vec3 const HAND_CARDS_OPPONENT_VISAVIS_POSITION;
-			static glm::vec3 const HAND_CARDS_OPPONENT_RIGHT_POSITION;
-			static glm::vec3 const HAND_CARDS_OPPONENT_LEFT_POSITION;
-
-			static glm::vec3 const DRAW_CARDS_ROTATION;
-			static glm::vec3 const PLAY_CARDS_ROTATION;
-			static glm::vec3 const HAND_CARDS_LOCAL_ROTATION;
-			static glm::vec3 const HAND_CARDS_OPPONENT_VISAVIS_ROTATION;
-			static glm::vec3 const HAND_CARDS_OPPONENT_RIGHT_ROTATION;
-			static glm::vec3 const HAND_CARDS_OPPONENT_LEFT_ROTATION;
-
-			static float const LEFT_RIGHT_OPPONENT_CARDS_WIDTH;
-			static float const FRONT_BACK_OPPONENT_CARDS_WIDTH;
-
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
@@ -64,8 +45,10 @@ namespace card {
 			Renderer2D renderer2d;
 			Renderer3D renderer3d;
 			CardRenderer cardRenderer;
+			CardInterpolator cardInterpolator;
 			CardStackRenderer cardStackRenderer;
 			HandCardStackRenderer handCardRenderer;
+			LocalPlayerRenderer localPlayerRenderer;
 			CardSceneBackgroundRenderer bgRenderer;
 			DrawnCardRenderer drawnCardRenderer;
 			ChooseCardRenderer chooseCardRenderer;
@@ -111,7 +94,6 @@ namespace card {
 			void renderDrawedCardAnimationsOfOpponentIfHasValue(std::size_t index, std::array<std::shared_ptr<ProxyPlayer>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, glm::vec3 middlePosition, glm::vec3 middleRotation);
 			void renderDrawedCardAnimationsOfOpponent(const CardAnimator& handCardStack, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, glm::vec3 middlePosition, glm::vec3 middleRotation);
 			void renderPlayerLabels(std::array<std::shared_ptr<ProxyPlayer>, 3>& opponents);
-			void renderLocalPlayer();
 			void renderClickableOverlaysIfGameHasntEnded();
 			void tryRenderDrawnCardOverlay(std::optional<Card> drawnCardOrNone, bool suppressMouseClick);
 			void tryRenderChooseColorOverlay();
@@ -124,13 +106,10 @@ namespace card {
 			void updateRenderGameEndScreenFlag();
 			void handleInput();
 			bool checkIntersectionWithDrawCardStack();
-			std::optional<int> checkIntersectionWithOwnHandCards();
 
 			std::array<std::shared_ptr<ProxyPlayer>, 3> mapOpponentsToTablePositionsInCwOrder(const std::vector<std::shared_ptr<ProxyPlayer>> opponents);
 
-			void interpolateAndRender(const CardAnimation& animation, glm::vec3 startPosition, glm::vec3 startRotation, glm::vec3 middle1Position, glm::vec3 middle1Rotation, glm::vec3 middle2Position, glm::vec3 middle2Rotation, glm::vec3 endPosition, glm::vec3 endRotation, float period1Ratio = 0.33f, float period2Ratio = 0.33f, float period3Ratio = 0.33f);
-			void interpolateAndRender(const CardAnimation& animation, glm::vec3 startPosition, glm::vec3 startRotation, glm::vec3 middlePosition, glm::vec3 middleRotation, glm::vec3 endPosition, glm::vec3 endRotation, float period1Ratio = 0.5f, float period2Ratio = 0.5f);
-			void interpolateAndRender(const CardAnimation& animation, glm::vec3 startPosition, glm::vec3 startRotation, glm::vec3 endPosition, glm::vec3 endRotation);
+			
 			
 			
 	};

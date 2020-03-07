@@ -6,6 +6,7 @@
 #include <iostream>
 #include "../utils/VectorMathUtils.h"
 #include <shared/utils/MathUtils.h>
+#include "CardStackPositions.h"
 
 #include <shared/utils/TimeUtils.h>
 #include <shared/utils/Logger.h>
@@ -13,23 +14,6 @@
 #include <shared/model/CardAnimationDuration.h>
 
 namespace card {
-	const glm::vec3 CardSceneRenderer::DRAW_CARDS_POSITION = {-0.5, 0, 0};
-	const glm::vec3 CardSceneRenderer::PLAY_CARDS_POSITION = {0.5, 0, 0};
-	const glm::vec3 CardSceneRenderer::HAND_CARDS_LOCAL_POSITION = {0, -CardRenderer::HEIGHT / 2, 1};
-	const glm::vec3 CardSceneRenderer::HAND_CARDS_OPPONENT_VISAVIS_POSITION = {0, CardRenderer::HEIGHT / 2, -1};
-	const glm::vec3 CardSceneRenderer::HAND_CARDS_OPPONENT_RIGHT_POSITION = {2, CardRenderer::HEIGHT / 2, 0};
-	const glm::vec3 CardSceneRenderer::HAND_CARDS_OPPONENT_LEFT_POSITION = {-2, CardRenderer::HEIGHT / 2, 0};
-
-	const glm::vec3 CardSceneRenderer::DRAW_CARDS_ROTATION = {PI / 2, 0, 0};
-	const glm::vec3 CardSceneRenderer::PLAY_CARDS_ROTATION = {PI / 2, PI, 0};
-	const glm::vec3 CardSceneRenderer::HAND_CARDS_LOCAL_ROTATION = {0, 0, 0};
-	const glm::vec3 CardSceneRenderer::HAND_CARDS_OPPONENT_VISAVIS_ROTATION = {PI, 0, 0};
-	const glm::vec3 CardSceneRenderer::HAND_CARDS_OPPONENT_RIGHT_ROTATION = {PI, PI / 2, 0};
-	const glm::vec3 CardSceneRenderer::HAND_CARDS_OPPONENT_LEFT_ROTATION = {PI, -PI / 2, 0};
-
-	const float CardSceneRenderer::LEFT_RIGHT_OPPONENT_CARDS_WIDTH = 2;
-	const float CardSceneRenderer::FRONT_BACK_OPPONENT_CARDS_WIDTH = 4;
-
 	CardSceneRenderer::CardSceneRenderer(ProjectionMatrix& projectionMatrix, Viewport& viewport, AvatarTextures& avatarTextures, egui::MasterRenderer& eguiRenderer) :
 			projectionMatrix(projectionMatrix),
 			viewport(viewport),
@@ -38,6 +22,8 @@ namespace card {
 			cardRenderer(renderer3d, cardTextures),
 			cardStackRenderer(cardRenderer, misalignmentGenerator),
 			handCardRenderer(cardRenderer),
+			localPlayerRenderer(projectionMatrix, viewport, cardRenderer),
+			cardInterpolator(cardRenderer, projectionMatrix, viewport),
 			bgRenderer(renderer2d, renderer3d),
 			drawnCardRenderer(cardRenderer, eguiRenderer, projectionMatrix, viewport,
 				[this]() {
@@ -158,7 +144,8 @@ namespace card {
 
 
 		// render local player
-		renderLocalPlayer();
+	//	renderLocalPlayer();
+		localPlayerRenderer.render(game);
 		cardRenderer.flush(true);
 		renderPlayerLabels(opponentsOrNoneInCwOrder);
 		renderCardIndexForNextCardIfGameHasntEnded();
@@ -201,7 +188,7 @@ namespace card {
 		const auto& drawStack = game.getDrawStack();
 		for(auto animation : handCardStack.getCardAnimations()) {
 			float cardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * (drawStack.getSize());
-			this->interpolateAndRender(animation,
+			cardInterpolator.interpolateAndRender(animation,
 									   DRAW_CARDS_POSITION + glm::vec3(0, cardStackHeightAddition, 0),
 									   DRAW_CARDS_ROTATION,
 									   DRAW_CARDS_POSITION + glm::vec3(0, cardStackHeightAddition + CardRenderer::HEIGHT/2, -CardRenderer::HEIGHT),
@@ -224,7 +211,7 @@ namespace card {
 		const auto& drawStack = game.getDrawStack();
 		for(auto animation : handCardStack.getCardAnimations()) {
 			float cardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * (drawStack.getSize());
-			this->interpolateAndRender(animation,
+			cardInterpolator.interpolateAndRender(animation,
 									   DRAW_CARDS_POSITION + glm::vec3(0, cardStackHeightAddition, 0),
 									   DRAW_CARDS_ROTATION,
 									   DRAW_CARDS_POSITION + glm::vec3(0, cardStackHeightAddition + CardRenderer::HEIGHT/2, -CardRenderer::HEIGHT),
@@ -252,74 +239,6 @@ namespace card {
 		if(opponents[1]) playerLabelOverlayRenderer.render(PlayerLabelRenderer::VIS_A_VIS_PLAYER_POSITION, opponents[1]->getPercentOfSkipAnimationOrNone(), opponents[1]->getPercentOfMauAnimationOrNone());
 		if(opponents[2]) playerLabelOverlayRenderer.render(PlayerLabelRenderer::RIGHT_PLAYER_POSITION, opponents[2]->getPercentOfSkipAnimationOrNone(), opponents[2]->getPercentOfMauAnimationOrNone());
 		playerLabelOverlayRenderer.render(PlayerLabelRenderer::LOCAL_PLAYER_POSITION, localPlayer->getPercentOfSkipAnimationOrNone(), localPlayer->getPercentOfMauAnimationOrNone());
-	}
-
-	void CardSceneRenderer::renderLocalPlayer() {
-		auto& game = room->getGame();
-		auto& localPlayer = game.getLocalPlayer();
-		const auto& drawStack = game.getDrawStack();
-
-		std::optional<int> intersectedCardOrNone = checkIntersectionWithOwnHandCards();
-		
-		int intersectedCard = (intersectedCardOrNone.has_value() && game.getGameData().isReadyToPerformLocalPlayerTurn()) ? *intersectedCardOrNone : -1;
-		static int intersectedCardInLastFrame = -1;
-		static long long unixTimeIntersectedCardHasChanged = getMilliseconds();
-		if(intersectedCard != intersectedCardInLastFrame) {
-			intersectedCardInLastFrame = intersectedCard;
-			unixTimeIntersectedCardHasChanged = getMilliseconds();
-		}
-		float x = getMilliseconds() - unixTimeIntersectedCardHasChanged;
-		float const x1 = 0;
-		float const x2 = 100;
-		float addition = interpolateLinear(x, x1, 0, x2, 0.1);
-		addition = std::clamp<float>(addition, 0, 0.1);
-
-		// render hand cards
-		handCardRenderer.renderCardStackInX(localPlayer->getCardStack(), HAND_CARDS_LOCAL_POSITION, HAND_CARDS_LOCAL_ROTATION, projectionMatrix, viewport, FRONT_BACK_OPPONENT_CARDS_WIDTH, intersectedCard, addition);
-
-		// render cards to hand cards
-		// please note that we iterate over the set from the end to the begin (we use a reverse-iterator),
-		// since we want to render animations added later also to be rendered later
-		// this is important when we have multiple CardAnimations from the draw card stack to the hand card stack,
-		// for example when the player was forced to draw 2 cards
-		auto localPlayerAnimations = localPlayer->getCardStack().getCardAnimations();
-		for(auto it = localPlayerAnimations.rbegin(); it != localPlayerAnimations.rend(); ++it) {
-			auto& animation = *it;
-
-			if(animation.source.get().equalsId(drawStack)) {
-				// render cards from draw card stack to hand cards
-				float cardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * (drawStack.getSize());
-				this->interpolateAndRender(animation,
-										   DRAW_CARDS_POSITION + glm::vec3(0, cardStackHeightAddition, 0),
-										   DRAW_CARDS_ROTATION,
-										   DRAW_CARDS_POSITION + glm::vec3(0, cardStackHeightAddition + CardRenderer::HEIGHT / 4, CardRenderer::HEIGHT * 0.75f),
-										   DRAW_CARDS_ROTATION - glm::vec3(PI / 4, 0, 0),
-										   DRAW_CARDS_POSITION + glm::vec3(0, cardStackHeightAddition + CardRenderer::HEIGHT, CardRenderer::HEIGHT * 1.5f),
-										   DRAW_CARDS_ROTATION - glm::vec3(PI / 2, 0, 0),
-										   HAND_CARDS_LOCAL_POSITION,
-										   HAND_CARDS_LOCAL_ROTATION);
-			} else if(animation.source.get().equalsId(localPlayer->getTempCardStack())) {
-				// render cards from temporary card stack to hand cards
-				this->interpolateAndRender(animation,
-										   DrawnCardRenderer::POSITION,
-										   DrawnCardRenderer::ROTATION,
-										   HAND_CARDS_LOCAL_POSITION,
-										   HAND_CARDS_LOCAL_ROTATION
-				);
-			}	
-		}
-
-		// render cards from draw card stack to temporary card stack
-		for(auto& animation : localPlayer->getTempCardStack().getCardAnimations()) {
-			this->interpolateAndRender(animation,
-										DRAW_CARDS_POSITION + glm::vec3(0, CardStackRenderer::ADDITION_PER_CARD * (drawStack.getSize()), 0),
-										DRAW_CARDS_ROTATION,
-										DRAW_CARDS_POSITION + glm::vec3(0, CardStackRenderer::ADDITION_PER_CARD * (drawStack.getSize()), CardRenderer::HEIGHT),
-										DRAW_CARDS_ROTATION - glm::vec3(PI / 4, 0, 0),
-										DrawnCardRenderer::POSITION,
-										DrawnCardRenderer::ROTATION
-			);
-		}
 	}
 
 	void CardSceneRenderer::renderClickableOverlaysIfGameHasntEnded() {
@@ -378,9 +297,8 @@ namespace card {
 		mauMauButtonRenderer.render(canClickMauButton);
 	}
 	void CardSceneRenderer::handleInput() {
-		// check if player wants to play/draw a card
-		auto intersectedCardIndex = checkIntersectionWithOwnHandCards();
 		auto& game = room->getGame();
+		auto intersectedCardIndex = localPlayerRenderer.checkIntersectionWithHandCards(game);
 		auto& clientGameAccessor = game.getAccessorFromClient();
 		
 		if(clientGameAccessor.canDraw() && checkIntersectionWithDrawCardStack()) {
@@ -392,11 +310,6 @@ namespace card {
 	bool CardSceneRenderer::checkIntersectionWithDrawCardStack() {
 		auto& game = room->getGame();
 		return cardStackIntersectionChecker.doesIntersect(game.getDrawStack(), DRAW_CARDS_POSITION, DRAW_CARDS_ROTATION, CardStackRenderer::ADDITION_PER_CARD, CardRenderer::WIDTH, CardRenderer::HEIGHT);
-	}
-
-	std::optional<int> CardSceneRenderer::checkIntersectionWithOwnHandCards() {
-		auto& game = room->getGame();
-		return handCardIntersectionChecker.getIndexOfIntersectedCardInX(game.getLocalPlayer()->getCardStack(), HAND_CARDS_LOCAL_POSITION, HAND_CARDS_LOCAL_ROTATION, FRONT_BACK_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH, CardRenderer::HEIGHT);
 	}
 
 	std::array<std::shared_ptr<ProxyPlayer>, 3> CardSceneRenderer::mapOpponentsToTablePositionsInCwOrder(const std::vector<std::shared_ptr<ProxyPlayer>> opponents) {
@@ -429,7 +342,7 @@ namespace card {
 			auto animation = animations[i];
 
 			glm::vec3 heightAddition(0, i * CardStackRenderer::ADDITION_PER_CARD, 0);
-			interpolateAndRender(animation,
+			cardInterpolator.interpolateAndRender(animation,
 								 PLAY_CARDS_POSITION + heightAddition, DRAW_CARDS_ROTATION,
 								 DRAW_CARDS_POSITION + heightAddition, DRAW_CARDS_ROTATION
 			);
@@ -454,20 +367,20 @@ namespace card {
 			CardAnimator& sourceStack = animation.source.get();
 
 			if(sourceStack.equalsId(localPlayer->getTempCardStack())) {
-				interpolateAndRender(animation, 
+				cardInterpolator.interpolateAndRender(animation,
 									DrawnCardRenderer::POSITION, {PI, PI, 0}, 
 									positionEnd, rotationEnd
 				);
 			} else if(sourceStack.equalsId(localPlayer->getCardStack())) {
 				glm::vec3 startPosition = glm::vec3(0, 0.1f, 0) + handCardStackPositionGenerator.getPositionOfCard_cardStackX(animation.indexInSourceStack - 1, sourceStack.getSize(), HAND_CARDS_LOCAL_POSITION, FRONT_BACK_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
-				interpolateAndRender(animation,
+				cardInterpolator.interpolateAndRender(animation,
 									 startPosition, HAND_CARDS_LOCAL_ROTATION + glm::vec3(PI, PI, 0),
 									 startPosition + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), HAND_CARDS_LOCAL_ROTATION + glm::vec3(PI, PI, 0),
 									 positionEnd, rotationEnd
 				);
 			} else if(cardStacksOrNoneInCwOrder[0] && sourceStack.equalsId(cardStacksOrNoneInCwOrder[0]->getCardStack())) {
 				glm::vec3 startPosition = handCardStackPositionGenerator.getPositionOfCard_cardStackZ(animation.indexInSourceStack - 1, sourceStack.getSize(), HAND_CARDS_OPPONENT_LEFT_POSITION, LEFT_RIGHT_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
-				interpolateAndRender(animation,
+				cardInterpolator.interpolateAndRender(animation,
 									 startPosition, glm::vec3(PI, -PI / 2, 0),
 									 startPosition + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), glm::vec3(PI, -PI / 2, 0),
 									 DRAW_CARDS_POSITION + glm::vec3(0, CardRenderer::HEIGHT * 0.25f + CardStackRenderer::ADDITION_PER_CARD * (drawCardStack.getSize()), 0), {1.5f * PI / 2, -PI, rotationEnd.z},
@@ -475,14 +388,14 @@ namespace card {
 				);
 			} else if(cardStacksOrNoneInCwOrder[1] && sourceStack.equalsId(cardStacksOrNoneInCwOrder[1]->getCardStack())) {
 				glm::vec3 startPosition = handCardStackPositionGenerator.getPositionOfCard_cardStackX(animation.indexInSourceStack - 1, sourceStack.getSize(), HAND_CARDS_OPPONENT_VISAVIS_POSITION, FRONT_BACK_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
-				interpolateAndRender(animation,
+				cardInterpolator.interpolateAndRender(animation,
 									 startPosition, HAND_CARDS_OPPONENT_VISAVIS_ROTATION + glm::vec3(-PI, PI, 0),
 									 startPosition + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), HAND_CARDS_OPPONENT_VISAVIS_ROTATION + glm::vec3(-PI, PI, 0),
 									 positionEnd, rotationEnd
 				);
 			} else if(cardStacksOrNoneInCwOrder[2] && sourceStack.equalsId(cardStacksOrNoneInCwOrder[2]->getCardStack())) {
 				glm::vec3 startPosition = handCardStackPositionGenerator.getPositionOfCard_cardStackZ(animation.indexInSourceStack - 1, sourceStack.getSize(), HAND_CARDS_OPPONENT_RIGHT_POSITION, LEFT_RIGHT_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
-				interpolateAndRender(animation,
+				cardInterpolator.interpolateAndRender(animation,
 									 HAND_CARDS_OPPONENT_RIGHT_POSITION, HAND_CARDS_OPPONENT_RIGHT_ROTATION,
 									 HAND_CARDS_OPPONENT_RIGHT_POSITION + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), HAND_CARDS_OPPONENT_RIGHT_ROTATION,
 									 positionEnd, rotationEnd
@@ -522,8 +435,7 @@ namespace card {
 								glm::vec3(DRAW_CARDS_ROTATION.x, -arc, DRAW_CARDS_ROTATION.z)},
 								projectionMatrix, viewport);
 		} else {
-
-			interpolateAndRender(secondAnimationPart,
+			cardInterpolator.interpolateAndRender(secondAnimationPart,
 								 DRAW_CARDS_POSITION + glm::vec3(CardRenderer::WIDTH / 2, drawCardStackHeightAddition + CardRenderer::WIDTH / 2, 0), 
 								 glm::vec3(DRAW_CARDS_ROTATION.x, -PI / 2, DRAW_CARDS_ROTATION.z),
 								 endPosition, 
@@ -575,80 +487,5 @@ namespace card {
 		}
 		hasGameEndedLastFrame = hasGameEnded;
 	}
-
-	void CardSceneRenderer::interpolateAndRender(const CardAnimation& animation, glm::vec3 startPosition, glm::vec3 startRotation, glm::vec3 middle1Position, glm::vec3 middle1Rotation, glm::vec3 middle2Position, glm::vec3 middle2Rotation, glm::vec3 endPosition, glm::vec3 endRotation,
-												 float period1Ratio, float period2Ratio, float period3Ratio) {
-		float ratioSum = period1Ratio + period2Ratio + period3Ratio;
-		float TOLERANCE = 0.02f;
-		if(ratioSum < 1 - TOLERANCE || ratioSum > 1 + TOLERANCE) {
-			throw std::runtime_error("ratio arguments doesn't sum up to 1");
-		}
-
-		glm::vec3 interpolatedPosition, interpolatedRotation;
-
-		float x = float(getMilliseconds() - animation.animationStartTime);
-		float x1 = 0;
-		float x2 = animation.duration * period1Ratio;
-		float x3 = x2 + animation.duration * period2Ratio;
-		float x4 = x3 + animation.duration * period3Ratio;
-
-		if(x < x2) {
-			// part 1 of the animation
-			interpolatedPosition = interpolateLinear(x, x1, startPosition, x2, middle1Position);
-			interpolatedRotation = interpolateLinear(x, x1, startRotation, x2, middle1Rotation);
-		} else if (x < x3) {
-			// part 2 of the animation
-			interpolatedPosition = interpolateLinear(x, x2, middle1Position, x3, middle2Position);
-			interpolatedRotation = interpolateLinear(x, x2, middle1Rotation, x3, middle2Rotation);
-		} else {
-			// part 3 of the animation
-			interpolatedPosition = interpolateLinear(x, x3, middle2Position, x4, endPosition);
-			interpolatedRotation = interpolateLinear(x, x3, middle2Rotation, x4, endRotation);
-		}
-
-		cardRenderer.renderInNextPass({animation.mutatesTo, interpolatedPosition, interpolatedRotation}, projectionMatrix, viewport);
-	}
-
-	void CardSceneRenderer::interpolateAndRender(const CardAnimation& animation, glm::vec3 startPosition, glm::vec3 startRotation, glm::vec3 middlePosition, glm::vec3 middleRotation, glm::vec3 endPosition, glm::vec3 endRotation, float period1Ratio, float period2Ratio) {
-		float ratioSum = period1Ratio + period2Ratio;
-		float TOLERANCE = 0.02f;
-		if(ratioSum < 1 - TOLERANCE || ratioSum > 1 + TOLERANCE) {
-			throw std::runtime_error("ratio arguments doesn't sum up to 1");
-		}
-
-		glm::vec3 interpolatedPosition, interpolatedRotation;
-
-		float x = float(getMilliseconds() - animation.animationStartTime);
-		float x1 = 0;
-		float x2 = animation.duration * period1Ratio;
-		float x3 = x2 + animation.duration * period2Ratio;
-		
-		if(x < x2) {
-			// part 1 of the animation
-			interpolatedPosition = interpolateLinear(x, x1, startPosition, x2, middlePosition);
-			interpolatedRotation = interpolateLinear(x, x1, startRotation, x2, middleRotation);
-		} else {
-			// part 2 of the animation
-			interpolatedPosition = interpolateLinear(x, x2, middlePosition, x3, endPosition);
-			interpolatedRotation = interpolateLinear(x, x2, middleRotation, x3, endRotation);
-		}
-
-		cardRenderer.renderInNextPass({animation.mutatesTo, interpolatedPosition, interpolatedRotation}, projectionMatrix, viewport);
-	}
-
-	void CardSceneRenderer::interpolateAndRender(const CardAnimation& animation, glm::vec3 startPosition, glm::vec3 startRotation, glm::vec3 endPosition, glm::vec3 endRotation) {
-		glm::vec3 interpolatedPosition, interpolatedRotation;
-
-		float x = float(getMilliseconds() - animation.animationStartTime);
-		float x1 = 0;
-		float x2 = float(animation.duration);
-
-		interpolatedPosition = interpolateLinear(x, x1, startPosition, x2, endPosition);
-		interpolatedRotation = interpolateLinear(x, x1, startRotation, x2, endRotation);
-
-		cardRenderer.renderInNextPass({animation.mutatesTo, interpolatedPosition, interpolatedRotation}, projectionMatrix, viewport);
-
-	}
-	
 	
 }
