@@ -14,12 +14,12 @@ namespace card {
 	HandCardStackRenderer::HandCardStackRenderer(CardRenderer& cardRendererImpl) :
 			cardRendererImpl(cardRendererImpl) {
 	}
-	void HandCardStackRenderer::renderCardStackInX(const CardAnimator& cardStack, glm::vec3 centerPosition, glm::vec3 rotation, ProjectionMatrix& projectionMatrix, Viewport& viewport, float maxWidth) {
-		auto cards = positionGenerator.generateMatricies_cardStackX(cardStack, centerPosition, rotation, maxWidth, CardRenderer::WIDTH);
+	void HandCardStackRenderer::renderCardStackInX(const CardAnimator& cardStack, glm::vec3 centerPosition, glm::vec3 rotation, ProjectionMatrix& projectionMatrix, Viewport& viewport, float maxWidth, int selectedCardIndex, float selectedCardAddition) {
+		auto cards = positionGenerator.generateMatricies_cardStackX(cardStack, centerPosition, rotation, maxWidth, CardRenderer::WIDTH, selectedCardIndex, selectedCardAddition);
 		cardRendererImpl.renderInNextPass(cards, projectionMatrix, viewport);
 	}
-	void HandCardStackRenderer::renderCardStackInZ(const CardAnimator& cardStack, glm::vec3 centerPosition, glm::vec3 rotation, ProjectionMatrix& projectionMatrix, Viewport& viewport, float maxWidth) {
-		auto cards = positionGenerator.generateMatricies_cardStackZ(cardStack, centerPosition, rotation, maxWidth, CardRenderer::WIDTH);
+	void HandCardStackRenderer::renderCardStackInZ(const CardAnimator& cardStack, glm::vec3 centerPosition, glm::vec3 rotation, ProjectionMatrix& projectionMatrix, Viewport& viewport, float maxWidth, int selectedCardIndex, float selectedCardAddition) {
+		auto cards = positionGenerator.generateMatricies_cardStackZ(cardStack, centerPosition, rotation, maxWidth, CardRenderer::WIDTH, selectedCardIndex, selectedCardAddition);
 		cardRendererImpl.renderInNextPass(cards, projectionMatrix, viewport);
 	}
 }

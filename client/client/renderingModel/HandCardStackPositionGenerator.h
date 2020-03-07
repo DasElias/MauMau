@@ -26,8 +26,8 @@ namespace card {
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			std::vector<PositionedCard> generateMatricies_cardStackX(const CardAnimator& cardStack, glm::vec3 centerPosition, glm::vec3 rotation, float maxWidthOfCardStack, float widthOfSingleCard);
-			std::vector<PositionedCard> generateMatricies_cardStackZ(const CardAnimator& cardStack, glm::vec3 centerPosition, glm::vec3 rotation, float maxWidthOfCardStack, float widthOfSingleCard);
+			std::vector<PositionedCard> generateMatricies_cardStackX(const CardAnimator& cardStack, glm::vec3 centerPosition, glm::vec3 rotation, float maxWidthOfCardStack, float widthOfSingleCard, int selectedCardIndex = -1, float selectedCardAddition = 0);
+			std::vector<PositionedCard> generateMatricies_cardStackZ(const CardAnimator& cardStack, glm::vec3 centerPosition, glm::vec3 rotation, float maxWidthOfCardStack, float widthOfSingleCard, int selectedCardIndex = -1, float selectedCardAddition = 0);
 			glm::vec3 getPositionOfCard_cardStackX(int index, std::size_t cardStackLength, glm::vec3 centerPosition, float maxWidthOfCardStack, float widthOfSingleCard);
 			glm::vec3 getPositionOfCard_cardStackZ(int index, std::size_t cardStackLength, glm::vec3 centerPosition, float maxWidthOfCardStack, float widthOfSingleCard);
 

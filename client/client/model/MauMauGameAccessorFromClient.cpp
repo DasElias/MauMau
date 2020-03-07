@@ -26,10 +26,8 @@ namespace card {
 		return canPlay(c);
 	}
 	bool MauMauGameAccessorFromClient::canPlay(Card card) const {
-		if(!gameData.isLocalPlayerOnTurn() ||
-		   !gameData.hasInitialCardBeenDistributed() ||
+		if(!gameData.isReadyToPerformLocalPlayerTurn() ||
 		   gameData.getLocalPlayer()->hasPlayedCard() ||
-		   !gameData.areAllPreviousCardTransactionsCompleted() ||
 		   gameData.hasGameEnded() ||
 		   gameData.getLocalPlayer()->hasTimeExpired()) {
 
@@ -48,9 +46,7 @@ namespace card {
 		return card.getCardIndex() == gameData.getCardIndexForNextCard() || card.getValue() == lastCardOnPlayStack.getValue();
 	}
 	bool MauMauGameAccessorFromClient::canDraw() const {
-		if(!gameData.isLocalPlayerOnTurn() ||
-		   !gameData.hasInitialCardBeenDistributed() ||
-		   !gameData.areAllPreviousCardTransactionsCompleted() ||
+		if(!gameData.isReadyToPerformLocalPlayerTurn() ||
 		   isWaitingForColorChoose() ||
 		   gameData.getLocalPlayer()->hasTimeExpired() ||
 		   gameData.hasGameEnded() ||

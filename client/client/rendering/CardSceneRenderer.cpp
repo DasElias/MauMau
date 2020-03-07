@@ -259,8 +259,23 @@ namespace card {
 		auto& localPlayer = game.getLocalPlayer();
 		const auto& drawStack = game.getDrawStack();
 
+		std::optional<int> intersectedCardOrNone = checkIntersectionWithOwnHandCards();
+		
+		int intersectedCard = (intersectedCardOrNone.has_value() && game.getGameData().isReadyToPerformLocalPlayerTurn()) ? *intersectedCardOrNone : -1;
+		static int intersectedCardInLastFrame = -1;
+		static long long unixTimeIntersectedCardHasChanged = getMilliseconds();
+		if(intersectedCard != intersectedCardInLastFrame) {
+			intersectedCardInLastFrame = intersectedCard;
+			unixTimeIntersectedCardHasChanged = getMilliseconds();
+		}
+		float x = getMilliseconds() - unixTimeIntersectedCardHasChanged;
+		float const x1 = 0;
+		float const x2 = 100;
+		float addition = interpolateLinear(x, x1, 0, x2, 0.1);
+		addition = std::clamp<float>(addition, 0, 0.1);
+
 		// render hand cards
-		handCardRenderer.renderCardStackInX(localPlayer->getCardStack(), HAND_CARDS_LOCAL_POSITION, HAND_CARDS_LOCAL_ROTATION, projectionMatrix, viewport, FRONT_BACK_OPPONENT_CARDS_WIDTH);
+		handCardRenderer.renderCardStackInX(localPlayer->getCardStack(), HAND_CARDS_LOCAL_POSITION, HAND_CARDS_LOCAL_ROTATION, projectionMatrix, viewport, FRONT_BACK_OPPONENT_CARDS_WIDTH, intersectedCard, addition);
 
 		// render cards to hand cards
 		// please note that we iterate over the set from the end to the begin (we use a reverse-iterator),
@@ -444,7 +459,7 @@ namespace card {
 									positionEnd, rotationEnd
 				);
 			} else if(sourceStack.equalsId(localPlayer->getCardStack())) {
-				glm::vec3 startPosition = handCardStackPositionGenerator.getPositionOfCard_cardStackX(animation.indexInSourceStack - 1, sourceStack.getSize(), HAND_CARDS_LOCAL_POSITION, FRONT_BACK_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
+				glm::vec3 startPosition = glm::vec3(0, 0.1f, 0) + handCardStackPositionGenerator.getPositionOfCard_cardStackX(animation.indexInSourceStack - 1, sourceStack.getSize(), HAND_CARDS_LOCAL_POSITION, FRONT_BACK_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
 				interpolateAndRender(animation,
 									 startPosition, HAND_CARDS_LOCAL_ROTATION + glm::vec3(PI, PI, 0),
 									 startPosition + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), HAND_CARDS_LOCAL_ROTATION + glm::vec3(PI, PI, 0),

@@ -87,6 +87,7 @@ namespace card {
 
 			bool isLocalPlayerOnTurn() const;
 			bool areAllPreviousCardTransactionsCompleted() const;
+			bool isReadyToPerformLocalPlayerTurn() const;
 			bool canChangeColor(Card playedCard) const;
 			bool canSkipPlayer(Card card) const;
 			std::size_t getAmountsOfCardsToDrawForNextPlayer(Card playedCard) const;

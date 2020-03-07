@@ -6,7 +6,7 @@
 namespace card {
 	float const HandCardStackPositionGenerator::CARD_OVERLAPPING_FACTOR = 0.5f;
 
-	std::vector<PositionedCard> HandCardStackPositionGenerator::generateMatricies_cardStackX(const CardAnimator& cardStack, glm::vec3 centerPosition, glm::vec3 rotation, float maxWidthOfCardStack, float widthOfSingleCard) {
+	std::vector<PositionedCard> HandCardStackPositionGenerator::generateMatricies_cardStackX(const CardAnimator& cardStack, glm::vec3 centerPosition, glm::vec3 rotation, float maxWidthOfCardStack, float widthOfSingleCard, int selectedCardIndex, float selectedCardAddition) {
 		float computedWidth = 0;
 		float computedOverlappingFactor = 0;
 		computeCardStackWidth(cardStack.getSize(), maxWidthOfCardStack, widthOfSingleCard, computedWidth, computedOverlappingFactor);
@@ -19,8 +19,12 @@ namespace card {
 		modelMatrix = glm::rotate(modelMatrix, rotation.z, {0, 0, 1});
 
 		std::vector<PositionedCard> cards;
-		for(auto& c : cardStack) {
-			glm::vec3 singleCardPosition(cardCenterX, centerPosition.y, centerPosition.z);
+		for(int i = 0; i < cardStack.getSize(); i++) {
+			auto& c = cardStack.get(i);
+			float cardCenterY = centerPosition.y;
+			if(i == selectedCardIndex) cardCenterY += selectedCardAddition;
+
+			glm::vec3 singleCardPosition(cardCenterX, cardCenterY, centerPosition.z);
 			cards.push_back({c, singleCardPosition, rotation});
 
 			cardCenterX += widthOfSingleCard * (1 - computedOverlappingFactor);
@@ -28,7 +32,7 @@ namespace card {
 
 		return cards;
 	}
-	std::vector<PositionedCard> HandCardStackPositionGenerator::generateMatricies_cardStackZ(const CardAnimator& cardStack, glm::vec3 centerPosition, glm::vec3 rotation, float maxWidthOfCardStack, float widthOfSingleCard) {
+	std::vector<PositionedCard> HandCardStackPositionGenerator::generateMatricies_cardStackZ(const CardAnimator& cardStack, glm::vec3 centerPosition, glm::vec3 rotation, float maxWidthOfCardStack, float widthOfSingleCard, int selectedCardIndex, float selectedCardAddition) {
 		float computedWidth = 0;
 		float computedOverlappingFactor = 0;
 		computeCardStackWidth(cardStack.getSize(), maxWidthOfCardStack, widthOfSingleCard, computedWidth, computedOverlappingFactor);
@@ -41,8 +45,12 @@ namespace card {
 		modelMatrix = glm::rotate(modelMatrix, rotation.z, {0, 0, 1});
 
 		std::vector<PositionedCard> cards;
-		for(auto& c : cardStack) {
-			glm::vec3 singleCardPosition(centerPosition.x, centerPosition.y, cardCenterZ);
+		for(int i = 0; i < cardStack.getSize(); i++) {
+			auto& c = cardStack.get(i);
+			float cardCenterY = centerPosition.y;
+			if(i == selectedCardIndex) cardCenterY += selectedCardAddition;
+
+			glm::vec3 singleCardPosition(centerPosition.x, cardCenterY, cardCenterZ);
 			cards.push_back({c, singleCardPosition, rotation});
 
 			cardCenterZ += widthOfSingleCard * (1 - computedOverlappingFactor);

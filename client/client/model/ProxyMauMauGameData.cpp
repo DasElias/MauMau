@@ -75,6 +75,12 @@ namespace card {
 		return true;
 	}
 
+	bool ProxyMauMauGameData::isReadyToPerformLocalPlayerTurn() const {
+		// we check localPlayer->isRemainingTimeAnimationActive because of the special case that another player draws and plays a card in the same turn
+		// in this case, the local player would be already on turn even though the card played before is still in the other player's hand card for a short amount of time
+		return isLocalPlayerOnTurn() && areAllPreviousCardTransactionsCompleted() && localPlayer->isRemainingTimeAnimationActive();
+	}
+
 	bool ProxyMauMauGameData::canChangeColor(Card playedCard) const {
 		return !hasGameEnded() && roomOptions.getOption(Options::CHOOSE_COLOR_ON_JACK) && playedCard.getValue() == CHANGE_COLOR_VALUE;
 	}
