@@ -157,7 +157,7 @@ namespace card {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		#ifndef NDEBUG
-		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+			glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 		#endif
 
 		//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -182,9 +182,9 @@ namespace card {
 		glfwSwapInterval(VSYNC);
 
 		#ifndef NDEBUG
-		glDebugMessageCallback( MessageCallback, 0 );
-		glEnable( GL_DEBUG_OUTPUT );
-		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+			glDebugMessageCallback( MessageCallback, 0 );
+			glEnable( GL_DEBUG_OUTPUT );
+			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 		#endif
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
@@ -245,54 +245,6 @@ namespace card {
 		while(! glfwWindowShouldClose(p_window)) {
 			glViewport(0, 0, egui::getDisplayHandler().getWidth(), egui::getDisplayHandler().getHeight());
 
-			auto gameFacade = stateManager.getGameFacade();
-	/*		auto gameFacade = std::dynamic_pointer_cast<NetworkGameFacade>(stateManager.getGameFacade());
-			if(gameFacade->isRoomAvailable()) {
-				if(gameFacade->getRoom().canStartGame()) {
-					gameFacade->getRoom().requestGameStart();
-				}
-			}*/
-
-			/*if(egui::getInputHandler().isKeyDown(KEY_1)) {
-				viewport.setPosition(viewport.getPosition() + glm::vec3(0, 0, 0.05f));
-			}
-			if(egui::getInputHandler().isKeyDown(KEY_2)) {
-				viewport.setPosition(viewport.getPosition() - glm::vec3(0, 0, 0.05f));
-			}
-			if(egui::getInputHandler().isKeyDown(KEY_3)) {
-				viewport.setPosition(glm::vec3(0, 0, 5));
-			}
-
-			if(egui::getInputHandler().isKeyDown(KEY_4)) {
-				viewport.setRotation(viewport.getRotation() + glm::vec3(0.01f, 0, 0));
-			}
-			if(egui::getInputHandler().isKeyDown(KEY_5)) {
-				viewport.setRotation(viewport.getRotation() - glm::vec3(0.01f, 0, 0));
-			}
-			if(egui::getInputHandler().isKeyDown(KEY_6)) {
-				viewport.setRotation(glm::vec3(-PI / 8, 0, 0));
-			}
-			if(egui::getInputHandler().isKeyDown(KEY_7)) {
-				//toRender.addFromPlain(Card(1));
-			}
-			static bool f = false;
-			if(egui::getInputHandler().isKeyDown(KEY_8) && !f)  {
-				game.proxyPlayerGetCardsLocal("123", 1);
-				game.proxyPlayerGetCardsLocal("456", 1);
-				game.proxyPlayerGetCardsLocal("789", 1);
-				game.localPlayerGetCardsLocal({{Card::HEART_EIGHT}});
-				f = true;
-			}
-			if(egui::getInputHandler().isKeyDown(KEY_9)) {
-				f = false;
-
-			}
-			if(egui::getInputHandler().isKeyDown(KEY_0) && !f) {
-				game.playCardLocal("123", Card::CLUB_ACE, CardIndex::NULLINDEX);
-				f = true;
-			}
-			 */
-
 			long long thisFrameTime = getMilliseconds();
 			float deltaSeconds = (thisFrameTime - lastFrameTime) / 1000.0f;
 			lastFrameTime = thisFrameTime;
@@ -304,14 +256,8 @@ namespace card {
 			threadUtils_update();
 
 			glfwSetWindowTitle(p_window, std::to_string(int(fps)).c_str());
-			std::cout << fps << std::endl;
 			stateManager.updateAndRender(deltaSeconds);
-			if(CardAnimator::arePendingAnimations()) {
-				glfwSwapInterval(VSYNC);
-			} else {
-				glfwSwapInterval(VSYNC_NO_ANIMATION_PENDING);
-			}
-			//glfwSwapInterval((CardAnimator::arePendingAnimations()) ? VSYNC : VSYNC_NO_ANIMATION_PENDING);
+			glfwSwapInterval(VSYNC);
 			glfwSwapBuffers(p_window);
 			glfwPollEvents();
 		}
