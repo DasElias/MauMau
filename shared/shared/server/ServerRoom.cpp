@@ -104,7 +104,7 @@ namespace card {
 		return ParticipantOnServer::getVectorWithUsernames(allParticipants);
 	}
 	bool ServerRoom::changeOptions(const std::shared_ptr<ParticipantOnServer>& sender, std::map<std::string, int> options) {
-		if(! checkIfLeader(sender) || isGameRunning()) return false;
+		if(! checkIfLeader(sender) || isGameRunning() || options.size() != RoomOptions::OPTIONS_SIZE) return false;
 
 		OptionsWereChanged_STCPacket packet(options);
 		packetTransmitter->sendPacketToClients(packet, allParticipants);
