@@ -25,6 +25,7 @@
 #include "MessageRenderer.h"
 #include "LocalPlayerRenderer.h"
 #include "CardInterpolator.h"
+#include "OpponentRenderer.h"
 #include "../renderingModel/CardStackIntersectionChecker.h"
 #include "../renderingModel/HandCardIntersectionChecker.h"
 #include "../renderingModel/MauMauCardStackMisalignmentGenerator.h"
@@ -49,6 +50,7 @@ namespace card {
 			CardStackRenderer cardStackRenderer;
 			HandCardStackRenderer handCardRenderer;
 			LocalPlayerRenderer localPlayerRenderer;
+			OpponentRenderer opponentRenderer;
 			CardSceneBackgroundRenderer bgRenderer;
 			DrawnCardRenderer drawnCardRenderer;
 			ChooseCardRenderer chooseCardRenderer;
@@ -87,12 +89,6 @@ namespace card {
 		private:
 			egui::FunctionWrapper<egui::MouseEvent> genOnMouseClickedHandler();
 
-			void renderOpponentIfHasValue(std::size_t index, std::array<std::shared_ptr<ProxyPlayer>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, float maxWidthOfHandCards, bool renderInX);
-			void renderOpponent(const CardAnimator& handCardStack, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, float maxWidthOfHandCards, bool renderInX);
-			void renderDrawedCardAnimationsOfOpponentIfHasValue(std::size_t index, std::array<std::shared_ptr<ProxyPlayer>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation);
-			void renderDrawedCardAnimationsOfOpponent(const CardAnimator& handCardStack, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation);
-			void renderDrawedCardAnimationsOfOpponentIfHasValue(std::size_t index, std::array<std::shared_ptr<ProxyPlayer>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, glm::vec3 middlePosition, glm::vec3 middleRotation);
-			void renderDrawedCardAnimationsOfOpponent(const CardAnimator& handCardStack, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, glm::vec3 middlePosition, glm::vec3 middleRotation);
 			void renderPlayerLabels(std::array<std::shared_ptr<ProxyPlayer>, 3>& opponents);
 			void renderClickableOverlaysIfGameHasntEnded();
 			void tryRenderDrawnCardOverlay(std::optional<Card> drawnCardOrNone, bool suppressMouseClick);
