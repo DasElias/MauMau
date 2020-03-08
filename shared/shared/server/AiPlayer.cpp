@@ -69,7 +69,7 @@ namespace card {
 		}
 	}
 	void AiPlayer::playCardImpl(Card card, bool wasCardJustDrawn) {
-		CardIndex nextCardIndex = (game.canChangeColor(card)) ? chooseCardIndex() : CardIndex::NULLINDEX;
+		CardIndex nextCardIndex = (game.canChangeColor(card)) ? chooseCardIndex(card.getCardIndex()) : CardIndex::NULLINDEX;
 		bool success = game.playCardAndSetNextPlayerOnTurn(*this, card, wasCardJustDrawn, nextCardIndex);
 		if(!success) {
 			log(LogSeverity::ERR, "AiPlayer " + getUsername() + " couldn't play card!");
@@ -81,27 +81,34 @@ namespace card {
 			log(LogSeverity::ERR, "AiPlayer " + getUsername() + " couldn't draw card!");
 		}
 	}
-	CardIndex AiPlayer::chooseCardIndex() {
+	CardIndex AiPlayer::chooseCardIndex(CardIndex indexOfPlayedJack) {
 		std::map<CardIndex, uint8_t> cardIndexCounter;
+		cardIndexCounter[CardIndex::HEART] = 0;
+		cardIndexCounter[CardIndex::CLUB] = 0;
+		cardIndexCounter[CardIndex::DIAMOND] = 0;
+		cardIndexCounter[CardIndex::SPADE] = 0;
 		for(auto& card : getHandCards()) {
-			if(cardIndexCounter.find(card.getCardIndex()) == cardIndexCounter.end()) {
-				// CardIndex doesn't exist yet
-				cardIndexCounter[card.getCardIndex()] = 1;
-			} else {
+			if(cardIndexCounter.find(card.getCardIndex()) != cardIndexCounter.end()) {
 				cardIndexCounter[card.getCardIndex()]++;
+			} else {
+				log(LogSeverity::WARNING, "AiPlayer has a NULLCARD in it's hand cards.");
 			}
 		}
 
-		uint8_t maxValue = 0;
-		CardIndex maxCardIndex = CardIndex::NULLINDEX;
+		std::vector<std::pair<CardIndex, uint8_t>> cardIndexList;
+		cardIndexList.push_back({CardIndex::HEART, cardIndexCounter[CardIndex::HEART]});
+		cardIndexList.push_back({CardIndex::CLUB, cardIndexCounter[CardIndex::CLUB]});
+		cardIndexList.push_back({CardIndex::DIAMOND, cardIndexCounter[CardIndex::DIAMOND]});
+		cardIndexList.push_back({CardIndex::SPADE, cardIndexCounter[CardIndex::SPADE]});
 
-		for(auto& pair : cardIndexCounter) {
-			if(pair.second > maxValue) {
-				maxCardIndex = pair.first;
-			}
+		std::sort(cardIndexList.begin(), cardIndexList.end(), [](const auto& a, const auto& b) {
+			return a.second > b.second;
+		});
+
+		for(auto& cardIndexEntry : cardIndexList) {
+			if(cardIndexEntry.first != indexOfPlayedJack) return cardIndexEntry.first;
 		}
-
-		return maxCardIndex;
+		return CardIndex::NULLINDEX;
 	}
 	bool AiPlayer::shouldPlayDrawnCard() {
 		Card lastCardOnDrawStack = game.getDrawCardStack().getLast();

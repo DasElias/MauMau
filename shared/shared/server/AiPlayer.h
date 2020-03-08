@@ -37,7 +37,7 @@ namespace card {
 			void tryMau();
 			void playCardImpl(Card c, bool wasCardJustDrawn);
 			void drawCardImpl();
-			CardIndex chooseCardIndex();
+			CardIndex chooseCardIndex(CardIndex indexOfPlayedJack);
 			bool shouldPlayDrawnCard();
 
 	};
