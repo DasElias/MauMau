@@ -32,4 +32,5 @@ target_link_libraries(card
 	state
 	rendering
 	gui
+	res_font
 )

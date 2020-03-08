@@ -55,6 +55,9 @@
 #include "model/CreateRoomNetworkGameFacade.h"
 #include "state/MainMenuNetworkErrorHandler.h"
 #include "gui/MauMauTheme.h"
+
+#include <res/font/RobotoCondensedBold.ttf.h>
+
 using namespace std;
 using namespace card;
 
@@ -63,6 +66,22 @@ void glfwErrorCallback(int error, const char* description) {
 	log(LogSeverity::FATAL, error);
 	log(LogSeverity::FATAL, description);
 	log(LogSeverity::FATAL, "------------------------------------------");
+
+	switch(error) {
+		case GLFW_API_UNAVAILABLE:
+		case GLFW_VERSION_UNAVAILABLE:
+		case GLFW_PLATFORM_ERROR:
+			{
+				egui::PopupErrorBox a("MauMau", u8"Ihr PC wird nicht unterstützt. MauMau benötigt mindestens OpenGL 3.3.");
+				a.show();
+			}
+		default:
+			{
+				egui::PopupErrorBox a("MauMau - Spielabsturz", "Ein fataler, unbekannter Fehler trat auf. \"" + std::string(description) + "\"");
+				a.show();
+			}
+	}
+
 	exit(-1);
 }
 
@@ -76,12 +95,12 @@ void cppExceptionCallback() {
 		} catch(const std::exception& exception) {
 			log(LogSeverity::FATAL, exception.what());
 
-			egui::PopupErrorBox a("A fatal error has occured!", "A fatal unknown error has happened! \""+ std::string(exception.what()) + "\"");
+			egui::PopupErrorBox a("MauMau - Spielabsturz", "Ein fataler, unbekannter Fehler trat auf. \"" + std::string(exception.what()) + "\"");
 			a.show();
 		} catch(...) {
 			log(LogSeverity::FATAL, "Unknown Exception!");
 
-			egui::PopupErrorBox a("A fatal error has occured!", "A fatal unknown error has happened! Unknown exception has been thrown.");
+			egui::PopupErrorBox a("MauMau - Spielabsturz", "Ein fataler, unbekannter Fehler trat auf.");
 			a.show();
 		}
 	}
@@ -153,11 +172,14 @@ namespace card {
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 		glfwWindowHint(GLFW_DEPTH_BITS, 16);
 		glfwWindowHint(GLFW_SAMPLES, 2);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		#ifndef NDEBUG
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 			glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+		#else
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		#endif
 
 		//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -204,7 +226,7 @@ namespace card {
 		egui::Font::createSystemFont(ctx, "ariblk");
 		egui::Font::createSystemFont(ctx, "ariali");
 		egui::Font::createSystemFont(ctx, "arialbd");
-		egui::Font::createFont(ctx, "Roboto Condensed", "C:\\Users\\Elias\\Downloads\\roboto-condensed\\RobotoCondensed-Bold.ttf");
+		egui::Font::createFontFromMemory(ctx, "Roboto Condensed", font_robotoCondensed, font_robotoCondensed_size);
 		auto theme = std::make_unique<egui::MauMauTheme>(ctx);
 		egui::ThemeManager::getInstance().addTheme(theme.get());
 
