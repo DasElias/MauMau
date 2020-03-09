@@ -28,7 +28,6 @@ namespace card {
 	bool MauMauGameAccessorFromClient::canPlay(Card card) const {
 		if(!gameData.isReadyToPerformLocalPlayerTurn() ||
 		   gameData.getLocalPlayer()->hasPlayedCard() ||
-		   gameData.hasGameEnded() ||
 		   gameData.getLocalPlayer()->hasTimeExpired()) {
 
 			return false;
@@ -49,7 +48,6 @@ namespace card {
 		if(!gameData.isReadyToPerformLocalPlayerTurn() ||
 		   isWaitingForColorChoose() ||
 		   gameData.getLocalPlayer()->hasTimeExpired() ||
-		   gameData.hasGameEnded() ||
 		   gameData.getLocalPlayer()->hasStartedToDrawCard() ||
 		   gameData.getDrawCardForNextPlayer() == Card::NULLCARD) {
 			
