@@ -17,6 +17,7 @@ namespace card {
         private:
             static float const PADDING_LEFT_RIGHT;
             static float const PADDING_TOP;
+            static glm::vec4 const CIRCLE_SECTOR_COLOR;
 
         public:
             static glm::vec2 const LOCAL_PLAYER_POSITION;

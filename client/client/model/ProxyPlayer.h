@@ -40,6 +40,7 @@ namespace card {
 			long long int unixTimeOnTurnAnimationFreezed;
 			long long int unixTimePlayerSkipped;
 			long long int unixTimePlayerMaued;
+			bool isInSkipState_field;
 			ProxyPlayerGameInformation& gameInformation;
 
 		// ----------------------------------------------------------------------
@@ -74,11 +75,13 @@ namespace card {
 			bool isRemainingTimeAnimationActive() const;
 			std::optional<float> getPercentOfRemainingTime() const;
 			std::shared_ptr<ParticipantOnClient> getWrappedParticipiant();
+			bool isInSkipState() const;
 
 			void endRemainingTimeAnimation();
 			void freezeRemainingTimeAnimation();
 
-			void onSkip();
+			void setSkipState();
+			void startSkippedAnimation();
 			void onSuccessfulMau();
 			virtual void onStartTurn();
 			virtual void onEndTurn();

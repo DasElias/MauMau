@@ -11,6 +11,7 @@
 namespace card {
 	float const PlayerLabelRenderer::PADDING_LEFT_RIGHT = 0.0575f;
 	float const PlayerLabelRenderer::PADDING_TOP = 0.1725f;
+	glm::vec4 const PlayerLabelRenderer::CIRCLE_SECTOR_COLOR = {0.93f, 0.62f, 0.16f, 0.5f};
 
 	glm::vec2 const PlayerLabelRenderer::LOCAL_PLAYER_POSITION = {0.25f, 0.65f};
 	glm::vec2 const PlayerLabelRenderer::VIS_A_VIS_PLAYER_POSITION = {0.5f - (PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN / 2), 0};
@@ -77,7 +78,7 @@ namespace card {
 		centerY += playerLabel->getImageElement()->getComputedHeight() / avatarTextures.getHeight() * CIRCLE_CENTER_OFFSET_PX_Y;
 
 		float diameterX = playerLabel->getImageElement()->getComputedWidth() / avatarTextures.getWidth() * (CIRCLE_DIAMETER + 25);
-		circleSectorRenderer.renderSector_xDiameter({centerX, centerY}, diameterX, startAngle, endAngle, 500, {0.93f, 0.62f, 0.16f, 0.5f});
+		circleSectorRenderer.renderSector_xDiameter({centerX, centerY}, diameterX, startAngle, endAngle, 500, CIRCLE_SECTOR_COLOR);
 	}
 	void PlayerLabelRenderer::flushText() {
 		eguiRenderer.beginFrame();

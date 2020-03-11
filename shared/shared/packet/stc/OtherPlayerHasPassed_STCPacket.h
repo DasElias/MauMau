@@ -1,45 +1,32 @@
 #pragma once
-#include "Player.h"
-#include "ServerMauMauGame.h"
+#include "AbstractUsernamePacket_STCPacket.h"
 
 namespace card {
-	class AiPlayer : public Player {
+	class OtherPlayerHasPassed_STCPacket : public AbstractUsernamePacket_STCPacket {
 		// ----------------------------------------------------------------------
 		// ----------------------------STATIC-FIELDS-----------------------------
 		// ----------------------------------------------------------------------
+		public:
+			static int const PACKET_ID = 201;
+
 		private:
-			static float const MAU_MISS_PROBABILITY;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
-			ServerMauMauGame& game;
+
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			AiPlayer(std::shared_ptr<ParticipantOnServer> wrappedParticipant, ServerMauMauGame& game, std::vector<Card> handCards = {});
-			~AiPlayer();
+			OtherPlayerHasPassed_STCPacket(std::string username);
+			OtherPlayerHasPassed_STCPacket(nlohmann::json& jsonHandle);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
-		public:
-			void onStartTurn() override;
-			void performTurn();
-
-		private:
-			// return true if a card was played
-			bool tryPlayCard();
-			std::vector<Card> getPlayableCards();
-			void tryMau();
-			void playCardImpl(Card c, bool wasCardJustDrawn);
-			void drawCardImpl();
-			CardIndex chooseCardIndex(CardIndex indexOfPlayedJack);
-			bool shouldPlayDrawnCard();
-			void playIfIsInSkipState();
 
 	};
 }

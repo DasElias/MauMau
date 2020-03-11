@@ -45,9 +45,12 @@ namespace card {
 
 			bool wasMauedCorrectly_thisTurn = false;
 
+			bool isInSkipState_field = false;
+
 			ClientPacketListenerCallback handler_onPlayCard;
 			ClientPacketListenerCallback handler_onDrawCard;
 			ClientPacketListenerCallback handler_onMau;
+			ClientPacketListenerCallback handler_onPass;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
@@ -63,11 +66,12 @@ namespace card {
 			void mau(Player& player);
 			[[nodiscard]] bool playCardAndSetNextPlayerOnTurn(Player& player, Card card, bool wasCardJustDrawn, CardIndex chosenIndex = CardIndex::NULLINDEX);
 			[[nodiscard]] bool drawCardAndSetNextPlayerOnTurn(Player& player);
-			void setNextOrNextButOneOnTurnLocal(Card playedCard);
+			[[nodiscard]] bool pass(Player& player);
+
+			void setNextPlayerOnTurnAndUpdateSkipState(Card playedCard);
 			void setNextPlayerOnTurn();
 			std::shared_ptr<Player> getNextPlayer(std::shared_ptr<Player> playerOnTurn);
 			void setNextButOnePlayerOnTurn();
-
 			void setPlayerOnTurn(std::shared_ptr<Player> player);
 
 			bool canPlay(Player& player, Card card) const;
@@ -76,7 +80,9 @@ namespace card {
 			int getAmountsOfCardsToDrawForNextPlayer(Card playedCard) const;
 			bool canSkipPlayer(Card playedCard) const;
 			bool canMau(Player& player) const;
+			bool canPass(Player& player) const;
 
+			bool isInSkipState() const;
 			bool wasCardDrawnLastTurn() const;
 			bool wasCardPlayedLastTurn() const;
 			bool wasCardDrawnAndPlayedLastTurn() const;
@@ -123,6 +129,8 @@ namespace card {
 			std::optional<OperationSuccessful_STCAnswerPacket> listener_onPlayCard(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);
 			std::optional<OperationSuccessful_STCAnswerPacket> listener_onDrawCard(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);
 			std::optional<OperationSuccessful_STCAnswerPacket> listener_onMau(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);
+			std::optional<OperationSuccessful_STCAnswerPacket> listener_onPass(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);
+
 
 	};
 }

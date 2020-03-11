@@ -5,7 +5,7 @@
 #include "../renderingModel/IngameButton.h"
 
 namespace card {
-	class MauMauButtonRenderer {
+	class PassButtonRenderer {
         // ----------------------------------------------------------------------
         // ----------------------------STATIC-FIELDS-----------------------------
         // ----------------------------------------------------------------------
@@ -17,21 +17,21 @@ namespace card {
         // ----------------------------------------------------------------------
         private:
             egui::MasterRenderer& eguiRenderer;
-            std::shared_ptr<IngameButton> mauMauBtn;
+            std::shared_ptr<IngameButton> passBtn;
             egui::Scene scene;
 
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            MauMauButtonRenderer(egui::MasterRenderer& eguiRenderer, std::function<void(void)> mauMauFunction);
+            PassButtonRenderer(egui::MasterRenderer& eguiRenderer, std::function<void(void)> passFunction);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
         // ----------------------------------------------------------------------
         public:
             void clearPreviousMouseEvents();
-            void render(bool canMau);
+            void render();
 
 	};
 }

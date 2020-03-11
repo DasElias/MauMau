@@ -284,19 +284,12 @@ namespace card {
 				log(LogSeverity::WARNING, "Unknown MauPunishmentCause: " + std::to_string(static_cast<int>(cause)));
 		}
 	}
-	void ProxyMauMauGameData::setNextOrNextButOneOnTurnLocal(Card playedCard) {
-		if(canSkipPlayer(playedCard)) setNextButOnePlayerOnTurnLocal();
-		else setNextPlayerOnTurnLocal();
+	void ProxyMauMauGameData::setPlayerOnTurnSkipStateIfNecessary(Card playedCard) {
+		if(canSkipPlayer(playedCard)) userOnTurn->setSkipState();
 	}
 	void ProxyMauMauGameData::setNextPlayerOnTurnLocal() {
 		std::shared_ptr<ProxyPlayer> nextPlayer = getNextPlayer(userOnTurn);
 		setOnTurnLocal(nextPlayer);
-	}
-	void ProxyMauMauGameData::setNextButOnePlayerOnTurnLocal() {
-		std::shared_ptr<ProxyPlayer> nextPlayer = getNextPlayer(userOnTurn);
-		nextPlayer->onSkip();
-		std::shared_ptr<ProxyPlayer> nextButOnePlayer = getNextPlayer(nextPlayer);
-		setOnTurnLocal(nextButOnePlayer);
 	}
 	std::shared_ptr<ProxyPlayer> ProxyMauMauGameData::getNextPlayer(std::shared_ptr<ProxyPlayer> playerOnTurn) {
 		auto playerOnTurnIter = std::find(allPlayers.begin(), allPlayers.end(), playerOnTurn);
@@ -320,6 +313,9 @@ namespace card {
 			delayToFreezeAnimation = 0;
 		}
 
+		if(this->userOnTurn->isInSkipState() && !field_wasCardPlayed) {
+			this->userOnTurn->startSkippedAnimation();
+		}
 
 		std::shared_ptr<ProxyPlayer> lastUserOnTurn = this->userOnTurn;
 		this->userOnTurn->onEndTurn();

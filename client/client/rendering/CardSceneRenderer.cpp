@@ -67,6 +67,12 @@ namespace card {
 					game.getAccessorFromClient().mau();
 				}
 			),
+			passButtonRenderer(eguiRenderer,
+				 [this]() {
+					 auto& game = room->getGame();
+					 game.getAccessorFromClient().pass();
+				 }
+			),
 			messageRenderer(eguiRenderer),
 			cardStackIntersectionChecker(projectionMatrix, viewport),
 			handCardIntersectionChecker(projectionMatrix, viewport),
@@ -157,6 +163,15 @@ namespace card {
 		renderGameEndScreenIfGameHasEnded(deltaSeconds);
 		messageRenderer.render(game.getGameData().getMessageQueue());
 
+		static bool flag = false;
+		if(egui::getInputHandler().isKeyDown(KEY_A) && flag) {
+			flag = false;
+			game.getAccessorFromClient().pass();
+		}
+		if(egui::getInputHandler().isKeyDown(KEY_S)) {
+			flag = true;
+		}
+
 		glEnable(GL_DEPTH_TEST);
 
 	}
@@ -171,10 +186,10 @@ namespace card {
 		playerLabelRenderer.renderLocal(game.getLocalPlayer());
 		playerLabelRenderer.flush();
 
-		if(opponents[0]) playerLabelOverlayRenderer.render(PlayerLabelRenderer::LEFT_PLAYER_POSITION, opponents[0]->getPercentOfSkipAnimationOrNone(), opponents[0]->getPercentOfMauAnimationOrNone());
-		if(opponents[1]) playerLabelOverlayRenderer.render(PlayerLabelRenderer::VIS_A_VIS_PLAYER_POSITION, opponents[1]->getPercentOfSkipAnimationOrNone(), opponents[1]->getPercentOfMauAnimationOrNone());
-		if(opponents[2]) playerLabelOverlayRenderer.render(PlayerLabelRenderer::RIGHT_PLAYER_POSITION, opponents[2]->getPercentOfSkipAnimationOrNone(), opponents[2]->getPercentOfMauAnimationOrNone());
-		playerLabelOverlayRenderer.render(PlayerLabelRenderer::LOCAL_PLAYER_POSITION, localPlayer->getPercentOfSkipAnimationOrNone(), localPlayer->getPercentOfMauAnimationOrNone());
+		if(opponents[0]) playerLabelOverlayRenderer.render(PlayerLabelRenderer::LEFT_PLAYER_POSITION, opponents[0]->getPercentOfSkipAnimationOrNone(), opponents[0]->isInSkipState(), opponents[0]->getPercentOfMauAnimationOrNone());
+		if(opponents[1]) playerLabelOverlayRenderer.render(PlayerLabelRenderer::VIS_A_VIS_PLAYER_POSITION, opponents[1]->getPercentOfSkipAnimationOrNone(), opponents[1]->isInSkipState(), opponents[1]->getPercentOfMauAnimationOrNone());
+		if(opponents[2]) playerLabelOverlayRenderer.render(PlayerLabelRenderer::RIGHT_PLAYER_POSITION, opponents[2]->getPercentOfSkipAnimationOrNone(), opponents[2]->isInSkipState(), opponents[2]->getPercentOfMauAnimationOrNone());
+		playerLabelOverlayRenderer.render(PlayerLabelRenderer::LOCAL_PLAYER_POSITION, localPlayer->getPercentOfSkipAnimationOrNone(), localPlayer->isInSkipState(), localPlayer->getPercentOfMauAnimationOrNone());
 	}
 
 	void CardSceneRenderer::renderClickableOverlaysIfGameHasntEnded() {
@@ -191,6 +206,7 @@ namespace card {
 		bool shouldSuppressDrawnCardOverlayClick = shouldRenderColorChooseOverlay;
 
 		renderMauButton(shouldSuppressMauButtonClick);
+		renderPassButton();
 		tryRenderDrawnCardOverlay(localPlayer->getCardInTempStack(), shouldSuppressDrawnCardOverlayClick);
 		tryRenderChooseColorOverlay();
 	}
@@ -231,6 +247,14 @@ namespace card {
 		bool canMau = clientGameAccessor.canMau();
 		bool canClickMauButton = canMau && !suppressMouseClick;
 		mauMauButtonRenderer.render(canClickMauButton);
+	}
+	void CardSceneRenderer::renderPassButton() {
+		auto& game = room->getGame();
+		auto& clientGameAccessor = game.getAccessorFromClient();
+
+		if(clientGameAccessor.canPass()) {
+			passButtonRenderer.render();
+		}
 	}
 	void CardSceneRenderer::handleInput() {
 		auto& game = room->getGame();

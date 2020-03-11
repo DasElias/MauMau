@@ -1,37 +1,27 @@
 #pragma once
-#include <egui/model/scene/Scene.h>
-#include <egui/model/nodes/Button.h>
 #include <egui/model/nodes/AspectRatioElement.h>
-#include "../renderingModel/IngameButton.h"
+#include <egui/model/nodes/UnorganizedParentElement.h>
 
 namespace card {
-	class MauMauButtonRenderer {
-        // ----------------------------------------------------------------------
-        // ----------------------------STATIC-FIELDS-----------------------------
-        // ----------------------------------------------------------------------
-        private:
-            static float const BTN_WIDTH_PERCENT;
-
+	class IngameButton : public egui::UnorganizedParentElement {
         // ----------------------------------------------------------------------
         // --------------------------------FIELDS--------------------------------
         // ----------------------------------------------------------------------
         private:
-            egui::MasterRenderer& eguiRenderer;
-            std::shared_ptr<IngameButton> mauMauBtn;
-            egui::Scene scene;
+            std::shared_ptr<egui::AspectRatioElement> mauMauButtonBgElement;
+            std::shared_ptr<egui::AspectRatioElement> mauMauButtonClickable;
 
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            MauMauButtonRenderer(egui::MasterRenderer& eguiRenderer, std::function<void(void)> mauMauFunction);
+            IngameButton(std::shared_ptr<egui::Background> background, std::shared_ptr<egui::Background> disabledBackground, float relativeWidthOnScreen, std::function<void(void)> clickHandler);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
         // ----------------------------------------------------------------------
         public:
-            void clearPreviousMouseEvents();
-            void render(bool canMau);
+            void setOwnPositioning(std::shared_ptr<egui::Positioning> positioning) override;
 
 	};
 }

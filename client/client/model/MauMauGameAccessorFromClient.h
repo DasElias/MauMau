@@ -32,6 +32,7 @@ namespace card {
 			bool canPlayDrawnCard() const;
 			bool canTakeDrawnCardIntoHandCards() const;
 			bool isWaitingForColorChoose() const;
+			bool canPass() const;
 
 			void mau();
 			void drawCard();
@@ -39,6 +40,7 @@ namespace card {
 			void playDrawnCard();
 			void playCard(std::size_t index);
 			void chooseColor(CardIndex color);
+			void pass();
 
 			void onTurnEnd();
 

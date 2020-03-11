@@ -28,6 +28,10 @@ namespace card {
 		});
 	}
 	void AiPlayer::performTurn() {
+		if(game.isInSkipState()) {
+			playIfIsInSkipState();
+			return;
+		}
 		if(tryPlayCard()) return;
 
 		// player cannot play, therefore no card was played
@@ -113,5 +117,26 @@ namespace card {
 	bool AiPlayer::shouldPlayDrawnCard() {
 		Card lastCardOnDrawStack = game.getDrawCardStack().getLast();
 		return game.canPlay(*this, lastCardOnDrawStack);
+	}
+	void AiPlayer::playIfIsInSkipState() {
+		// we can't use getPlayableCard() since ServerMauMauGame::canPlay returns always
+		// false if the game is in skip state
+		std::vector<Card> playableCards;	
+		for(auto& c : getHandCards()) {
+			if(c.getValue() == SKIP_VALUE) playableCards.push_back(c);
+		}
+
+		bool success;
+		if(playableCards.empty()) {
+			success = game.pass(*this);
+		} else {
+			std::size_t randomIndex = randomInRange<std::size_t>(0, playableCards.size() - 1);
+			Card cardToPlay = playableCards[randomIndex];
+			success = game.playCardAndSetNextPlayerOnTurn(*this, cardToPlay, false);
+		}
+
+		if(!success) {
+			log(LogSeverity::ERR, "AiPlayer " + getUsername() + " couldn't play card!");
+		}
 	}
 }

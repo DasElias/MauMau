@@ -26,6 +26,7 @@
 #include "LocalPlayerRenderer.h"
 #include "CardInterpolator.h"
 #include "OpponentRenderer.h"
+#include "PassButtonRenderer.h"
 #include "../renderingModel/CardStackIntersectionChecker.h"
 #include "../renderingModel/HandCardIntersectionChecker.h"
 #include "../renderingModel/MauMauCardStackMisalignmentGenerator.h"
@@ -61,6 +62,7 @@ namespace card {
 			ParticleRenderer particleRenderer;
 			GameEndRenderer fireworkRenderer;
 			MauMauButtonRenderer mauMauButtonRenderer;
+			PassButtonRenderer passButtonRenderer;
 			MessageRenderer messageRenderer;
 			CardStackIntersectionChecker cardStackIntersectionChecker;
 			HandCardIntersectionChecker handCardIntersectionChecker;
@@ -94,6 +96,7 @@ namespace card {
 			void tryRenderDrawnCardOverlay(std::optional<Card> drawnCardOrNone, bool suppressMouseClick);
 			void tryRenderChooseColorOverlay();
 			void renderMauButton(bool suppressMouseClick);
+			void renderPassButton();
 			void renderDrawCardStack();
 			void renderPlayCardStack();
 			void renderAnimationFromDrawToPlayStack(const CardAnimation& cardAnimation, glm::vec3 endPosition, glm::vec3 endRotation);

@@ -77,10 +77,8 @@ namespace card {
 			void playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, std::size_t amountOfCards, int delayMs = 0);
 			void playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, const std::vector<Card>& cards, int delayMs = 0);
 			
-
-			void setNextOrNextButOneOnTurnLocal(Card playedCard);
+			void setPlayerOnTurnSkipStateIfNecessary(Card playedCard);
 			void setNextPlayerOnTurnLocal();
-			void setNextButOnePlayerOnTurnLocal();
 			std::shared_ptr<ProxyPlayer> getNextPlayer(std::shared_ptr<ProxyPlayer> playerOnTurn);
 			void setOnTurnLocal(std::shared_ptr<ProxyPlayer> player);
 			void setInitialPlayerOnTurnLocal(std::shared_ptr<ProxyPlayer> player, Card nextCardOnDrawStack);

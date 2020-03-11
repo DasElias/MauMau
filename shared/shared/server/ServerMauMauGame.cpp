@@ -4,6 +4,7 @@
 #include "../packet/cts/MauRequest_CTSPacket.h"
 #include "../packet/cts/DrawCardRequest_CTSPacket.h"
 #include "../packet/cts/PlayCardRequest_CTSPacket.h"
+#include "../packet/cts/PassRequest_CTSPacket.h"
 
 #include "../packet/stc/InitialPlayerIsOnTurn_STCPacket.h"
 #include "../packet/stc/PlayerHasMauedSuccessfully_STCPacket.h"
@@ -12,6 +13,7 @@
 #include "../packet/stc/LocalPlayerIsOnTurn_STCPacket.h"
 #include "../packet/stc/OtherPlayerHasDrawnCards_STCPacket.h"
 #include "../packet/stc/OtherPlayerHasPlayedCard_STCPacket.h"
+#include "../packet/stc/OtherPlayerHasPassed_STCPacket.h"
 #include "../packet/stc/GameHasBeenStarted_STCPacket.h"
 #include "../model/PlayerNotFoundException.h"
 #include "../model/MauMauCardValueMeanings.h"
@@ -36,16 +38,20 @@ namespace card {
 			playCardStack(),
 			handler_onPlayCard(std::bind(&ServerMauMauGame::listener_onPlayCard, this, std::placeholders::_1, std::placeholders::_2)),
 			handler_onDrawCard(std::bind(&ServerMauMauGame::listener_onDrawCard, this, std::placeholders::_1, std::placeholders::_2)),
-			handler_onMau(std::bind(&ServerMauMauGame::listener_onMau, this, std::placeholders::_1, std::placeholders::_2)) {
+			handler_onMau(std::bind(&ServerMauMauGame::listener_onMau, this, std::placeholders::_1, std::placeholders::_2)),
+			handler_onPass(std::bind(&ServerMauMauGame::listener_onPass, this, std::placeholders::_1, std::placeholders::_2)) {
 
-		drawCardStack.fillWithCardDeckAndShuffle();
-	
+	//	drawCardStack.fillWithCardDeckAndShuffle();
+		for(int i = 0; i < Card::MAX_CARDS; i++) {
+			Card c = (i % 2 == 0) ? Card::CLUB_EIGHT : Card::CLUB_FIVE;
+			drawCardStack.addFromPlain(c);
+		}
 		Card firstCardOnPlayStack;
 
 		// init play card stack
 		for(std::size_t i = 0; i < drawCardStack.getSize(); i++) {
 			auto card = drawCardStack.get(i);
-			if(! canChangeColor(card) && getAmountsOfCardsToDrawForNextPlayer(card) == 0 && !canSkipPlayer(card)) {
+			if(! canChangeColor(card) && getAmountsOfCardsToDrawForNextPlayer(card) == 0) {
 				firstCardOnPlayStack = card;
 
 				drawCardStack.remove(i);
@@ -77,12 +83,14 @@ namespace card {
 		packetTransmitter->addListenerForClientPkt(PlayCardRequest_CTSPacket::PACKET_ID, handler_onPlayCard);
 		packetTransmitter->addListenerForClientPkt(DrawCardRequest_CTSPacket::PACKET_ID, handler_onDrawCard);
 		packetTransmitter->addListenerForClientPkt(MauRequest_CTSPacket::PACKET_ID, handler_onMau);
+		packetTransmitter->addListenerForClientPkt(PassRequest_CTSPacket::PACKET_ID, handler_onPass);
 	}
 	
 	ServerMauMauGame::~ServerMauMauGame() {
 		packetTransmitter->removeListenerForClientPkt(PlayCardRequest_CTSPacket::PACKET_ID, handler_onPlayCard);
 		packetTransmitter->removeListenerForClientPkt(DrawCardRequest_CTSPacket::PACKET_ID, handler_onDrawCard);
 		packetTransmitter->removeListenerForClientPkt(MauRequest_CTSPacket::PACKET_ID, handler_onMau);
+		packetTransmitter->removeListenerForClientPkt(PassRequest_CTSPacket::PACKET_ID, handler_onPass);
 
 		// all threadUtils callbacks for this object aren't executed after the object is destroyed
 		threadUtils_removeCallbacksWithKey(this);
@@ -133,7 +141,7 @@ namespace card {
 			log(LogSeverity::ERR, "Played card " + std::to_string(card.getCardNumber()) + "can't change card index but the chosen card index wasn't NULLINDEX");
 			return false;
 		}
-
+		
 		bool moveSuccess = movePlayedCardToPlayCardStack(player, card, wasCardJustDrawn);
 		if(! moveSuccess) return false;
 
@@ -147,7 +155,7 @@ namespace card {
 		std::vector<int> cardsToDrawForNextPlayer = popCardsFromDrawStack(getAmountsOfCardsToDrawForNextPlayer(card));
 
 		checkForMauIfNeeded();
-		setNextOrNextButOneOnTurnLocal(card);
+		setNextPlayerOnTurnAndUpdateSkipState(card);
 
 		// actually draw cardsToDrawForNextPlayer
 		playerOnTurn->addHandCards(cardsToDrawForNextPlayer);
@@ -172,7 +180,7 @@ namespace card {
 		wasCardPlayed_thisTurn = true;
 
 		if(wasCardJustDrawn) {
-			if(player.containsHandCard(card)) {
+			if(drawCardStack.getLast() != card) {
 				log(LogSeverity::ERR, "Player \"" + player.getUsername() + " erroneously pretended to have just drawn the played card");
 				return false;
 			}
@@ -248,9 +256,23 @@ namespace card {
 		return true;
 	}
 
-	void ServerMauMauGame::setNextOrNextButOneOnTurnLocal(Card playedCard) {
-		if(canSkipPlayer(playedCard)) setNextButOnePlayerOnTurn();
-		else setNextPlayerOnTurn();
+	bool ServerMauMauGame::pass(Player& player) {
+		if(! canPass(player)) return false;
+		setNextPlayerOnTurn();
+
+		std::string playerUsername = player.getUsername();
+		OtherPlayerHasPassed_STCPacket packet(playerUsername);
+		for(auto& p : this->players) {
+			if(p->getUsername() == playerUsername) continue;
+			packetTransmitter->sendPacketToClient(packet, p->getWrappedParticipant());
+		}
+
+		return true;
+	}
+
+	void ServerMauMauGame::setNextPlayerOnTurnAndUpdateSkipState(Card playedCard) {
+		setNextPlayerOnTurn();
+		if(canSkipPlayer(playedCard)) isInSkipState_field = true;
 	}
 
 	void ServerMauMauGame::setNextPlayerOnTurn() {
@@ -287,6 +309,7 @@ namespace card {
 		wasCardPlayed_thisTurn = false;
 
 		wasMauedCorrectly_thisTurn = false;
+		isInSkipState_field = false;
 
 		startTurnAbortTimer();
 
@@ -377,9 +400,9 @@ namespace card {
 	}
 	bool ServerMauMauGame::canPlay(Player& player, Card card) const {
 		if(playerOnTurn->getUsername() != player.getUsername()) return false;
+		if(isInSkipState_field && card.getValue() != CardValue::EIGHT) return false;
 
 		Card lastCardOnPlayStack = playCardStack.getLast();
-
 		if(card.getValue() == CHANGE_COLOR_VALUE && roomOptions.getOption(Options::CHOOSE_COLOR_ON_JACK)) {
 			if(! roomOptions.getOption(Options::CAN_PUT_JACK_ON_JACK) && lastCardOnPlayStack.getValue() == CHANGE_COLOR_VALUE) return false;
 			if(roomOptions.getOption(Options::CAN_PUT_JACK_ON_EVERY_COLOR)) return true;
@@ -389,7 +412,7 @@ namespace card {
 	}
 	bool ServerMauMauGame::canDraw(Player& player) const {
 		if(playerOnTurn->getUsername() != player.getUsername()) return false;
-
+		if(isInSkipState_field) return false;
 		return true;
 	}
 	bool ServerMauMauGame::canChangeColor(Card playedCard) const {
@@ -404,6 +427,12 @@ namespace card {
 	}
 	bool ServerMauMauGame::canMau(Player& player) const {
 		return checkIfOnTurn(player) && player.getHandCards().getSize() == 2;
+	}
+	bool ServerMauMauGame::canPass(Player& player) const {
+		return checkIfOnTurn(player) && isInSkipState_field;
+	}
+	bool ServerMauMauGame::isInSkipState() const {
+		return isInSkipState_field;
 	}
 	bool ServerMauMauGame::wasCardDrawnLastTurn() const {
 		return wasCardDrawn_lastTurn;
@@ -516,5 +545,14 @@ namespace card {
 		auto player = lookupPlayerByParticipant(participant);
 		mau(*player);
 		return OperationSuccessful_STCAnswerPacket(true);
+	}
+	std::optional<OperationSuccessful_STCAnswerPacket> ServerMauMauGame::listener_onPass(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant) {
+		if(!checkIfPlayerByParticipant(participant)) return std::nullopt;
+		auto& casted = dynamic_cast<PassRequest_CTSPacket&>(p);
+		auto player = lookupPlayerByParticipant(participant);
+		bool wasSuccessful = pass(*player);
+		return OperationSuccessful_STCAnswerPacket(wasSuccessful);
+
+
 	}
 }

@@ -12,6 +12,7 @@ namespace card {
 		
 			ServerPacketListenerCallback handler_onOtherPlayerHasDrawnCard;
 			ServerPacketListenerCallback handler_onOtherPlayerHasPlayedCard;
+			ServerPacketListenerCallback handler_onOtherPlayerHasPassed;
 			ServerPacketListenerCallback handler_onLocalPlayerIsOnTurn;
 			ServerPacketListenerCallback handler_onTimeExpires;
 			ServerPacketListenerCallback handler_onMauPunishment;
@@ -36,6 +37,7 @@ namespace card {
 		private:
 			void listener_onOtherPlayerHasDrawnCard(Packet& p);
 			void listener_onOtherPlayerHasPlayedCard(Packet& p);
+			void listener_onOtherPlayerHasPassed(Packet& p);
 			void listener_onLocalPlayerIsOnTurn(Packet& p);
 			void listener_onTimeExpires(Packet& p);
 			void listener_onMauPunishment(Packet& p);

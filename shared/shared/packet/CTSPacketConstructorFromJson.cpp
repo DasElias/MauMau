@@ -8,6 +8,7 @@
 #include "../packet/cts/DrawCardRequest_CTSPacket.h"
 #include "../packet/cts/GameStartRequest_CTSPacket.h"
 #include "../packet/cts/MauRequest_CTSPacket.h"
+#include "../packet/cts/PassRequest_CTSPacket.h"
 #include "../packet/cts/PlayCardRequest_CTSPacket.h"
 #include "../packet/cts/RoomCreationRequest_CTSPacket.h"
 #include "../packet/cts/RoomJoinRequest_CTSPacket.h"
@@ -37,6 +38,7 @@ namespace card {
 			PACKET_TYPE_CASE(RoomJoinRequest_CTSPacket)
 			PACKET_TYPE_CASE(KickPlayerRequest_CTSPacket)
 			PACKET_TYPE_CASE(JoinAiPlayerRequest_CTSPacket)
+			PACKET_TYPE_CASE(PassRequest_CTSPacket)
 			default:
 				log(LogSeverity::ERR, "Packet with unknown packet id (" + std::to_string(packetType) + ") received!");
 		}

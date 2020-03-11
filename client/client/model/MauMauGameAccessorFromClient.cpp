@@ -2,6 +2,7 @@
 
 #include <shared/packet/cts/MauRequest_CTSPacket.h>
 #include <shared/packet/cts/PlayCardRequest_CTSPacket.h>
+#include <shared/packet/cts/PassRequest_CTSPacket.h>
 #include <shared/packet/cts/DrawCardRequest_CTSPacket.h>
 #include <shared/model/MauMauCardValueMeanings.h>
 #include <shared/model/CardAnimationDuration.h>
@@ -32,6 +33,7 @@ namespace card {
 
 			return false;
 		}
+		if(gameData.getLocalPlayer()->isInSkipState() && card.getValue() != CardValue::EIGHT) return false;
 
 		auto& roomOptions = gameData.getOptions();
 		const CardAnimator& playCardStack = gameData.getPlayStack();
@@ -49,6 +51,7 @@ namespace card {
 		   isWaitingForColorChoose() ||
 		   gameData.getLocalPlayer()->hasTimeExpired() ||
 		   gameData.getLocalPlayer()->hasStartedToDrawCard() ||
+		   gameData.getLocalPlayer()->isInSkipState() ||
 		   gameData.getDrawCardForNextPlayer() == Card::NULLCARD) {
 			
 			return false;
@@ -68,6 +71,9 @@ namespace card {
 	}
 	bool MauMauGameAccessorFromClient::isWaitingForColorChoose() const {
 		return cardToPlayAfterColorChoose.has_value();
+	}
+	bool MauMauGameAccessorFromClient::canPass() const {
+		return gameData.isReadyToPerformLocalPlayerTurn() && gameData.getLocalPlayer()->isInSkipState();
 	}
 	void MauMauGameAccessorFromClient::mau() {
 		auto localPlayer = gameData.getLocalPlayer();
@@ -138,6 +144,16 @@ namespace card {
 		}
 	}
 
+
+	void MauMauGameAccessorFromClient::pass() {
+		if(! canPass()) throw std::runtime_error("Can't pass!");
+		auto localPlayer = gameData.getLocalPlayer();
+		PassRequest_CTSPacket p;
+		packetTransmitter->sendPacketToServer(p);
+
+		gameData.setNextPlayerOnTurnLocal();
+	}
+
 	void MauMauGameAccessorFromClient::chooseColor(CardIndex color) {
 		if(!isWaitingForColorChoose()) throw std::runtime_error("Can't choose color!");
 		auto localPlayer = gameData.getLocalPlayer();
@@ -168,7 +184,8 @@ namespace card {
 		PlayCardRequest_CTSPacket p(playedCard.getCardNumber(), wasCardDrawnThisTurn, static_cast<int>(newCardIndex));
 		packetTransmitter->sendPacketToServer(p);
 
-		gameData.setNextOrNextButOneOnTurnLocal(playedCard);
+		gameData.setNextPlayerOnTurnLocal();
+		gameData.setPlayerOnTurnSkipStateIfNecessary(playedCard);
 
 		std::size_t cardsToDrawForNextPlayer = gameData.getAmountsOfCardsToDrawForNextPlayer(playedCard);
 		auto newPlayerOnTurn = gameData.getPlayerOnTurn();

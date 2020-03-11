@@ -1,30 +1,28 @@
-#include "MauMauButtonRenderer.h"
+#include "PassButtonRenderer.h"
 #include <egui/model/nodes/UnorganizedParentElement.h>
 #include <egui/model/nodeComponents/background/TexturedBackground.h>
 #include <egui/model/positioning/RelativePositioningOnScreen.h>
 #include <res/ingame/maubutton.png.h>
 
 namespace card {
-	float const MauMauButtonRenderer::BTN_WIDTH_PERCENT = 0.075f;
+	float const PassButtonRenderer::BTN_WIDTH_PERCENT = 0.075f;
 
-	MauMauButtonRenderer::MauMauButtonRenderer(egui::MasterRenderer& eguiRenderer, std::function<void(void)> mauMauFunction) :
+	PassButtonRenderer::PassButtonRenderer(egui::MasterRenderer& eguiRenderer, std::function<void(void)> passFunction) :
 			eguiRenderer(eguiRenderer) {
 
-		mauMauBtn = std::make_shared<IngameButton>(
+		passBtn = std::make_shared<IngameButton>(
 			std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_maubutton, tex_maubutton_size)),
 			std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_maubuttondisabled, tex_maubuttondisabled_size)),
 			BTN_WIDTH_PERCENT,
-			mauMauFunction
+			passFunction
 		);
-		mauMauBtn->setOwnPositioning(std::make_shared<egui::RelativePositioningOnScreen>(0.7f, 0.6f));
-		scene.setRootElement(mauMauBtn);
+		passBtn->setOwnPositioning(std::make_shared<egui::RelativePositioningOnScreen>(0.775f, 0.6f));
+		scene.setRootElement(passBtn);
 	}
-	void MauMauButtonRenderer::clearPreviousMouseEvents() {
+	void PassButtonRenderer::clearPreviousMouseEvents() {
 		scene.discardMouseEvents();
 	}
-	void MauMauButtonRenderer::render(bool canMau) {
-		mauMauBtn->setDisabled(! canMau);
-		
+	void PassButtonRenderer::render() {		
 		eguiRenderer.beginFrame();
 		scene.render(eguiRenderer);
 		eguiRenderer.endFrame();

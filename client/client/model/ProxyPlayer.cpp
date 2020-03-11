@@ -16,6 +16,7 @@ namespace card {
 			unixTimeOnTurnAnimationFreezed(ANIMATION_NOT_FREEZED),
 			unixTimePlayerSkipped(0),
 			unixTimePlayerMaued(0),
+			isInSkipState_field(false),
 			gameInformation(gameInformation) {
 	}
 	void ProxyPlayer::initHandCards(std::vector<Card> handCards, CardAnimator& drawCardStack, std::size_t playerIndex) {
@@ -101,6 +102,9 @@ namespace card {
 	std::shared_ptr<ParticipantOnClient> ProxyPlayer::getWrappedParticipiant() {
 		return wrappedParticipant;
 	}
+	bool ProxyPlayer::isInSkipState() const {
+		return isInSkipState_field;
+	}
 	void ProxyPlayer::endRemainingTimeAnimation() {
 		this->unixTimeOnTurnAnimationStarted = NOT_ON_TURN;
 		this->unixTimeOnTurnAnimationFreezed = ANIMATION_NOT_FREEZED;
@@ -108,9 +112,11 @@ namespace card {
 	void ProxyPlayer::freezeRemainingTimeAnimation() {
 		this->unixTimeOnTurnAnimationFreezed = getMilliseconds();
 	}
-	void ProxyPlayer::onSkip() {
+	void ProxyPlayer::setSkipState() {
+		isInSkipState_field = true;
+	}
+	void ProxyPlayer::startSkippedAnimation() {
 		this->unixTimePlayerSkipped = getMilliseconds();
-		if(gameInformation.wasSingleCardDrawedInHandCardsThisTurn) this->unixTimePlayerSkipped += DRAW_DURATION_MS + DELAY_BETWEEN_DRAW_AND_PLAY;
 	}
 	void ProxyPlayer::onSuccessfulMau() {
 		this->unixTimePlayerMaued = getMilliseconds();
@@ -121,6 +127,7 @@ namespace card {
 	}
 	void ProxyPlayer::onEndTurn() {
 		gameInformation.wasSingleCardDrawedInHandCardsThisTurn = false;
+		isInSkipState_field = false;
 	}
 	bool ProxyPlayer::operator==(const ProxyPlayer& p2) const {
 		return p2.wrappedParticipant == this->wrappedParticipant;
