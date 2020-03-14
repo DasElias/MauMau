@@ -19,25 +19,27 @@ namespace card {
 		avatarElement->setBackground(avatar);
 	//	avatar->setBackground(std::make_shared<egui::ColoredBackground>(egui::Color(1)));
 
-		int const LABEL_FONT_SIZE_PX = 20;
-		this->usernameLabel = std::make_shared<egui::Label>(username, LABEL_FONT_SIZE_PX, false, egui::Text::HorizontalAlignment::CENTER, egui::Text::VerticalAlignment::MIDDLE, egui::Color(1, 1, 1), egui::Font::getFont("NotoSans Semibold"));
+		int const LABEL_FONT_SIZE_PX = 24;
+		this->usernameLabel = std::make_shared<egui::Label>(username, LABEL_FONT_SIZE_PX, false, egui::Text::HorizontalAlignment::CENTER, egui::Text::VerticalAlignment::MIDDLE, egui::Color(1, 1, 1), egui::Font::getFont("NotoSans Medium"));
 		addChildElement(usernameLabel);
 		usernameLabel->setPreferredHeight({LABEL_FONT_SIZE_PX, egui::RelativityMode::ABSOLUTE_VALUE});
 
-		int const DESCRIPTION_LABEL_FONT_SIZE_PX = LABEL_FONT_SIZE_PX - 3;
+		int const DESCRIPTION_LABEL_FONT_SIZE_PX = LABEL_FONT_SIZE_PX - 4;
 		std::string descriptionText = getDescriptionForAttributes(attributes);
 		this->descriptionLabel = std::make_shared<egui::Label>(descriptionText, DESCRIPTION_LABEL_FONT_SIZE_PX, false, egui::Text::HorizontalAlignment::CENTER, egui::Text::VerticalAlignment::MIDDLE, egui::Color(1, 1, 1), egui::Font::getFont("NotoSans Light"));
 		addChildElement(descriptionLabel);
 		descriptionLabel->setPreferredHeight({DESCRIPTION_LABEL_FONT_SIZE_PX, egui::RelativityMode::ABSOLUTE_VALUE});
+		descriptionLabel->setYTranslation(-2);
 
 		int BUTTON_HEIGHT_PX = 35;
 
 		auto buttonBoxWrapper = std::make_shared<egui::HBox>();
-		buttonBoxWrapper->setYTranslation(20);
+		buttonBoxWrapper->setYTranslation(9);
 		addChildElement(buttonBoxWrapper);
 		buttonBoxWrapper->setShouldCenterElements(true);
 
 		auto buttonBox = std::make_shared<egui::VBox>();
+		buttonBox->setSpaceBetweenElements({5, egui::RelativityMode::ABSOLUTE_VALUE});
 		buttonBoxWrapper->addChildElement(buttonBox);
 		buttonBox->setPreferredWidth({0.7, egui::RelativityMode::RELATIVE_IN_PARENT});
 

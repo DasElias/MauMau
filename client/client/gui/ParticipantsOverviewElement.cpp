@@ -10,8 +10,8 @@
 namespace card {
 	ParticipantsOverviewElement::ParticipantsOverviewElement(AvatarTextures& avatarTextures) :
 			avatarTextures(avatarTextures) {
-		int const TITLE_FONT_SIZE_PX = 20;
-		int const ROOM_CODE_FONT_SIZE_PX = 70;
+		int const TITLE_FONT_SIZE_PX = 30;
+		int const ROOM_CODE_FONT_SIZE_PX = 90;
 		
 
 		float const MARGIN_LEFT_RIGHT = 0.015f;
@@ -40,6 +40,7 @@ namespace card {
 		titleBox->addChildElement(title);
 		this->roomCodeLabel = std::make_shared<egui::Label>("212", ROOM_CODE_FONT_SIZE_PX, false, egui::Text::HorizontalAlignment::CENTER, egui::Text::VerticalAlignment::MIDDLE, egui::Color(1, 1, 1));
 		roomCodeLabel->setPreferredHeight({ROOM_CODE_FONT_SIZE_PX, egui::RelativityMode::ABSOLUTE_VALUE});
+		roomCodeLabel->setYTranslation(-10);
 		titleBox->addChildElement(roomCodeLabel);
 
 
