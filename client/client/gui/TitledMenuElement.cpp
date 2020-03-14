@@ -9,7 +9,7 @@ namespace card {
 	float const TitledMenuElement::TITLE_Y_MARGIN_PERCENT_ON_SCREEN = 0.025f;
 
 	TitledMenuElement::TitledMenuElement(std::string titleString) :
-			title(std::make_shared<egui::Label>(titleString, FONT_SIZE_PX, false, egui::Text::HorizontalAlignment::CENTER, egui::Text::VerticalAlignment::MIDDLE, egui::Color(0.36f, 0.6f, 0.83f), egui::Font::getFont("ariblk"))) {
+			title(std::make_shared<egui::Label>(titleString, FONT_SIZE_PX, false, egui::Text::HorizontalAlignment::CENTER, egui::Text::VerticalAlignment::MIDDLE, egui::Color(0.36f, 0.6f, 0.83f), egui::Font::getFont("NotoSans ExtraBold"))) {
 
 		addChildElement(title);
 		title->setPreferredHeight({FONT_SIZE_PX, egui::RelativityMode::ABSOLUTE_VALUE});

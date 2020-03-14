@@ -13,10 +13,13 @@ namespace card {
             private:
                 std::shared_ptr<egui::Label> text;
                 std::shared_ptr<egui::Label> shadow;
+                std::shared_ptr<egui::Background> coloredBackground;
+                std::shared_ptr<egui::Background> linearGradientBackground;
 
             public:
                 TextToRender(int fontSizePx);
                 void setText(std::string text);
+                void updateBackground(bool isLastElement);
         };
 
         typedef std::array<std::shared_ptr<TextToRender>, MessageQueue::MAX_MSG_AMOUNT> TextBoxesArray;

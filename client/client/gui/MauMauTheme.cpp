@@ -24,7 +24,7 @@ egui::MauMauTheme::MauMauTheme(EGuiContext& context) :
 
 		// LABELED
 	/*	std::shared_ptr<Font> defaultFont = Font::createFont(ctx, "CodersCrux", std::string(applFolder).append("\\resources\\fonts\\coders_crux.ttf"));
-		std::shared_ptr<Font> emojiFont = Font::createFont(ctx, "EmojiFallback", std::string(applFolder).append("\\resources\\fonts\\OpenSansEmoji.ttf"));
+		std::shared_ptr<Font> emojiFont = Font::createFont(ctx, "EmojiFallback", std::string(applFolder).append("\\resources\\fonts\\NotoSansEmoji.ttf"));
 		defaultFont->addFallbackFont(ctx, emojiFont);
 		AbstractTheme::addComponent(Labeled::getClassName_static(), [&defaultFont, &emojiFont](Node* p_node) {
 			Labeled* p_labeled = dynamic_cast<Labeled*>(p_node);
@@ -54,6 +54,9 @@ std::function<void(egui::Node* const)> egui::MauMauTheme::button_coloredButton_a
 		ColoredButton* p_btn = dynamic_cast<ColoredButton*>(p_node);
 		if(!p_btn) throw std::logic_error("Component is not of type ColoredButton");
 
+		p_btn->getTextComponent()->setFont(egui::Font::getFont("NotoSans Medium"));
+		p_btn->getTextComponent()->setFontSize(0.5f, true);
+
 		p_btn->setDisabledBackground(std::make_shared<LinearGradientBackground>(
 			LinearGradient(
 				Color(0.57f, 0.57f, 0.57f),
@@ -65,28 +68,30 @@ std::function<void(egui::Node* const)> egui::MauMauTheme::button_coloredButton_a
 
 		switch(p_btn->getButtonType()) {
 			case ColoredButtonType::GREEN:
+				p_btn->getTextComponent()->setColor(egui::Color(1.0f, 1.0f, 0.96f));
 				p_btn->setBackground(std::make_shared<ColoredBackground>(
-					Color(0.46f, 0.87f, 0.54f)
+					Color(0.37f, 0.86f, 0.45f)
 				));
 				p_btn->setHoveredBackground(std::make_shared<LinearGradientBackground>(
 					LinearGradient(
-						Color(0.46f, 0.87f, 0.54f),
-						Color(0.62f, 0.91f, 0.68f),
+						Color(0.37f, 0.86f, 0.45f),
+						Color(0.56f, 0.9f, 0.62f),
 						0.5f,
 						0,
 						0.5f,
 						1
 					)
-					), RENDER_EXCLUSIVELY);
+				), RENDER_EXCLUSIVELY);
 				break;
 			case ColoredButtonType::BLUE:
+				p_btn->getTextComponent()->setColor(egui::Color(0.96f, 1.0f, 1.0f));
 				p_btn->setBackground(std::make_shared<ColoredBackground>(
 					Color(0.0f, 0.69f, 0.94)
 				));
 				p_btn->setHoveredBackground(std::make_shared<LinearGradientBackground>(
 					LinearGradient(
 						Color(0.0f, 0.69f, 0.94f),
-						Color(0.34f, 0.83f, 1.0f),
+						Color(0.30f, 0.78f, 0.96f),
 						0.5f,
 						0,
 						0.5f,
@@ -95,13 +100,14 @@ std::function<void(egui::Node* const)> egui::MauMauTheme::button_coloredButton_a
 					), RENDER_EXCLUSIVELY);
 				break;
 			case ColoredButtonType::RED:
+				p_btn->getTextComponent()->setColor(egui::Color(1.0f, 0.98f, 1.0f));
 				p_btn->setBackground(std::make_shared<ColoredBackground>(
 					Color(0.93f, 0.38f, 0.29f)
 				));
 				p_btn->setHoveredBackground(std::make_shared<LinearGradientBackground>(
 					LinearGradient(
 						Color(0.93f, 0.38f, 0.29f),
-						Color(0.95f, 0.54f, 0.47f),
+						Color(0.95f, 0.56f, 0.50f),
 						0.5f,
 						0,
 						0.5f,
@@ -120,7 +126,7 @@ std::function<void(egui::Node* const)> egui::MauMauTheme::button_apply() {
 
 		// set dimensions
 		p_btn->setPreferredDimension({1, RelativityMode::RELATIVE_IN_PARENT}, {BTN_HEIGHT, RelativityMode::RELATIVE_ON_SCREEN});
-		p_btn->setRadius(0.2f, true);
+		p_btn->setRadius(0.15f, true);
 
 		p_btn->getTextComponent()->setForceOneLine(true);
 		p_btn->getTextComponent()->setFontSize(0.5f, true);

@@ -12,9 +12,9 @@ using namespace egui;
 
 namespace card {
 	CreditsElement::CreditsElement() {
-		int const TITLE_FONT_SIZE_PX = 75;
-		int const SUBTITLE_FONT_SIZE_PX = 40;
-		int const CONTENT_FONT_SIZE_PX = 20;
+		int const TITLE_FONT_SIZE_PX = 77.5f;
+		int const SUBTITLE_FONT_SIZE_PX = 42.5;
+		int const CONTENT_FONT_SIZE_PX = 25.5f;
 
 		auto title = std::make_shared<egui::Label>(
 			"MauMau",

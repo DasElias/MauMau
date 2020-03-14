@@ -14,7 +14,7 @@ namespace card {
 		glm::vec4 modelViewProjection_col2;
 		glm::vec4 modelViewProjection_col3;
 		glm::vec4 modelViewProjection_col4;
-		int textureId;
+		std::uint32_t textureId;
 	};
 	#pragma pack(pop)
 
@@ -24,6 +24,9 @@ namespace card {
 			void update(const std::vector<InstancedCardData>& data);
 
 		private:
+			// 16 floats for MVP-matricies
+			// 1 uint32_t for card texture id, but the last bit represents whether the card should be rendered in grey scale
+			// this bit is 1, if the card should be rendered in grey scale
 			static int const BYTES_PER_CARD = (16 * sizeof(float) + 1 * sizeof(std::uint32_t));
 
 			DataTextureVertexArrayObject vao;
@@ -49,6 +52,7 @@ namespace card {
 		private:
 			static std::vector<float> const VERTEX_DATA;
 			static std::vector<float> const TEXTURE_DATA;
+			static uint32_t const GREY_SCALE_BIT_MASK = 1u << 31;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
@@ -74,8 +78,8 @@ namespace card {
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			void renderInNextPass(const PositionedCard& card, ProjectionMatrix& projectionMatrix, Viewport& viewport);
-			void renderInNextPass(const std::vector<PositionedCard>& cards, ProjectionMatrix& projectionMatrix, Viewport& viewport);
+			void renderInNextPass(const PositionedCard& card, ProjectionMatrix& projectionMatrix, Viewport& viewport, bool shouldRenderInGreyScale = false);
+			void renderInNextPass(const std::vector<PositionedCard>& cards, ProjectionMatrix& projectionMatrix, Viewport& viewport, std::vector<bool> shouldRenderInGreyScaleVector = {});
 			void flush(bool renderWithHighAnisotropicFiltering = false);
 
 	};

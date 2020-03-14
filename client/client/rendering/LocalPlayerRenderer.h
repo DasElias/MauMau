@@ -43,5 +43,6 @@ namespace card {
         private:
             void renderHandCards(ProxyMauMauGame& game);
             void renderAnimations(ProxyMauMauGame& data);
+            bool shouldDisableCard(ProxyMauMauGame& game, Card c);
 	};
 }

@@ -56,7 +56,13 @@
 #include "state/MainMenuNetworkErrorHandler.h"
 #include "gui/MauMauTheme.h"
 
-#include <res/font/RobotoCondensedBold.ttf.h>
+#include <res/font/BoogalooRegular.ttf.h>
+#include <res/font/NotoSansBlack.ttf.h>
+#include <res/font/NotoSansBold.ttf.h>
+#include <res/font/NotoSansExtraBold.ttf.h>
+#include <res/font/NotoSansLight.ttf.h>
+#include <res/font/NotoSansMedium.ttf.h>
+#include <res/font/NotoSansRegular.ttf.h>
 
 using namespace std;
 using namespace card;
@@ -222,11 +228,16 @@ namespace card {
 		egui::EGuiContext ctx = {};
 		egui::NvgRenderer nvgRenderer(ctx);
 		egui::Image::setContext(ctx);
-		egui::Font::setDefaultFont(egui::Font::createSystemFont(ctx, "Arial"));
-		egui::Font::createSystemFont(ctx, "ariblk");
-		egui::Font::createSystemFont(ctx, "ariali");
-		egui::Font::createSystemFont(ctx, "arialbd");
-		egui::Font::createFontFromMemory(ctx, "Roboto Condensed", font_robotoCondensed, font_robotoCondensed_size);
+		egui::Font::setDefaultFont(egui::Font::createFontFromMemory(ctx, "NotoSans Regular", font_NotoSansRegular, font_NotoSansRegular_size));
+		egui::Font::createFontFromMemory(ctx, "NotoSans Medium", font_NotoSansMedium, font_NotoSansMedium_size);
+	//	egui::Font::createFontFromMemory(ctx, "NotoSans Semibold", font_notosans);
+		egui::Font::createFontFromMemory(ctx, "NotoSans Bold", font_NotoSansBold, font_NotoSansBold_size);
+		egui::Font::createFontFromMemory(ctx, "NotoSans ExtraBold", font_NotoSansExtraBold, font_NotoSansExtraBold_size);
+		egui::Font::createFontFromMemory(ctx, "NotoSans Black", font_NotoSansBlack, font_NotoSansBlack_size);
+		egui::Font::createFontFromMemory(ctx, "NotoSans Light", font_NotoSansLight, font_NotoSansLight_size);
+		egui::Font::createFontFromMemory(ctx, "Boogaloo", font_BoogalooRegular, font_BoogalooRegular_size);
+
+
 		auto theme = std::make_unique<egui::MauMauTheme>(ctx);
 		egui::ThemeManager::getInstance().addTheme(theme.get());
 

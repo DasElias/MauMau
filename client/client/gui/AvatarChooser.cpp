@@ -13,7 +13,7 @@ namespace card {
 			chosenAvatar(defaultAvatar) {
 
 		setPreferredHeight({0.175f, egui::RelativityMode::RELATIVE_IN_PARENT});
-		int const LABEL_FONT_SIZE_PX = 20;
+		int const LABEL_FONT_SIZE_PX = 22;
 
 		auto backgroundElementWrapper = std::make_shared<egui::HBox>();
 		backgroundElementWrapper->setShouldCenterElements(true);
@@ -40,6 +40,7 @@ namespace card {
 		// magic constant for width, depends on LABEL_FONT_SIZE_PX
 		label->setPreferredWidth({180, egui::RelativityMode::ABSOLUTE_VALUE});	
 		label->getTextComponent()->setColor(egui::Color(0.36f, 0.6f, 0.83f));
+		label->getTextComponent()->setFont(egui::Font::getFont("NotoSans Medium"));
 
 		auto popup = std::make_shared<AvatarChoosePopup>(avatarTextures);
 		popup->setZIndex(100);

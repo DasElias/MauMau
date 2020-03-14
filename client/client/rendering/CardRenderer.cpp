@@ -59,7 +59,7 @@ namespace card {
 	}
 	void InstancedCardRenderingVao::addInstacedIntegerAttribute(std::uint32_t index, std::uint32_t offsetInBytes, std::uint32_t amountOfInteger) {
 		glEnableVertexAttribArray(index);
-		glVertexAttribIPointer(index, amountOfInteger, GL_INT, BYTES_PER_CARD, BUFFER_OFFSET(offsetInBytes));
+		glVertexAttribIPointer(index, amountOfInteger, GL_UNSIGNED_INT, BYTES_PER_CARD, BUFFER_OFFSET(offsetInBytes));
 
 		glVertexAttribDivisor(index, 1);
 	}
@@ -89,20 +89,27 @@ namespace card {
 	CardRenderer::~CardRenderer() {
 		singleCardVao.cleanUp();
 	}
-	void CardRenderer::renderInNextPass(const PositionedCard& card, ProjectionMatrix& projectionMatrix, Viewport& viewport) {
+	void CardRenderer::renderInNextPass(const PositionedCard& card, ProjectionMatrix& projectionMatrix, Viewport& viewport, bool shouldRenderInGreyScale) {
 		glm::mat4 frontMVPMatrix = projectionMatrix.getProjectionMatrix() * viewport.getViewMatrix() * card.getModelMatrix();
-		this->cardsToRenderInNextPass.push_back({frontMVPMatrix[0], frontMVPMatrix[1], frontMVPMatrix[2], frontMVPMatrix[3], card.getCardNumber()});
+		uint32_t frontTextureID = card.getCardNumber();
+		if(shouldRenderInGreyScale) frontTextureID |= GREY_SCALE_BIT_MASK;
+		this->cardsToRenderInNextPass.push_back({frontMVPMatrix[0], frontMVPMatrix[1], frontMVPMatrix[2], frontMVPMatrix[3], frontTextureID});
 
 		// draw back side of the card
 		PositionedCard backside = card;
 		backside.changeRotation({0, PI, 0});
 		backside.setCard(Card::NULLCARD);
 		glm::mat4 backMVPMatrix = projectionMatrix.getProjectionMatrix() * viewport.getViewMatrix() * backside.getModelMatrix();
-		this->cardsToRenderInNextPass.push_back({backMVPMatrix[0], backMVPMatrix[1], backMVPMatrix[2], backMVPMatrix[3], backside.getCardNumber()});
+		uint32_t backTextureId = backside.getCardNumber();
+		if(shouldRenderInGreyScale) backTextureId |= GREY_SCALE_BIT_MASK;
+		this->cardsToRenderInNextPass.push_back({backMVPMatrix[0], backMVPMatrix[1], backMVPMatrix[2], backMVPMatrix[3], backTextureId});
 	}
-	void CardRenderer::renderInNextPass(const std::vector<PositionedCard>& cards, ProjectionMatrix& projectionMatrix, Viewport& viewport) {
-		for(auto& c : cards) {
-			this->renderInNextPass(c, projectionMatrix, viewport);
+	void CardRenderer::renderInNextPass(const std::vector<PositionedCard>& cards, ProjectionMatrix& projectionMatrix, Viewport& viewport, std::vector<bool> shouldRenderInGrayScale) {
+		for(int i = 0; i < cards.size(); i++) {
+			auto& c = cards[i];
+			bool shouldRenderThisCardInGrayScale = false;
+			if(i < shouldRenderInGrayScale.size()) shouldRenderThisCardInGrayScale = shouldRenderInGrayScale[i];
+			this->renderInNextPass(c, projectionMatrix, viewport, shouldRenderThisCardInGrayScale);
 		}
 	}
 	void CardRenderer::flush(bool renderWithHighAnisotropy) {

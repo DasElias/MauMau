@@ -163,15 +163,6 @@ namespace card {
 		renderGameEndScreenIfGameHasEnded(deltaSeconds);
 		messageRenderer.render(game.getGameData().getMessageQueue());
 
-		static bool flag = false;
-		if(egui::getInputHandler().isKeyDown(KEY_A) && flag) {
-			flag = false;
-			game.getAccessorFromClient().pass();
-		}
-		if(egui::getInputHandler().isKeyDown(KEY_S)) {
-			flag = true;
-		}
-
 		glEnable(GL_DEPTH_TEST);
 
 	}
@@ -295,7 +286,8 @@ namespace card {
 	void CardSceneRenderer::renderDrawCardStack() {
 		auto& game = room->getGame();
 		auto& drawCardStack = game.getDrawStack();
-		cardStackRenderer.renderCardStack(drawCardStack, DRAW_CARDS_POSITION, DRAW_CARDS_ROTATION, projectionMatrix, viewport);
+		bool shouldDisable = game.getLocalPlayer()->isInSkipState();
+		cardStackRenderer.renderCardStack(drawCardStack, DRAW_CARDS_POSITION, DRAW_CARDS_ROTATION, projectionMatrix, viewport, shouldDisable);
 
 		auto& animations = drawCardStack.getCardAnimations();
 		for(int i = 0; i < animations.size(); i++) {

@@ -9,6 +9,7 @@ namespace card {
 		int const SLIDER_WIDTH_PX = 100;
 
 		auto label = std::make_shared<egui::Label>(labelText, float(HEIGHT_PX), false, egui::Text::HorizontalAlignment::LEFT, egui::Text::VerticalAlignment::MIDDLE, egui::Color(1, 1, 1));
+		label->getTextComponent()->setFont(egui::Font::getFont("NotoSans Light"));
 		addChildElement(label);
 		label->setPreferredWidth({{1, egui::RelativityMode::RELATIVE_IN_PARENT}, {-SLIDER_WIDTH_PX, egui::RelativityMode::ABSOLUTE_VALUE}});
 

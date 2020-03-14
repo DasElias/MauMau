@@ -25,7 +25,7 @@ namespace card {
 			egui::Text::HorizontalAlignment::CENTER,
 			egui::Text::VerticalAlignment::MIDDLE,
 			egui::Color(1, 1, 1),
-			egui::Font::getFont("ariblk")
+			egui::Font::getFont("NotoSans Black")
 		);
 		titleLabel->getTextComponent()->setForceOneLine(true);
 		int const WINNER_FONT_SIZE = 50;
@@ -35,9 +35,11 @@ namespace card {
 			false,
 			egui::Text::HorizontalAlignment::CENTER,
 			egui::Text::VerticalAlignment::MIDDLE,
-			egui::Color(1, 1, 1)
+			egui::Color(1, 1, 1),
+			egui::Font::getFont("NotoSans Light")
 		);
 		winnerLabel->getTextComponent()->setForceOneLine(true);
+		winnerLabel->setYTranslation(-5);
 
 		auto lblContainer = std::make_shared<egui::VBox>();
 		lblContainer->addChildElement(titleLabel);

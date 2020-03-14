@@ -6,7 +6,7 @@ namespace card {
 		inputField = std::make_shared<IntegerSelector>(defaultValue, minValue, maxValue);
 		title = std::make_shared<egui::Label>(titleString, TITLE_FONT_SIZE_PX, false);
 		title->getTextComponent()->setColor(fontColor);
-		title->getTextComponent()->setFont(egui::Font::getFont("Roboto Condensed"));
+		title->getTextComponent()->setFont(egui::Font::getFont("NotoSans Regular"));
 		title->setPreferredHeight({TITLE_FONT_SIZE_PX, egui::RelativityMode::ABSOLUTE_VALUE});
 		setPreferredHeight({{inputField->getPreferredHeight(), title->getPreferredHeight()}});
 

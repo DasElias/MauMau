@@ -285,7 +285,12 @@ namespace card {
 		}
 	}
 	void ProxyMauMauGameData::setPlayerOnTurnSkipStateIfNecessary(Card playedCard) {
-		if(canSkipPlayer(playedCard)) userOnTurn->setSkipState();
+		if(canSkipPlayer(playedCard)) {
+			userOnTurn->setSkipState();
+			if(userOnTurn == localPlayer) {
+				appendMessage("Du wurdest ausgelassen. Spiele eine 8 oder passe.");
+			}
+		}
 	}
 	void ProxyMauMauGameData::setNextPlayerOnTurnLocal() {
 		std::shared_ptr<ProxyPlayer> nextPlayer = getNextPlayer(userOnTurn);

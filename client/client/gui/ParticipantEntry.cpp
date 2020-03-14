@@ -20,13 +20,13 @@ namespace card {
 	//	avatar->setBackground(std::make_shared<egui::ColoredBackground>(egui::Color(1)));
 
 		int const LABEL_FONT_SIZE_PX = 20;
-		this->usernameLabel = std::make_shared<egui::Label>(username, LABEL_FONT_SIZE_PX, false, egui::Text::HorizontalAlignment::CENTER, egui::Text::VerticalAlignment::MIDDLE, egui::Color(1, 1, 1), egui::Font::getFont("arialbd"));
+		this->usernameLabel = std::make_shared<egui::Label>(username, LABEL_FONT_SIZE_PX, false, egui::Text::HorizontalAlignment::CENTER, egui::Text::VerticalAlignment::MIDDLE, egui::Color(1, 1, 1), egui::Font::getFont("NotoSans Semibold"));
 		addChildElement(usernameLabel);
 		usernameLabel->setPreferredHeight({LABEL_FONT_SIZE_PX, egui::RelativityMode::ABSOLUTE_VALUE});
 
 		int const DESCRIPTION_LABEL_FONT_SIZE_PX = LABEL_FONT_SIZE_PX - 3;
 		std::string descriptionText = getDescriptionForAttributes(attributes);
-		this->descriptionLabel = std::make_shared<egui::Label>(descriptionText, DESCRIPTION_LABEL_FONT_SIZE_PX, false, egui::Text::HorizontalAlignment::CENTER, egui::Text::VerticalAlignment::MIDDLE, egui::Color(1, 1, 1), egui::Font::getFont("ariali"));
+		this->descriptionLabel = std::make_shared<egui::Label>(descriptionText, DESCRIPTION_LABEL_FONT_SIZE_PX, false, egui::Text::HorizontalAlignment::CENTER, egui::Text::VerticalAlignment::MIDDLE, egui::Color(1, 1, 1), egui::Font::getFont("NotoSans Light"));
 		addChildElement(descriptionLabel);
 		descriptionLabel->setPreferredHeight({DESCRIPTION_LABEL_FONT_SIZE_PX, egui::RelativityMode::ABSOLUTE_VALUE});
 
