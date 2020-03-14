@@ -12,6 +12,7 @@ namespace card {
 		label->getTextComponent()->setFont(egui::Font::getFont("NotoSans Light"));
 		addChildElement(label);
 		label->setPreferredWidth({{1, egui::RelativityMode::RELATIVE_IN_PARENT}, {-SLIDER_WIDTH_PX, egui::RelativityMode::ABSOLUTE_VALUE}});
+		label->getTextComponent()->setForceOneLine(true);
 
 		switchElement = std::make_shared<ToggleSwitch>();
 		addChildElement(switchElement);

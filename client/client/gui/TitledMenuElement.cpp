@@ -14,6 +14,7 @@ namespace card {
 		addChildElement(title);
 		title->setPreferredHeight({FONT_SIZE_PX, egui::RelativityMode::ABSOLUTE_VALUE});
 		title->setOwnPositioning(std::make_shared<egui::RelativePositioningOnScreen>(0.0f, TITLE_Y_MARGIN_PERCENT_ON_SCREEN));
+		title->getTextComponent()->setForceOneLine(true);
 
 		contentBox = std::make_shared<egui::VBox>();
 		addChildElement(contentBox);
