@@ -288,7 +288,7 @@ namespace card {
 		if(canSkipPlayer(playedCard)) {
 			userOnTurn->setSkipState();
 			if(userOnTurn == localPlayer) {
-				appendMessage("Du wurdest ausgelassen. Spiele eine 8 oder passe.");
+				messageQueue.appendMessagePermanently("Du wurdest ausgelassen. Spiele eine 8 oder passe.", skipStateMessageKey);
 			}
 		}
 	}
@@ -327,6 +327,7 @@ namespace card {
 		onTurnEndCallback(this->userOnTurn);
 		this->userOnTurn = player;
 
+		messageQueue.removeMessagesWithKey(skipStateMessageKey);
 		field_wasCardDrawnIntoHandCards = false;
 		field_wasCardPlayed = false;
 		threadUtils_invokeIn(delayToSetNextPlayerOnTurn, [this, player, lastUserOnTurn]() {			

@@ -43,6 +43,9 @@ namespace card {
 
 			std::function<void(std::shared_ptr<ProxyPlayer>)> onTurnEndCallback;
 
+			// message that the game is in skip state
+			MessageKey skipStateMessageKey;
+
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------

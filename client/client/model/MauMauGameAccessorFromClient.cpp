@@ -116,7 +116,6 @@ namespace card {
 	}
 
 	void MauMauGameAccessorFromClient::playCard(std::size_t index) {
-		gameData.appendMessage("Franz jagt im komplett verwahrlosten Taxi quer durch Bayern.");
 		auto localPlayer = gameData.getLocalPlayer();
 		Card card = localPlayer->getCardStack().get(index);
 		if(! canPlay(card)) throw std::runtime_error("Can't play card!");
