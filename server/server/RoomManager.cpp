@@ -164,12 +164,13 @@ namespace card {
 	}
 	optionalSuccessAnswerPacket RoomManager::listener_onJoinRoom(ClientToServerPacket& p, const std::shared_ptr<ConnectionToClient>& conn) {
 		auto& casted = dynamic_cast<RoomJoinRequest_CTSPacket&>(p);
-
+		
 		join(casted.getRoomCode(), casted.getOwnUsername(), casted.getAvatar(), conn);
 		return OperationSuccessful_STCAnswerPacket(true);
 	}
 	optionalSuccessAnswerPacket RoomManager::listener_onCreateRoom(ClientToServerPacket& p, const std::shared_ptr<ConnectionToClient>& conn) {
 		auto& casted = dynamic_cast<RoomCreationRequest_CTSPacket&>(p);
+		if(casted.getOptions().size() != RoomOptions::OPTIONS_SIZE) return OperationSuccessful_STCAnswerPacket(false);
 
 		createAndJoin(casted.getOwnUsername(), casted.getAvatar(), casted.getOptions(), conn);
 		return OperationSuccessful_STCAnswerPacket(true);
