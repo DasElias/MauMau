@@ -16,11 +16,9 @@ namespace card {
             float avatarAspectRatio;
 
             SimpleTexture textureSkip;
-            SimpleTexture textureSkipGrey;
             SimpleTexture textureMau;
 
             std::shared_ptr<egui::AspectRatioElement> skipAnimElement;
-            std::shared_ptr<egui::AspectRatioElement> skipAnimGreyElement;
             std::shared_ptr<egui::AspectRatioElement> mauAnimElement;
             std::shared_ptr<egui::RelativePositioningOnScreen> basicPositioning;
 
@@ -38,7 +36,6 @@ namespace card {
 
         private:
             void updateSkipElement(std::optional<float> percentSkipAnimOrNone);
-            void updateSkipGreyElement(bool shouldRender);
             void updateMauElement(std::optional<float> percentMauAnimOrNone);
             
 

@@ -13,16 +13,13 @@ namespace card {
 			renderer2D(renderer2D),
 			playerLabelWidthRelativeOnScreen(playerLabelWidthRelativeOnScreen),
 			avatarAspectRatio(avatarAspectRatio),
-			textureSkip(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromFile("C:\\Users\\Elias\\Downloads\\Verbot1.png")),
-			textureSkipGrey(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromFile("C:\\Users\\Elias\\Downloads\\Verbot1.png")),
+			textureSkip(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromMemory(tex_skipPlayer, tex_skipPlayer_size)),
 			textureMau(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromMemory(tex_mauspeechbubble, tex_mauspeechbubble_size)),
 			skipAnimElement(std::make_shared<egui::AspectRatioElement>(textureSkip.getAspectRatio())),
-			skipAnimGreyElement(std::make_shared<egui::AspectRatioElement>(textureSkipGrey.getAspectRatio())),
 			mauAnimElement(std::make_shared<egui::AspectRatioElement>(textureMau.getAspectRatio())),
 			basicPositioning(std::make_shared<egui::RelativePositioningOnScreen>(0.0f, 0.0f)) {
 			
 		skipAnimElement->setOwnPositioning(basicPositioning);
-		skipAnimGreyElement->setOwnPositioning(basicPositioning);
 
 		auto mauAnimElementPositioning = std::make_shared<CombinedPositioning>();
 		mauAnimElementPositioning->addPart(basicPositioning);
@@ -35,17 +32,14 @@ namespace card {
 		basicPositioning->setX(positionRelativeOnScreen.x);
 		basicPositioning->setY(positionRelativeOnScreen.y);
 
+		if(renderSkipGrey && !percentSkipAnimOrNone.has_value()) percentSkipAnimOrNone = 0;
+
 		updateSkipElement(percentSkipAnimOrNone);
-		updateSkipGreyElement(renderSkipGrey);
 		updateMauElement(percentMauAnimOrNone);
 
 		if(percentSkipAnimOrNone.has_value()) {
 			textureSkip.bind();
 			renderer2D.render(skipAnimElement, true);
-		}
-		if(renderSkipGrey) {
-			textureSkipGrey.bind();
-			renderer2D.render(skipAnimGreyElement, true);
 		}
 		if(percentMauAnimOrNone.has_value()) {
 			textureMau.bind();
@@ -78,17 +72,6 @@ namespace card {
 			skipAnimElement->setXTranslation(marginLeftPx);
 			skipAnimElement->setYTranslation(marginTopPx + 6);
 		}
-	}
-	void MauMauPlayerLabelOverlayRenderer::updateSkipGreyElement(bool shouldRender) {
-		skipAnimGreyElement->setVisible(shouldRender);
-
-		float skipGreyElementWidth = 0.9f * playerLabelWidthRelativeOnScreen;
-		float marginLeft = (playerLabelWidthRelativeOnScreen - skipGreyElementWidth) / 2.0f;
-		int marginLeftPx = egui::x_percentToPixel(marginLeft);
-		
-		skipAnimGreyElement->setMaxWidth({{skipGreyElementWidth, egui::RelativityMode::RELATIVE_ON_SCREEN}});
-		skipAnimGreyElement->setXTranslation(marginLeftPx);
-		skipAnimGreyElement->setYTranslation(12);
 	}
 	void MauMauPlayerLabelOverlayRenderer::updateMauElement(std::optional<float> percentMauAnimOrNone) {
 		bool isAnimationActive = percentMauAnimOrNone.has_value();
