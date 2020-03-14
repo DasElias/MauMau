@@ -66,11 +66,12 @@ namespace card {
 			int marginLeftPx = egui::x_percentToPixel(marginLeft);
 			float playerLabelHeightRelativeOnScreen = playerLabelWidthRelativeOnScreen / avatarAspectRatio * (egui::getDisplayHandler().getWidth() / float(egui::getDisplayHandler().getHeight()));
 			float elemHeight = skipAnimElement->getComputedHeight();
-			float marginTop = (playerLabelHeightRelativeOnScreen - elemHeight) / 2.0f;
+			float const avatarTextureCircleOffset = 2 / 136.0f;
+			float marginTop = (playerLabelHeightRelativeOnScreen + (avatarTextureCircleOffset * elemHeight) - elemHeight) / 2.0f ;
 			int marginTopPx = egui::y_percentToPixel(marginTop);
 
 			skipAnimElement->setXTranslation(marginLeftPx);
-			skipAnimElement->setYTranslation(marginTopPx + 6);
+			skipAnimElement->setYTranslation(marginTopPx);
 		}
 	}
 	void MauMauPlayerLabelOverlayRenderer::updateMauElement(std::optional<float> percentMauAnimOrNone) {
