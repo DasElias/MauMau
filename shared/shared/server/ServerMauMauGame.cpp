@@ -275,7 +275,6 @@ namespace card {
 			setNextPlayerOnTurn();
 			if(canSkipPlayer(playedCard)) {
 				isInSkipState_field = true;
-				pass(*playerOnTurn);
 			}
 		} else {
 			if(canSkipPlayer(playedCard)) setNextButOnePlayerOnTurn();
