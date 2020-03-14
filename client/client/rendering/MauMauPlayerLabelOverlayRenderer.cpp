@@ -1,16 +1,20 @@
 #include "MauMauPlayerLabelOverlayRenderer.h"
 #include "../renderingModel/SimpleTextureFactory.h"
 #include "../utils/FileUtils.h"
+#include <shared/utils/MathUtils.h>
 #include "../gui/CombinedPositioning.h"
 #include <res/ingame/mauspeechbubble.h>
 #include <res/ingame/skipPlayer.png.h>
+#include <egui/input/IOHandler.h>
+#include <iostream>
 
 namespace card {
-	MauMauPlayerLabelOverlayRenderer::MauMauPlayerLabelOverlayRenderer(Renderer2D& renderer2D, float playerLabelWidthRelativeOnScreen) :
+	MauMauPlayerLabelOverlayRenderer::MauMauPlayerLabelOverlayRenderer(Renderer2D& renderer2D, float playerLabelWidthRelativeOnScreen, float avatarAspectRatio) :
 			renderer2D(renderer2D),
 			playerLabelWidthRelativeOnScreen(playerLabelWidthRelativeOnScreen),
-			textureSkip(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromMemory(tex_skipPlayer, tex_skipPlayer_size)),
-			textureSkipGrey(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromFile("C:\\Users\\Elias\\Documents\\PROJECT X\\skipgrey.png")),
+			avatarAspectRatio(avatarAspectRatio),
+			textureSkip(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromFile("C:\\Users\\Elias\\Downloads\\Verbot1.png")),
+			textureSkipGrey(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromFile("C:\\Users\\Elias\\Downloads\\Verbot1.png")),
 			textureMau(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromMemory(tex_mauspeechbubble, tex_mauspeechbubble_size)),
 			skipAnimElement(std::make_shared<egui::AspectRatioElement>(textureSkip.getAspectRatio())),
 			skipAnimGreyElement(std::make_shared<egui::AspectRatioElement>(textureSkipGrey.getAspectRatio())),
@@ -52,20 +56,28 @@ namespace card {
 		bool isAnimationActive = percentSkipAnimOrNone.has_value();
 		skipAnimElement->setVisible(isAnimationActive);
 
-		int computedXTranslation = 25;
-		int computedYTranslation = 5;
+		float const startWidth = 0.9f * playerLabelWidthRelativeOnScreen;
+		float const endWidth = 1.5f * playerLabelWidthRelativeOnScreen;
+		float width = 0;
 		if(isAnimationActive) {
-			// interpolation
-			if(*percentSkipAnimOrNone > 0.5f) percentSkipAnimOrNone = (*percentSkipAnimOrNone - 1) * (-2);
-			else percentSkipAnimOrNone = (*percentSkipAnimOrNone) * 2;
+			if(*percentSkipAnimOrNone < 0.5f) {
+				width = interpolateLinear(*percentSkipAnimOrNone, 0, startWidth, 0.5f, endWidth);
+			} else {
+				width = interpolateLinear(*percentSkipAnimOrNone, 0.5f, endWidth, 1, startWidth);
+			}
 
-			computedXTranslation += 7 * (*percentSkipAnimOrNone);
-			computedYTranslation += 7 * (*percentSkipAnimOrNone);
+			skipAnimElement->setMaxWidth({width, egui::RelativityMode::RELATIVE_ON_SCREEN});
+
+			float marginLeft = (playerLabelWidthRelativeOnScreen - width) / 2.0f;
+			int marginLeftPx = egui::x_percentToPixel(marginLeft);
+			float playerLabelHeightRelativeOnScreen = playerLabelWidthRelativeOnScreen / avatarAspectRatio * (egui::getDisplayHandler().getWidth() / float(egui::getDisplayHandler().getHeight()));
+			float elemHeight = skipAnimElement->getComputedHeight();
+			float marginTop = (playerLabelHeightRelativeOnScreen - elemHeight) / 2.0f;
+			int marginTopPx = egui::y_percentToPixel(marginTop);
+
+			skipAnimElement->setXTranslation(marginLeftPx);
+			skipAnimElement->setYTranslation(marginTopPx + 6);
 		}
-
-		skipAnimElement->setMaxWidth({{playerLabelWidthRelativeOnScreen, egui::RelativityMode::RELATIVE_ON_SCREEN}, {2.0f * computedXTranslation, egui::RelativityMode::ABSOLUTE_VALUE}});
-		skipAnimElement->setXTranslation(-computedXTranslation);
-		skipAnimElement->setYTranslation(-computedYTranslation);
 	}
 	void MauMauPlayerLabelOverlayRenderer::updateSkipGreyElement(bool shouldRender) {
 		skipAnimGreyElement->setVisible(shouldRender);

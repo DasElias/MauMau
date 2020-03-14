@@ -13,6 +13,7 @@ namespace card {
         private:
             Renderer2D& renderer2D;
             float playerLabelWidthRelativeOnScreen;
+            float avatarAspectRatio;
 
             SimpleTexture textureSkip;
             SimpleTexture textureSkipGrey;
@@ -27,7 +28,7 @@ namespace card {
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            MauMauPlayerLabelOverlayRenderer(Renderer2D& renderer2D, float playerLabelWidthRelativeOnScreen);
+            MauMauPlayerLabelOverlayRenderer(Renderer2D& renderer2D, float playerLabelWidthRelativeOnScreen, float avatarAspectRatio);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
