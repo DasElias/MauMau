@@ -271,8 +271,16 @@ namespace card {
 	}
 
 	void ServerMauMauGame::setNextPlayerOnTurnAndUpdateSkipState(Card playedCard) {
-		setNextPlayerOnTurn();
-		if(canSkipPlayer(playedCard)) isInSkipState_field = true;
+		if(roomOptions.getOption(Options::PASS_SKIP)) {
+			setNextPlayerOnTurn();
+			if(canSkipPlayer(playedCard)) {
+				isInSkipState_field = true;
+				pass(*playerOnTurn);
+			}
+		} else {
+			if(canSkipPlayer(playedCard)) setNextButOnePlayerOnTurn();
+			else setNextPlayerOnTurn();
+		}
 	}
 
 	void ServerMauMauGame::setNextPlayerOnTurn() {

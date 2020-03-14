@@ -55,8 +55,7 @@ namespace card {
 		}
 
 		if(card != Card::NULLCARD) gameData.playCardFromHandCards(player, card, newCardIndex, delayMs);
-		gameData.setNextPlayerOnTurnLocal();
-		gameData.setPlayerOnTurnSkipStateIfNecessary(card);
+		gameData.setNextPlayerOnTurnAndUpdateSkipState(card);
 
 		auto newPlayerOnTurn = gameData.getPlayerOnTurn();
 		gameData.playerHasToDrawCards(newPlayerOnTurn, cardsToDraw, PLAY_DURATION_MS + delayMs);

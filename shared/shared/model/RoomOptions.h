@@ -7,6 +7,7 @@ namespace card {
         CAN_PUT_JACK_ON_EVERY_COLOR,
         CAN_PUT_JACK_ON_JACK,
         SKIP_ON_EIGHT,
+        PASS_SKIP,
         DRAW_TWO_ON_SEVEN,
         DIRECTION_CHANGE_ON_NINE,
         AMOUNT_OF_START_CARDS
@@ -18,7 +19,7 @@ namespace card {
         // ----------------------------STATIC-FIELDS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            static int const OPTIONS_SIZE = 7;
+            static int const OPTIONS_SIZE = 8;
 
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------

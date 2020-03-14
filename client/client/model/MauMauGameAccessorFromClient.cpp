@@ -184,8 +184,7 @@ namespace card {
 		PlayCardRequest_CTSPacket p(playedCard.getCardNumber(), wasCardDrawnThisTurn, static_cast<int>(newCardIndex));
 		packetTransmitter->sendPacketToServer(p);
 
-		gameData.setNextPlayerOnTurnLocal();
-		gameData.setPlayerOnTurnSkipStateIfNecessary(playedCard);
+		gameData.setNextPlayerOnTurnAndUpdateSkipState(playedCard);
 
 		std::size_t cardsToDrawForNextPlayer = gameData.getAmountsOfCardsToDrawForNextPlayer(playedCard);
 		auto newPlayerOnTurn = gameData.getPlayerOnTurn();

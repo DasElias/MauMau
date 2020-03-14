@@ -284,17 +284,30 @@ namespace card {
 				log(LogSeverity::WARNING, "Unknown MauPunishmentCause: " + std::to_string(static_cast<int>(cause)));
 		}
 	}
-	void ProxyMauMauGameData::setPlayerOnTurnSkipStateIfNecessary(Card playedCard) {
-		if(canSkipPlayer(playedCard)) {
-			userOnTurn->setSkipState();
-			if(userOnTurn == localPlayer) {
-				messageQueue.appendMessagePermanently("Du wurdest ausgelassen. Spiele eine 8 oder passe.", skipStateMessageKey);
+	void ProxyMauMauGameData::setNextPlayerOnTurnAndUpdateSkipState(Card playedCard) {
+		if(roomOptions.getOption(Options::PASS_SKIP)) {
+			setNextPlayerOnTurnLocal();
+			if(canSkipPlayer(playedCard)) {
+				userOnTurn->setSkipState();
+				if(userOnTurn == localPlayer) {
+					messageQueue.appendMessagePermanently("Du wurdest ausgelassen. Spiele eine 8 oder passe.", skipStateMessageKey);
+				}
 			}
+		} else {
+			if(canSkipPlayer(playedCard)) setNextButOnePlayerOnTurnLocal();
+			else setNextPlayerOnTurnLocal();
 		}
+		
 	}
 	void ProxyMauMauGameData::setNextPlayerOnTurnLocal() {
 		std::shared_ptr<ProxyPlayer> nextPlayer = getNextPlayer(userOnTurn);
 		setOnTurnLocal(nextPlayer);
+	}
+	void ProxyMauMauGameData::setNextButOnePlayerOnTurnLocal() {
+		std::shared_ptr<ProxyPlayer> nextPlayer = getNextPlayer(userOnTurn);
+		nextPlayer->startSkippedAnimation();
+		std::shared_ptr<ProxyPlayer> nextButOnePlayer = getNextPlayer(nextPlayer);
+		setOnTurnLocal(nextButOnePlayer);
 	}
 	std::shared_ptr<ProxyPlayer> ProxyMauMauGameData::getNextPlayer(std::shared_ptr<ProxyPlayer> playerOnTurn) {
 		auto playerOnTurnIter = std::find(allPlayers.begin(), allPlayers.end(), playerOnTurn);

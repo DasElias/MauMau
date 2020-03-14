@@ -8,6 +8,7 @@ namespace card {
 		setOption(Options::CAN_PUT_JACK_ON_EVERY_COLOR, false);
 		setOption(Options::CAN_PUT_JACK_ON_JACK, false);
 		setOption(Options::SKIP_ON_EIGHT, true);
+		setOption(Options::PASS_SKIP, false);
 		setOption(Options::DRAW_TWO_ON_SEVEN, true);
 		setOption(Options::DIRECTION_CHANGE_ON_NINE, false);
 		setOption(Options::AMOUNT_OF_START_CARDS, 6);

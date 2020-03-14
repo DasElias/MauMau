@@ -16,7 +16,8 @@ namespace card {
 		addOptionGroup(chooseColorOnJack_option, {canPutJackOnEveryColor_option, canPutJackOnJack_option});
 
 		skipOnEight_option = std::make_shared<BoolOptionElement>("Aussetzen bei 8");
-		addStandaloneOption(skipOnEight_option);
+		passSkip_option = std::make_shared<BoolOptionElement>("Aussetzen weiterreichen");
+		addOptionGroup(skipOnEight_option, {passSkip_option});
 
 		drawTwoOnSeven_option = std::make_shared<BoolOptionElement>("zwei Karten ziehen bei 7");
 		addStandaloneOption(drawTwoOnSeven_option);
@@ -45,11 +46,12 @@ namespace card {
 		canPutJackOnEveryColor_option->set(roomOptions.getOption(Options::CAN_PUT_JACK_ON_EVERY_COLOR));
 		canPutJackOnJack_option->set(roomOptions.getOption(Options::CAN_PUT_JACK_ON_JACK));
 		skipOnEight_option->set(roomOptions.getOption(Options::SKIP_ON_EIGHT));
+		passSkip_option->set(roomOptions.getOption(Options::PASS_SKIP));
 		drawTwoOnSeven_option->set(roomOptions.getOption(Options::DRAW_TWO_ON_SEVEN));
 		directionChangeOnNine_option->set(roomOptions.getOption(Options::DIRECTION_CHANGE_ON_NINE));
 		amountOfStartCards_option->setValue(roomOptions.getOption(Options::AMOUNT_OF_START_CARDS));
 
-		assert(roomOptions.getAmountOfOptions() == 7);
+		assert(roomOptions.getAmountOfOptions() == 8);
 	}
 
 	RoomOptions BasicOptionsElement::getOptions() {
@@ -58,11 +60,12 @@ namespace card {
 		options.setOption(Options::CAN_PUT_JACK_ON_EVERY_COLOR, canPutJackOnEveryColor_option->isToggled());
 		options.setOption(Options::CAN_PUT_JACK_ON_JACK, canPutJackOnJack_option->isToggled());
 		options.setOption(Options::SKIP_ON_EIGHT, skipOnEight_option->isToggled());
+		options.setOption(Options::PASS_SKIP, passSkip_option->isToggled());
 		options.setOption(Options::DRAW_TWO_ON_SEVEN, drawTwoOnSeven_option->isToggled());
 		options.setOption(Options::DIRECTION_CHANGE_ON_NINE, directionChangeOnNine_option->isToggled());
 		options.setOption(Options::AMOUNT_OF_START_CARDS, amountOfStartCards_option->getValue());
 
-		assert(options.getAmountOfOptions() == 7);
+		assert(options.getAmountOfOptions() == 8);
 		return options;
 	}
 
