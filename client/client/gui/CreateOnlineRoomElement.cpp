@@ -4,9 +4,10 @@
 #include <egui/model/positioning/RelativePositioningOnScreen.h>
 #include "LabeledInputField.h"
 #include <algorithm>
+#include "UsernameInputFieldCharacterFilter.h"
 
 namespace card {
-	CreateOnlineRoomElement::CreateOnlineRoomElement(AvatarTextures& avatarTextures, std::size_t maxFieldLength) :
+	CreateOnlineRoomElement::CreateOnlineRoomElement(AvatarTextures& avatarTextures) :
 			BasicRoomCreationElement("Online-Raum erstellen", "Raum erstellen") {
 		lockElement = std::make_shared<egui::UnorganizedParentElement>();
 		lockElement->setBackground(std::make_shared<egui::ColoredBackground>(egui::Color(0, 0, 0, 0.5f)));
@@ -16,13 +17,10 @@ namespace card {
 		avatarChooser = std::make_shared<AvatarChooser>(avatarTextures, 0);
 		contentBox->addChildElement(avatarChooser);
 
-		auto usernameCharVerification = [](char c) {
-			return isalnum(c) || c == '.' || c == '_' || c == '-';
-		};
 		usernameInputField = std::make_shared<LabeledInputField>("Dein Benutzername", egui::Color(1.0f, 1.0f, 1.0f));
-		usernameInputField->getInputFieldImpl()->setCharFilterFunction([this, maxFieldLength, usernameCharVerification](std::string entered) {
-			return usernameInputField->getText().size() + entered.size() > maxFieldLength || std::find_if(entered.begin(), entered.end(), usernameCharVerification) == entered.end();
-		});
+		usernameInputField->getInputFieldImpl()->setCharFilterFunction(
+			UsernameInputFieldCharacterFilter(usernameInputField->getInputFieldImpl())
+		);
 		contentBox->addChildElement(usernameInputField);
 		
 

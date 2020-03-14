@@ -11,7 +11,7 @@ namespace card {
 			State(stateManager),
 			eguiRenderer(eguiRenderer),
 			networkErrorHandler(networkErrorHandler),
-			element(std::make_shared<JoinOnlineRoomElement>(avatarTextures, USERNAME_MAX_LENGTH, ROOM_CODE_LENGTH)),
+			element(std::make_shared<JoinOnlineRoomElement>(avatarTextures, ROOM_CODE_LENGTH)),
 			scene(element) {
 
 		element->addBackBtnEventHandler({[this, &stateManager](egui::ActionEvent&) {
@@ -49,7 +49,6 @@ namespace card {
 		std::string usernameInput = element->getUsernameInput();
 		std::string roomCodeInput = element->getRoomCodeInput();
 
-		if(usernameInput.size() > USERNAME_MAX_LENGTH) return "Dein Nutzername darf maximal " + std::to_string(USERNAME_MAX_LENGTH) + " Zeichen lang sein.";
 		if(usernameInput.size() == 0) return "Dein Nutzername darf nicht nicht leer sein.";
 		if(roomCodeInput.size() != ROOM_CODE_LENGTH) return "Bitte gib einen dreistelligen Raum-Code ein.";
 		

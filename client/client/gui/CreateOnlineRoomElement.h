@@ -21,7 +21,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			CreateOnlineRoomElement(AvatarTextures& avatarTextures, std::size_t maxFieldLength);
+			CreateOnlineRoomElement(AvatarTextures& avatarTextures);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------

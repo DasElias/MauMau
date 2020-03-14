@@ -11,7 +11,7 @@ namespace card {
 	CreateLocalRoomState::CreateLocalRoomState(StateManager& stateManager, AvatarTextures& avatarTextures, egui::MasterRenderer& eguiRenderer) :
 			State(stateManager),
 			eguiRenderer(eguiRenderer),
-			element(std::make_shared<CreateLocalRoomElement>(avatarTextures, FIELDS_MAX_LENGTH)),
+			element(std::make_shared<CreateLocalRoomElement>(avatarTextures)),
 			scene(element) {
 
 		element->addBackBtnEventHandler({[this, &stateManager](egui::ActionEvent&) {
@@ -49,7 +49,6 @@ namespace card {
 	std::optional<std::string> CreateLocalRoomState::getErrorMessage() {
 		std::string usernameInput = element->getUsernameInput();
 
-		if(usernameInput.size() > FIELDS_MAX_LENGTH) return "Dein Nutzername darf maximal " + std::to_string(FIELDS_MAX_LENGTH) + " Zeichen lang sein.";
 		if(usernameInput.size() == 0) return "Dein Nutzername darf nicht nicht leer sein.";
 
 		return std::nullopt;

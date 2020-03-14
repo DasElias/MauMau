@@ -22,7 +22,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			CreateLocalRoomElement(AvatarTextures& avatarTextures, std::size_t maxFieldLength);
+			CreateLocalRoomElement(AvatarTextures& avatarTextures);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------

@@ -1,42 +1,34 @@
 #pragma once
-#include "State.h"
-#include "../gui/MainMenuElement.h"
-#include <egui/model/scene/Scene.h>
-#include <shared/model/RoomCode.h>
-#include "../model/LocalGameFacade.h"
-#include "../gui/CreateLocalRoomElement.h"
-#include <optional>
+#include <egui/model/nodes/InputField.h>
+
 
 namespace card {
-	class CreateLocalRoomState : public State {
+	class UsernameInputFieldCharacterFilter {
 		// ----------------------------------------------------------------------
 		// ----------------------------STATIC-FIELDS-----------------------------
 		// ----------------------------------------------------------------------
-		private:
-			static int const MAX_OPPONENTS;
+		public:
+			static std::size_t const USERNAME_MAX_LENGTH = 20;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
-			egui::MasterRenderer& eguiRenderer;
-			std::shared_ptr<CreateLocalRoomElement> element;
-			egui::Scene scene;
+			std::shared_ptr<egui::InputField> inputField;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			CreateLocalRoomState(StateManager& stateManager, AvatarTextures& avatarTextures, egui::MasterRenderer& eguiRenderer);
+			UsernameInputFieldCharacterFilter(std::shared_ptr<egui::InputField> inputField);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			void updateAndRender(float delta) override;
-			void onStateEnter() override;
+			bool operator()(unsigned int enteredChar) const;
 
 		private:
-			std::optional<std::string> getErrorMessage();
+			bool isCharacterValid(unsigned int enteredChar) const;
 	};
 }

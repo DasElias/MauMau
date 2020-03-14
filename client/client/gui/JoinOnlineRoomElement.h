@@ -21,7 +21,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			JoinOnlineRoomElement(AvatarTextures& avatarTextures, std::size_t usernameMaxLength, std::size_t roomCodeMaxLength);
+			JoinOnlineRoomElement(AvatarTextures& avatarTextures, std::size_t roomCodeMaxLength);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------

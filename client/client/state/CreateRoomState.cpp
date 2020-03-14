@@ -9,7 +9,7 @@ namespace card {
 			State(stateManager),
 			eguiRenderer(eguiRenderer),
 			networkErrorHandler(networkErrorHandler),
-			element(std::make_shared<CreateOnlineRoomElement>(avatarTextures, 20)),
+			element(std::make_shared<CreateOnlineRoomElement>(avatarTextures)),
 			scene(element) {
 
 		element->addBackBtnEventHandler({[this, &stateManager](egui::ActionEvent&) {
