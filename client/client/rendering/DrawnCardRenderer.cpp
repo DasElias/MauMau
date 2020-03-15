@@ -32,17 +32,15 @@ namespace card {
 			takeIntoHandCardsFunction();
 		}});
 
-		float const BUTTON_WIDTH = 0.2f;
-		float const BUTTON_HEIGHT = 0.1f;
+		float const BUTTON_WIDTH = 0.175f;
+		float const BUTTON_HEIGHT = 0.08f;
 		float const DISTANCE_BETWEEN_BUTTONS = 0.1f;
-		//this->playCardButton->setBackground((std::make_shared<egui::ColoredBackground>(egui::Color(0, 1, 0))));
 		this->playCardButton->setPreferredDimension({{BUTTON_WIDTH, egui::RelativityMode::RELATIVE_ON_SCREEN}}, {{BUTTON_HEIGHT, egui::RelativityMode::RELATIVE_ON_SCREEN}});
 
-		//this->takeIntoHandCardsButton->setBackground((std::make_shared<egui::ColoredBackground>(egui::Color(1, 0, 0))));
 		this->takeIntoHandCardsButton->setPreferredDimension({{BUTTON_WIDTH, egui::RelativityMode::RELATIVE_ON_SCREEN}}, {{BUTTON_HEIGHT, egui::RelativityMode::RELATIVE_ON_SCREEN}});
 
 		std::shared_ptr<egui::HBox> buttonBar(new egui::HBox({this->playCardButton, this->takeIntoHandCardsButton}));
-		buttonBar->setOwnPositioning(std::make_shared<egui::CenterXInParentWrapper>(std::make_shared<egui::RelativePositioningOnScreen>(0.0f, 0.6f)));
+		buttonBar->setOwnPositioning(std::make_shared<egui::CenterXInParentWrapper>(std::make_shared<egui::RelativePositioningOnScreen>(0.0f, 0.65f)));
 		buttonBar->setPreferredDimension({{2 * BUTTON_WIDTH + DISTANCE_BETWEEN_BUTTONS, egui::RelativityMode::RELATIVE_ON_SCREEN}}, {{BUTTON_HEIGHT, egui::RelativityMode::RELATIVE_ON_SCREEN}});
 		buttonBar->setSpaceBetweenElements({{DISTANCE_BETWEEN_BUTTONS, egui::RelativityMode::RELATIVE_ON_SCREEN}});
 
