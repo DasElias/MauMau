@@ -66,7 +66,7 @@ namespace card {
 			int marginLeftPx = egui::x_percentToPixel(marginLeft);
 			float playerLabelHeightRelativeOnScreen = playerLabelWidthRelativeOnScreen / avatarAspectRatio * (egui::getDisplayHandler().getWidth() / float(egui::getDisplayHandler().getHeight()));
 			float elemHeight = skipAnimElement->getComputedHeight();
-			float const avatarTextureCircleOffset = 2 / 136.0f;
+			float const avatarTextureCircleOffset = 20 / 136.0f;
 			float marginTop = (playerLabelHeightRelativeOnScreen + (avatarTextureCircleOffset * elemHeight) - elemHeight) / 2.0f ;
 			int marginTopPx = egui::y_percentToPixel(marginTop);
 
