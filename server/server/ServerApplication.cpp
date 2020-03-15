@@ -37,7 +37,7 @@ void runThreadUtils() {
 
 int main() {
  	initDaemon();
-	initLogger(LATEST_LOG_FLIE, FATAL_LOG_FILE);
+	initLogger(LATEST_LOG_FILE, FATAL_LOG_FILE);
 
 
 	try {	
