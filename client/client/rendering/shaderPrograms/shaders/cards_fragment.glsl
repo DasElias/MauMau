@@ -13,7 +13,7 @@ void main(void) {
 	if(texColor.a < 0.5) discard;
 
 	if(bool(pass_shouldRenderInGrayScale)) {
-		out_Color = mix(texColor, vec4(1), 0.4f);
+		out_Color = mix(texColor, vec4(vec3(0.925f), 1.0f), 0.45f);
 	} else {
 		out_Color = texColor;
 	}
