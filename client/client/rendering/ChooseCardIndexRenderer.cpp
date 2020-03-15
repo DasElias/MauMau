@@ -1,7 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "ChooseCardRenderer.h"
+#include "ChooseCardIndexRenderer.h"
 #include <egui/model/nodeComponents/background/ColoredBackground.h>
 #include <egui/model/nodeComponents/background/TexturedBackground.h>
 #include <egui/model/nodes/VBox.h>
@@ -15,7 +15,7 @@
 #include "../utils/FileUtils.h"
 
 namespace card {
-	ChooseCardRenderer::ChooseCardRenderer(egui::MasterRenderer& eguiRenderer, CardIndexTextures& cardIndexTextures, std::function<void(CardIndex)> chooseIndexFunction) :
+	ChooseCardIndexRenderer::ChooseCardIndexRenderer(egui::MasterRenderer& eguiRenderer, CardIndexTextures& cardIndexTextures, std::function<void(CardIndex)> chooseIndexFunction) :
 				eguiRenderer(eguiRenderer),
 				chooseIndexFunction(chooseIndexFunction) {
 		
@@ -66,17 +66,17 @@ namespace card {
 		rootElem->setBackground(std::make_shared<egui::ColoredBackground>(egui::Color(0, 0, 0, 0.55f)));
 		this->scene.setRootElement(rootElem);
 	}
-	void ChooseCardRenderer::discardPreviousMouseEvents() {
+	void ChooseCardIndexRenderer::discardPreviousMouseEvents() {
 		scene.discardMouseEvents();
 	}
-	void ChooseCardRenderer::render() {
+	void ChooseCardIndexRenderer::render() {
 		adjustButtonBar();
 
 		eguiRenderer.beginFrame();
 		scene.render(eguiRenderer);
 		eguiRenderer.endFrame();
 	}
-	void card::ChooseCardRenderer::adjustButtonBar() {
+	void ChooseCardIndexRenderer::adjustButtonBar() {
 		int btnWidthInPixels = egui::x_percentToPixel(indexButtons[0]->getComputedWidth());
 		float aspiredButtonHeightInPercent = egui::y_pixelToPercent(btnWidthInPixels);
 		egui::Value preferredHeight(aspiredButtonHeightInPercent, egui::RelativityMode::RELATIVE_ON_SCREEN);

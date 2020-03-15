@@ -15,7 +15,7 @@
 #include "HandCardStackRenderer.h"
 #include "CardSceneBackgroundRenderer.h"
 #include "DrawnCardRenderer.h"
-#include "ChooseCardRenderer.h"
+#include "ChooseCardIndexRenderer.h"
 #include "PlayerLabelRenderer.h"
 #include "MauMauPlayerLabelOverlayRenderer.h"
 #include "CircleSectorRenderer.h"
@@ -54,7 +54,7 @@ namespace card {
 			OpponentRenderer opponentRenderer;
 			CardSceneBackgroundRenderer bgRenderer;
 			DrawnCardRenderer drawnCardRenderer;
-			ChooseCardRenderer chooseCardRenderer;
+			ChooseCardIndexRenderer chooseCardRenderer;
 			CircleSectorRenderer circleSectorRenderer;
 			PlayerLabelRenderer playerLabelRenderer;
 			MauMauPlayerLabelOverlayRenderer playerLabelOverlayRenderer;

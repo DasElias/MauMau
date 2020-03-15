@@ -11,7 +11,7 @@
 #include "../renderingModel/CardIndexTextures.h"
 
 namespace card {
-	class ChooseCardRenderer {
+	class ChooseCardIndexRenderer {
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
@@ -28,8 +28,8 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			ChooseCardRenderer(egui::MasterRenderer& eguiRenderer, CardIndexTextures& cardIndexTextures, std::function<void(CardIndex)> chooseIndexFunction);
-			ChooseCardRenderer(const ChooseCardRenderer&) = delete;
+			ChooseCardIndexRenderer(egui::MasterRenderer& eguiRenderer, CardIndexTextures& cardIndexTextures, std::function<void(CardIndex)> chooseIndexFunction);
+			ChooseCardIndexRenderer(const ChooseCardIndexRenderer&) = delete;
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
