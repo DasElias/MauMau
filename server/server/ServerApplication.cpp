@@ -7,6 +7,15 @@
 #include <shared/utils/ThreadUtils.h>
 #include "ThreadSynchronizer.h"
 
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+	// windows
+	#define LATEST_LOG_FLIE "C:\\latest.log"
+	#define FATAL_LOG_FILE "C:\\fatal.log"
+#else
+	#define LATEST_LOG_FILE "~/latest.log"
+	#define FATAL_LOG_FILE "~/fatal.log"
+#endif
+
 using namespace card;
 namespace ba = boost::asio;
 using ba::ip::tcp;
@@ -28,7 +37,7 @@ void runThreadUtils() {
 
 int main() {
  	initDaemon();
-//	initLogger("~/latest.log", "~/fatal.log");
+	initLogger(LATEST_LOG_FLIE, FATAL_LOG_FILE);
 
 
 	try {	
