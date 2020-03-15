@@ -70,12 +70,12 @@ std::function<void(egui::Node* const)> egui::MauMauTheme::button_coloredButton_a
 			case ColoredButtonType::GREEN:
 				p_btn->getTextComponent()->setColor(egui::Color(1.0f, 1.0f, 0.96f));
 				p_btn->setBackground(std::make_shared<ColoredBackground>(
-					Color(0.37f, 0.86f, 0.45f)
+					Color(0.26f, 0.82f, 0.35f)
 				));
 				p_btn->setHoveredBackground(std::make_shared<LinearGradientBackground>(
 					LinearGradient(
-						Color(0.37f, 0.86f, 0.45f),
-						Color(0.56f, 0.9f, 0.62f),
+						Color(0.26f, 0.82f, 0.35f),
+						Color(0.48f, 0.88f, 0.55f),
 						0.5f,
 						0,
 						0.5f,
