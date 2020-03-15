@@ -411,7 +411,11 @@ namespace card {
 	void ProxyMauMauGameData::appendMessage(std::string content) {
 		messageQueue.appendMessage(content);
 	}
-	const MessageQueue ProxyMauMauGameData::getMessageQueue() const {
+	const MessageQueue& ProxyMauMauGameData::getMessageQueue() const {
+		return messageQueue;
+	}
+
+	MessageQueue& ProxyMauMauGameData::getMessageQueue() {
 		return messageQueue;
 	}
 	

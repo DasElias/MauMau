@@ -218,15 +218,22 @@ namespace card {
 	}
 
 	void CardSceneRenderer::tryRenderChooseColorOverlay() {
-		static bool wasWaitingForColorChooseInLastPass = false;
-
+		static MessageKey messageKey = {};
 		auto& game = room->getGame();
+		auto& messageQueue = game.getMessageQueue();
+
+		static bool wasWaitingForColorChooseInLastPass = false;
 		bool isWaitingForColorChoose = game.getAccessorFromClient().isWaitingForColorChoose();
 		if(isWaitingForColorChoose) {
-			if(! wasWaitingForColorChooseInLastPass) chooseCardRenderer.discardPreviousMouseEvents();
+			if(!wasWaitingForColorChooseInLastPass) {
+				chooseCardRenderer.discardPreviousMouseEvents();
+				messageQueue.appendMessagePermanently(u8"Wähle die zu spielende Kartenfarbe aus.", messageKey);
+			}
 
 			cardRenderer.flush();
 			chooseCardRenderer.render();
+		} else if(wasWaitingForColorChooseInLastPass) {
+			messageQueue.removeMessagesWithKey(messageKey);
 		}
 
 		wasWaitingForColorChooseInLastPass = isWaitingForColorChoose;

@@ -115,7 +115,8 @@ namespace card {
 			std::shared_ptr<ProxyPlayer> getWinnerOrNull() const;
 			const RoomOptions& getOptions() const;
 			void appendMessage(std::string content);
-			const MessageQueue getMessageQueue() const;
+			const MessageQueue& getMessageQueue() const;
+			MessageQueue& getMessageQueue();
 
 		private:
 			void initStartCards(const std::vector<int>& handCardNumbersOfLocalPlayer, Card cardOnPlayStack);

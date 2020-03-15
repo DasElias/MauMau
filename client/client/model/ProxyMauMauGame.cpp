@@ -45,4 +45,7 @@ namespace card {
 	std::shared_ptr<ProxyPlayer> ProxyMauMauGame::getWinnerOrNull() {
 		return gameData.getWinnerOrNull();
 	}
+	MessageQueue& ProxyMauMauGame::getMessageQueue() {
+		return gameData.getMessageQueue();
+	}
 }

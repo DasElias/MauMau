@@ -39,5 +39,6 @@ namespace card {
 			bool hasGameEnded() const;
 			bool hasInitialCardBeenDistributed() const;
 			std::shared_ptr<ProxyPlayer> getWinnerOrNull();
+			MessageQueue& getMessageQueue();
 	};
 }
