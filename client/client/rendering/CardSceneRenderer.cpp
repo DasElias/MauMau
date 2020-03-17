@@ -59,7 +59,7 @@ namespace card {
 			cardIndexRenderer(renderer2d, cardIndexTextures),
 			particleRenderer(),
 			fireworkRenderer(particleRenderer, eguiRenderer, renderer2d, [this]() {
-				room->returnBackToMenu();
+				room->returnBackToMenu(ReturnBackToMenuCause::GAME_HAS_ENDED);
 			}),
 			mauMauButtonRenderer(eguiRenderer,
 				[this]() {

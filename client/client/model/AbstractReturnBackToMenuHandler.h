@@ -1,6 +1,11 @@
 #pragma once
 
 namespace card {
+	enum class ReturnBackToMenuCause {
+		GAME_HAS_ENDED,
+		GAME_WAS_ABORTED
+	};
+
 	class AbstractReturnBackToMenuHandler {
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
@@ -16,6 +21,6 @@ namespace card {
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			virtual void returnBackToMenu() =0;
+			virtual void returnBackToMenu(ReturnBackToMenuCause cause) =0;
 	};
 }

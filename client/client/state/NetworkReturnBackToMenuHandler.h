@@ -21,6 +21,6 @@ namespace card {
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			void returnBackToMenu() override;
+			void returnBackToMenu(ReturnBackToMenuCause cause) override;
 	};
 }

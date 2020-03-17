@@ -80,7 +80,7 @@ namespace card {
 			void changeRoomLeaderLocal(std::string newLeaderUsername);
 			void startGameLocal(std::vector<std::string> usernamesOfAllPlayers, std::vector<int> handCards, int startCard);
 
-			void returnBackToMenu() override;
+			void returnBackToMenu(ReturnBackToMenuCause cause) override;
 
 		private:
 			void listener_onPlayerJoinsRoom(Packet& p);

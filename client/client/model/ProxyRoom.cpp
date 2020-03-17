@@ -230,8 +230,8 @@ namespace card {
 		isWaitingForResponse_field = false;
 	}
 
-	void ProxyRoom::returnBackToMenu() {
-		gameEndHandler.returnBackToMenu();
+	void ProxyRoom::returnBackToMenu(ReturnBackToMenuCause cause) {
+		gameEndHandler.returnBackToMenu(cause);
 		game = nullptr;
 	}
 
@@ -267,7 +267,7 @@ namespace card {
 
 	void ProxyRoom::listener_onGameAbort(Packet& p) {
 		auto& casted = dynamic_cast<GameWasAborted_STCPacket&>(p);
-		returnBackToMenu();
+		returnBackToMenu(ReturnBackToMenuCause::GAME_WAS_ABORTED);
 	}
 
 }
