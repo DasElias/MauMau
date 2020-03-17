@@ -18,6 +18,7 @@ namespace card {
 		private:
 			static int const CARDS_TO_DRAW_ON_TIME_EXPIRED = 2;
 			static int const CARDS_TO_DRAW_MAU_PUNISHMENT = 2;
+			static int const MAX_CARDS_INGAME = 3 * Card::MAX_CARDS;
 
 			static uint64_t startTurnAbortIdCounter;
 
@@ -36,6 +37,7 @@ namespace card {
 			CardStack playCardStack;
 			CardIndex indexForNextCard;
 			Direction direction = Direction::CW;
+			int cardsIngameSum = 0;
 
 			bool wasCardDrawn_thisTurn = false;
 			bool wasCardDrawn_lastTurn = false;
@@ -105,6 +107,7 @@ namespace card {
 		private:
 			void setInitialPlayerOnTurn();
 			void tryRebalanceCardStacks();
+			void addCardDeckToDrawStack();
 
 			// warning: if game has ended, object will be invalidated after call
 			void callGameEndFunctIfGameHasEnded();

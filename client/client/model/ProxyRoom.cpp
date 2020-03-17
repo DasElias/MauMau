@@ -8,6 +8,7 @@
 #include <shared/packet/stc/OptionsWereChanged_STCPacket.h>
 #include <shared/packet/stc/RoomLeaderHasChanged_STCPacket.h>
 #include <shared/packet/stc/GameHasBeenStarted_STCPacket.h>
+#include <shared/packet/stc/GameWasAborted_STCPacket.h>
 
 #include <shared/packet/cts/GameStartRequest_CTSPacket.h>
 #include <shared/packet/cts/ChangeRoomLeaderRequest_CTSPacket.h>
@@ -27,13 +28,15 @@ namespace card {
 			handler_onOtherPlayerLeavesRoom(std::bind(&ProxyRoom::listener_onOtherPlayerLeavesRoom, this, std::placeholders::_1)), 
 			handler_onOptionsWereChanged(std::bind(&ProxyRoom::listener_onOptionsWereChanged, this, std::placeholders::_1)),
 			handler_onRoomLeaderChange(std::bind(&ProxyRoom::listener_onRoomLeaderChange, this, std::placeholders::_1)),
-			handler_onGameStart(std::bind(&ProxyRoom::listener_onGameStart, this, std::placeholders::_1)) {
+			handler_onGameStart(std::bind(&ProxyRoom::listener_onGameStart, this, std::placeholders::_1)),
+			handler_onGameAbort(std::bind(&ProxyRoom::listener_onGameAbort, this, std::placeholders::_1)) {
 
 		packetTransmitter->addListenerForServerPkt(OtherPlayerHasJoinedRoom_STCPacket::PACKET_ID, handler_onPlayerJoinsRoom);
 		packetTransmitter->addListenerForServerPkt(OtherPlayerHasLeavedRoom_STCPacket::PACKET_ID, handler_onOtherPlayerLeavesRoom);
 		packetTransmitter->addListenerForServerPkt(OptionsWereChanged_STCPacket::PACKET_ID, handler_onOptionsWereChanged);
 		packetTransmitter->addListenerForServerPkt(RoomLeaderHasChanged_STCPacket::PACKET_ID, handler_onRoomLeaderChange);
 		packetTransmitter->addListenerForServerPkt(GameHasBeenStarted_STCPacket::PACKET_ID, handler_onGameStart);
+		packetTransmitter->addListenerForServerPkt(GameWasAborted_STCPacket::PACKET_ID, handler_onGameAbort);
 
 		if(opponentUsernames.size() != opponentAvatars.size() || opponentUsernames.size() != areOpponentsAiPlayers.size()) {
 			throw std::runtime_error("The vectors as arguments for opponentUsernames, opponentAvatars and areOpponentsAiPlayers must be of the same length.");
@@ -56,6 +59,8 @@ namespace card {
 		packetTransmitter->removeListenerForServerPkt(OptionsWereChanged_STCPacket::PACKET_ID, handler_onOptionsWereChanged);
 		packetTransmitter->removeListenerForServerPkt(RoomLeaderHasChanged_STCPacket::PACKET_ID, handler_onRoomLeaderChange);
 		packetTransmitter->removeListenerForServerPkt(GameHasBeenStarted_STCPacket::PACKET_ID, handler_onGameStart);
+		packetTransmitter->removeListenerForServerPkt(GameWasAborted_STCPacket::PACKET_ID, handler_onGameAbort);
+
 	}
 
 	bool ProxyRoom::isGameRunning() const {
@@ -258,6 +263,11 @@ namespace card {
 		isWaitingForResponse_field = false;
 
 		startGameLocal(casted.getUsernamesOfAllParticipants(), casted.getHandCards(), casted.getStartCard());
+	}
+
+	void ProxyRoom::listener_onGameAbort(Packet& p) {
+		auto& casted = dynamic_cast<GameWasAborted_STCPacket&>(p);
+		returnBackToMenu();
 	}
 
 }

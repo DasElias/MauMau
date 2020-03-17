@@ -15,6 +15,7 @@
 #include "../packet/stc/OtherPlayerHasPlayedCard_STCPacket.h"
 #include "../packet/stc/OtherPlayerHasPassed_STCPacket.h"
 #include "../packet/stc/GameHasBeenStarted_STCPacket.h"
+#include "../packet/stc/GameWasAborted_STCPacket.h"
 #include "../model/PlayerNotFoundException.h"
 #include "../model/MauMauCardValueMeanings.h"
 #include "../utils/Logger.h"
@@ -41,11 +42,7 @@ namespace card {
 			handler_onMau(std::bind(&ServerMauMauGame::listener_onMau, this, std::placeholders::_1, std::placeholders::_2)),
 			handler_onPass(std::bind(&ServerMauMauGame::listener_onPass, this, std::placeholders::_1, std::placeholders::_2)) {
 
-	//	drawCardStack.fillWithCardDeckAndShuffle();
-		for(int i = 0; i < Card::MAX_CARDS; i++) {
-			Card c = (i % 2 == 0) ? Card::CLUB_EIGHT : Card::CLUB_FIVE;
-			drawCardStack.addFromPlain(c);
-		}
+		addCardDeckToDrawStack();
 		Card firstCardOnPlayStack;
 
 		// init play card stack
@@ -511,9 +508,24 @@ namespace card {
 			drawCardStack.addFromPlainAtPosition(0, playCardStack.remove(0));
 		}
 		if(drawCardStack.getSize() <= MIN_DRAW_CARD_STACK_SIZE) {
-			for(int i = 1; i <= Card::MAX_CARDS; i++) {
-				drawCardStack.addFromPlainAtPosition(0, Card(i));
-			}
+			addCardDeckToDrawStack();
+		}
+	}
+	void ServerMauMauGame::addCardDeckToDrawStack() {
+		CardStack cardsToAdd = {};
+		cardsToAdd.fillWithCardDeckAndShuffle();
+		cardsIngameSum += cardsToAdd.getSize();
+
+		for(auto& c : cardsToAdd) {
+			drawCardStack.addFromPlainAtPosition(0, c);
+		}
+		if(cardsIngameSum > MAX_CARDS_INGAME) {
+			// after onGameEnd is called, this object is destroyed
+			threadUtils_invokeIn(0, this, [this]() {
+				GameWasAborted_STCPacket packet;
+				packetTransmitter->sendPacketToClients(packet, Player::getVectorWithWrappedParticipants(players));
+				gameEndHandler.onGameEnd();
+			});
 		}
 	}
 	void ServerMauMauGame::callGameEndFunctIfGameHasEnded() {

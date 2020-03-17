@@ -32,6 +32,7 @@ namespace card {
 			ServerPacketListenerCallback handler_onOptionsWereChanged;
 			ServerPacketListenerCallback handler_onRoomLeaderChange;
 			ServerPacketListenerCallback handler_onGameStart;
+			ServerPacketListenerCallback handler_onGameAbort;
 
 
 		// ----------------------------------------------------------------------
@@ -87,7 +88,8 @@ namespace card {
 			void listener_onOptionsWereChanged(Packet& p);
 			void listener_onRoomLeaderChange(Packet& p);
 			void listener_onGameStart(Packet& p);
-			
+			void listener_onGameAbort(Packet& p);
+
 
 	};
 }
