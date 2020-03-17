@@ -13,6 +13,9 @@ namespace card {
 			wrappedCardCollection(std::move(wrappedCardCollection)),
 			lastRegisteredAnimation() {
 	}
+	CardAnimator::~CardAnimator() {
+		threadUtils_removeCallbacksWithKey(this);
+	}
 	bool CardAnimator::arePendingAnimations() {
 		return pendingAnimationsCounter > 0;
 	}
@@ -24,7 +27,7 @@ namespace card {
 		}
 
 		registerCardAnimation(mutatesTo);
-		threadUtils_invokeIn(delayMs, [this, mutatesTo, &source, durationMs]() {
+		threadUtils_invokeIn(delayMs, this, [this, mutatesTo, &source, durationMs]() {
 			unregisterCardAnimation();
 			this->addFirstCardFromImmediately(mutatesTo, source, durationMs);
 		});
@@ -38,7 +41,7 @@ namespace card {
 		CardAnimation a(getMilliseconds(), durationMs, source, mutatesTo, indexToRemove);
 		animations.insertAnimation(a);
 
-		threadUtils_invokeIn(durationMs, [this, a, mutatesTo] {
+		threadUtils_invokeIn(durationMs, this, [this, a, mutatesTo] {
 			animations.removeAnimation(a);
 			this->addFromPlain(mutatesTo);
 			onAnimationEnd();
@@ -52,7 +55,7 @@ namespace card {
 		}
 
 		registerCardAnimation(mutatesTo);
-		threadUtils_invokeIn(delayMs, [this, mutatesTo, &source, durationMs]() {
+		threadUtils_invokeIn(delayMs, this, [this, mutatesTo, &source, durationMs]() {
 			unregisterCardAnimation();
 			this->addLastCardFromImmediately(mutatesTo, source, durationMs);
 		});
@@ -66,7 +69,7 @@ namespace card {
 		CardAnimation a(getMilliseconds(), durationMs, source, mutatesTo, indexToRemove);
 		animations.insertAnimation(a);
 
-		threadUtils_invokeIn(durationMs, [this, a, mutatesTo] {
+		threadUtils_invokeIn(durationMs, this, [this, a, mutatesTo] {
 			animations.removeAnimation(a);
 			this->addFromPlain(mutatesTo);
 			onAnimationEnd();
@@ -81,7 +84,7 @@ namespace card {
 
 		Card card = source.get(indexOfCardToAddInSource);
 		registerCardAnimation(card);
-		threadUtils_invokeIn(delayMs, [this, indexOfCardToAddInSource, &source, durationMs]() {
+		threadUtils_invokeIn(delayMs, this, [this, indexOfCardToAddInSource, &source, durationMs]() {
 			unregisterCardAnimation();
 			this->addDeterminedCardFromImmediately(indexOfCardToAddInSource, source, durationMs);
 		});
@@ -95,7 +98,7 @@ namespace card {
 		CardAnimation a(getMilliseconds(), durationMs, source, card, indexOfCardToAddInSource);
 		animations.insertAnimation(a);
 
-		threadUtils_invokeIn(durationMs, [this, a, card] {
+		threadUtils_invokeIn(durationMs, this, [this, a, card] {
 			onAnimationEnd();
 			animations.removeAnimation(a);
 			this->addFromPlain(card);
@@ -109,7 +112,7 @@ namespace card {
 		}
 	
 		registerCardAnimation(mutatesTo);
-		threadUtils_invokeIn(delayMs, [this, mutatesTo, &source, durationMs]() {
+		threadUtils_invokeIn(delayMs, this, [this, mutatesTo, &source, durationMs]() {
 			unregisterCardAnimation();
 			addRandomCardFromImmediately(mutatesTo, source, durationMs);
 		});
@@ -124,7 +127,7 @@ namespace card {
 		CardAnimation a(getMilliseconds(), durationMs, source, mutatesTo, indexToRemove);
 		animations.insertAnimation(a);
 
-		threadUtils_invokeIn(durationMs, [this, a, mutatesTo] {	
+		threadUtils_invokeIn(durationMs, this, [this, a, mutatesTo] {	
 			animations.removeAnimation(a);
 			this->addFromPlain(mutatesTo);
 			onAnimationEnd();

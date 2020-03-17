@@ -29,6 +29,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			CardAnimator(std::unique_ptr<CardCollection> wrappedCardCollection);
+			~CardAnimator();
 			CardAnimator(const CardAnimator&) = delete;
 			CardAnimator& operator=(const CardAnimator&) = delete;
 
