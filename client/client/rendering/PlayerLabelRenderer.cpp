@@ -19,14 +19,14 @@ namespace card {
 	glm::vec2 const PlayerLabelRenderer::RIGHT_PLAYER_POSITION = {1 - PADDING_LEFT_RIGHT - PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN, PADDING_TOP};
 
 	PlayerLabelRenderer::PlayerLabelRenderer(egui::MasterRenderer& eguiRenderer, AvatarTextures& avatarTextures, Renderer2D& renderer2D, CircleSectorRenderer& circleSectorRenderer) :
-			eguiRenderer(eguiRenderer),
-			renderer2D(renderer2D),
-			circleSectorRenderer(circleSectorRenderer),
-			avatarTextures(avatarTextures),
-			labelElementForLocal(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
-			labelElementForVisAVis(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
-			labelElementForLeft(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
-			labelElementForRight(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())) {
+		eguiRenderer(eguiRenderer),
+		renderer2D(renderer2D),
+		circleSectorRenderer(circleSectorRenderer),
+		avatarTextures(avatarTextures),
+		labelElementForLocal(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
+		labelElementForVisAVis(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
+		labelElementForLeft(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
+		labelElementForRight(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())) {
 
 		auto parentElement = std::make_shared<egui::UnorganizedParentElement>();
 		parentElement->addChildElement(labelElementForLocal);
@@ -52,7 +52,7 @@ namespace card {
 	void PlayerLabelRenderer::renderRight(const std::shared_ptr<ProxyPlayer>& participant) {
 		renderImpl(participant, labelElementForRight, playerRight);
 	}
-	void PlayerLabelRenderer::renderImpl(const std::shared_ptr<ProxyPlayer>& participant, std::shared_ptr<PlayerLabel>& labelElementField, std::shared_ptr<ProxyPlayer>& proxyPlayerField) {
+	void PlayerLabelRenderer::renderImpl(const std::shared_ptr<ProxyPlayer>& participant, std::shared_ptr<PlayerLabel>& labelElementField, std::weak_ptr<ProxyPlayer>& proxyPlayerField) {
 		proxyPlayerField = participant;
 		labelElementField->set(participant->getUsername());
 
@@ -64,12 +64,12 @@ namespace card {
 		endFlush();
 	}
 	void PlayerLabelRenderer::renderCircleSector(const std::shared_ptr<PlayerLabel>& playerLabel, float percentExpired) {
-		float startAngle = PI/2;
-		float endAngle = interpolateLinear(percentExpired, 0, PI/2 + 2*PI, 1, PI/2);
+		float startAngle = PI / 2;
+		float endAngle = interpolateLinear(percentExpired, 0, PI / 2 + 2 * PI, 1, PI / 2);
 
 		float centerX = playerLabel->getImageElement()->getAbsXMargin();
 		float centerY = playerLabel->getImageElement()->getAbsYMargin();
-		
+
 		float const CIRCLE_RADIUS = 117 / 2.0f;
 		float const CIRCLE_DIAMETER = 2 * CIRCLE_RADIUS;
 		float const CIRCLE_CENTER_OFFSET_PX_X = 5 + (CIRCLE_RADIUS);
@@ -93,8 +93,9 @@ namespace card {
 		flushImageOfPlayer(labelElementForLeft, playerLeft);
 		flushImageOfPlayer(labelElementForRight, playerRight);
 	}
-	void PlayerLabelRenderer::flushImageOfPlayer(const std::shared_ptr<PlayerLabel>& element, const std::shared_ptr<ProxyPlayer>& participant) {
+	void PlayerLabelRenderer::flushImageOfPlayer(const std::shared_ptr<PlayerLabel>& element, std::weak_ptr<ProxyPlayer> participant_wp) {
 		if(element->isVisible()) {
+			auto participant = participant_wp.lock();
 			Avatar avatar = participant->getAvatar();
 			avatarTextures.bind(avatar);
 			renderer2D.render(element->getImageElement(), true);

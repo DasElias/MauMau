@@ -41,10 +41,10 @@ namespace card {
             std::shared_ptr<PlayerLabel> labelElementForLeft;
             std::shared_ptr<PlayerLabel> labelElementForRight;
             
-            std::shared_ptr<ProxyPlayer> playerLocal;
-            std::shared_ptr<ProxyPlayer> playerVisAVis;
-            std::shared_ptr<ProxyPlayer> playerLeft;
-            std::shared_ptr<ProxyPlayer> playerRight;
+            std::weak_ptr<ProxyPlayer> playerLocal;
+            std::weak_ptr<ProxyPlayer> playerVisAVis;
+            std::weak_ptr<ProxyPlayer> playerLeft;
+            std::weak_ptr<ProxyPlayer> playerRight;
             
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------
@@ -63,11 +63,11 @@ namespace card {
              void flush();
             
         private:
-            void renderImpl(const std::shared_ptr<ProxyPlayer>& participant, std::shared_ptr<PlayerLabel>& labelElementField, std::shared_ptr<ProxyPlayer>& proxyPlayerField);
+            void renderImpl(const std::shared_ptr<ProxyPlayer>& participant, std::shared_ptr<PlayerLabel>& labelElementField, std::weak_ptr<ProxyPlayer>& proxyPlayerField);
             void renderCircleSector(const std::shared_ptr<PlayerLabel>& playerLabel, float percentExpired);
             void flushText();
             void flushImages();
-            void flushImageOfPlayer(const std::shared_ptr<PlayerLabel>& element, const std::shared_ptr<ProxyPlayer>& participant);
+            void flushImageOfPlayer(const std::shared_ptr<PlayerLabel>& element, std::weak_ptr<ProxyPlayer> participant);
             void endFlush();
 
 	};
