@@ -9,7 +9,7 @@
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 	// windows
-	#define LATEST_LOG_FLIE "C:\\latest.log"
+	#define LATEST_LOG_FILE "C:\\latest.log"
 	#define FATAL_LOG_FILE "C:\\fatal.log"
 #else
 	#define LATEST_LOG_FILE "~/latest.log"
