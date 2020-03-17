@@ -10,9 +10,11 @@ namespace card {
 		// ----------------------------------------------------------------------
 		private:
 			std::vector<std::pair<const void*, Operation>> pendingOperations;
-			std::vector<std::pair<const void*, Operation>> tempWriteBuffer;
+			std::vector<std::pair<const void*, Operation>> pendingOperations_tempWriteBuffer;
 			std::vector<const void*> keysToRemoveInNextUpdate;
-			bool useTempWriteBuffer = false;
+			std::vector<const void*> keysToRemoveInNextUpdate_tempWriteBuffer;
+			bool useTempWriteBuffer_pendingOperations = false;
+			bool useTempWriteBuffer_keysToRemove = false;
 			std::mutex invokeInMutex;
 
 		// ----------------------------------------------------------------------

@@ -34,12 +34,16 @@ TEST_CASE("DefaultThreadUtilsProvider", "[DefaultThreadUtilsProvider]") {
 		REQUIRE(! wasExecuted);
 	}
 	SECTION("insert callback in callback") {
-		provider.invokeIn(0, nullptr, [&provider]() {
-			provider.invokeIn(0, nullptr, []() {
-				
+		bool wasExecuted = false;
+		provider.invokeIn(0, nullptr, [&provider, &wasExecuted]() {
+			provider.invokeIn(0, nullptr, [&wasExecuted]() {
+				wasExecuted = true;
 			});
+			REQUIRE(! wasExecuted);
 		});
 		provider.update();
+		provider.update();	// we need to update the provider twice, since otherwise the second callback would not be executed
+		REQUIRE(wasExecuted);
 	}
 	SECTION("insert callback with key") {
 		int keyValue;
@@ -62,6 +66,19 @@ TEST_CASE("DefaultThreadUtilsProvider", "[DefaultThreadUtilsProvider]") {
 		provider.removeCallbacks(&keyValue2);
 		provider.update();
 		REQUIRE(wasExecuted);
+	}
+	SECTION("remove callback in callback") {
+		bool wasExecuted = false;
+		int keyValueToRemove, keyValue;
+		provider.invokeIn(0, &keyValue, [&keyValueToRemove, &provider]() {
+			provider.removeCallbacks(&keyValueToRemove);
+		});
+		provider.invokeIn(0, &keyValueToRemove, [&wasExecuted]() {
+			wasExecuted = true;
+		});
+		provider.update();
+		provider.update();	// we update the provider twice to make sure that the callback won't be executed in the next frame
+		REQUIRE(! wasExecuted);
 	}
 
 }
