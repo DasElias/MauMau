@@ -343,11 +343,11 @@ namespace card {
 		messageQueue.removeMessagesWithKey(skipStateMessageKey);
 		field_wasCardDrawnIntoHandCards = false;
 		field_wasCardPlayed = false;
-		threadUtils_invokeIn(delayToSetNextPlayerOnTurn, [this, player, lastUserOnTurn]() {			
+		threadUtils_invokeIn(delayToSetNextPlayerOnTurn, this, [this, player, lastUserOnTurn]() {			
 			lastUserOnTurn->endRemainingTimeAnimation();
 			this->userOnTurn->onStartTurn();
 		});
-		threadUtils_invokeIn(delayToFreezeAnimation, [this, lastUserOnTurn]() {
+		threadUtils_invokeIn(delayToFreezeAnimation, this, [this, lastUserOnTurn]() {
 			lastUserOnTurn->freezeRemainingTimeAnimation();
 		});
 	}
