@@ -12,11 +12,13 @@ namespace card {
 		});
 		conn->setOnErrorFunc([this](boost::system::error_code ec) {
 			if(ec != boost::asio::error::operation_aborted) {
-				if(ec == boost::asio::error::eof) {
-					onKickHandler();
-				} else {
-					onErrorHandler(ec);
-				}
+				threadUtils_invokeIn(0, [this, ec]() {
+					if(ec == boost::asio::error::eof) {
+						onKickHandler();
+					} else {
+						onErrorHandler(ec);
+					}
+				});		
 			}
 		});
 	}

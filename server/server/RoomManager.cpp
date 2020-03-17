@@ -104,14 +104,19 @@ namespace card {
 					if(! singleRoom->checkIfLeader(requesterParticipant)) return false;
 					if(! singleRoom->checkIfParticipantByUsername(usernameOfPlayerToKick)) return false;
 					std::shared_ptr<ParticipantOnServer> participantToKick = singleRoom->lookupParticipantByUsername(usernameOfPlayerToKick);
-					std::shared_ptr<ConnectionToClient> connOfParticipantToKick = packetTransmitter->getConnectionOrNull(participantToKick);
-					if(! connOfParticipantToKick) return false;
+					if(participantToKick->isRealPlayer()) {
+						std::shared_ptr<ConnectionToClient> connOfParticipantToKick = packetTransmitter->getConnectionOrNull(participantToKick);
+						if(!connOfParticipantToKick) return false;
 
-					singleRoom->leaveRoom(participantToKick, true);
-					closeRoomIfNecessary(singleRoom);
+						singleRoom->leaveRoom(participantToKick, true);
+						closeRoomIfNecessary(singleRoom);
 
-					connOfParticipantToKick->close();
-					packetTransmitter->unregisterParticipant(connOfParticipantToKick);
+						connOfParticipantToKick->close();
+						packetTransmitter->unregisterParticipant(connOfParticipantToKick);
+					} else {
+						singleRoom->leaveRoom(participantToKick, true);
+						closeRoomIfNecessary(singleRoom);
+					}
 
 					return true;
 				}
