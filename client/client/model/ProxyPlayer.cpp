@@ -43,9 +43,6 @@ namespace card {
 			delayMs += DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS;
 		}
 	}
-	void ProxyPlayer::playCardFromHandCards(Card card, CardAnimator& playCardStack) {
-		playCardStack.addRandomCardFromImmediately(card, handCardStack, PLAY_DURATION_MS);
-	}
 	void ProxyPlayer::playCardFromHandCardsAfterDelay(Card card, CardAnimator& playCardStack, int delayMs) {
 		playCardStack.addRandomCardFrom(card, handCardStack, PLAY_DURATION_MS, delayMs);
 	}

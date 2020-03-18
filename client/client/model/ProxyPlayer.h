@@ -59,7 +59,6 @@ namespace card {
 			void drawSingleCardInHandCardsLocal(Card mutatesTo, CardAnimator& drawCardStack);
 			void drawMultipleCardsInHandCardsLocal(std::vector<Card> mutatesTo, CardAnimator& drawCardStack);
 			void drawMultipleCardsInHandCardsAfterDelay(std::vector<Card> mutatesTo, CardAnimator& drawCardStack, int delayMs);
-			virtual void playCardFromHandCards(Card card, CardAnimator& playCardStack);
 			virtual void playCardFromHandCardsAfterDelay(Card card, CardAnimator& playCardStack, int delayMs);
 
 			const CardAnimator& getCardStack() const;

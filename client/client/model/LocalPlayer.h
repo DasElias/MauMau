@@ -43,9 +43,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			void drawSingleCardInTempCardStackLocal(Card mutatesTo, CardAnimator& drawCardStack);
-			void playCardFromHandCards(Card card, CardAnimator& playCardStack) override;
 			void playCardFromHandCardsAfterDelay(Card card, CardAnimator& playCardStack, int delayMs) override;
-			void playCardFromHandCards(std::size_t indexInHandCards, CardAnimator& playCardStack);
 			void playCardFromHandCardsAfterDelay(std::size_t indexInHandCards, CardAnimator& playCardStack, int delayMs);
 			void playCardFromTempCardStackLocal(CardAnimator& playCardStack);
 			void sortDrawnCardIntoHandCardsLocal();

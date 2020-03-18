@@ -33,12 +33,6 @@ namespace card {
 		}
 	}
 
-	void LocalPlayer::playCardFromHandCards(Card card, CardAnimator& playCardStack) {
-		log(LogSeverity::DEBUG, "Deprecation warning. LocalPlayer::playCardFromHandCards(Card, CardAnimator&) is deprecated.");
-		std::size_t index = handCardStack.find(card);
-		playCardFromHandCards(index, playCardStack);
-	}
-
 	void LocalPlayer::playCardFromHandCardsAfterDelay(Card card, CardAnimator& playCardStack, int delayMs) {
 		log(LogSeverity::DEBUG, "Deprecation warning. LocalPlayer::playCardFromHandCardsAfterDelay(Card, CardAnimator&, int) is deprecated.");
 		std::size_t index = handCardStack.find(card);
@@ -49,12 +43,6 @@ namespace card {
 		Card card = handCardStack.get(indexInHandCards);
 		this->playedCard = card;
 		playCardStack.addDeterminedCardFrom(indexInHandCards, handCardStack, PLAY_DURATION_MS, delayMs);
-	}
-
-	void LocalPlayer::playCardFromHandCards(std::size_t indexInHandCards, CardAnimator& playCardStack) {
-		Card card = handCardStack.get(indexInHandCards);
-		this->playedCard = card;
-		playCardStack.addDeterminedCardFromImmediately(indexInHandCards, handCardStack, PLAY_DURATION_MS);
 	}
 
 	void LocalPlayer::playCardFromTempCardStackLocal(CardAnimator& playCardStack) {
