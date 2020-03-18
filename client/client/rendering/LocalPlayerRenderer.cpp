@@ -33,7 +33,7 @@ namespace card {
 		int intersectedCardIndex = -1;
 		if(intersectedCardIndexOrNone.has_value()) {
 			Card intersectedCard = handCards.get(*intersectedCardIndexOrNone);
-			if(! shouldDisableCard(game, intersectedCard) && gameData.isLocalPlayerOnTurn()) {
+			if(! shouldDisableCard(game, intersectedCard) && gameData.isReadyToPerformLocalPlayerTurn()) {
 				intersectedCardIndex = *intersectedCardIndexOrNone;
 			}
 		}
