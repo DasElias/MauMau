@@ -58,6 +58,7 @@ namespace card {
 
 			std::vector<CardAnimation> getCardAnimations() const;
 
+			std::size_t getSizeOfPendingTransactions() const;
 			std::size_t getSizeInclPendingTransactions() const;
 			bool isEmptyAndNoPendingTransactions() const;
 			bool equalsId(const CardAnimator& other);
@@ -66,6 +67,7 @@ namespace card {
 			CardCollection& operator*();
 
 			Card getLastInclAnimations() const;
+			void clearInclAnimations();
 
 			//
 			// METHODS FROM CardCollection

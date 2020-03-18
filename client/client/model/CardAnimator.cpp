@@ -154,8 +154,12 @@ namespace card {
 		return animations;
 	}
 
+	std::size_t CardAnimator::getSizeOfPendingTransactions() const {
+		return animations.size() + ((lastRegisteredAnimation.has_value()) ? 1 : 0);
+	}
+
 	std::size_t CardAnimator::getSizeInclPendingTransactions() const {
-		return getSize() + animations.size() + ((lastRegisteredAnimation.has_value()) ? 1 : 0);
+		return getSize() + getSizeOfPendingTransactions();
 	}
 
 	bool CardAnimator::isEmptyAndNoPendingTransactions() const {
@@ -179,6 +183,15 @@ namespace card {
 		if(! animations.empty()) return animations.getLast().mutatesTo;
 		return getLast();
 
+	}
+
+	void CardAnimator::clearInclAnimations() {
+		clear();
+		animations.clear();
+		lastRegisteredAnimation = std::nullopt;
+
+		// callbacks for animations shouldn't be executed
+		threadUtils_removeCallbacksWithKey(this);
 	}
 
 
