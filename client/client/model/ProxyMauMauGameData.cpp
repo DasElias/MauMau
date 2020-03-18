@@ -101,6 +101,14 @@ namespace card {
 		updateCardIndex(card, newCardIndex);
 		updateDirection(card);
 	}
+	void ProxyMauMauGameData::playCardFromLocalPlayerHandCards(std::size_t indexInHandCards, CardIndex newCardIndex, int delayMs) {
+		Card card = localPlayer->getCardStack().get(indexInHandCards);
+		throwIfGameHasEnded();
+		field_wasCardPlayed = true;
+		localPlayer->playCardFromHandCardsAfterDelay(indexInHandCards, playCardStack, delayMs);
+		updateCardIndex(card, newCardIndex);
+		updateDirection(card);
+	}
 	void ProxyMauMauGameData::playCardFromLocalPlayerTempCards(CardIndex newCardIndex, int delay) {
 		auto drawnCardOrNone = localPlayer->getCardInTempStack();
 		if(!drawnCardOrNone.has_value()) {

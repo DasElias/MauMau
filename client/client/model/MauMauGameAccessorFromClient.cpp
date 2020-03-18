@@ -70,7 +70,7 @@ namespace card {
 		return localPlayer->isCardInTemporaryStack();
 	}
 	bool MauMauGameAccessorFromClient::isWaitingForColorChoose() const {
-		return cardToPlayAfterColorChoose.has_value();
+		return indexOfCardToPlayAfterColorChoose.has_value();
 	}
 	bool MauMauGameAccessorFromClient::canPass() const {
 		return gameData.isReadyToPerformLocalPlayerTurn() && gameData.getLocalPlayer()->isInSkipState();
@@ -122,10 +122,10 @@ namespace card {
 
 		bool canChangeColor = gameData.canChangeColor(card);
 		if(!canChangeColor || gameData.hasGameEnded()) {
-			gameData.playCardFromHandCards(localPlayer, card);
+			gameData.playCardFromLocalPlayerHandCards(index);
 			sendPlayCardPacket();
 		} else {
-			cardToPlayAfterColorChoose = card;
+			indexOfCardToPlayAfterColorChoose = index;
 		}
 	}
 
@@ -140,7 +140,7 @@ namespace card {
 			gameData.playCardFromLocalPlayerTempCards();
 			sendPlayCardPacket();
 		} else {
-			cardToPlayAfterColorChoose = card;
+			indexOfCardToPlayAfterColorChoose = INDEX_OF_CARD_IN_TEMP_STACK;
 		}
 	}
 
@@ -164,15 +164,15 @@ namespace card {
 
 	void MauMauGameAccessorFromClient::playPremarkedCardAfterColorChoose(CardIndex newCardIndex) {
 		auto localPlayer = gameData.getLocalPlayer();
-		if(cardToPlayAfterColorChoose.has_value()) {
-			Card cardToPlay = *cardToPlayAfterColorChoose;
-
+		if(indexOfCardToPlayAfterColorChoose.has_value()) {
 			std::optional<Card> drawnCard = localPlayer->getCardInTempStack();
 			if(drawnCard.has_value()) {
-				if(*drawnCard != cardToPlay) throw std::runtime_error("Can't play card which isn't equal to the drawn card");
 				gameData.playCardFromLocalPlayerTempCards(newCardIndex);
 			} else {
-				gameData.playCardFromHandCards(localPlayer, cardToPlay, newCardIndex);
+				int cardIndexToPlay = *indexOfCardToPlayAfterColorChoose;
+				if(cardIndexToPlay == INDEX_OF_CARD_IN_TEMP_STACK) throw std::runtime_error("Can't play card in temp card stack from hand cards.");
+
+				gameData.playCardFromLocalPlayerHandCards(cardIndexToPlay, newCardIndex);
 			}
 		}
 	}
@@ -192,7 +192,7 @@ namespace card {
 	}
 
 	void MauMauGameAccessorFromClient::onTurnEnd() {
-		cardToPlayAfterColorChoose = std::nullopt;
+		indexOfCardToPlayAfterColorChoose = std::nullopt;
 		wasCardDrawnThisTurn = false;
 	}
 

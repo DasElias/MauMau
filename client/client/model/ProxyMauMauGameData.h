@@ -63,6 +63,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			void playCardFromHandCards(std::shared_ptr<ProxyPlayer> player, Card card, CardIndex newCardIndex = CardIndex::NULLINDEX, int delayMs = 0);
+			void playCardFromLocalPlayerHandCards(std::size_t indexInHandCards, CardIndex newCardIndex = CardIndex::NULLINDEX, int delayMs = 0);
 			void playCardFromLocalPlayerTempCards(CardIndex newCardIndex = CardIndex::NULLINDEX, int delayMs = 0);
 
 			void drawInHandCardsFromCardStack(std::shared_ptr<ProxyPlayer> player, Card card);

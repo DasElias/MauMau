@@ -5,13 +5,19 @@
 namespace card {
 	class MauMauGameAccessorFromClient {
 		// ----------------------------------------------------------------------
+		// ----------------------------STATIC-FIELDS-----------------------------
+		// ----------------------------------------------------------------------
+		private:
+			static int const INDEX_OF_CARD_IN_TEMP_STACK = -1;
+
+		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
 			ProxyMauMauGameData& gameData;
 			std::shared_ptr<CTSPacketTransmitter> packetTransmitter;
 			
-			std::optional<Card> cardToPlayAfterColorChoose = std::nullopt;
+			std::optional<int> indexOfCardToPlayAfterColorChoose = std::nullopt;
 			bool wasCardDrawnThisTurn = false;
 
 		// ----------------------------------------------------------------------

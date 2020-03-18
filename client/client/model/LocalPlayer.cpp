@@ -34,11 +34,13 @@ namespace card {
 	}
 
 	void LocalPlayer::playCardFromHandCards(Card card, CardAnimator& playCardStack) {
+		log(LogSeverity::DEBUG, "Deprecation warning. LocalPlayer::playCardFromHandCards(Card, CardAnimator&) is deprecated.");
 		std::size_t index = handCardStack.find(card);
 		playCardFromHandCards(index, playCardStack);
 	}
 
 	void LocalPlayer::playCardFromHandCardsAfterDelay(Card card, CardAnimator& playCardStack, int delayMs) {
+		log(LogSeverity::DEBUG, "Deprecation warning. LocalPlayer::playCardFromHandCardsAfterDelay(Card, CardAnimator&, int) is deprecated.");
 		std::size_t index = handCardStack.find(card);
 		playCardFromHandCardsAfterDelay(index, playCardStack, delayMs);
 	}
