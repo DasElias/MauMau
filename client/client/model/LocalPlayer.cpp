@@ -14,9 +14,6 @@ namespace card {
 			wrappedLocalPlayer(wrappedLocalPlayer),
 			drawnCardTempStack(std::make_unique<HandCardStack>()) {
 
-	//	if(handCards.empty()) throw std::runtime_error("LocalPlayer needs at least one default hand card");
-//		this->selectedCard = handCards.at((handCards.size() - 1) / 2);
-
 	}
 
 	std::optional<Card> LocalPlayer::getPlayedCard() const {
