@@ -31,7 +31,7 @@ namespace card {
 		if(hasStartedToDrawCard()) {
 			log(LogSeverity::ERR, "Inconsistent data model. Card was moved to LocalPlayer even though he has already got a card.");
 		} else {
-			drawnCardTempStack.addLastCardFromImmediately(mutatesTo, drawCardStack, DRAW_DURATION_MS * 5);
+			drawnCardTempStack.addLastCardFromImmediately(mutatesTo, drawCardStack, DRAW_DURATION_MS);
 			wasCardDrawn_flag = true;
 		}
 	}
