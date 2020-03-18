@@ -48,6 +48,8 @@ namespace card {
 			bool wasMauedCorrectly_thisTurn = false;
 
 			bool isInSkipState_field = false;
+			int amountOfDrawedCardsDueToPlusTwoLastTurn = 0;
+			std::vector<int> cardsToDrawDueToPlusTwo;
 
 			ClientPacketListenerCallback handler_onPlayCard;
 			ClientPacketListenerCallback handler_onDrawCard;
@@ -85,9 +87,11 @@ namespace card {
 			bool canPass(Player& player) const;
 
 			bool isInSkipState() const;
+			bool isInDrawTwoState() const;
 			bool wasCardDrawnLastTurn() const;
 			bool wasCardPlayedLastTurn() const;
 			bool wasCardDrawnAndPlayedLastTurn() const;
+			int getAmountOfDrawedCardsDueToPlusTwoLastTurn() const;
 			bool checkIfPlayerByParticipant(const std::shared_ptr<ParticipantOnServer>& participant);
 			bool checkIfPlayerByUsername(std::string username);
 			bool checkIfOnTurn(Player& p) const;

@@ -154,15 +154,17 @@ namespace card {
 		checkForMauIfNeeded();
 		setNextPlayerOnTurnAndUpdateSkipState(card);
 
-		// actually draw cardsToDrawForNextPlayer
-		playerOnTurn->addHandCards(cardsToDrawForNextPlayer);
+		// add cardsToDrawForNextPlayer to cardsToDrawDueToPlusTwo
+		for(int& c : cardsToDrawForNextPlayer) {
+			this->cardsToDrawDueToPlusTwo.push_back(c);
+		}
 
 		// send packet to all other players
 		auto senderPlayerPtr = lookupPlayerByUsername(player.getUsername());
 		for(auto& p : this->players) {
 			if(senderPlayerPtr == p) continue;
 
-			std::vector<int> cardsToDrawToSend = (playerOnTurn == p) ? cardsToDrawForNextPlayer : std::vector<int>(cardsToDrawForNextPlayer.size(), 0);
+			std::vector<int> cardsToDrawToSend = (playerOnTurn == p) ? cardsToDrawDueToPlusTwo : std::vector<int>(cardsToDrawDueToPlusTwo.size(), 0);
 
 			OtherPlayerHasPlayedCard_STCPacket packet(player.getUsername(), card.getCardNumber(), static_cast<int>(chosenIndex), cardsToDrawToSend, wasCardJustDrawn);
 			packetTransmitter->sendPacketToClient(packet, p->getWrappedParticipant());
@@ -306,6 +308,15 @@ namespace card {
 	}
 
 	void ServerMauMauGame::setPlayerOnTurn(std::shared_ptr<Player> player) {
+		if(! wasCardPlayed_thisTurn) {
+			// if there was a card played, the +2 was passed on to the next player
+			playerOnTurn->addHandCards(cardsToDrawDueToPlusTwo);
+			amountOfDrawedCardsDueToPlusTwoLastTurn = cardsToDrawDueToPlusTwo.size();
+			cardsToDrawDueToPlusTwo.clear();
+		} else {
+			amountOfDrawedCardsDueToPlusTwoLastTurn = 0;
+		}
+
 		wasCardDrawn_lastTurn = wasCardDrawn_thisTurn;
 		wasCardDrawn_thisTurn = false;
 
@@ -369,9 +380,8 @@ namespace card {
 	void ServerMauMauGame::startTurnAbortTimer() {
 		uint64_t currentTurnAbortId = ++startTurnAbortIdCounter;
 
-		int delay = MAX_TURN_DURATION + getTimeToSetNextPlayerOnTurn(playCardStack.getSize(), playCardStack.getLast(), wasCardPlayedLastTurn(), wasCardDrawnLastTurn(), roomOptions);
+		int delay = MAX_TURN_DURATION + getTimeToSetNextPlayerOnTurn(playCardStack.getSize(), playCardStack.getLast(), wasCardPlayedLastTurn(), wasCardDrawnLastTurn(), getAmountOfDrawedCardsDueToPlusTwoLastTurn(),roomOptions);
 		threadUtils_invokeIn(delay, this, [this, currentTurnAbortId]() {
-
 			if(startTurnAbortIdCounter == currentTurnAbortId) {
 				// startTurnAbortTimer() was not called in meantime
 
@@ -404,7 +414,8 @@ namespace card {
 	}
 	bool ServerMauMauGame::canPlay(Player& player, Card card) const {
 		if(playerOnTurn->getUsername() != player.getUsername()) return false;
-		if(isInSkipState_field && card.getValue() != CardValue::EIGHT) return false;
+		if(isInSkipState() && card.getValue() != SKIP_VALUE) return false;
+		if(isInDrawTwoState() && card.getValue() != DRAW_2_VALUE) return false;
 
 		Card lastCardOnPlayStack = playCardStack.getLast();
 		if(card.getValue() == CHANGE_COLOR_VALUE && roomOptions.getOption(Options::CHOOSE_COLOR_ON_JACK)) {
@@ -416,7 +427,7 @@ namespace card {
 	}
 	bool ServerMauMauGame::canDraw(Player& player) const {
 		if(playerOnTurn->getUsername() != player.getUsername()) return false;
-		if(isInSkipState_field) return false;
+		if(canPass(player)) return false;
 		return true;
 	}
 	bool ServerMauMauGame::canChangeColor(Card playedCard) const {
@@ -433,10 +444,13 @@ namespace card {
 		return checkIfOnTurn(player) && player.getHandCards().getSize() == 2;
 	}
 	bool ServerMauMauGame::canPass(Player& player) const {
-		return checkIfOnTurn(player) && isInSkipState_field;
+		return checkIfOnTurn(player) && (isInSkipState() || isInDrawTwoState());
 	}
 	bool ServerMauMauGame::isInSkipState() const {
 		return isInSkipState_field;
+	}
+	bool ServerMauMauGame::isInDrawTwoState() const {
+		return cardsToDrawDueToPlusTwo.size() > 0;
 	}
 	bool ServerMauMauGame::wasCardDrawnLastTurn() const {
 		return wasCardDrawn_lastTurn;
@@ -446,6 +460,9 @@ namespace card {
 	}
 	bool ServerMauMauGame::wasCardDrawnAndPlayedLastTurn() const {
 		return wasCardDrawnLastTurn() && wasCardPlayedLastTurn();
+	}
+	int ServerMauMauGame::getAmountOfDrawedCardsDueToPlusTwoLastTurn() const {
+		return amountOfDrawedCardsDueToPlusTwoLastTurn;
 	}
 	bool ServerMauMauGame::checkIfPlayerByParticipant(const std::shared_ptr<ParticipantOnServer>& participant) {
 		for(auto& p : players) {
@@ -513,7 +530,11 @@ namespace card {
 	}
 	void ServerMauMauGame::addCardDeckToDrawStack() {
 		CardStack cardsToAdd = {};
-		cardsToAdd.fillWithCardDeckAndShuffle();
+		for(int i = 0; i < Card::MAX_CARDS; i++) {
+			Card c = (i % 2 == 0) ? Card::CLUB_SEVEN : Card::CLUB_FIVE;
+			cardsToAdd.addFromPlain(c);
+		}
+	//	cardsToAdd.fillWithCardDeckAndShuffle();
 		cardsIngameSum += cardsToAdd.getSize();
 
 		for(auto& c : cardsToAdd) {

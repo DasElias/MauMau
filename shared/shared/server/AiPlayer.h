@@ -39,7 +39,7 @@ namespace card {
 			void drawCardImpl();
 			CardIndex chooseCardIndex(CardIndex indexOfPlayedJack);
 			bool shouldPlayDrawnCard();
-			void playIfIsInSkipState();
+			void playIfIsInSkipOrDrawTwoState();
 
 	};
 }

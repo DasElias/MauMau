@@ -58,7 +58,7 @@ namespace card {
 		gameData.setNextPlayerOnTurnAndUpdateSkipState(card);
 
 		auto newPlayerOnTurn = gameData.getPlayerOnTurn();
-		gameData.playerHasToDrawCards(newPlayerOnTurn, cardsToDraw, PLAY_DURATION_MS + delayMs);
+		gameData.setCardsToDrawOnPassDueToPlusTwo(cardsToDraw);
 	}
 	void MauMauGameAccessorFromServer::drawCardAndSetNextPlayerOnTurnLocal(std::string username) {
 		auto player = gameData.lookupOpponent(username);

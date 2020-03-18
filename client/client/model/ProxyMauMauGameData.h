@@ -36,6 +36,9 @@ namespace card {
 			std::vector<std::shared_ptr<ProxyPlayer>> opponents;
 			std::shared_ptr<LocalPlayer> localPlayer;
 
+			// when the player before has played a +2-card, the cards to draw are stored here
+			std::vector<Card> cardsToDrawOnPassDueToPlusTwo;
+
 			bool field_wasCardDrawnIntoHandCards = false;
 			bool field_wasCardPlayed = false;
 
@@ -88,6 +91,9 @@ namespace card {
 			void setOnTurnLocal(std::shared_ptr<ProxyPlayer> player);
 			void setInitialPlayerOnTurnLocal(std::shared_ptr<ProxyPlayer> player, Card nextCardOnDrawStack);
 
+			void addCardsToDrawOnPassDueToPlusTwo(std::size_t amountOfNullcards);
+			void setCardsToDrawOnPassDueToPlusTwo(std::vector<Card> cards);
+			bool isInDrawTwoState() const;
 			bool isLocalPlayerOnTurn() const;
 			bool areAllPreviousCardTransactionsCompleted() const;
 			bool isReadyToPerformLocalPlayerTurn() const;

@@ -22,14 +22,14 @@ namespace card {
 
 		int delay = randomInRange(1250, 1750);
 		auto& playCardStack = game.getPlayCardStack();
-		delay += getTimeToSetNextPlayerOnTurn(playCardStack.getSize(), playCardStack.getLast(), game.wasCardPlayedLastTurn(), game.wasCardDrawnLastTurn(), game.getOptions());
+		delay += getTimeToSetNextPlayerOnTurn(playCardStack.getSize(), playCardStack.getLast(), game.wasCardPlayedLastTurn(), game.wasCardDrawnLastTurn(), game.getAmountOfDrawedCardsDueToPlusTwoLastTurn(), game.getOptions());
 		threadUtils_invokeIn(delay, this, [this]() {
 			performTurn();
 		});
 	}
 	void AiPlayer::performTurn() {
-		if(game.isInSkipState()) {
-			playIfIsInSkipState();
+		if(game.isInSkipState() || game.isInDrawTwoState()) {
+			playIfIsInSkipOrDrawTwoState();
 			return;
 		}
 		if(tryPlayCard()) return;
@@ -118,13 +118,8 @@ namespace card {
 		Card lastCardOnDrawStack = game.getDrawCardStack().getLast();
 		return game.canPlay(*this, lastCardOnDrawStack);
 	}
-	void AiPlayer::playIfIsInSkipState() {
-		// we can't use getPlayableCard() since ServerMauMauGame::canPlay returns always
-		// false if the game is in skip state
-		std::vector<Card> playableCards;	
-		for(auto& c : getHandCards()) {
-			if(c.getValue() == SKIP_VALUE) playableCards.push_back(c);
-		}
+	void AiPlayer::playIfIsInSkipOrDrawTwoState() {
+		std::vector<Card> playableCards = getPlayableCards();
 
 		bool success;
 		if(playableCards.empty()) {

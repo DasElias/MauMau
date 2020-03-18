@@ -4,11 +4,11 @@
 #include "../utils/Logger.h"
 
 namespace card {
-	int getTimeToSetNextPlayerOnTurn(std::size_t playCardStackSize, Card lastCardOnPlayCardStack, bool wasCardPlayedThisTurn, bool wasCardDrawedThisTurn, const RoomOptions& options) {
+	int getTimeToSetNextPlayerOnTurn(std::size_t playCardStackSize, Card lastCardOnPlayCardStack, bool wasCardPlayedThisTurn, bool wasCardDrawedThisTurn, int cardsToDrawDueToPlusTwo, const RoomOptions& options) {
 		int delay = getTimeToEndCurrentTurn(playCardStackSize, lastCardOnPlayCardStack, wasCardPlayedThisTurn, wasCardDrawedThisTurn);
 
-		if(wasCardPlayedThisTurn && playCardStackSize > 1 && lastCardOnPlayCardStack.getValue() == DRAW_2_VALUE && options.getOption(Options::DRAW_TWO_ON_SEVEN)) {
-			delay += DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS + DRAW_DURATION_MS;
+		if(cardsToDrawDueToPlusTwo > 0) {
+			delay += DRAW_DURATION_MS + (cardsToDrawDueToPlusTwo - 1) * DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS;
 		}
 		if(wasCardDrawedThisTurn && !wasCardPlayedThisTurn) {
 			delay += DRAW_DURATION_MS;

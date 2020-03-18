@@ -33,7 +33,10 @@ namespace card {
 
 			return false;
 		}
-		if(gameData.getLocalPlayer()->isInSkipState() && card.getValue() != CardValue::EIGHT) return false;
+
+		// TODO check: what happens if skipping/drawing two is disabled
+		if(gameData.getLocalPlayer()->isInSkipState() && card.getValue() != SKIP_VALUE) return false;
+		if(gameData.isInDrawTwoState() && card.getValue() != DRAW_2_VALUE) return false;
 
 		auto& roomOptions = gameData.getOptions();
 		const CardAnimator& playCardStack = gameData.getPlayStack();
@@ -51,7 +54,7 @@ namespace card {
 		   isWaitingForColorChoose() ||
 		   gameData.getLocalPlayer()->hasTimeExpired() ||
 		   gameData.getLocalPlayer()->hasStartedToDrawCard() ||
-		   gameData.getLocalPlayer()->isInSkipState() ||
+		   canPass() ||
 		   gameData.getDrawCardForNextPlayer() == Card::NULLCARD) {
 			
 			return false;
@@ -73,7 +76,8 @@ namespace card {
 		return indexOfCardToPlayAfterColorChoose.has_value();
 	}
 	bool MauMauGameAccessorFromClient::canPass() const {
-		return gameData.isReadyToPerformLocalPlayerTurn() && gameData.getLocalPlayer()->isInSkipState();
+		auto localPlayer = gameData.getLocalPlayer();
+		return gameData.isReadyToPerformLocalPlayerTurn() && (localPlayer->isInSkipState() || gameData.isInDrawTwoState());
 	}
 	void MauMauGameAccessorFromClient::mau() {
 		auto localPlayer = gameData.getLocalPlayer();
@@ -188,7 +192,7 @@ namespace card {
 
 		std::size_t cardsToDrawForNextPlayer = gameData.getAmountsOfCardsToDrawForNextPlayer(playedCard);
 		auto newPlayerOnTurn = gameData.getPlayerOnTurn();
-		gameData.playerHasToDrawCards(newPlayerOnTurn, cardsToDrawForNextPlayer, PLAY_DURATION_MS);
+		gameData.addCardsToDrawOnPassDueToPlusTwo(cardsToDrawForNextPlayer);
 	}
 
 	void MauMauGameAccessorFromClient::onTurnEnd() {

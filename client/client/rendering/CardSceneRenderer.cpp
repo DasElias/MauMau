@@ -292,8 +292,9 @@ namespace card {
 
 	void CardSceneRenderer::renderDrawCardStack() {
 		auto& game = room->getGame();
+		auto& gameData = game.getGameData();
 		auto& drawCardStack = game.getDrawStack();
-		bool shouldDisable = game.getLocalPlayer()->isInSkipState();
+		bool shouldDisable = gameData.isReadyToPerformLocalPlayerTurn() && (game.getLocalPlayer()->isInSkipState() || gameData.isInDrawTwoState());
 		cardStackRenderer.renderCardStack(drawCardStack, DRAW_CARDS_POSITION, DRAW_CARDS_ROTATION, projectionMatrix, viewport, shouldDisable);
 
 		auto& animations = drawCardStack.getCardAnimations();

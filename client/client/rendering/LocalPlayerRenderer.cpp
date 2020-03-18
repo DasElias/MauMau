@@ -59,7 +59,12 @@ namespace card {
 	bool LocalPlayerRenderer::shouldDisableCard(ProxyMauMauGame& game, Card c) {
 		auto& gameData = game.getGameData();
 		auto& localPlayer = game.getLocalPlayer();
-		return localPlayer->isInSkipState() && !gameData.canSkipPlayer(c);
+
+		if(! gameData.isReadyToPerformLocalPlayerTurn()) return false;
+
+		if(localPlayer->isInSkipState()) return !gameData.canSkipPlayer(c);
+		else if(gameData.isInDrawTwoState()) return gameData.getAmountsOfCardsToDrawForNextPlayer(c) == 0;
+		else return false;
 	}
 	void LocalPlayerRenderer::renderAnimations(ProxyMauMauGame& game) {
 		auto& localPlayer = game.getLocalPlayer();

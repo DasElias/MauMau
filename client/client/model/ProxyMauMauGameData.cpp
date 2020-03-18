@@ -60,6 +60,26 @@ namespace card {
 		playCardStack.addLastCardFrom(cardOnPlayStack, drawCardStack, INITIAL_DRAW_DURATION_PLAYCARDSTACK_MS, getDelayUntilPlayStackCanBeInitialized(allPlayers.size(), handCardNumbersOfLocalPlayer.size()));
 	}
 
+	void ProxyMauMauGameData::addCardsToDrawOnPassDueToPlusTwo(std::size_t amountOfNullcards) {
+		// we change all cards in cardsToDrawOnPassDueToPlusTwo in NULLCARDS
+		for(int i = 0; i < cardsToDrawOnPassDueToPlusTwo.size(); i++) {
+			cardsToDrawOnPassDueToPlusTwo[i] = Card::NULLCARD;
+		}
+
+		// add amountOfNullcards
+		for(int i = 0; i < amountOfNullcards; i++) {
+			cardsToDrawOnPassDueToPlusTwo.push_back(Card::NULLCARD);
+		}
+	}
+
+	void ProxyMauMauGameData::setCardsToDrawOnPassDueToPlusTwo(std::vector<Card> cards) {
+		this->cardsToDrawOnPassDueToPlusTwo = cards;
+	}
+
+	bool ProxyMauMauGameData::isInDrawTwoState() const {
+		return cardsToDrawOnPassDueToPlusTwo.size() > 0;
+	}
+
 	bool ProxyMauMauGameData::isLocalPlayerOnTurn() const {
 		return userOnTurn == localPlayer;
 	}
@@ -331,16 +351,22 @@ namespace card {
 		return *playerOnTurnIter;
 	}
 	void ProxyMauMauGameData::setOnTurnLocal(std::shared_ptr<ProxyPlayer> player) {	
-		int delayToSetNextPlayerOnTurn = getTimeToSetNextPlayerOnTurn(playCardStack.getSizeInclPendingTransactions(), playCardStack.getLastInclAnimations(), field_wasCardPlayed, field_wasCardDrawnIntoHandCards, roomOptions);
+		int cardsToDrawDueToPlusTwoAmount = 0;
+
+		// if field_wasCardPlayed would be true, the player on turn would have passed skip/+2 to the next player
+		if(this->userOnTurn->isInSkipState() && !field_wasCardPlayed) {
+			this->userOnTurn->startSkippedAnimation();
+		}
+		if(isInDrawTwoState() && !field_wasCardPlayed) {
+			cardsToDrawDueToPlusTwoAmount = cardsToDrawOnPassDueToPlusTwo.size();
+			playerHasToDrawCards(userOnTurn, cardsToDrawOnPassDueToPlusTwo);
+		}
+
+		int delayToSetNextPlayerOnTurn = getTimeToSetNextPlayerOnTurn(playCardStack.getSizeInclPendingTransactions(), playCardStack.getLastInclAnimations(), field_wasCardPlayed, field_wasCardDrawnIntoHandCards, cardsToDrawDueToPlusTwoAmount, roomOptions);
 		int delayToFreezeAnimation = getTimeToEndCurrentTurn(playCardStack.getSizeInclPendingTransactions(), playCardStack.getLastInclAnimations(), field_wasCardPlayed, field_wasCardDrawnIntoHandCards);
-		// TODO FIX: Wenn Bedingung erfüllt, delayToFreezeAnimation von delayToSetNextPlayerOnTurn abziehen
 		if(field_wasCardDrawnIntoHandCards && field_wasCardPlayed && userOnTurn == localPlayer) {
 			// we don't have to take the time for drawing the card into consideration
 			delayToFreezeAnimation = 0;
-		}
-
-		if(this->userOnTurn->isInSkipState() && !field_wasCardPlayed) {
-			this->userOnTurn->startSkippedAnimation();
 		}
 
 		std::shared_ptr<ProxyPlayer> lastUserOnTurn = this->userOnTurn;
@@ -349,6 +375,10 @@ namespace card {
 		this->userOnTurn = player;
 
 		messageQueue.removeMessagesWithKey(skipStateMessageKey);
+		if(! field_wasCardPlayed) {
+			// if field_wasCardPlayed would be true, the player on turn would have +2 to the next player
+			this->cardsToDrawOnPassDueToPlusTwo.clear();
+		}
 		field_wasCardDrawnIntoHandCards = false;
 		field_wasCardPlayed = false;
 		threadUtils_invokeIn(delayToSetNextPlayerOnTurn, this, [this, player, lastUserOnTurn]() {			
