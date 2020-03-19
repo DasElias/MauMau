@@ -9,6 +9,7 @@ namespace card {
         SKIP_ON_EIGHT,
         PASS_SKIP,
         DRAW_TWO_ON_SEVEN,
+        PASS_DRAW_TWO,
         DIRECTION_CHANGE_ON_NINE,
         AMOUNT_OF_START_CARDS
     };
@@ -19,7 +20,7 @@ namespace card {
         // ----------------------------STATIC-FIELDS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            static int const OPTIONS_SIZE = 8;
+            static int const OPTIONS_SIZE = 9;
 
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------

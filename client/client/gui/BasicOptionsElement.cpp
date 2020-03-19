@@ -20,7 +20,8 @@ namespace card {
 		addOptionGroup(skipOnEight_option, {passSkip_option});
 
 		drawTwoOnSeven_option = std::make_shared<BoolOptionElement>("zwei Karten ziehen bei 7");
-		addStandaloneOption(drawTwoOnSeven_option);
+		passDrawTwo_option = std::make_shared<BoolOptionElement>("zwei Karten ziehen weiterreichen");
+		addOptionGroup(drawTwoOnSeven_option, {passDrawTwo_option});
 
 		directionChangeOnNine_option = std::make_shared<BoolOptionElement>("Richtungswechsel bei 9");
 		addStandaloneOption(directionChangeOnNine_option);
@@ -48,10 +49,11 @@ namespace card {
 		skipOnEight_option->set(roomOptions.getOption(Options::SKIP_ON_EIGHT));
 		passSkip_option->set(roomOptions.getOption(Options::PASS_SKIP));
 		drawTwoOnSeven_option->set(roomOptions.getOption(Options::DRAW_TWO_ON_SEVEN));
+		passDrawTwo_option->set(roomOptions.getOption(Options::PASS_DRAW_TWO));
 		directionChangeOnNine_option->set(roomOptions.getOption(Options::DIRECTION_CHANGE_ON_NINE));
 		amountOfStartCards_option->setValue(roomOptions.getOption(Options::AMOUNT_OF_START_CARDS));
 
-		assert(roomOptions.getAmountOfOptions() == 8);
+		assert(roomOptions.getAmountOfOptions() == 9);
 	}
 
 	RoomOptions BasicOptionsElement::getOptions() {
@@ -62,10 +64,11 @@ namespace card {
 		options.setOption(Options::SKIP_ON_EIGHT, skipOnEight_option->isToggled());
 		options.setOption(Options::PASS_SKIP, passSkip_option->isToggled());
 		options.setOption(Options::DRAW_TWO_ON_SEVEN, drawTwoOnSeven_option->isToggled());
+		options.setOption(Options::PASS_DRAW_TWO, passDrawTwo_option->isToggled());
 		options.setOption(Options::DIRECTION_CHANGE_ON_NINE, directionChangeOnNine_option->isToggled());
 		options.setOption(Options::AMOUNT_OF_START_CARDS, amountOfStartCards_option->getValue());
 
-		assert(options.getAmountOfOptions() == 8);
+		assert(options.getAmountOfOptions() == 9);
 		return options;
 	}
 

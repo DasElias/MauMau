@@ -188,11 +188,9 @@ namespace card {
 		PlayCardRequest_CTSPacket p(playedCard.getCardNumber(), wasCardDrawnThisTurn, static_cast<int>(newCardIndex));
 		packetTransmitter->sendPacketToServer(p);
 
-		gameData.setNextPlayerOnTurnAndUpdateSkipState(playedCard);
-
 		std::size_t cardsToDrawForNextPlayer = gameData.getAmountsOfCardsToDrawForNextPlayer(playedCard);
-		auto newPlayerOnTurn = gameData.getPlayerOnTurn();
 		gameData.addCardsToDrawOnPassDueToPlusTwo(cardsToDrawForNextPlayer);
+		gameData.setNextPlayerOnTurnAndUpdateSkipState(playedCard);
 	}
 
 	void MauMauGameAccessorFromClient::onTurnEnd() {

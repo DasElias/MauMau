@@ -10,6 +10,7 @@ namespace card {
 		setOption(Options::SKIP_ON_EIGHT, true);
 		setOption(Options::PASS_SKIP, true);
 		setOption(Options::DRAW_TWO_ON_SEVEN, true);
+		setOption(Options::PASS_DRAW_TWO, true);
 		setOption(Options::DIRECTION_CHANGE_ON_NINE, false);
 		setOption(Options::AMOUNT_OF_START_CARDS, 6);
 

@@ -353,15 +353,22 @@ namespace card {
 	void ProxyMauMauGameData::setOnTurnLocal(std::shared_ptr<ProxyPlayer> player) {	
 		int cardsToDrawDueToPlusTwoAmount = 0;
 
-		// if field_wasCardPlayed would be true, the player on turn would have passed skip/+2 to the next player
+		// if field_wasCardPlayed would be true, the player on turn would have passed skip to the next player
 		if(this->userOnTurn->isInSkipState() && !field_wasCardPlayed) {
 			this->userOnTurn->startSkippedAnimation();
 		}
 		if(isInDrawTwoState() && !field_wasCardPlayed) {
+			if(! roomOptions.getOption(Options::PASS_DRAW_TWO)) throw std::runtime_error("It isn't possible that a player has to draw cards due to a plus two, even though no (+2)-card was played when +2 cards can't be passed on.");
 			cardsToDrawDueToPlusTwoAmount = cardsToDrawOnPassDueToPlusTwo.size();
 			playerHasToDrawCards(userOnTurn, cardsToDrawOnPassDueToPlusTwo);
 		}
+		if(isInDrawTwoState() && !roomOptions.getOption(Options::PASS_DRAW_TWO)) {
+			cardsToDrawDueToPlusTwoAmount = cardsToDrawOnPassDueToPlusTwo.size();
+			// we actually draw the cards when the new player was set on turn (at the end of the method)
+		}
 
+		// we don't have to consider this delay if PASS_DRAW_TWO is disabled
+		int delayForDrawDueToPlusTwo = PLAY_DURATION_MS + ((field_wasCardDrawnIntoHandCards) ? (DRAW_DURATION_MS + DELAY_BETWEEN_DRAW_AND_PLAY) : 0);
 		int delayToSetNextPlayerOnTurn = getTimeToSetNextPlayerOnTurn(field_wasCardPlayed, field_wasCardDrawnIntoHandCards, cardsToDrawDueToPlusTwoAmount);
 		int delayToFreezeAnimation = getTimeToEndCurrentTurn(field_wasCardPlayed, field_wasCardDrawnIntoHandCards);
 		if(field_wasCardDrawnIntoHandCards && field_wasCardPlayed && userOnTurn == localPlayer) {
@@ -388,6 +395,11 @@ namespace card {
 		threadUtils_invokeIn(delayToFreezeAnimation, this, [this, lastUserOnTurn]() {
 			lastUserOnTurn->freezeRemainingTimeAnimation();
 		});
+
+		if(isInDrawTwoState() && !roomOptions.getOption(Options::PASS_DRAW_TWO)) {
+			playerHasToDrawCards(userOnTurn, cardsToDrawOnPassDueToPlusTwo, delayForDrawDueToPlusTwo);
+			cardsToDrawOnPassDueToPlusTwo.clear();
+		}
 	}
 
 	void ProxyMauMauGameData::setInitialPlayerOnTurnLocal(std::shared_ptr<ProxyPlayer> player, Card nextCardOnDrawStack) {

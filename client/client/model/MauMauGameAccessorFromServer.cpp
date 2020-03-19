@@ -55,10 +55,8 @@ namespace card {
 		}
 
 		if(card != Card::NULLCARD) gameData.playCardFromHandCards(player, card, newCardIndex, delayMs);
-		gameData.setNextPlayerOnTurnAndUpdateSkipState(card);
-
-		auto newPlayerOnTurn = gameData.getPlayerOnTurn();
 		gameData.setCardsToDrawOnPassDueToPlusTwo(cardsToDraw);
+		gameData.setNextPlayerOnTurnAndUpdateSkipState(card);
 	}
 	void MauMauGameAccessorFromServer::drawCardAndSetNextPlayerOnTurnLocal(std::string username) {
 		auto player = gameData.lookupOpponent(username);

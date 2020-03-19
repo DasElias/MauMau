@@ -145,19 +145,13 @@ namespace card {
 		updateColor(card, chosenIndex);
 		updateDirection(card);
 
-		// compute cards to draw for next player
-		// it's important to compute those before the next player is set on turn,
-		// since afterwards we've send already the last card on draw stack to the new
-		// player on turn
 		std::vector<int> cardsToDrawForNextPlayer = popCardsFromDrawStack(getAmountsOfCardsToDrawForNextPlayer(card));
-
-		checkForMauIfNeeded();
-		setNextPlayerOnTurnAndUpdateSkipState(card);
-
-		// add cardsToDrawForNextPlayer to cardsToDrawDueToPlusTwo
 		for(int& c : cardsToDrawForNextPlayer) {
 			this->cardsToDrawDueToPlusTwo.push_back(c);
 		}
+
+		checkForMauIfNeeded();
+		setNextPlayerOnTurnAndUpdateSkipState(card);		
 
 		// send packet to all other players
 		auto senderPlayerPtr = lookupPlayerByUsername(player.getUsername());
@@ -171,6 +165,11 @@ namespace card {
 		}
 
 		callGameEndFunctIfGameHasEnded();
+
+		if(isInDrawTwoState() && !roomOptions.getOption(Options::PASS_DRAW_TWO)) {
+			playerOnTurn->addHandCards(cardsToDrawDueToPlusTwo);
+			cardsToDrawDueToPlusTwo.clear();
+		}
 
 		return true;
 	}
@@ -308,13 +307,16 @@ namespace card {
 	}
 
 	void ServerMauMauGame::setPlayerOnTurn(std::shared_ptr<Player> player) {
-		if(! wasCardPlayed_thisTurn) {
+		amountOfDrawedCardsDueToPlusTwoLastTurn = 0;
+
+		if(isInDrawTwoState() && !wasCardPlayed_thisTurn) {
 			// if there was a card played, the +2 was passed on to the next player
 			playerOnTurn->addHandCards(cardsToDrawDueToPlusTwo);
 			amountOfDrawedCardsDueToPlusTwoLastTurn = cardsToDrawDueToPlusTwo.size();
 			cardsToDrawDueToPlusTwo.clear();
-		} else {
-			amountOfDrawedCardsDueToPlusTwoLastTurn = 0;
+		}
+		if(isInDrawTwoState() && !roomOptions.getOption(Options::PASS_DRAW_TWO)) {
+			amountOfDrawedCardsDueToPlusTwoLastTurn = cardsToDrawDueToPlusTwo.size();
 		}
 
 		wasCardDrawn_lastTurn = wasCardDrawn_thisTurn;
