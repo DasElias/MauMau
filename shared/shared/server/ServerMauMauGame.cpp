@@ -27,7 +27,6 @@
 #include "../model/TimeToSetNextPlayerOnTurnDuration.h"
 #include "../model/MaxTurnDuration.h"
 #include "../model/MinDrawCardStackSize.h"
-#include "PlayerFactory.h"
 
 namespace card {
 	uint64_t ServerMauMauGame::startTurnAbortIdCounter = 0;
@@ -62,7 +61,7 @@ namespace card {
 
 		// init players
 		for(auto& p : participants) {
-			auto constructedPlayer = PlayerFactory::constructPlayer(p);
+			auto constructedPlayer = (p->isRealPlayer()) ? std::make_shared<Player>(p) : std::make_shared<AiPlayer>(p, *this);
 			this->players.push_back(constructedPlayer);
 
 			int startCardsPerPlayer = options.getOption(Options::AMOUNT_OF_START_CARDS);
