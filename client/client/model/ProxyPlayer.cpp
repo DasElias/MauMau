@@ -26,22 +26,12 @@ namespace card {
 			delay += INITIAL_DRAW_DELAY_BETWEEN_CARDS_MS;
 		}
 	}
-	void ProxyPlayer::drawSingleCardInHandCardsLocal(Card mutatesTo, CardAnimator& drawCardStack) {
-		handCardStack.addLastCardFromImmediately(mutatesTo, drawCardStack, DRAW_DURATION_MS);
+	void ProxyPlayer::drawCardInHandCardsDueToUserAction(Card mutatesTo, CardAnimator& drawCardStack, int delayMs) {
+		handCardStack.addLastCardFrom(mutatesTo, drawCardStack, DRAW_DURATION_MS, delayMs);
 		gameInformation.wasSingleCardDrawedInHandCardsThisTurn = true;
 	}
-	void ProxyPlayer::drawMultipleCardsInHandCardsLocal(std::vector<Card> mutatesTo, CardAnimator& drawCardStack) {
-		int delay = 0;
-		for(Card& c : mutatesTo) {
-			handCardStack.addLastCardFrom(c, drawCardStack, DRAW_DURATION_MS, delay);
-			delay += DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS;
-		}
-	}
-	void ProxyPlayer::drawMultipleCardsInHandCardsAfterDelay(std::vector<Card> mutatesTo, CardAnimator& drawCardStack, int delayMs) {
-		for(Card& c : mutatesTo) {
-			handCardStack.addLastCardFrom(c, drawCardStack, DRAW_DURATION_MS, delayMs);
-			delayMs += DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS;
-		}
+	void ProxyPlayer::drawCardInHandCardsAsPunishment(Card mutatesTo, CardAnimator& drawCardStack, int delayMs) {
+		handCardStack.addLastCardFrom(mutatesTo, drawCardStack, DRAW_DURATION_MS, delayMs);
 	}
 	void ProxyPlayer::playCardFromHandCardsAfterDelay(Card card, CardAnimator& playCardStack, int delayMs) {
 		playCardStack.addRandomCardFrom(card, handCardStack, PLAY_DURATION_MS, delayMs);

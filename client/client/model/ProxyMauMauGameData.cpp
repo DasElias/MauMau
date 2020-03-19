@@ -159,7 +159,7 @@ namespace card {
 	void ProxyMauMauGameData::drawInHandCardsFromCardStack(std::shared_ptr<ProxyPlayer> player, Card card) {
 		throwIfGameHasEnded();
 		field_wasCardDrawnIntoHandCards = true;
-		player->drawSingleCardInHandCardsLocal(card, drawCardStack);
+		player->drawCardInHandCardsDueToUserAction(card, drawCardStack);
 	}
 
 	void ProxyMauMauGameData::drawInHandCardsFromTempCards() {
@@ -423,8 +423,12 @@ namespace card {
 	}
 
 	void ProxyMauMauGameData::playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, const std::vector<Card>& cards, int delayMs) {
-		player->drawMultipleCardsInHandCardsAfterDelay(cards, drawCardStack, delayMs);
-		tryRebalanceCardStacks();
+		for(const Card& c : cards) {
+			player->drawCardInHandCardsDueToUserAction(c, drawCardStack, delayMs);
+			tryRebalanceCardStacks();
+
+			delayMs += DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS;
+		}
 	}
 
 	void ProxyMauMauGameData::tryRebalanceCardStacks() {

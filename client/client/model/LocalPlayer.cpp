@@ -53,7 +53,7 @@ namespace card {
 
 	void LocalPlayer::sortDrawnCardIntoHandCardsLocal() {
 		if(! isCardInTemporaryStack()) throw std::runtime_error("The player hasn't drawn a card yet!");
-		drawSingleCardInHandCardsLocal(drawnCardTempStack.get(0), drawnCardTempStack);
+		drawCardInHandCardsDueToUserAction(drawnCardTempStack.get(0), drawnCardTempStack);
 	}
 
 	bool LocalPlayer::hasStartedToDrawCard() const {
