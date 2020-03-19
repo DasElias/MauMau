@@ -380,7 +380,7 @@ namespace card {
 	void ServerMauMauGame::startTurnAbortTimer() {
 		uint64_t currentTurnAbortId = ++startTurnAbortIdCounter;
 
-		int delay = MAX_TURN_DURATION + getTimeToSetNextPlayerOnTurn(playCardStack.getSize(), playCardStack.getLast(), wasCardPlayedLastTurn(), wasCardDrawnLastTurn(), getAmountOfDrawedCardsDueToPlusTwoLastTurn(),roomOptions);
+		int delay = MAX_TURN_DURATION + getTimeToSetNextPlayerOnTurn(wasCardPlayedLastTurn(), wasCardDrawnLastTurn(), getAmountOfDrawedCardsDueToPlusTwoLastTurn());
 		threadUtils_invokeIn(delay, this, [this, currentTurnAbortId]() {
 			if(startTurnAbortIdCounter == currentTurnAbortId) {
 				// startTurnAbortTimer() was not called in meantime

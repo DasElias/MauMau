@@ -22,7 +22,7 @@ namespace card {
 
 		int delay = randomInRange(1250, 1750);
 		auto& playCardStack = game.getPlayCardStack();
-		delay += getTimeToSetNextPlayerOnTurn(playCardStack.getSize(), playCardStack.getLast(), game.wasCardPlayedLastTurn(), game.wasCardDrawnLastTurn(), game.getAmountOfDrawedCardsDueToPlusTwoLastTurn(), game.getOptions());
+		delay += getTimeToSetNextPlayerOnTurn(game.wasCardPlayedLastTurn(), game.wasCardDrawnLastTurn(), game.getAmountOfDrawedCardsDueToPlusTwoLastTurn());
 		threadUtils_invokeIn(delay, this, [this]() {
 			performTurn();
 		});

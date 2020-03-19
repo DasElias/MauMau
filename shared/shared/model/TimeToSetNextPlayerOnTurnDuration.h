@@ -3,6 +3,6 @@
 #include "RoomOptions.h"
 
 namespace card {
-	int getTimeToSetNextPlayerOnTurn(std::size_t playCardStackSize, Card lastCardOnPlayCardStack, bool wasCardPlayedThisTurn, bool wasCardDrawedThisTurn, int cardsToDrawDueToPlusTwo, const RoomOptions& options);
-	int getTimeToEndCurrentTurn(std::size_t playCardStackSize, Card lastCardOnPlayCardStack, bool wasCardPlayedThisTurn, bool wasCardDrawedThisTurn);
+	int getTimeToSetNextPlayerOnTurn(bool wasCardPlayedThisTurn, bool wasCardDrawedThisTurn, int cardsToDrawDueToPlusTwo);
+	int getTimeToEndCurrentTurn(bool wasCardPlayedThisTurn, bool wasCardDrawedThisTurn);
 }
