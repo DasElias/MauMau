@@ -144,32 +144,25 @@ namespace card {
 
 		updateColor(card, chosenIndex);
 		updateDirection(card);
-
-		std::vector<int> cardsToDrawForNextPlayer = popCardsFromDrawStack(getAmountsOfCardsToDrawForNextPlayer(card));
-		for(int& c : cardsToDrawForNextPlayer) {
-			this->cardsToDrawDueToPlusTwo.push_back(c);
-		}
-
+		markCardsFromDrawStackToDrawDueToPlusTwo(getAmountsOfCardsToDrawForNextPlayer(card));
 		checkForMauIfNeeded();
+
+		// if the option PASS_DRAW_TWO is active, the field is going to be cleared after the cards have been drawn
+		std::vector<int> cardsToDrawDueToPlusTwo_backup = this->cardsToDrawDueToPlusTwo;
+		std::vector<int> cardsToDrawDueToPlusTwo_filledWithNullcards = std::vector<int>(cardsToDrawDueToPlusTwo_backup.size(), 0);
 		setNextPlayerOnTurnAndUpdateSkipState(card);		
 
-		// send packet to all other players
+		// send packet to players
 		auto senderPlayerPtr = lookupPlayerByUsername(player.getUsername());
 		for(auto& p : this->players) {
 			if(senderPlayerPtr == p) continue;
 
-			std::vector<int> cardsToDrawToSend = (playerOnTurn == p) ? cardsToDrawDueToPlusTwo : std::vector<int>(cardsToDrawDueToPlusTwo.size(), 0);
-
+			std::vector<int>& cardsToDrawToSend = (playerOnTurn == p) ? cardsToDrawDueToPlusTwo_backup : cardsToDrawDueToPlusTwo_filledWithNullcards;
 			OtherPlayerHasPlayedCard_STCPacket packet(player.getUsername(), card.getCardNumber(), static_cast<int>(chosenIndex), cardsToDrawToSend, wasCardJustDrawn);
 			packetTransmitter->sendPacketToClient(packet, p->getWrappedParticipant());
 		}
 
 		callGameEndFunctIfGameHasEnded();
-
-		if(isInDrawTwoState() && !roomOptions.getOption(Options::PASS_DRAW_TWO)) {
-			playerOnTurn->addHandCards(cardsToDrawDueToPlusTwo);
-			cardsToDrawDueToPlusTwo.clear();
-		}
 
 		return true;
 	}
@@ -227,6 +220,11 @@ namespace card {
 			removedCards.push_back(removed.getCardNumber());
 		}
 		return removedCards;
+	}
+
+	void ServerMauMauGame::markCardsFromDrawStackToDrawDueToPlusTwo(int cardAmount) {
+		std::vector<int> cardsToDrawForNextPlayer = popCardsFromDrawStack(cardAmount);
+		this->cardsToDrawDueToPlusTwo.insert(cardsToDrawDueToPlusTwo.begin(), cardsToDrawForNextPlayer.begin(), cardsToDrawForNextPlayer.end());
 	}
 
 	bool ServerMauMauGame::drawCardAndSetNextPlayerOnTurn(Player& player) {
@@ -333,6 +331,11 @@ namespace card {
 		this->playerOnTurn->onEndTurn();
 		this->playerOnTurn = player;
 		this->playerOnTurn->onStartTurn();
+
+		if(isInDrawTwoState() && !roomOptions.getOption(Options::PASS_DRAW_TWO)) {
+			playerOnTurn->addHandCards(cardsToDrawDueToPlusTwo);
+			cardsToDrawDueToPlusTwo.clear();
+		}
 
 		Card nextOnDrawStackToSend = drawCardStack.getLast();
 		LocalPlayerIsOnTurn_STCPacket packet(nextOnDrawStackToSend.getCardNumber());

@@ -118,6 +118,7 @@ namespace card {
 			[[nodiscard]] bool hasPlayerWon();
 
 			[[nodiscard]] std::vector<int> popCardsFromDrawStack(int cardAmount);
+			void markCardsFromDrawStackToDrawDueToPlusTwo(int cardAmount);
 
 			// returns false if the player tries to play a card which isn't owned by him
 			[[nodiscard]] bool movePlayedCardToPlayCardStack(Player& p, Card playedCard, bool wasCardJustDrawn);
