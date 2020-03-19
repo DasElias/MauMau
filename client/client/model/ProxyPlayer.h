@@ -6,17 +6,6 @@
 #include <optional>
 
 namespace card {
-	struct ProxyPlayerGameInformation {
-		public:
-			ProxyPlayerGameInformation() = default;
-			ProxyPlayerGameInformation(const ProxyPlayerGameInformation&) = delete;
-
-		private:
-			bool wasSingleCardDrawedInHandCardsThisTurn = false;
-
-		friend class ProxyPlayer;
-	};
-
 	class ProxyPlayer {
 		// ----------------------------------------------------------------------
 		// ----------------------------STATIC-FIELDS-----------------------------
@@ -41,13 +30,12 @@ namespace card {
 			long long int unixTimePlayerSkipped;
 			long long int unixTimePlayerMaued;
 			bool isInSkipState_field;
-			ProxyPlayerGameInformation& gameInformation;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			ProxyPlayer(std::shared_ptr<ParticipantOnClient> wrappedParticipant, ProxyPlayerGameInformation& gameInformation);
+			ProxyPlayer(std::shared_ptr<ParticipantOnClient> wrappedParticipant);
 			ProxyPlayer(const ProxyPlayer&) = delete;
 			virtual ~ProxyPlayer() = default;
 

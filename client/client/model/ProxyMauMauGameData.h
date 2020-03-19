@@ -27,7 +27,6 @@ namespace card {
 			CardIndex indexForNextCard;
 			Card drawCardForNextPlayer;
 			RoomOptions& roomOptions;
-			ProxyPlayerGameInformation gameInformation;
 			Direction direction = Direction::CW;
 			MessageQueue messageQueue;
 

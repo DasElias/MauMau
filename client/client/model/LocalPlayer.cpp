@@ -9,8 +9,8 @@
 #include <shared/model/CardAnimationDuration.h>
 
 namespace card {
-	LocalPlayer::LocalPlayer(std::shared_ptr<ParticipantOnClient> wrappedLocalPlayer,  ProxyPlayerGameInformation& gameInformation) :
-			ProxyPlayer(wrappedLocalPlayer, gameInformation),
+	LocalPlayer::LocalPlayer(std::shared_ptr<ParticipantOnClient> wrappedLocalPlayer) :
+			ProxyPlayer(wrappedLocalPlayer),
 			wrappedLocalPlayer(wrappedLocalPlayer),
 			drawnCardTempStack(std::make_unique<HandCardStack>()) {
 

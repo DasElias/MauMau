@@ -9,15 +9,14 @@ namespace card {
 	int const ProxyPlayer::SKIP_ANIMATION_DURATION_MS = 2 * PLAY_DURATION_MS;
 	int const ProxyPlayer::MAU_ANIMATION_DURATION_MS = 2 * PLAY_DURATION_MS;
 
-	ProxyPlayer::ProxyPlayer(std::shared_ptr<ParticipantOnClient> wrappedParticipant, ProxyPlayerGameInformation& gameInformation) :
+	ProxyPlayer::ProxyPlayer(std::shared_ptr<ParticipantOnClient> wrappedParticipant) :
 			handCardStack(std::make_unique<HandCardStack>()),
 			wrappedParticipant(wrappedParticipant),
 			unixTimeOnTurnAnimationStarted(NOT_ON_TURN),
 			unixTimeOnTurnAnimationFreezed(ANIMATION_NOT_FREEZED),
 			unixTimePlayerSkipped(0),
 			unixTimePlayerMaued(0),
-			isInSkipState_field(false),
-			gameInformation(gameInformation) {
+			isInSkipState_field(false) {
 	}
 	void ProxyPlayer::initHandCards(std::vector<Card> handCards, CardAnimator& drawCardStack, std::size_t playerIndex) {
 		int delay = int(playerIndex * handCards.size() * INITIAL_DRAW_DELAY_BETWEEN_CARDS_MS);
@@ -28,7 +27,6 @@ namespace card {
 	}
 	void ProxyPlayer::drawCardInHandCardsDueToUserAction(Card mutatesTo, CardAnimator& drawCardStack, int delayMs) {
 		handCardStack.addLastCardFrom(mutatesTo, drawCardStack, DRAW_DURATION_MS, delayMs);
-		gameInformation.wasSingleCardDrawedInHandCardsThisTurn = true;
 	}
 	void ProxyPlayer::drawCardInHandCardsAsPunishment(Card mutatesTo, CardAnimator& drawCardStack, int delayMs) {
 		handCardStack.addLastCardFrom(mutatesTo, drawCardStack, DRAW_DURATION_MS, delayMs);
@@ -113,7 +111,6 @@ namespace card {
 		this->unixTimeOnTurnAnimationFreezed = ANIMATION_NOT_FREEZED;
 	}
 	void ProxyPlayer::onEndTurn() {
-		gameInformation.wasSingleCardDrawedInHandCardsThisTurn = false;
 		isInSkipState_field = false;
 	}
 	bool ProxyPlayer::operator==(const ProxyPlayer& p2) const {
