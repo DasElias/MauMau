@@ -27,6 +27,7 @@
 #include "../model/TimeToSetNextPlayerOnTurnDuration.h"
 #include "../model/MaxTurnDuration.h"
 #include "../model/MinDrawCardStackSize.h"
+#include "PlayerFactory.h"
 
 namespace card {
 	uint64_t ServerMauMauGame::startTurnAbortIdCounter = 0;
@@ -43,9 +44,9 @@ namespace card {
 			handler_onPass(std::bind(&ServerMauMauGame::listener_onPass, this, std::placeholders::_1, std::placeholders::_2)) {
 
 		addCardDeckToDrawStack();
-		Card firstCardOnPlayStack;
 
 		// init play card stack
+		Card firstCardOnPlayStack;
 		for(std::size_t i = 0; i < drawCardStack.getSize(); i++) {
 			auto card = drawCardStack.get(i);
 			if(!canChangeColor(card) && getAmountsOfCardsToDrawForNextPlayer(card) == 0 && !canSkipPlayer(card)) {
@@ -61,7 +62,7 @@ namespace card {
 
 		// init players
 		for(auto& p : participants) {
-			auto constructedPlayer = (p->isRealPlayer()) ? std::make_shared<Player>(p) : std::make_shared<AiPlayer>(p, *this);
+			auto constructedPlayer = PlayerFactory::constructPlayer(p);
 			this->players.push_back(constructedPlayer);
 
 			int startCardsPerPlayer = options.getOption(Options::AMOUNT_OF_START_CARDS);
@@ -73,8 +74,6 @@ namespace card {
 
 		// set player on turn
 		setInitialPlayerOnTurn();
-
-
 
 		// init packet listeners
 		packetTransmitter->addListenerForClientPkt(PlayCardRequest_CTSPacket::PACKET_ID, handler_onPlayCard);
@@ -92,7 +91,7 @@ namespace card {
 		// all threadUtils callbacks for this object aren't executed after the object is destroyed
 		threadUtils_removeCallbacksWithKey(this);
 
-		// turn of current player doesn't expire
+		// we increment this counter to prevent that the turn abort callback for the player currently on turn is called
 		startTurnAbortIdCounter++;
 	}
 
@@ -309,20 +308,22 @@ namespace card {
 
 		if(isInDrawTwoState() && !wasCardPlayed_thisTurn) {
 			// if there was a card played, the +2 was passed on to the next player
-			playerOnTurn->addHandCards(cardsToDrawDueToPlusTwo);
 			amountOfDrawedCardsDueToPlusTwoLastTurn = cardsToDrawDueToPlusTwo.size();
+			playerOnTurn->addHandCards(cardsToDrawDueToPlusTwo);
 			cardsToDrawDueToPlusTwo.clear();
 		}
 		if(isInDrawTwoState() && !roomOptions.getOption(Options::PASS_DRAW_TWO)) {
+			// the cards are actually drawn later at the end of the method
+			// If the PASS_DRAW_TWO option is NOT active, wasCardPlayed_thisTurn cannot be false if there are cards to draw,
+			// since the player, which is on turn at the moment, must have played the +2-card.
 			amountOfDrawedCardsDueToPlusTwoLastTurn = cardsToDrawDueToPlusTwo.size();
 		}
 
+		// reset fields
 		wasCardDrawn_lastTurn = wasCardDrawn_thisTurn;
 		wasCardDrawn_thisTurn = false;
-
 		wasCardPlayed_lastTurn = wasCardPlayed_thisTurn;
 		wasCardPlayed_thisTurn = false;
-
 		wasMauedCorrectly_thisTurn = false;
 		isInSkipState_field = false;
 
@@ -332,6 +333,7 @@ namespace card {
 		this->playerOnTurn = player;
 		this->playerOnTurn->onStartTurn();
 
+		// if there are still cards to draw and the option PASS_DRAW_TWO is not set, we draw the punishment cards
 		if(isInDrawTwoState() && !roomOptions.getOption(Options::PASS_DRAW_TWO)) {
 			playerOnTurn->addHandCards(cardsToDrawDueToPlusTwo);
 			cardsToDrawDueToPlusTwo.clear();
@@ -346,7 +348,7 @@ namespace card {
 			// we don't check for mau if the player has drawed and played a card in the same turn
 			return;
 		} else if(wasCardDrawn_thisTurn) {
-			throw std::runtime_error("Logic error. Can't check for mau if the player hasn't played a card-");
+			throw std::runtime_error("Logic error. Can't check for mau if the player has drawed but not played a card-");
 		}
 
 		bool hasJustPlayedLastButOneCard = playerOnTurn->getHandCards().getSize() == 1;
@@ -388,8 +390,7 @@ namespace card {
 		int delay = MAX_TURN_DURATION + getTimeToSetNextPlayerOnTurn(wasCardPlayedLastTurn(), wasCardDrawnLastTurn(), getAmountOfDrawedCardsDueToPlusTwoLastTurn());
 		threadUtils_invokeIn(delay, this, [this, currentTurnAbortId]() {
 			if(startTurnAbortIdCounter == currentTurnAbortId) {
-				// startTurnAbortTimer() was not called in meantime
-
+				// if startTurnAbortTimer() was not called in meantime
 				abortTurn();
 			}
 		});
