@@ -23,10 +23,10 @@ namespace card {
 		renderer2D(renderer2D),
 		circleSectorRenderer(circleSectorRenderer),
 		avatarTextures(avatarTextures),
-		labelElementForLocal(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
-		labelElementForVisAVis(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
-		labelElementForLeft(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())),
-		labelElementForRight(std::make_shared<PlayerLabel>(avatarTextures.getAspectRatio())) {
+		labelElementForLocal(std::make_shared<PlayerLabel>()),
+		labelElementForVisAVis(std::make_shared<PlayerLabel>()),
+		labelElementForLeft(std::make_shared<PlayerLabel>()),
+		labelElementForRight(std::make_shared<PlayerLabel>()) {
 
 		auto parentElement = std::make_shared<egui::UnorganizedParentElement>();
 		parentElement->addChildElement(labelElementForLocal);
@@ -40,16 +40,20 @@ namespace card {
 		labelElementForLeft->setPositionOnScreen(LEFT_PLAYER_POSITION);
 		labelElementForRight->setPositionOnScreen(RIGHT_PLAYER_POSITION);
 	}
-	void PlayerLabelRenderer::renderLocal(const std::shared_ptr<ProxyPlayer>& participant) {
+	void PlayerLabelRenderer::renderLocal(const std::shared_ptr<ProxyPlayer>& participant, glm::vec2 positionOnScreen) {
+		labelElementForLocal->setPositionOnScreen(positionOnScreen);
 		renderImpl(participant, labelElementForLocal, playerLocal);
 	}
-	void PlayerLabelRenderer::renderVisAVis(const std::shared_ptr<ProxyPlayer>& participant) {
+	void PlayerLabelRenderer::renderVisAVis(const std::shared_ptr<ProxyPlayer>& participant, glm::vec2 positionOnScreen) {
+		labelElementForVisAVis->setPositionOnScreen(positionOnScreen);
 		renderImpl(participant, labelElementForVisAVis, playerVisAVis);
 	}
-	void PlayerLabelRenderer::renderLeft(const std::shared_ptr<ProxyPlayer>& participant) {
+	void PlayerLabelRenderer::renderLeft(const std::shared_ptr<ProxyPlayer>& participant, glm::vec2 positionOnScreen) {
+		labelElementForLeft->setPositionOnScreen(positionOnScreen);
 		renderImpl(participant, labelElementForLeft, playerLeft);
 	}
-	void PlayerLabelRenderer::renderRight(const std::shared_ptr<ProxyPlayer>& participant) {
+	void PlayerLabelRenderer::renderRight(const std::shared_ptr<ProxyPlayer>& participant, glm::vec2 positionOnScreen) {
+		labelElementForRight->setPositionOnScreen(positionOnScreen);
 		renderImpl(participant, labelElementForRight, playerRight);
 	}
 	void PlayerLabelRenderer::renderImpl(const std::shared_ptr<ProxyPlayer>& participant, std::shared_ptr<PlayerLabel>& labelElementField, std::weak_ptr<ProxyPlayer>& proxyPlayerField) {

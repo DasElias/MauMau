@@ -3,6 +3,7 @@
 #include "../rendering/CardSceneRenderer.h"
 #include "../renderingModel/ProjectionMatrix.h"
 #include "../renderingModel/Viewport.h"
+#include "../renderingModel/WorldToScreenConverter.h"
 #include <egui/rendering/MasterRenderer.h>
 
 namespace card {
@@ -19,6 +20,7 @@ namespace card {
 		private:
 			ProjectionMatrix projectionMatrix;
 			Viewport viewport;
+			WorldToScreenConverter worldToScreenConverter;
 			egui::MasterRenderer& eguiRenderer;
 			CardSceneRenderer sceneRenderer;
 			long long unixTimeGameHasEnded;
@@ -36,6 +38,9 @@ namespace card {
 			void updateAndRender(float delta) override;
 			void onStateEnter() override;
 			void onStateExit() override;
+
+		private:
+			float getYOnScreenOfMiddleOfHandCards();
 
 	};
 }

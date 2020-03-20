@@ -16,6 +16,11 @@ namespace card {
         public:
             static float const IMAGE_WIDTH_RELATIVE_ON_SCREEN;
             static int const SKIP_IMAGE_WIDTH_ADDITION;
+            static int const SPACE_BETWEEN_IMAGE_AND_LABEL_PX;
+
+        private:
+            static float const AVATAR_IMAGE_ASPECT_RATIO;
+            static int const LABEL_FONT_SIZE_PX;
 
         // ----------------------------------------------------------------------
         // --------------------------------FIELDS--------------------------------
@@ -30,7 +35,13 @@ namespace card {
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            PlayerLabel(float avatarAspectRatio);
+            PlayerLabel();
+
+        // ----------------------------------------------------------------------
+        // ---------------------------STATIC-METHODS-----------------------------
+        // ----------------------------------------------------------------------
+        public:
+            static float getHeightInPercent();
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------

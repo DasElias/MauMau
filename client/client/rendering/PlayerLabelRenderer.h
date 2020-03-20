@@ -56,10 +56,10 @@ namespace card {
         // -------------------------------METHODS--------------------------------
         // ----------------------------------------------------------------------
         public:
-             void renderLocal(const std::shared_ptr<ProxyPlayer>& participant);
-             void renderVisAVis(const std::shared_ptr<ProxyPlayer>& participant);
-             void renderLeft(const std::shared_ptr<ProxyPlayer>& participant);
-             void renderRight(const std::shared_ptr<ProxyPlayer>& participant);
+             void renderLocal(const std::shared_ptr<ProxyPlayer>& participant, glm::vec2 positionOnScreen);
+             void renderVisAVis(const std::shared_ptr<ProxyPlayer>& participant, glm::vec2 positionOnScreen);
+             void renderLeft(const std::shared_ptr<ProxyPlayer>& participant, glm::vec2 positionOnScreen);
+             void renderRight(const std::shared_ptr<ProxyPlayer>& participant, glm::vec2 positionOnScreen);
              void flush();
             
         private:

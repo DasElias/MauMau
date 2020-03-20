@@ -31,6 +31,7 @@
 #include "../renderingModel/HandCardIntersectionChecker.h"
 #include "../renderingModel/MauMauCardStackMisalignmentGenerator.h"
 #include "../renderingModel/CardIndexTextures.h"
+#include "PlayerLabelPositionGenerator.h"
 
 namespace card {
 	class CardSceneRenderer {
@@ -66,6 +67,7 @@ namespace card {
 			MessageRenderer messageRenderer;
 			CardStackIntersectionChecker cardStackIntersectionChecker;
 			HandCardIntersectionChecker handCardIntersectionChecker;
+			PlayerLabelPositionGenerator playerLabelPositionGenerator;
 
 			boost::optional<ProxyRoom&> room;
 			bool shouldRenderGameEndScreen = false;
