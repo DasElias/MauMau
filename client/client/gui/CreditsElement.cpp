@@ -49,8 +49,8 @@ namespace card {
 		title->setPreferredHeight({TITLE_FONT_SIZE_PX, RelativityMode::ABSOLUTE_VALUE});
 		subtitle->setPreferredHeight({SUBTITLE_FONT_SIZE_PX + 20, RelativityMode::ABSOLUTE_VALUE});
 
-		appendContent("Karten", "www.svg-cards.sourceforge.net");
-		appendContent("Avatare", "www.getavataaars.com");
+		appendContent("Karten", "David Bellot - www.svg-cards.sourceforge.net");
+		appendContent("Avatare", "Pablo Stanley - www.getavataaars.com");
 		appendContent(u8"Textur für Tisch", "Petr Kovar - www.freeimages.com");
 		appendContent("Icons", "Freepik - www.flaticon.com");
 		appendContent("Verwendete Libraries", "GLFW/GLAD\nNanoVG\nBoost.Asio\nLoguru");
