@@ -69,13 +69,20 @@ std::function<void(egui::Node* const)> egui::MauMauTheme::button_coloredButton_a
 		switch(p_btn->getButtonType()) {
 			case ColoredButtonType::GREEN:
 				p_btn->getTextComponent()->setColor(egui::Color(1.0f, 1.0f, 0.96f));
-				p_btn->setBackground(std::make_shared<ColoredBackground>(
-					Color(0.26f, 0.82f, 0.35f)
+				p_btn->setBackground(std::make_shared<LinearGradientBackground>(
+					LinearGradient(
+						Color(0.26f, 0.82f, 0.35f),
+						Color(0.21f, 0.65f, 0.28f),
+						0.5f,
+						0,
+						0.5f,
+						1
+					)
 				));
 				p_btn->setHoveredBackground(std::make_shared<LinearGradientBackground>(
 					LinearGradient(
 						Color(0.26f, 0.82f, 0.35f),
-						Color(0.48f, 0.88f, 0.55f),
+						Color(0.33f, 0.84f, 0.42f),
 						0.5f,
 						0,
 						0.5f,
@@ -85,13 +92,20 @@ std::function<void(egui::Node* const)> egui::MauMauTheme::button_coloredButton_a
 				break;
 			case ColoredButtonType::BLUE:
 				p_btn->getTextComponent()->setColor(egui::Color(0.96f, 1.0f, 1.0f));
-				p_btn->setBackground(std::make_shared<ColoredBackground>(
-					Color(0.0f, 0.69f, 0.94)
+				p_btn->setBackground(std::make_shared<LinearGradientBackground>(
+					LinearGradient(
+						Color(0.0f, 0.69f, 0.94f),
+						Color(0.0f, 0.62f, 0.85f),
+						0.5f,
+						0,
+						0.5f,
+						1
+					)
 				));
 				p_btn->setHoveredBackground(std::make_shared<LinearGradientBackground>(
 					LinearGradient(
 						Color(0.0f, 0.69f, 0.94f),
-						Color(0.30f, 0.78f, 0.96f),
+						Color(0.1f, 0.72f, 0.95f),
 						0.5f,
 						0,
 						0.5f,
@@ -101,13 +115,20 @@ std::function<void(egui::Node* const)> egui::MauMauTheme::button_coloredButton_a
 				break;
 			case ColoredButtonType::RED:
 				p_btn->getTextComponent()->setColor(egui::Color(1.0f, 0.98f, 1.0f));
-				p_btn->setBackground(std::make_shared<ColoredBackground>(
-					Color(0.93f, 0.38f, 0.29f)
+				p_btn->setBackground(std::make_shared<LinearGradientBackground>(
+					LinearGradient(
+						Color(0.93f, 0.38f, 0.29f),
+						Color(0.84f, 0.34f, 0.24f),
+						0.5f,
+						0,
+						0.5f,
+						1
+					)
 				));
 				p_btn->setHoveredBackground(std::make_shared<LinearGradientBackground>(
 					LinearGradient(
 						Color(0.93f, 0.38f, 0.29f),
-						Color(0.95f, 0.56f, 0.50f),
+						Color(0.94f, 0.44f, 0.36f),
 						0.5f,
 						0,
 						0.5f,
