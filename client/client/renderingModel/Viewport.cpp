@@ -1,5 +1,6 @@
 #include "Viewport.h"
 #include "Viewport.h"
+#include "Viewport.h"
 
 #include <glm/mat4x4.hpp>
 #include <glm/matrix.hpp>
@@ -12,6 +13,10 @@ namespace card {
 			rotation(rotation),
 			scale(scale) {
 
+		update();
+	}
+	void Viewport::addPosition(glm::vec3 posAddition) {
+		this->position += posAddition;
 		update();
 	}
 	void Viewport::setPosition(glm::vec3 pos) {

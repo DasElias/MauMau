@@ -1,6 +1,7 @@
 #pragma once
 #include "State.h"
 #include "../rendering/CardSceneRenderer.h"
+#include "../rendering/PlayerLabelPositionGenerator.h"
 #include "../renderingModel/ProjectionMatrix.h"
 #include "../renderingModel/Viewport.h"
 #include "../renderingModel/WorldToScreenConverter.h"
@@ -12,7 +13,8 @@ namespace card {
 		// ----------------------------STATIC-FIELDS-----------------------------
 		// ----------------------------------------------------------------------
 		private:
-			static const long long GAME_HASNT_ENDED = -1;
+			static int const FOV;
+			static float const START_VIEWPORT_Z;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
@@ -21,9 +23,9 @@ namespace card {
 			ProjectionMatrix projectionMatrix;
 			Viewport viewport;
 			WorldToScreenConverter worldToScreenConverter;
+			PlayerLabelPositionGenerator playerLabelPositionGenerator;
 			egui::MasterRenderer& eguiRenderer;
 			CardSceneRenderer sceneRenderer;
-			long long unixTimeGameHasEnded;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
@@ -40,7 +42,11 @@ namespace card {
 			void onStateExit() override;
 
 		private:
+			void updateViewportY();
+			void updateViewportZ();
 			float getYOnScreenOfMiddleOfHandCards();
+			float getTopYOfVisAVisPlayerLabel();
+
 
 	};
 }

@@ -24,6 +24,7 @@ namespace card {
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
+			void addPosition(glm::vec3 posAddition);
 			void setPosition(glm::vec3 pos);
 			void setRotation(glm::vec3 rotation);
 			void setScale(float scale);
