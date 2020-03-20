@@ -15,7 +15,7 @@ namespace card {
 		label->getTextComponent()->setForceOneLine(true);
 
 		selector = std::make_shared<IntegerSelector>(defaultValue, minValue, maxValue, false);
-		selector->setFontSize(0.75f, true);
+		selector->setFontSize(0.85f, true);
 		addChildElement(selector);
 		selector->setPreferredWidth({SLIDER_WIDTH_PX, egui::RelativityMode::ABSOLUTE_VALUE});
 
