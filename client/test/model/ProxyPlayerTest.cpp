@@ -12,8 +12,7 @@ TEST_CASE("ProxyPlayer can draw and play cards", "[ProxyPlayer]") {
 
 	const std::string username = "Testnutzer";
 	auto wrappedParticipant = std::make_shared<ParticipantOnClient>(username, 0, false);
-	ProxyPlayerGameInformation gameInformation;
-	ProxyPlayer p(wrappedParticipant, gameInformation);
+	ProxyPlayer p(wrappedParticipant);
 	CardAnimator drawCardStack(std::make_unique<CardStack>());
 	drawCardStack.addFromPlain(Card::NULLCARD, Card::MAX_CARDS);
 
@@ -34,31 +33,13 @@ TEST_CASE("ProxyPlayer can draw and play cards", "[ProxyPlayer]") {
 		REQUIRE(drawCardStack.getSize() == (Card::MAX_CARDS - handCards.size()));
 		REQUIRE(p.getCardStack().getSize() == handCards.size());
 	}
-	SECTION("draw single card") {
-		p.drawSingleCardInHandCardsLocal(Card::CLUB_FIVE, drawCardStack);
+	SECTION("draw card") {
+		p.drawCardInHandCards(Card::CLUB_FIVE, drawCardStack);
 		
 		REQUIRE(drawCardStack.getSize() == (Card::MAX_CARDS - 1));
 		REQUIRE(p.getCardStack().getSize() == 1);
 	}
-	SECTION("draw multiple cards after card play time") {
-		std::vector<Card> cardsToDraw = {Card::CLUB_ACE, Card::DIAMOND_SEVEN};
-
-		p.drawMultipleCardsInHandCardsAfterDelay(cardsToDraw, drawCardStack, 0);
-
-		REQUIRE(drawCardStack.getSize() == (Card::MAX_CARDS - cardsToDraw.size()));
-		REQUIRE(p.getCardStack().getSize() == cardsToDraw.size());
-	}
 	SECTION("play card from hand card") {
-		std::vector<Card> handCards = {Card::CLUB_ACE, Card::DIAMOND_SEVEN};
-		p.initHandCards(handCards, drawCardStack, 0);
-
-		p.playCardFromHandCards(Card::CLUB_EIGHT, playCardStack);
-
-		REQUIRE(playCardStack.getSize() == 1);
-		REQUIRE(playCardStack.get(0) == Card::CLUB_EIGHT);
-		REQUIRE(p.getCardStack().getSize() == handCards.size() - 1);
-	}
-	SECTION("play card from hand card after draw time") {
 		std::vector<Card> handCards = {Card::CLUB_ACE, Card::DIAMOND_SEVEN};
 		p.initHandCards(handCards, drawCardStack, 0);
 
@@ -68,16 +49,5 @@ TEST_CASE("ProxyPlayer can draw and play cards", "[ProxyPlayer]") {
 		REQUIRE(playCardStack.get(0) == Card::CLUB_EIGHT);
 		REQUIRE(p.getCardStack().getSize() == handCards.size() - 1);
 	}
-	SECTION("on skip") {
-		p.onStartTurn();
-		p.onSkip();
-
-		REQUIRE(p.getPercentOfSkipAnimationOrNone().has_value());
-		REQUIRE(p.getPercentOfSkipAnimation() >= 0);
-		REQUIRE(p.getPercentOfSkipAnimation() <= 1);
-		REQUIRE(p.isSkipAnimationActive());
-
-	}
-
 	p.onEndTurn();
 }
