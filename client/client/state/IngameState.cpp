@@ -27,6 +27,7 @@ namespace card {
 		
 		updateViewportY();
 		updateViewportZ();
+		updateViewportY();
 
 		projectionMatrix.update(FOV);
 		sceneRenderer.render(delta);
