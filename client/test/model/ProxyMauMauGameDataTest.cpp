@@ -33,7 +33,7 @@ TEST_CASE("", "[ProxyMauMauGameData]") {
 		auto localPlayer = gameData.getLocalPlayer();
 		REQUIRE(localPlayer->getWrappedParticipiant() == localParticipant);
 	}
-	SECTION("change player on turn") {
+	/*SECTION("change player on turn") {
 		REQUIRE(gameData.isLocalPlayerOnTurn());
 
 		SECTION("set next player on turn") {
@@ -54,7 +54,7 @@ TEST_CASE("", "[ProxyMauMauGameData]") {
 		
 		REQUIRE(wasTurnEndCallbackInvoked);
 
-	}
+	}*/
 	SECTION("player has to draw cards") {
 		auto player = gameData.lookupPlayer(opponent1->getUsername());
 		std::size_t handCardSizeBefore = player->getCardStack().getSize();
