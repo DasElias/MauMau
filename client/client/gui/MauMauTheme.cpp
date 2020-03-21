@@ -16,7 +16,7 @@
 #include <egui/model/nodeComponents/background/LinearGradientBackground.h>
 #include <stdexcept>
 
-float const egui::MauMauTheme::BTN_HEIGHT = 0.065f;
+float const egui::MauMauTheme::BTN_HEIGHT = 0.0575f;
 
 egui::MauMauTheme::MauMauTheme(EGuiContext& context) :
 	AbstractTheme(context, [this]() {

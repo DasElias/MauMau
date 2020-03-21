@@ -35,7 +35,7 @@ namespace card {
 		// apply theme
 		ThemeManager::getInstance().apply(this);
 
-		setPreferredDimension({1, RelativityMode::RELATIVE_IN_PARENT}, {0.065f, RelativityMode::RELATIVE_ON_SCREEN});
+		setPreferredDimension({1, RelativityMode::RELATIVE_IN_PARENT}, {0.0575f, RelativityMode::RELATIVE_ON_SCREEN});
 		label = std::make_shared<egui::Label>();
 		addChildElement(label);
 		label->setPreferredWidth({1, egui::RelativityMode::RELATIVE_IN_PARENT});
