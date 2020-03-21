@@ -535,11 +535,7 @@ namespace card {
 	}
 	void ServerMauMauGame::addCardDeckToDrawStack() {
 		CardStack cardsToAdd = {};
-		for(int i = 0; i < Card::MAX_CARDS; i++) {
-			Card c = (i % 2 == 0) ? Card::CLUB_SEVEN : Card::CLUB_FIVE;
-			cardsToAdd.addFromPlain(c);
-		}
-	//	cardsToAdd.fillWithCardDeckAndShuffle();
+		cardsToAdd.fillWithCardDeckAndShuffle();
 		cardsIngameSum += cardsToAdd.getSize();
 
 		for(auto& c : cardsToAdd) {
