@@ -25,7 +25,7 @@ namespace card {
 
 		float const GRID_MARGIN_LEFT_RIGHT = 0.05f;
 		float const GRID_MARGIN_TOP_BOTTOM = 0.05f;
-		grid = std::make_shared<CategorizedAvatarGrid>(avatarTextures, 1);
+		grid = std::make_shared<CategorizedAvatarGrid>(avatarTextures, 0);
 		content->addChildElement(grid);
 		grid->setPreferredDimension({1-GRID_MARGIN_LEFT_RIGHT, egui::RelativityMode::RELATIVE_IN_PARENT}, {1-GRID_MARGIN_TOP_BOTTOM, egui::RelativityMode::RELATIVE_IN_PARENT});
 		grid->setOwnPositioning(std::make_shared<egui::RelativePositioningInParent>(GRID_MARGIN_LEFT_RIGHT / 2, GRID_MARGIN_TOP_BOTTOM / 2));
