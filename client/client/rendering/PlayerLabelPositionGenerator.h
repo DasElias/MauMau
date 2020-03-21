@@ -7,7 +7,8 @@ namespace card {
         // ----------------------------STATIC-FIELDS-----------------------------
         // ----------------------------------------------------------------------
         private:
-            static int const SPACE_BETWEEN_LABEL_AND_CARDS_LOCAL_VISAVIS_PX;
+            static int const SPACE_BETWEEN_LABEL_AND_CARDS_LOCAL_PX;
+            static int const SPACE_BETWEEN_LABEL_AND_CARDS_VISAVIS_PX;
             static float const LEFT_RIGHT_TRANSLATION;
 
         // ----------------------------------------------------------------------

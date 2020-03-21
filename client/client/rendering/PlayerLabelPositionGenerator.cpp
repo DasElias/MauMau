@@ -4,7 +4,8 @@
 #include "../gui/PlayerLabel.h"
 
 namespace card {
-	int const PlayerLabelPositionGenerator::SPACE_BETWEEN_LABEL_AND_CARDS_LOCAL_VISAVIS_PX = 5;
+	int const PlayerLabelPositionGenerator::SPACE_BETWEEN_LABEL_AND_CARDS_VISAVIS_PX = 5;
+	int const PlayerLabelPositionGenerator::SPACE_BETWEEN_LABEL_AND_CARDS_LOCAL_PX = 25;
 	float const PlayerLabelPositionGenerator::LEFT_RIGHT_TRANSLATION = 0.045f;
 
 	PlayerLabelPositionGenerator::PlayerLabelPositionGenerator(ProjectionMatrix& pm, Viewport& v) :
@@ -15,7 +16,7 @@ namespace card {
 		glm::vec2 positionScreen = converter.convertWorldToScreen_percent(positionWorld);
 		positionScreen.x = 0.25f;
 		positionScreen.y -= PlayerLabel::getHeightInPercent();
-		positionScreen.y -= egui::y_pixelToPercent(SPACE_BETWEEN_LABEL_AND_CARDS_LOCAL_VISAVIS_PX);
+		positionScreen.y -= egui::y_pixelToPercent(SPACE_BETWEEN_LABEL_AND_CARDS_LOCAL_PX);
 		return positionScreen;
 	}
 	glm::vec2 PlayerLabelPositionGenerator::getScreenPosForVisAVisPlayerLabel() const {
@@ -23,7 +24,7 @@ namespace card {
 		glm::vec2 positionScreen = converter.convertWorldToScreen_percent(positionWorld);
 		positionScreen.x -= PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN / 2;
 		positionScreen.y -= PlayerLabel::getHeightInPercent();
-		positionScreen.y -= egui::y_pixelToPercent(SPACE_BETWEEN_LABEL_AND_CARDS_LOCAL_VISAVIS_PX);
+		positionScreen.y -= egui::y_pixelToPercent(SPACE_BETWEEN_LABEL_AND_CARDS_VISAVIS_PX);
 		return positionScreen;
 	}
 	glm::vec2 PlayerLabelPositionGenerator::getScreenPosForLeftPlayerLabel() const {
