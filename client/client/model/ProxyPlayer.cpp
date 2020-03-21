@@ -25,10 +25,7 @@ namespace card {
 			delay += INITIAL_DRAW_DELAY_BETWEEN_CARDS_MS;
 		}
 	}
-	void ProxyPlayer::drawCardInHandCardsDueToUserAction(Card mutatesTo, CardAnimator& drawCardStack, int delayMs) {
-		handCardStack.addLastCardFrom(mutatesTo, drawCardStack, DRAW_DURATION_MS, delayMs);
-	}
-	void ProxyPlayer::drawCardInHandCardsAsPunishment(Card mutatesTo, CardAnimator& drawCardStack, int delayMs) {
+	void ProxyPlayer::drawCardInHandCards(Card mutatesTo, CardAnimator& drawCardStack, int delayMs) {
 		handCardStack.addLastCardFrom(mutatesTo, drawCardStack, DRAW_DURATION_MS, delayMs);
 	}
 	void ProxyPlayer::playCardFromHandCardsAfterDelay(Card card, CardAnimator& playCardStack, int delayMs) {

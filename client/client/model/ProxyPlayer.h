@@ -46,9 +46,7 @@ namespace card {
 			void initHandCards(std::vector<Card> handCards, CardAnimator& drawCardStack, std::size_t playerIndex);
 			
 			// a method to draw multiple cards is not offered, since the draw card stack has to be rebalanced after every drawn card
-			void drawCardInHandCardsDueToUserAction(Card mutatesTo, CardAnimator& drawCardStack, int delayMs = 0);	// when a player chooses to draw a card
-			void drawCardInHandCardsAsPunishment(Card mutatesTo, CardAnimator& drawCardStack, int delayMs = 0);	// for example, after a +2-card
-
+			void drawCardInHandCards(Card mutatesTo, CardAnimator& drawCardStack, int delayMs = 0);	
 			virtual void playCardFromHandCardsAfterDelay(Card card, CardAnimator& playCardStack, int delayMs);
 
 			const CardAnimator& getCardStack() const;
