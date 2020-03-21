@@ -190,7 +190,7 @@ namespace card {
 
 		std::size_t cardsToDrawForNextPlayer = gameData.getAmountsOfCardsToDrawForNextPlayer(playedCard);
 		gameData.addCardsToDrawOnPassDueToPlusTwo(cardsToDrawForNextPlayer);
-		gameData.setNextPlayerOnTurnAndUpdateSkipState(playedCard);
+		gameData.setNextPlayerOnTurnAndUpdateSkipAndDrawTwoState(playedCard);
 	}
 
 	void MauMauGameAccessorFromClient::onTurnEnd() {

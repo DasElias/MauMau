@@ -56,7 +56,7 @@ namespace card {
 
 		if(card != Card::NULLCARD) gameData.playCardFromHandCards(player, card, newCardIndex, delayMs);
 		gameData.setCardsToDrawOnPassDueToPlusTwo(cardsToDraw);
-		gameData.setNextPlayerOnTurnAndUpdateSkipState(card);
+		gameData.setNextPlayerOnTurnAndUpdateSkipAndDrawTwoState(card);
 	}
 	void MauMauGameAccessorFromServer::drawCardAndSetNextPlayerOnTurnLocal(std::string username) {
 		auto player = gameData.lookupOpponent(username);
@@ -74,8 +74,15 @@ namespace card {
 	}
 	void MauMauGameAccessorFromServer::listener_onOtherPlayerHasPassed(Packet& p) {
 		auto& casted = dynamic_cast<OtherPlayerHasPassed_STCPacket&>(p);
+		// we append the message first since after the next player was set on turn, the game isn't in draw two state anymore
+		if(gameData.isInDrawTwoState()) {
+			gameData.appendMessage(casted.getUsername() + " musste passen und muss "+std::to_string(gameData.getSizeOfCardsToDrawDueToPlusTwo())+" Karten ziehen.");
+		} else {
+			gameData.appendMessage(casted.getUsername() + " musste passen.");
+		}
+
 		gameData.setNextPlayerOnTurnLocal();
-		gameData.appendMessage(casted.getUsername() + " musste passen.");
+		
 	}
 	void MauMauGameAccessorFromServer::listener_onLocalPlayerIsOnTurn(Packet& p) {
 		auto& casted = dynamic_cast<LocalPlayerIsOnTurn_STCPacket&>(p);

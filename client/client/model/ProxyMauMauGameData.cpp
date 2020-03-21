@@ -80,6 +80,10 @@ namespace card {
 		return cardsToDrawOnPassDueToPlusTwo.size() > 0;
 	}
 
+	std::size_t ProxyMauMauGameData::getSizeOfCardsToDrawDueToPlusTwo() const {
+		return cardsToDrawOnPassDueToPlusTwo.size();
+	}
+
 	bool ProxyMauMauGameData::isLocalPlayerOnTurn() const {
 		return userOnTurn == localPlayer;
 	}
@@ -312,7 +316,7 @@ namespace card {
 				log(LogSeverity::WARNING, "Unknown MauPunishmentCause: " + std::to_string(static_cast<int>(cause)));
 		}
 	}
-	void ProxyMauMauGameData::setNextPlayerOnTurnAndUpdateSkipState(Card playedCard) {
+	void ProxyMauMauGameData::setNextPlayerOnTurnAndUpdateSkipAndDrawTwoState(Card playedCard) {
 		if(roomOptions.getOption(Options::PASS_SKIP)) {
 			setNextPlayerOnTurnLocal();
 			if(canSkipPlayer(playedCard)) {
@@ -326,6 +330,9 @@ namespace card {
 			else setNextPlayerOnTurnLocal();
 		}
 		
+		if(roomOptions.getOption(Options::PASS_DRAW_TWO) && isInDrawTwoState() &&userOnTurn == localPlayer) {
+			messageQueue.appendMessagePermanently("Spiele eine 7 oder passe, um "+std::to_string(getSizeOfCardsToDrawDueToPlusTwo())+" Karten zu ziehen.", drawTwoMessageKey);
+		}
 	}
 	void ProxyMauMauGameData::setNextPlayerOnTurnLocal() {
 		std::shared_ptr<ProxyPlayer> nextPlayer = getNextPlayer(userOnTurn);
@@ -382,6 +389,7 @@ namespace card {
 		this->userOnTurn = player;
 
 		messageQueue.removeMessagesWithKey(skipStateMessageKey);
+		messageQueue.removeMessagesWithKey(drawTwoMessageKey);
 		if(! field_wasCardPlayed) {
 			// if field_wasCardPlayed would be true, the player on turn would have +2 to the next player
 			this->cardsToDrawOnPassDueToPlusTwo.clear();

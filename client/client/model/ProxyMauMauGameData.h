@@ -47,6 +47,8 @@ namespace card {
 
 			// message that the game is in skip state
 			MessageKey skipStateMessageKey;
+			MessageKey drawTwoMessageKey;
+
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
@@ -83,7 +85,7 @@ namespace card {
 			void playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, std::size_t amountOfCards, int delayMs = 0);
 			void playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, const std::vector<Card>& cards, int delayMs = 0);
 			
-			void setNextPlayerOnTurnAndUpdateSkipState(Card playedCard);
+			void setNextPlayerOnTurnAndUpdateSkipAndDrawTwoState(Card playedCard);
 			void setNextPlayerOnTurnLocal();
 			void setNextButOnePlayerOnTurnLocal();
 			std::shared_ptr<ProxyPlayer> getNextPlayer(std::shared_ptr<ProxyPlayer> playerOnTurn);
@@ -93,6 +95,7 @@ namespace card {
 			void addCardsToDrawOnPassDueToPlusTwo(std::size_t amountOfNullcards);
 			void setCardsToDrawOnPassDueToPlusTwo(std::vector<Card> cards);
 			bool isInDrawTwoState() const;
+			std::size_t getSizeOfCardsToDrawDueToPlusTwo() const;
 			bool isLocalPlayerOnTurn() const;
 			bool areAllPreviousCardTransactionsCompleted() const;
 			bool isReadyToPerformLocalPlayerTurn() const;
