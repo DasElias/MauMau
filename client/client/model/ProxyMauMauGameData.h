@@ -135,6 +135,8 @@ namespace card {
 			void updateCardIndex(Card playedCard, CardIndex newCardIndex);
 			void updateDirection(Card playedCard);
 			void throwIfGameHasEnded();
+			void clearPermanentMessagesIfGameHasEnded();
+			void clearPermanentMessages();
 
 			void appendMauPunishmentMessage(std::string punishedUsername, MauPunishmentCause cause);
 

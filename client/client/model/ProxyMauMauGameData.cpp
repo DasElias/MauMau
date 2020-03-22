@@ -124,6 +124,7 @@ namespace card {
 		player->playCardFromHandCardsAfterDelay(card, playCardStack, delay);
 		updateCardIndex(card, newCardIndex);
 		updateDirection(card);
+		clearPermanentMessagesIfGameHasEnded();
 	}
 	void ProxyMauMauGameData::playCardFromLocalPlayerHandCards(std::size_t indexInHandCards, CardIndex newCardIndex, int delayMs) {
 		Card card = localPlayer->getCardStack().get(indexInHandCards);
@@ -132,6 +133,7 @@ namespace card {
 		localPlayer->playCardFromHandCardsAfterDelay(indexInHandCards, playCardStack, delayMs);
 		updateCardIndex(card, newCardIndex);
 		updateDirection(card);
+		clearPermanentMessagesIfGameHasEnded();
 	}
 	void ProxyMauMauGameData::playCardFromLocalPlayerTempCards(CardIndex newCardIndex, int delay) {
 		auto drawnCardOrNone = localPlayer->getCardInTempStack();
@@ -145,6 +147,7 @@ namespace card {
 		localPlayer->playCardFromTempCardStackLocal(playCardStack);
 		updateCardIndex(drawnCard, newCardIndex);
 		updateDirection(drawnCard);
+		clearPermanentMessagesIfGameHasEnded();
 	}
 	void ProxyMauMauGameData::updateCardIndex(Card playedCard, CardIndex newCardIndex) {
 		if(newCardIndex == CardIndex::NULLINDEX) {
@@ -183,6 +186,16 @@ namespace card {
 			throw std::runtime_error("Can't perform action when the game has already ended.");
 		}
 	}
+	void ProxyMauMauGameData::clearPermanentMessagesIfGameHasEnded() {
+		if(hasGameEnded()) {
+			clearPermanentMessages();
+		}
+	}
+	void ProxyMauMauGameData::clearPermanentMessages() {
+		messageQueue.removeMessagesWithKey(skipStateMessageKey);
+		messageQueue.removeMessagesWithKey(drawTwoMessageKey);
+		
+	}
 	const CardAnimator& ProxyMauMauGameData::getDrawStack() const {
 		return drawCardStack;
 	}
@@ -206,6 +219,7 @@ namespace card {
 	void ProxyMauMauGameData::removeOpponentLocal(std::shared_ptr<ParticipantOnClient> participant) {
 		std::string participantUsername = participant->getUsername();
 		appendMessage(participantUsername + u8" verließ das Spiel.");
+		clearPermanentMessagesIfGameHasEnded();
 
 		if(hasGameEnded()) return;
 		auto player = lookupOpponent(participantUsername);
@@ -388,8 +402,7 @@ namespace card {
 		onTurnEndCallback(this->userOnTurn);
 		this->userOnTurn = player;
 
-		messageQueue.removeMessagesWithKey(skipStateMessageKey);
-		messageQueue.removeMessagesWithKey(drawTwoMessageKey);
+		clearPermanentMessages();
 		if(! field_wasCardPlayed) {
 			// if field_wasCardPlayed would be true, the player on turn would have +2 to the next player
 			this->cardsToDrawOnPassDueToPlusTwo.clear();
