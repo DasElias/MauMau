@@ -9,8 +9,11 @@ add_subdirectory(state)
 
 set(card_source_files Main.h Main.cpp)
 
-
 if(CMAKE_BUILD_TYPE STREQUAL "Release")   
+	if(MSVC)
+		set(CMAKE_CREATE_WIN32_EXE "/SUBSYSTEM:WINDOWS /ENTRY:\"mainCRTStartup\"")
+	else()
+	endif()
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ENTRY:mainCRTStartup")
 	add_executable(card WIN32 ${card_source_files})
 else()
@@ -34,3 +37,18 @@ target_link_libraries(card
 	gui
 	res_font
 )
+
+install(TARGETS card DESTINATION .)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../installer/svg-cards DESTINATION .)
+
+set(CPACK_GENERATOR WIX)
+set(CPACK_PACKAGE_NAME "MauMau 3D")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "MauMau")
+set(CPACK_PACKAGE_VENDOR "Elias Horner")
+set_property(INSTALL "$<TARGET_FILE_NAME:card>"
+  PROPERTY CPACK_START_MENU_SHORTCUTS "MauMau 3D"
+)
+set(CPACK_WIX_UPGRADE_GUID "798DCAC0-0B6D-4432-A603-27464F1E821F")
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION .)
+include(CPack)
+include(InstallRequiredSystemLibraries)

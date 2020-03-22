@@ -1,18 +1,22 @@
-cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
-cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.15.5 FATAL_ERROR)
 project(card)
 
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if(MSVC)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
 endif(MSVC)
+
+if (NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
+endif()
+
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")   
     message("Link runtime statically.")
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
-    set(Boost_USE_STATIC_RUNTIME ON)
+   # set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
+   # set(Boost_USE_STATIC_RUNTIME ON)
 endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
@@ -50,6 +54,8 @@ if(BUILD_SERVER_AS_DAEMON)
     add_compile_definitions(BUILD_SERVER_AS_DAEMON)
 endif(BUILD_SERVER_AS_DAEMON)
 
+enable_testing()
+
 add_subdirectory(deps)
 add_subdirectory(shared)
 if(BUILD_CLIENT)
@@ -58,3 +64,6 @@ endif(BUILD_CLIENT)
 if(BUILD_SERVER)
     add_subdirectory(server)
 endif(BUILD_SERVER)
+
+set(CTEST_PROJECT_NAME "MauMau")
+include(CTest)

@@ -7,6 +7,8 @@ file(GLOB_RECURSE client_test_files
 )
 
 add_executable(client_test ${client_test_files})
+enable_testing()
+add_test(client_test client_test)
 
 target_link_libraries(client_test
 	${Boost_LIBRARIES}

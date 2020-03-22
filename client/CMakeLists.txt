@@ -22,6 +22,8 @@ include_directories("${CMAKE_SOURCE_DIR}/deps/loguru")
 include_directories("${CMAKE_SOURCE_DIR}/deps/simpleIni")
 include_directories("${CMAKE_SOURCE_DIR}/deps/json")
 
+enable_testing()
+
 add_subdirectory(res)
 add_subdirectory(deps)
 add_subdirectory(client)
