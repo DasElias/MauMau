@@ -452,10 +452,11 @@ namespace card {
 	}
 
 	void ProxyMauMauGameData::tryRebalanceCardStacks() {
-		while(drawCardStack.getSize() <= MIN_DRAW_CARD_STACK_SIZE && playCardStack.getSize() > 1) {
-			drawCardStack.addFirstCardFrom(Card::NULLCARD, playCardStack, REBALANCE_DURATION, 0);
+		while(drawCardStack.getAvailableCardsSize() <= MIN_DRAW_CARD_STACK_SIZE && playCardStack.getAvailableCardsSize() > 1) {
+			drawCardStack.addFirstCardFromImmediately(Card::NULLCARD, playCardStack, REBALANCE_DURATION);
 		}
-		if(drawCardStack.getSize() < MIN_DRAW_CARD_STACK_SIZE) {
+
+		if(drawCardStack.getAvailableCardsSize() == 0 || drawCardStack.getAvailableCardsSize() + drawCardStack.getNumberOfIncomingAnimations() < MIN_DRAW_CARD_STACK_SIZE) {
 			for(int i = 1; i <= Card::MAX_CARDS; i++) {
 				drawCardStack.addFromPlainAtPosition(0, Card(i));
 			}

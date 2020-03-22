@@ -13,13 +13,14 @@ namespace card {
 		// ----------------------------------------------------------------------
 		private:
 			static long long idCounter;
-			static int pendingAnimationsCounter;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
 			long long id;
+			int cardsToRemoveAfterDelayCounter = 0;
+			int numberOfIncomingAnimations = 0;
 			CardAnimationCollection animations;
 			std::unique_ptr<CardCollection> wrappedCardCollection;
 			std::optional<Card> lastRegisteredAnimation;
@@ -32,12 +33,6 @@ namespace card {
 			~CardAnimator();
 			CardAnimator(const CardAnimator&) = delete;
 			CardAnimator& operator=(const CardAnimator&) = delete;
-
-		// ----------------------------------------------------------------------
-		// ---------------------------STATIC-METHODS-----------------------------
-		// ----------------------------------------------------------------------
-		public:
-			static bool arePendingAnimations();
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
@@ -68,6 +63,9 @@ namespace card {
 
 			Card getLastInclAnimations() const;
 			void clearInclAnimations();
+
+			int getAvailableCardsSize() const;
+			int getNumberOfIncomingAnimations() const;
 
 			//
 			// METHODS FROM CardCollection
@@ -100,8 +98,7 @@ namespace card {
 		private:
 			void onAnimationStart();
 			void onAnimationEnd();
-
-			void registerCardAnimation(Card c);
-			void unregisterCardAnimation();
+			void registerCardAnimation(Card c, CardAnimator& source);
+			void unregisterCardAnimation(CardAnimator& source);
 	};
 }

@@ -6,7 +6,6 @@
 
 namespace card {
 	long long CardAnimator::idCounter = 0;
-	int CardAnimator::pendingAnimationsCounter = 0;
 
 	CardAnimator::CardAnimator(std::unique_ptr<CardCollection> wrappedCardCollection) :
 			id(idCounter++),
@@ -16,9 +15,6 @@ namespace card {
 	CardAnimator::~CardAnimator() {
 		threadUtils_removeCallbacksWithKey(this);
 	}
-	bool CardAnimator::arePendingAnimations() {
-		return pendingAnimationsCounter > 0;
-	}
 
 	void card::CardAnimator::addFirstCardFrom(Card mutatesTo, CardAnimator& source, int durationMs, int delayMs) {
 		if(delayMs == 0) {
@@ -26,25 +22,25 @@ namespace card {
 			return;
 		}
 
-		registerCardAnimation(mutatesTo);
+		registerCardAnimation(mutatesTo, source);
 		threadUtils_invokeIn(delayMs, this, [this, mutatesTo, &source, durationMs]() {
-			unregisterCardAnimation();
+			unregisterCardAnimation(source);
 			this->addFirstCardFromImmediately(mutatesTo, source, durationMs);
 		});
 	}
 
 	void card::CardAnimator::addFirstCardFromImmediately(Card mutatesTo, CardAnimator& source, int durationMs) {
 		std::size_t const indexToRemove = 0;
-		onAnimationStart();
 		source.remove(indexToRemove);
 
 		CardAnimation a(getMilliseconds(), durationMs, source, mutatesTo, indexToRemove);
 		animations.insertAnimation(a);
 
+		onAnimationStart();
 		threadUtils_invokeIn(durationMs, this, [this, a, mutatesTo] {
+			onAnimationEnd();
 			animations.removeAnimation(a);
 			this->addFromPlain(mutatesTo);
-			onAnimationEnd();
 		});
 	}
 
@@ -54,25 +50,25 @@ namespace card {
 			return;
 		}
 
-		registerCardAnimation(mutatesTo);
+		registerCardAnimation(mutatesTo, source);
 		threadUtils_invokeIn(delayMs, this, [this, mutatesTo, &source, durationMs]() {
-			unregisterCardAnimation();
+			unregisterCardAnimation(source);
 			this->addLastCardFromImmediately(mutatesTo, source, durationMs);
 		});
 	}
 
 	void CardAnimator::addLastCardFromImmediately(Card mutatesTo, CardAnimator& source, int durationMs) {
 		std::size_t const indexToRemove = source.getSize() - 1;
-		onAnimationStart();
 		source.removeLast();
 
 		CardAnimation a(getMilliseconds(), durationMs, source, mutatesTo, indexToRemove);
 		animations.insertAnimation(a);
 
+		onAnimationStart();
 		threadUtils_invokeIn(durationMs, this, [this, a, mutatesTo] {
+			onAnimationEnd();
 			animations.removeAnimation(a);
 			this->addFromPlain(mutatesTo);
-			onAnimationEnd();
 		});
 	}
 
@@ -83,21 +79,21 @@ namespace card {
 		}
 
 		Card card = source.get(indexOfCardToAddInSource);
-		registerCardAnimation(card);
+		registerCardAnimation(card, source);
 		threadUtils_invokeIn(delayMs, this, [this, indexOfCardToAddInSource, &source, durationMs]() {
-			unregisterCardAnimation();
+			unregisterCardAnimation(source);
 			this->addDeterminedCardFromImmediately(indexOfCardToAddInSource, source, durationMs);
 		});
 	}
 
 	void CardAnimator::addDeterminedCardFromImmediately(std::size_t indexOfCardToAddInSource, CardAnimator& source, int durationMs) {
-		onAnimationStart();
 		Card card = source.get(indexOfCardToAddInSource);
 		source.remove(indexOfCardToAddInSource);
 
 		CardAnimation a(getMilliseconds(), durationMs, source, card, indexOfCardToAddInSource);
 		animations.insertAnimation(a);
 
+		onAnimationStart();
 		threadUtils_invokeIn(durationMs, this, [this, a, card] {
 			onAnimationEnd();
 			animations.removeAnimation(a);
@@ -111,9 +107,9 @@ namespace card {
 			return;
 		}
 	
-		registerCardAnimation(mutatesTo);
+		registerCardAnimation(mutatesTo, source);
 		threadUtils_invokeIn(delayMs, this, [this, mutatesTo, &source, durationMs]() {
-			unregisterCardAnimation();
+			unregisterCardAnimation(source);
 			addRandomCardFromImmediately(mutatesTo, source, durationMs);
 		});
 	}
@@ -121,33 +117,35 @@ namespace card {
 	void CardAnimator::addRandomCardFromImmediately(Card mutatesTo, CardAnimator& source, int durationMs) {
 		if(source.isEmpty()) throw std::runtime_error("Can't add card from an empty card stack.");
 		std::size_t const indexToRemove = randomInRange<std::size_t>(0, source.getSize() - 1);
-		onAnimationStart();
 		source.remove(indexToRemove);
 
 		CardAnimation a(getMilliseconds(), durationMs, source, mutatesTo, indexToRemove);
 		animations.insertAnimation(a);
 
+		onAnimationStart();
 		threadUtils_invokeIn(durationMs, this, [this, a, mutatesTo] {	
+			onAnimationEnd();
 			animations.removeAnimation(a);
 			this->addFromPlain(mutatesTo);
-			onAnimationEnd();
 		});
 	}
 
-	void card::CardAnimator::onAnimationStart() {
-		pendingAnimationsCounter++;
+	void CardAnimator::onAnimationStart() {
+		numberOfIncomingAnimations++;
 	}
 
-	void card::CardAnimator::onAnimationEnd() {
-		pendingAnimationsCounter--;
+	void CardAnimator::onAnimationEnd() {
+		numberOfIncomingAnimations--;
 	}
 
-	void CardAnimator::registerCardAnimation(Card c) {
+	void CardAnimator::registerCardAnimation(Card c, CardAnimator& source) {
 		lastRegisteredAnimation = c;
+		source.cardsToRemoveAfterDelayCounter++;
 	}
 
-	void CardAnimator::unregisterCardAnimation() {
+	void CardAnimator::unregisterCardAnimation(CardAnimator& source) {
 		lastRegisteredAnimation = std::nullopt;
+		source.cardsToRemoveAfterDelayCounter--;
 	}
 
 	std::vector<CardAnimation> CardAnimator::getCardAnimations() const {
@@ -192,6 +190,14 @@ namespace card {
 
 		// callbacks for animations shouldn't be executed
 		threadUtils_removeCallbacksWithKey(this);
+	}
+
+	int CardAnimator::getAvailableCardsSize() const {
+		return getSize() - cardsToRemoveAfterDelayCounter;
+	}
+
+	int CardAnimator::getNumberOfIncomingAnimations() const {
+		return numberOfIncomingAnimations;
 	}
 
 
