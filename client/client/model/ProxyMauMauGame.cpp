@@ -48,4 +48,7 @@ namespace card {
 	MessageQueue& ProxyMauMauGame::getMessageQueue() {
 		return gameData.getMessageQueue();
 	}
+	void ProxyMauMauGame::clearPermanentMessages() {
+		gameData.clearPermanentMessages();
+	}
 }

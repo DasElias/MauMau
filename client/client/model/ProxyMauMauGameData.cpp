@@ -388,8 +388,7 @@ namespace card {
 		onTurnEndCallback(this->userOnTurn);
 		this->userOnTurn = player;
 
-		messageQueue.removeMessagesWithKey(skipStateMessageKey);
-		messageQueue.removeMessagesWithKey(drawTwoMessageKey);
+		clearPermanentMessages();
 		if(! field_wasCardPlayed) {
 			// if field_wasCardPlayed would be true, the player on turn would have +2 to the next player
 			this->cardsToDrawOnPassDueToPlusTwo.clear();
@@ -408,6 +407,11 @@ namespace card {
 			playerHasToDrawCards(userOnTurn, cardsToDrawOnPassDueToPlusTwo, delayForDrawDueToPlusTwo);
 			cardsToDrawOnPassDueToPlusTwo.clear();
 		}
+	}
+
+	void ProxyMauMauGameData::clearPermanentMessages() {
+		messageQueue.removeMessagesWithKey(skipStateMessageKey);
+		messageQueue.removeMessagesWithKey(drawTwoMessageKey);
 	}
 
 	void ProxyMauMauGameData::setInitialPlayerOnTurnLocal(std::shared_ptr<ProxyPlayer> player, Card nextCardOnDrawStack) {

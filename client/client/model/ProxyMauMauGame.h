@@ -40,5 +40,6 @@ namespace card {
 			bool hasInitialCardBeenDistributed() const;
 			std::shared_ptr<ProxyPlayer> getWinnerOrNull();
 			MessageQueue& getMessageQueue();
+			void clearPermanentMessages();
 	};
 }

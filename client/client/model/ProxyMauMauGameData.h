@@ -91,6 +91,7 @@ namespace card {
 			std::shared_ptr<ProxyPlayer> getNextPlayer(std::shared_ptr<ProxyPlayer> playerOnTurn);
 			void setOnTurnLocal(std::shared_ptr<ProxyPlayer> player);
 			void setInitialPlayerOnTurnLocal(std::shared_ptr<ProxyPlayer> player, Card nextCardOnDrawStack);
+			void clearPermanentMessages();
 
 			void addCardsToDrawOnPassDueToPlusTwo(std::size_t amountOfNullcards);
 			void setCardsToDrawOnPassDueToPlusTwo(std::vector<Card> cards);
@@ -137,6 +138,7 @@ namespace card {
 			void throwIfGameHasEnded();
 
 			void appendMauPunishmentMessage(std::string punishedUsername, MauPunishmentCause cause);
+
 
 	};
 }
