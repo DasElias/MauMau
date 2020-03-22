@@ -9,6 +9,8 @@
 #include <egui/model/nodes/UnorganizedParentElement.h>
 #include <egui/model/nodes/Button.h>
 #include "../gui/ColoredButton.h"
+#include <egui/model/positioning/RelativePositioningOnScreen.h>
+#include "../renderingModel/WorldToScreenConverter.h"
 
 namespace card {
 	class DrawnCardRenderer {
@@ -27,9 +29,11 @@ namespace card {
 			egui::MasterRenderer& eguiRenderer;
 			ProjectionMatrix& projectionMatrix;
 			Viewport& viewport;
+			WorldToScreenConverter worldToScreenConverter;
 			std::function<void(void)> playCardFunction;
 			std::function<void(void)> takeIntoHandCardsFunction;
 
+			std::shared_ptr<egui::RelativePositioningOnScreen> buttonBarPositioning;
 			egui::Scene scene;
 			std::shared_ptr<ColoredButton> playCardButton;
 			std::shared_ptr<ColoredButton> takeIntoHandCardsButton;
