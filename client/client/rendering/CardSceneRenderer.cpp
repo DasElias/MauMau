@@ -243,6 +243,8 @@ namespace card {
 	void CardSceneRenderer::renderMauButton(bool suppressMouseClick) {
 		auto& game = room->getGame();
 		auto& clientGameAccessor = game.getAccessorFromClient();
+		auto& options = game.getGameData().getOptions();
+		if(! options.getOption(Options::HAVE_TO_MAU)) return;
 
 		bool canMau = clientGameAccessor.canMau();
 		bool canClickMauButton = canMau && !suppressMouseClick;

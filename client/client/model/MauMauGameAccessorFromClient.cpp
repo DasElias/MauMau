@@ -15,7 +15,8 @@ namespace card {
 	bool MauMauGameAccessorFromClient::canMau() const {
 		if(gameData.hasGameEnded() ||
 		   !gameData.hasInitialCardBeenDistributed() ||
-			gameData.getLocalPlayer()->wasMauDemandedThisTurn()) {
+			gameData.getLocalPlayer()->wasMauDemandedThisTurn() ||
+			! gameData.getOptions().getOption(Options::HAVE_TO_MAU)) {
 			return false;
 		}
 
@@ -80,6 +81,7 @@ namespace card {
 		return gameData.isReadyToPerformLocalPlayerTurn() && (localPlayer->isInSkipState() || gameData.isInDrawTwoState());
 	}
 	void MauMauGameAccessorFromClient::mau() {
+		if(! canMau()) throw std::runtime_error("Can't mau card in the current situation!");
 		auto localPlayer = gameData.getLocalPlayer();
 		localPlayer->onMauDemand();
 

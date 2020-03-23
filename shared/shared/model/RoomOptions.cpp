@@ -4,6 +4,7 @@
 
 namespace card {
 	RoomOptions::RoomOptions() {
+		setOption(Options::HAVE_TO_MAU, true);
 		setOption(Options::CHOOSE_COLOR_ON_JACK, true);
 		setOption(Options::CAN_PUT_JACK_ON_EVERY_COLOR, false);
 		setOption(Options::CAN_PUT_JACK_ON_JACK, false);

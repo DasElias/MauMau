@@ -10,6 +10,9 @@ namespace card {
 	BasicOptionsElement::BasicOptionsElement(std::string title) :
 			TitledMenuElement(title) {
 
+		haveToMau_option = std::make_shared<BoolOptionElement>(u8"Mau-Knopf muss vor dem Spielen der vorletzten Karte betätigt werden");
+		addStandaloneOption(haveToMau_option);
+
 		chooseColorOnJack_option = std::make_shared<BoolOptionElement>("Farbwahl bei Bube");
 		canPutJackOnEveryColor_option = std::make_shared<BoolOptionElement>("Kann Bube auf jede Farbe gelegt werden?");
 		canPutJackOnJack_option = std::make_shared<BoolOptionElement>("Kann Bube auf Bube gelegt werden?");
@@ -43,6 +46,7 @@ namespace card {
 		group->getAbsYMargin();
 	}
 	void BasicOptionsElement::loadOptions(RoomOptions& roomOptions) {
+		haveToMau_option->set(roomOptions.getOption(Options::HAVE_TO_MAU));
 		chooseColorOnJack_option->set(roomOptions.getOption(Options::CHOOSE_COLOR_ON_JACK));
 		canPutJackOnEveryColor_option->set(roomOptions.getOption(Options::CAN_PUT_JACK_ON_EVERY_COLOR));
 		canPutJackOnJack_option->set(roomOptions.getOption(Options::CAN_PUT_JACK_ON_JACK));
@@ -53,11 +57,12 @@ namespace card {
 		directionChangeOnNine_option->set(roomOptions.getOption(Options::DIRECTION_CHANGE_ON_NINE));
 		amountOfStartCards_option->setValue(roomOptions.getOption(Options::AMOUNT_OF_START_CARDS));
 
-		assert(roomOptions.getAmountOfOptions() == 9);
+		assert(roomOptions.getAmountOfOptions() == 10);
 	}
 
 	RoomOptions BasicOptionsElement::getOptions() {
 		RoomOptions options;
+		options.setOption(Options::HAVE_TO_MAU, haveToMau_option->isToggled());
 		options.setOption(Options::CHOOSE_COLOR_ON_JACK, chooseColorOnJack_option->isToggled());
 		options.setOption(Options::CAN_PUT_JACK_ON_EVERY_COLOR, canPutJackOnEveryColor_option->isToggled());
 		options.setOption(Options::CAN_PUT_JACK_ON_JACK, canPutJackOnJack_option->isToggled());
@@ -68,7 +73,7 @@ namespace card {
 		options.setOption(Options::DIRECTION_CHANGE_ON_NINE, directionChangeOnNine_option->isToggled());
 		options.setOption(Options::AMOUNT_OF_START_CARDS, amountOfStartCards_option->getValue());
 
-		assert(options.getAmountOfOptions() == 9);
+		assert(options.getAmountOfOptions() == 10);
 		return options;
 	}
 

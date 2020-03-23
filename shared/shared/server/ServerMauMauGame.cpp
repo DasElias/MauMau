@@ -343,6 +343,9 @@ namespace card {
 		packetTransmitter->sendPacketToClient(packet, player->getWrappedParticipant());
 	}
 	void ServerMauMauGame::checkForMauIfNeeded() {
+		bool isMauDisabledByOptions = !roomOptions.getOption(Options::HAVE_TO_MAU);
+		if(isMauDisabledByOptions) return;
+
 		if(wasCardDrawn_thisTurn && wasCardPlayed_thisTurn) {
 			// we don't check for mau if the player has drawed and played a card in the same turn
 			return;

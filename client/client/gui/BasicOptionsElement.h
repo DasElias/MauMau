@@ -11,6 +11,7 @@ namespace card {
         // --------------------------------FIELDS--------------------------------
         // ----------------------------------------------------------------------
         private:            
+            std::shared_ptr<BoolOptionElement> haveToMau_option;
             std::shared_ptr<BoolOptionElement> chooseColorOnJack_option;
             std::shared_ptr<BoolOptionElement> canPutJackOnEveryColor_option;
             std::shared_ptr<BoolOptionElement> canPutJackOnJack_option;
