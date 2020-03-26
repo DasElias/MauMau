@@ -1,6 +1,5 @@
 #pragma once
 #include "TextureArray.h"
-#include "SimpleTexture.h"
 #include "SamplerObject.h"
 
 namespace card {
@@ -9,7 +8,7 @@ namespace card {
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
-			SimpleTexture textureArrayImpl;
+			TextureArray textureArrayImpl;
 			SamplerObject highAnisotropicFilteringSampler;
 
 		// ----------------------------------------------------------------------

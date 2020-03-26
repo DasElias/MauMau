@@ -82,7 +82,5 @@ namespace card {
 			void renderInNextPass(const std::vector<PositionedCard>& cards, ProjectionMatrix& projectionMatrix, Viewport& viewport, std::vector<bool> shouldRenderInGreyScaleVector = {});
 			void flush(bool renderWithHighAnisotropicFiltering = false);
 
-		private:
-			std::uint32_t convertCardNumberToTextureId(std::uint32_t cardNumber);
 	};
 }

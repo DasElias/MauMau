@@ -1,12 +1,12 @@
 const char* cards_fragment = R"(
 #version 400 core
 
-in vec2 pass_texCoords;
+in vec3 pass_texCoords;
 flat in uint pass_shouldRenderInGrayScale;
 
 out vec4 out_Color;
 
-uniform sampler2D tex;
+uniform sampler2DArray tex;
 
 void main(void) {
 	vec4 texColor = texture(tex, pass_texCoords);
