@@ -2,6 +2,7 @@
 #include "CardStackPositions.h"
 #include <shared/utils/MathUtils.h>
 #include "CardStackRenderer.h"
+#include "../renderingModel/DrawCardStackClamper.h"
 
 namespace card {
 	OpponentRenderer::OpponentRenderer(CardRenderer& cardRenderer, ProjectionMatrix& projectionMatrix, Viewport& viewport) :
@@ -38,8 +39,10 @@ namespace card {
 	}
 	void OpponentRenderer::renderDrawedCardAnimationsOfOpponent(ProxyMauMauGame& game, const CardAnimator& handCardStack, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation) {
 		const auto& drawStack = game.getDrawStack();
+		std::size_t cardStackSize = DrawCardStackClamper::getClampedSize(drawStack);
+
 		for(auto animation : handCardStack.getCardAnimations()) {
-			float cardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * (drawStack.getSize());
+			float cardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * cardStackSize;
 			cardInterpolator.interpolateAndRender(animation,
 												  DRAW_CARDS_POSITION + glm::vec3(0, cardStackHeightAddition, 0),
 												  DRAW_CARDS_ROTATION,

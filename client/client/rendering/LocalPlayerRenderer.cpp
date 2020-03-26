@@ -1,12 +1,12 @@
 #include "LocalPlayerRenderer.h"
-#include "LocalPlayerRenderer.h"
-#include "LocalPlayerRenderer.h"
 #include <shared/utils/TimeUtils.h>
 #include <shared/utils/MathUtils.h>
 #include <algorithm>
 #include "CardStackPositions.h"
 #include "DrawnCardRenderer.h"
 #include "CardStackRenderer.h"
+#include "../renderingModel/DrawCardStackClamper.h"
+
 
 namespace card {
 	float const LocalPlayerRenderer::HOVERED_CARD_Y_ADDITION = 0.1f;
@@ -69,6 +69,7 @@ namespace card {
 	void LocalPlayerRenderer::renderAnimations(ProxyMauMauGame& game) {
 		auto& localPlayer = game.getLocalPlayer();
 		const auto& drawStack = game.getDrawStack();
+		std::size_t drawStackSize = DrawCardStackClamper::getClampedSize(drawStack);
 
 		// render cards to hand cards
 		// please note that we iterate over the set from the end to the begin (we use a reverse-iterator),
@@ -81,7 +82,7 @@ namespace card {
 
 			if(animation.source.get().equalsId(drawStack)) {
 				// render cards from draw card stack to hand cards
-				float cardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * (drawStack.getSize());
+				float cardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * drawStackSize;
 				cardInterpolator.interpolateAndRender(animation,
 										   DRAW_CARDS_POSITION + glm::vec3(0, cardStackHeightAddition, 0),
 										   DRAW_CARDS_ROTATION,
@@ -105,9 +106,9 @@ namespace card {
 		// render cards from draw card stack to temporary card stack
 		for(auto& animation : localPlayer->getTempCardStack().getCardAnimations()) {
 			cardInterpolator.interpolateAndRender(animation,
-									   DRAW_CARDS_POSITION + glm::vec3(0, CardStackRenderer::ADDITION_PER_CARD * (drawStack.getSize()), 0),
+									   DRAW_CARDS_POSITION + glm::vec3(0, CardStackRenderer::ADDITION_PER_CARD * drawStackSize, 0),
 									   DRAW_CARDS_ROTATION,
-									   DRAW_CARDS_POSITION + glm::vec3(0, CardStackRenderer::ADDITION_PER_CARD * (drawStack.getSize()), CardRenderer::HEIGHT),
+									   DRAW_CARDS_POSITION + glm::vec3(0, CardStackRenderer::ADDITION_PER_CARD * drawStackSize, CardRenderer::HEIGHT),
 									   DRAW_CARDS_ROTATION - glm::vec3(PI / 4, 0, 0),
 									   DrawnCardRenderer::POSITION,
 									   DrawnCardRenderer::ROTATION

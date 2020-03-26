@@ -21,7 +21,7 @@ namespace card {
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			bool doesIntersect(const CardAnimator& cardStack, glm::vec3 centerPosition, glm::vec3 rotation, float heightAdditionPerCard, float widthOfSingleCard, float heightOfSingleCard);
+			bool doesIntersect(std::size_t cardStackSize, glm::vec3 centerPosition, glm::vec3 rotation, float heightAdditionPerCard, float widthOfSingleCard, float heightOfSingleCard);
 
 		private:
 			std::array<glm::vec2, 4> generateScreenPositions(std::array<glm::vec4, 4>& positionsInLocalSpace, glm::vec3 centerPosition, glm::vec3 rotation);

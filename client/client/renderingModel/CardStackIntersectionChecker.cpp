@@ -10,8 +10,8 @@ namespace card {
 	CardStackIntersectionChecker::CardStackIntersectionChecker(ProjectionMatrix& projectionMatrix, Viewport& viewport) :
 			IntersectionChecker(projectionMatrix, viewport) {
 	}
-	bool CardStackIntersectionChecker::doesIntersect(const CardAnimator& cardStack, glm::vec3 centerPosition, glm::vec3 rotation, float heightAdditionPerCard, float widthOfSingleCard, float heightOfSingleCard) {
-		float height = 1 * heightAdditionPerCard * (cardStack.getSize() - 1);
+	bool CardStackIntersectionChecker::doesIntersect(std::size_t cardStackSize, glm::vec3 centerPosition, glm::vec3 rotation, float heightAdditionPerCard, float widthOfSingleCard, float heightOfSingleCard) {
+		float height = 1 * heightAdditionPerCard * (cardStackSize - 1);
 		std::array<glm::vec4, 4> edgesInLocalSpace = {
 			glm::vec4(-widthOfSingleCard / 2, heightOfSingleCard / 2, 0, 1.0f),		// top left
 			glm::vec4(-widthOfSingleCard / 2, -heightOfSingleCard / 2, 0, 1.0f),	// bottom left

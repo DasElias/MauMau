@@ -6,6 +6,7 @@
 #include "../renderingModel/SimpleTextureFactory.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include "CardStackRenderer.h"
+#include "../renderingModel/DrawCardStackClamper.h"
 #include <iostream>
 #include <shared/utils/VectorUtils.h>
 #include <shared/utils/MathUtils.h>
@@ -85,7 +86,7 @@ namespace card {
 		};
 	}
 	void DrawCardStackRenderer::render(const CardAnimator& cardStack, glm::vec3 position, glm::vec3 rotation, ProjectionMatrix& projectionMatrix, Viewport& viewport) {
-		int cardStackSize = cardStack.getSize();
+		int cardStackSize = DrawCardStackClamper::getClampedSize(cardStack);
 		PositionedCard p = {Card::NULLCARD, position, rotation};
 		glm::mat4 modelMatrix = p.getModelMatrix();
 		float height = (cardStackSize - 1) * CardStackRenderer::ADDITION_PER_CARD;

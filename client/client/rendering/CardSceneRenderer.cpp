@@ -7,6 +7,7 @@
 #include "../utils/VectorMathUtils.h"
 #include <shared/utils/MathUtils.h>
 #include "CardStackPositions.h"
+#include "../renderingModel/DrawCardStackClamper.h"
 
 #include <shared/utils/TimeUtils.h>
 #include <shared/utils/Logger.h>
@@ -272,7 +273,8 @@ namespace card {
 	}
 	bool CardSceneRenderer::checkIntersectionWithDrawCardStack() {
 		auto& game = room->getGame();
-		return cardStackIntersectionChecker.doesIntersect(game.getDrawStack(), DRAW_CARDS_POSITION, DRAW_CARDS_ROTATION, CardStackRenderer::ADDITION_PER_CARD, CardRenderer::WIDTH, CardRenderer::HEIGHT);
+		std::size_t clampedDrawStackHeight = DrawCardStackClamper::getClampedSize(game.getDrawStack());
+		return cardStackIntersectionChecker.doesIntersect(clampedDrawStackHeight, DRAW_CARDS_POSITION, DRAW_CARDS_ROTATION, CardStackRenderer::ADDITION_PER_CARD, CardRenderer::WIDTH, CardRenderer::HEIGHT);
 	}
 
 	std::array<std::shared_ptr<ProxyPlayer>, 3> CardSceneRenderer::mapOpponentsToTablePositionsInCwOrder(const std::vector<std::shared_ptr<ProxyPlayer>> opponents) {
@@ -346,10 +348,11 @@ namespace card {
 				);
 			} else if(cardStacksOrNoneInCwOrder[0] && sourceStack.equalsId(cardStacksOrNoneInCwOrder[0]->getCardStack())) {
 				glm::vec3 startPosition = handCardStackPositionGenerator.getPositionOfCard_cardStackZ(animation.indexInSourceStack - 1, sourceStack.getSize(), HAND_CARDS_OPPONENT_LEFT_POSITION, LEFT_RIGHT_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
+				std::size_t drawCardStackSize = DrawCardStackClamper::getClampedSize(drawCardStack);
 				cardInterpolator.interpolateAndRender(animation,
 									 startPosition, glm::vec3(PI, -PI / 2, 0),
 									 startPosition + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), glm::vec3(PI, -PI / 2, 0),
-									 DRAW_CARDS_POSITION + glm::vec3(0, CardRenderer::HEIGHT * 0.25f + CardStackRenderer::ADDITION_PER_CARD * (drawCardStack.getSize()), 0), {1.5f * PI / 2, -PI, rotationEnd.z},
+									 DRAW_CARDS_POSITION + glm::vec3(0, CardRenderer::HEIGHT * 0.25f + CardStackRenderer::ADDITION_PER_CARD * drawCardStackSize, 0), {1.5f * PI / 2, -PI, rotationEnd.z},
 									 positionEnd, {rotationEnd.x, -PI, rotationEnd.z}
 				);
 			} else if(cardStacksOrNoneInCwOrder[1] && sourceStack.equalsId(cardStacksOrNoneInCwOrder[1]->getCardStack())) {
@@ -383,7 +386,8 @@ namespace card {
 		secondAnimationPart.animationStartTime += firstAnimationPart.duration;
 
 		auto& game = room->getGame();
-		float drawCardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * (game.getDrawStack().getSize());
+		std::size_t drawCardStackHeight = DrawCardStackClamper::getClampedSize(game.getDrawStack());
+		float drawCardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * drawCardStackHeight;
 
 		float x = float(getMilliseconds() - firstAnimationPart.animationStartTime);
 		float x1 = 0;
