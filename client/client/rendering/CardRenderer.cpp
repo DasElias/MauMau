@@ -24,12 +24,15 @@ namespace card {
 		X, -HEIGHT / 2, Z,
 		X, HEIGHT / 2, Z,
 	};
+
+	static float const TEXTURE_DATA_Y = 369.0f / 512.0f;
+
 	std::vector<float> const CardRenderer::TEXTURE_DATA = {
 		0, 0,
-		0, 1,
-		1, 1,
+		0, TEXTURE_DATA_Y,
+		1, TEXTURE_DATA_Y,
 		0, 0,
-		1, 1,
+		1, TEXTURE_DATA_Y,
 		1, 0,
 	};
 
