@@ -21,6 +21,7 @@ namespace card {
             std::shared_ptr<BoolOptionElement> passDrawTwo_option;
             std::shared_ptr<BoolOptionElement> directionChangeOnNine_option;
             std::shared_ptr<IntegerOptionElement> amountOfStartCards_option;
+            std::shared_ptr<IntegerOptionElement> amountOfStartCardDecks_option;
 
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------

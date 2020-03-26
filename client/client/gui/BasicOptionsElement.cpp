@@ -31,6 +31,9 @@ namespace card {
 
 		amountOfStartCards_option = std::make_shared<IntegerOptionElement>("Anzahl Startkarten", 6, 1, 9);
 		contentBox->addChildElement(amountOfStartCards_option);
+
+		amountOfStartCardDecks_option = std::make_shared<IntegerOptionElement>("Anzahl Kartendecks auf Ziehstapel", 1, 1, 2);
+		contentBox->addChildElement(amountOfStartCardDecks_option);
 		
 		contentBox->setSpaceBetweenElements({0.05f, egui::RelativityMode::RELATIVE_IN_PARENT});
 	}
@@ -56,8 +59,9 @@ namespace card {
 		passDrawTwo_option->set(roomOptions.getOption(Options::PASS_DRAW_TWO));
 		directionChangeOnNine_option->set(roomOptions.getOption(Options::DIRECTION_CHANGE_ON_NINE));
 		amountOfStartCards_option->setValue(roomOptions.getOption(Options::AMOUNT_OF_START_CARDS));
+		amountOfStartCardDecks_option->setValue(roomOptions.getOption(Options::AMOUNT_OF_START_CARD_DECKS));
 
-		assert(roomOptions.getAmountOfOptions() == 10);
+		assert(roomOptions.getAmountOfOptions() == 11);
 	}
 
 	RoomOptions BasicOptionsElement::getOptions() {
@@ -72,8 +76,9 @@ namespace card {
 		options.setOption(Options::PASS_DRAW_TWO, passDrawTwo_option->isToggled());
 		options.setOption(Options::DIRECTION_CHANGE_ON_NINE, directionChangeOnNine_option->isToggled());
 		options.setOption(Options::AMOUNT_OF_START_CARDS, amountOfStartCards_option->getValue());
+		options.setOption(Options::AMOUNT_OF_START_CARD_DECKS, amountOfStartCardDecks_option->getValue());
 
-		assert(options.getAmountOfOptions() == 10);
+		assert(options.getAmountOfOptions() == 11);
 		return options;
 	}
 

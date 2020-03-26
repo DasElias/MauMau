@@ -42,7 +42,10 @@ namespace card {
 			handler_onMau(std::bind(&ServerMauMauGame::listener_onMau, this, std::placeholders::_1, std::placeholders::_2)),
 			handler_onPass(std::bind(&ServerMauMauGame::listener_onPass, this, std::placeholders::_1, std::placeholders::_2)) {
 
-		addCardDeckToDrawStack();
+		for(int i = 0; i < options.getOption(Options::AMOUNT_OF_START_CARD_DECKS); i++) {
+			addCardDeckToDrawStack();
+		}
+		drawCardStack.shuffle();
 
 		// init play card stack
 		Card firstCardOnPlayStack;

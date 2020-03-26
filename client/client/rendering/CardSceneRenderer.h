@@ -32,6 +32,7 @@
 #include "../renderingModel/MauMauCardStackMisalignmentGenerator.h"
 #include "../renderingModel/CardIndexTextures.h"
 #include "PlayerLabelPositionGenerator.h"
+#include "DrawCardStackRenderer.h"
 
 namespace card {
 	class CardSceneRenderer {
@@ -65,6 +66,7 @@ namespace card {
 			MauMauButtonRenderer mauMauButtonRenderer;
 			PassButtonRenderer passButtonRenderer;
 			MessageRenderer messageRenderer;
+			DrawCardStackRenderer drawCardStackRenderer;
 			CardStackIntersectionChecker cardStackIntersectionChecker;
 			HandCardIntersectionChecker handCardIntersectionChecker;
 			PlayerLabelPositionGenerator playerLabelPositionGenerator;

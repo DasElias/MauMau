@@ -74,6 +74,7 @@ namespace card {
 				 }
 			),
 			messageRenderer(eguiRenderer),
+			drawCardStackRenderer(cardRenderer, renderer3d),
 			cardStackIntersectionChecker(projectionMatrix, viewport),
 			handCardIntersectionChecker(projectionMatrix, viewport),
 			playerLabelPositionGenerator(projectionMatrix, viewport),
@@ -144,7 +145,7 @@ namespace card {
 		glDepthFunc(GL_LESS);
 		renderDrawCardStack();
 
-		cardRenderer.flush();
+		cardRenderer.flush(false);
 		glDisable(GL_DEPTH_TEST);
 
 		
@@ -299,7 +300,8 @@ namespace card {
 		auto& gameData = game.getGameData();
 		auto& drawCardStack = game.getDrawStack();
 		bool shouldDisable = gameData.isReadyToPerformLocalPlayerTurn() && (game.getLocalPlayer()->isInSkipState() || gameData.isInDrawTwoState());
-		cardStackRenderer.renderCardStack(drawCardStack, DRAW_CARDS_POSITION, DRAW_CARDS_ROTATION, projectionMatrix, viewport, shouldDisable);
+	//	cardStackRenderer.renderCardStack(drawCardStack, DRAW_CARDS_POSITION, DRAW_CARDS_ROTATION, projectionMatrix, viewport, shouldDisable);
+		drawCardStackRenderer.render(drawCardStack, DRAW_CARDS_POSITION, DRAW_CARDS_ROTATION, projectionMatrix, viewport);
 
 		auto& animations = drawCardStack.getCardAnimations();
 		for(int i = 0; i < animations.size(); i++) {

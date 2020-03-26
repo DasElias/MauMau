@@ -12,7 +12,8 @@ namespace card {
         DRAW_TWO_ON_SEVEN,
         PASS_DRAW_TWO,
         DIRECTION_CHANGE_ON_NINE,
-        AMOUNT_OF_START_CARDS
+        AMOUNT_OF_START_CARDS,
+        AMOUNT_OF_START_CARD_DECKS
     };
     
 	// composition
@@ -21,7 +22,7 @@ namespace card {
         // ----------------------------STATIC-FIELDS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            static int const OPTIONS_SIZE = 10;
+            static int const OPTIONS_SIZE = 11;
 
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------
