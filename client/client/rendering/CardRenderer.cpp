@@ -24,13 +24,17 @@ namespace card {
 		X, -HEIGHT / 2, Z,
 		X, HEIGHT / 2, Z,
 	};
+
+	static float const TEXTURE_COORD_ADDITION_X = 1.0f / Card::CARDS_PER_CARD_INDEX;
+	static float const TEXTURE_COORD_ADDITION_Y = 1142.0f / 2048.0f / 5;	// usable space / max space / textures per column in usable space
+
 	std::vector<float> const CardRenderer::TEXTURE_DATA = {
 		0, 0,
-		0, 1,
-		1, 1,
+		0, TEXTURE_COORD_ADDITION_Y,
+		TEXTURE_COORD_ADDITION_X, TEXTURE_COORD_ADDITION_Y,
 		0, 0,
-		1, 1,
-		1, 0,
+		TEXTURE_COORD_ADDITION_X, TEXTURE_COORD_ADDITION_Y,
+		TEXTURE_COORD_ADDITION_X, 0,
 	};
 
 	InstancedCardRenderingVao::InstancedCardRenderingVao(DataTextureVertexArrayObject wrappedVao) :
@@ -91,7 +95,7 @@ namespace card {
 	}
 	void CardRenderer::renderInNextPass(const PositionedCard& card, ProjectionMatrix& projectionMatrix, Viewport& viewport, bool shouldRenderInGreyScale) {
 		glm::mat4 frontMVPMatrix = projectionMatrix.getProjectionMatrix() * viewport.getViewMatrix() * card.getModelMatrix();
-		uint32_t frontTextureID = card.getCardNumber();
+		uint32_t frontTextureID = convertCardNumberToTextureId(card.getCardNumber());
 		if(shouldRenderInGreyScale) frontTextureID |= GREY_SCALE_BIT_MASK;
 		this->cardsToRenderInNextPass.push_back({frontMVPMatrix[0], frontMVPMatrix[1], frontMVPMatrix[2], frontMVPMatrix[3], frontTextureID});
 
@@ -100,9 +104,18 @@ namespace card {
 		backside.changeRotation({0, PI, 0});
 		backside.setCard(Card::NULLCARD);
 		glm::mat4 backMVPMatrix = projectionMatrix.getProjectionMatrix() * viewport.getViewMatrix() * backside.getModelMatrix();
-		uint32_t backTextureId = backside.getCardNumber();
+		uint32_t backTextureId = convertCardNumberToTextureId(backside.getCardNumber());
 		if(shouldRenderInGreyScale) backTextureId |= GREY_SCALE_BIT_MASK;
 		this->cardsToRenderInNextPass.push_back({backMVPMatrix[0], backMVPMatrix[1], backMVPMatrix[2], backMVPMatrix[3], backTextureId});
+	}
+	std::uint32_t CardRenderer::convertCardNumberToTextureId(std::uint32_t cardNumber) {
+		// check if nullcard
+		if(cardNumber == 0) return 55;
+
+		// check if ace
+		if(cardNumber % Card::CARDS_PER_CARD_INDEX == 0) return cardNumber - Card::CARDS_PER_CARD_INDEX + 1;
+
+		return cardNumber + 1;
 	}
 	void CardRenderer::renderInNextPass(const std::vector<PositionedCard>& cards, ProjectionMatrix& projectionMatrix, Viewport& viewport, std::vector<bool> shouldRenderInGrayScale) {
 		for(int i = 0; i < cards.size(); i++) {
