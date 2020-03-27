@@ -85,7 +85,7 @@ namespace card {
 			1, 0,
 		};
 	}
-	void DrawCardStackRenderer::render(const CardAnimator& cardStack, glm::vec3 position, glm::vec3 rotation, ProjectionMatrix& projectionMatrix, Viewport& viewport) {
+	void DrawCardStackRenderer::render(const CardAnimator& cardStack, glm::vec3 position, glm::vec3 rotation, ProjectionMatrix& projectionMatrix, Viewport& viewport, bool shouldRenderDisabled) {
 		int cardStackSize = DrawCardStackClamper::getClampedSize(cardStack);
 		PositionedCard p = {Card::NULLCARD, position, rotation};
 		glm::mat4 modelMatrix = p.getModelMatrix();
@@ -97,6 +97,6 @@ namespace card {
 		renderer3D.render(borderVao, projectionMatrix, viewport, modelMatrix);
 
 		p.changePosition({0, height, 0});
-		cardRenderer.renderInNextPass({p}, projectionMatrix, viewport);
+		cardRenderer.renderInNextPass(p, projectionMatrix, viewport, shouldRenderDisabled);
 	}
 }
