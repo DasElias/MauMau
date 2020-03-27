@@ -34,7 +34,7 @@ namespace card {
 				.setMagFilter(TextureMagFilter::LINEAR)
 				.setWrapS(TextureWrap::CLAMP_TO_BORDER)
 				.setWrapT(TextureWrap::CLAMP_TO_BORDER)
-				.setAnisotropicFiltering(16)
+				.setAnisotropicFiltering(8)
 				.generateSampler()
 		) {
 
