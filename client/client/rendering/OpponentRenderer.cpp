@@ -61,8 +61,10 @@ namespace card {
 	}
 	void OpponentRenderer::renderDrawedCardAnimationsOfOpponent(ProxyMauMauGame& game, const CardAnimator& handCardStack, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, glm::vec3 middlePosition, glm::vec3 middleRotation) {
 		const auto& drawStack = game.getDrawStack();
+		std::size_t drawStackSize = DrawCardStackClamper::getClampedSize(drawStack);
+
 		for(auto animation : handCardStack.getCardAnimations()) {
-			float cardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * (drawStack.getSize());
+			float cardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * drawStackSize;
 			cardInterpolator.interpolateAndRender(animation,
 												  DRAW_CARDS_POSITION + glm::vec3(0, cardStackHeightAddition, 0),
 												  DRAW_CARDS_ROTATION,
