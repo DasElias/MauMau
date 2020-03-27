@@ -146,7 +146,7 @@ namespace card {
 		glDepthFunc(GL_LESS);
 		renderDrawCardStack();
 
-		cardRenderer.flush(false);
+		cardRenderer.flush();
 		glDisable(GL_DEPTH_TEST);
 
 		
