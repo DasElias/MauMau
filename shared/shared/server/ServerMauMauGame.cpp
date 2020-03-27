@@ -51,7 +51,7 @@ namespace card {
 		Card firstCardOnPlayStack;
 		for(std::size_t i = 0; i < drawCardStack.getSize(); i++) {
 			auto card = drawCardStack.get(i);
-			if(!canChangeColor(card) && getAmountsOfCardsToDrawForNextPlayer(card) == 0 && !canSkipPlayer(card)) {
+			if(!canChangeColor(card) && getAmountsOfCardsToDrawForNextPlayer(card) == 0 && !canSkipPlayer(card) && !canChangeDirection(card)) {
 				firstCardOnPlayStack = card;
 
 				drawCardStack.remove(i);
@@ -200,7 +200,7 @@ namespace card {
 		}
 	}
 	void ServerMauMauGame::updateDirection(Card playedCard) {
-		if(playedCard.getValue() == CHANGE_DIRECTION_VALUE && roomOptions.getOption(Options::DIRECTION_CHANGE_ON_NINE)) {
+		if(canChangeDirection(playedCard)) {
 			if(direction == Direction::CW) direction = Direction::CCW;
 			else direction = Direction::CW;
 		}
@@ -450,6 +450,9 @@ namespace card {
 	}
 	bool ServerMauMauGame::canSkipPlayer(Card playedCard) const {
 		return playedCard.getValue() == SKIP_VALUE && roomOptions.getOption(Options::SKIP_ON_EIGHT);
+	}
+	bool ServerMauMauGame::canChangeDirection(Card playedCard) const {
+		return playedCard.getValue() == CHANGE_DIRECTION_VALUE && roomOptions.getOption(Options::DIRECTION_CHANGE_ON_NINE);
 	}
 	bool ServerMauMauGame::canMau(Player& player) const {
 		return checkIfOnTurn(player) && player.getHandCards().getSize() == 2;

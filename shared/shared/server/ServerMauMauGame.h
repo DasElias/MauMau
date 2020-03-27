@@ -83,6 +83,7 @@ namespace card {
 			bool canChangeColor(Card playedCard) const;
 			int getAmountsOfCardsToDrawForNextPlayer(Card playedCard) const;
 			bool canSkipPlayer(Card playedCard) const;
+			bool canChangeDirection(Card playedCard) const;
 			bool canMau(Player& player) const;
 			bool canPass(Player& player) const;
 
