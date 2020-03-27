@@ -63,7 +63,7 @@ namespace card {
 		buttonBarBackground->setBackground(std::make_shared<egui::ColoredBackground>(egui::Color(1, 1, 1, 0.85f)));
 
 		std::shared_ptr<egui::UnorganizedParentElement> rootElem(new egui::UnorganizedParentElement({buttonBarBackground, buttonBar}));
-		rootElem->setBackground(std::make_shared<egui::ColoredBackground>(egui::Color(0, 0, 0, 0.55f)));
+		rootElem->setBackground(std::make_shared<egui::ColoredBackground>(egui::Color(0, 0, 0, 0.5f)));
 		this->scene.setRootElement(rootElem);
 	}
 	void ChooseCardIndexRenderer::discardPreviousMouseEvents() {

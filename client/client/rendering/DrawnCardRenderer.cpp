@@ -44,7 +44,7 @@ namespace card {
 		buttonBar->setSpaceBetweenElements({{DISTANCE_BETWEEN_BUTTONS, egui::RelativityMode::RELATIVE_ON_SCREEN}});
 
 		std::shared_ptr<egui::UnorganizedParentElement> rootElem(new egui::UnorganizedParentElement({buttonBar}));
-		rootElem->setBackground(std::make_shared<egui::ColoredBackground>(egui::Color(0, 0, 0, 0.85f)));
+		rootElem->setBackground(std::make_shared<egui::ColoredBackground>(egui::Color(0, 0, 0, 0.6f)));
 		this->scene.setRootElement(rootElem);
 	}
 	void DrawnCardRenderer::clearPreviousMouseEvents() {
