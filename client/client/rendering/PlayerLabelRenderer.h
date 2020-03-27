@@ -15,15 +15,7 @@ namespace card {
         // ----------------------------STATIC-FIELDS-----------------------------
         // ----------------------------------------------------------------------
         private:
-            static float const PADDING_LEFT_RIGHT;
-            static float const PADDING_TOP;
             static glm::vec4 const CIRCLE_SECTOR_COLOR;
-
-        public:
-            static glm::vec2 const LOCAL_PLAYER_POSITION;
-            static glm::vec2 const VIS_A_VIS_PLAYER_POSITION;
-            static glm::vec2 const LEFT_PLAYER_POSITION;
-            static glm::vec2 const RIGHT_PLAYER_POSITION;
 
         // ----------------------------------------------------------------------
         // --------------------------------FIELDS--------------------------------

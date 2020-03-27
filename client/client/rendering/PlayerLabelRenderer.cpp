@@ -9,14 +9,7 @@
 #include <shared/utils/Logger.h>
 
 namespace card {
-	float const PlayerLabelRenderer::PADDING_LEFT_RIGHT = 0.0575f;
-	float const PlayerLabelRenderer::PADDING_TOP = 0.1725f;
 	glm::vec4 const PlayerLabelRenderer::CIRCLE_SECTOR_COLOR = {0.93f, 0.62f, 0.16f, 0.5f};
-
-	glm::vec2 const PlayerLabelRenderer::LOCAL_PLAYER_POSITION = {0.25f, 0.65f};
-	glm::vec2 const PlayerLabelRenderer::VIS_A_VIS_PLAYER_POSITION = {0.5f - (PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN / 2), 0};
-	glm::vec2 const PlayerLabelRenderer::LEFT_PLAYER_POSITION = {PADDING_LEFT_RIGHT, PADDING_TOP};
-	glm::vec2 const PlayerLabelRenderer::RIGHT_PLAYER_POSITION = {1 - PADDING_LEFT_RIGHT - PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN, PADDING_TOP};
 
 	PlayerLabelRenderer::PlayerLabelRenderer(egui::MasterRenderer& eguiRenderer, AvatarTextures& avatarTextures, Renderer2D& renderer2D, CircleSectorRenderer& circleSectorRenderer) :
 		eguiRenderer(eguiRenderer),
@@ -34,11 +27,6 @@ namespace card {
 		parentElement->addChildElement(labelElementForLeft);
 		parentElement->addChildElement(labelElementForRight);
 		scene.setRootElement(parentElement);
-
-		labelElementForLocal->setPositionOnScreen(LOCAL_PLAYER_POSITION);
-		labelElementForVisAVis->setPositionOnScreen(VIS_A_VIS_PLAYER_POSITION);
-		labelElementForLeft->setPositionOnScreen(LEFT_PLAYER_POSITION);
-		labelElementForRight->setPositionOnScreen(RIGHT_PLAYER_POSITION);
 	}
 	void PlayerLabelRenderer::renderLocal(const std::shared_ptr<ProxyPlayer>& participant, glm::vec2 positionOnScreen) {
 		labelElementForLocal->setPositionOnScreen(positionOnScreen);
