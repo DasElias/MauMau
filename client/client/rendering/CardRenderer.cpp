@@ -133,28 +133,4 @@ namespace card {
 
 		this->cardsToRenderInNextPass.clear();
 	}
-	/*void CardRenderer::render(const std::vector<PositionedCard>& positionedCards, ProjectionMatrix& projectionMatrix, Viewport& viewport) {
-		std::vector<InstancedCardData> updateData;
-		for(auto& card : positionedCards) {
-			glm::mat4 frontMVPMatrix = projectionMatrix.getProjectionMatrix() * viewport.getViewMatrix() * card.getModelMatrix();
-			updateData.push_back({frontMVPMatrix[0], frontMVPMatrix[1], frontMVPMatrix[2], frontMVPMatrix[3], card.getCardNumber()});
-
-			// draw back side of the card
-			PositionedCard backside = card;
-			backside.changeRotation({0, PI, 0});
-			backside.setCard({0});
-			glm::mat4 backMVPMatrix = projectionMatrix.getProjectionMatrix() * viewport.getViewMatrix() * backside.getModelMatrix();
-			updateData.push_back({backMVPMatrix[0], backMVPMatrix[1], backMVPMatrix[2], backMVPMatrix[3], backside.getCardNumber()});
-		}
-		instancedVbo.update(updateData);
-
-		shader.startProgram();
-		glBindVertexArray(singleCardVao.getVertexArrayObjectId());
-		
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D_ARRAY, cardTextures.getTexId());
-		glDrawArraysInstanced(singleCardVao.getRenderMode(), 0, singleCardVao.getIndiciesCount(), updateData.size());
-		glBindVertexArray(0);
-		shader.stopProgram();
-	}*/
 }
