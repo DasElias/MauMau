@@ -208,14 +208,20 @@ namespace card {
 
 	void CardSceneRenderer::tryRenderDrawnCardOverlay(std::optional<Card> drawnCardOrNone, bool suppressMouseClick) {
 		static std::optional<Card> drawnCardInLastPass = std::nullopt;
+		auto& game = room->getGame();
+		auto& clientGameAccessor = game.getAccessorFromClient();
 
 		if(drawnCardOrNone.has_value()) {
 			// if the overlay wasn't displayed in the last frame, we need to ensure that there
 			// are no previous mouse events which are going to fire
 			if(! drawnCardInLastPass.has_value() || suppressMouseClick) drawnCardRenderer.clearPreviousMouseEvents();
-
 			cardRenderer.flush();
-			drawnCardRenderer.render(*drawnCardOrNone);
+
+			if(clientGameAccessor.isWaitingForColorChoose()) {
+				drawnCardRenderer.renderOnlyCard(*drawnCardOrNone);
+			} else {
+				drawnCardRenderer.render(*drawnCardOrNone);
+			}
 		}
 
 		drawnCardInLastPass = drawnCardOrNone;
@@ -421,7 +427,8 @@ namespace card {
 		const RoomOptions& options = game.getGameData().getOptions();
 		bool doesColorIndexChangeOnJack = options.getOption(Options::CHOOSE_COLOR_ON_JACK);
 		bool isGameRunning = !game.hasGameEnded();
-		if(cardIndexForNextCardOrNone.has_value() && isGameRunning && doesColorIndexChangeOnJack) {
+		bool hasNotDrawnPlayableCard = !game.getLocalPlayer()->getCardInTempStack().has_value();
+		if(cardIndexForNextCardOrNone.has_value() && isGameRunning && doesColorIndexChangeOnJack && hasNotDrawnPlayableCard) {
 			cardIndexRenderer.renderCardIndexForNextCard(*cardIndexForNextCardOrNone);
 		}
 	}

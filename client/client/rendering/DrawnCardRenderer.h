@@ -51,6 +51,7 @@ namespace card {
 		public:
 			void clearPreviousMouseEvents();
 			void render(Card card);
+			void renderOnlyCard(Card card);
 
 	};
 }
