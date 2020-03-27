@@ -10,7 +10,7 @@ namespace card {
 	float const PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN = 0.045f;
 	int const PlayerLabel::SKIP_IMAGE_WIDTH_ADDITION = 30;
 	int const PlayerLabel::SPACE_BETWEEN_IMAGE_AND_LABEL_PX = 3;
-	float const PlayerLabel::AVATAR_IMAGE_ASPECT_RATIO = 128 / float(136);
+	float const PlayerLabel::AVATAR_IMAGE_ASPECT_RATIO = 128 / float(128);
 	int const PlayerLabel::LABEL_FONT_SIZE_PX = 25;
 
 	PlayerLabel::PlayerLabel() :

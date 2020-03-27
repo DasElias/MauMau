@@ -9,6 +9,10 @@
 #include <shared/utils/Logger.h>
 
 namespace card {
+	int const PlayerLabelRenderer::CIRCLE_DIAMETER = 110;
+	int const PlayerLabelRenderer::CIRCLE_RADIUS = PlayerLabelRenderer::CIRCLE_DIAMETER / 2.0f;
+	int const PlayerLabelRenderer::CIRCLE_CENTER_OFFSET_PX_X = 9 + PlayerLabelRenderer::CIRCLE_RADIUS;
+	int const PlayerLabelRenderer::CIRCLE_CENTER_OFFSET_PX_Y = 18 + PlayerLabelRenderer::CIRCLE_RADIUS;
 	glm::vec4 const PlayerLabelRenderer::CIRCLE_SECTOR_COLOR = {0.93f, 0.62f, 0.16f, 0.5f};
 
 	PlayerLabelRenderer::PlayerLabelRenderer(egui::MasterRenderer& eguiRenderer, AvatarTextures& avatarTextures, Renderer2D& renderer2D, CircleSectorRenderer& circleSectorRenderer) :
@@ -62,14 +66,10 @@ namespace card {
 		float centerX = playerLabel->getImageElement()->getAbsXMargin();
 		float centerY = playerLabel->getImageElement()->getAbsYMargin();
 
-		float const CIRCLE_RADIUS = 117 / 2.0f;
-		float const CIRCLE_DIAMETER = 2 * CIRCLE_RADIUS;
-		float const CIRCLE_CENTER_OFFSET_PX_X = 5 + (CIRCLE_RADIUS);
-		float const CIRCLE_CENTER_OFFSET_PX_Y = 19 + (CIRCLE_RADIUS);
 		centerX += playerLabel->getImageElement()->getComputedWidth() / avatarTextures.getWidth() * CIRCLE_CENTER_OFFSET_PX_X;
 		centerY += playerLabel->getImageElement()->getComputedHeight() / avatarTextures.getHeight() * CIRCLE_CENTER_OFFSET_PX_Y;
 
-		float diameterX = playerLabel->getImageElement()->getComputedWidth() / avatarTextures.getWidth() * (CIRCLE_DIAMETER + 25);
+		float diameterX = playerLabel->getImageElement()->getComputedWidth() / avatarTextures.getWidth() * (CIRCLE_DIAMETER + 20);
 		circleSectorRenderer.renderSector_xDiameter({centerX, centerY}, diameterX, startAngle, endAngle, 500, CIRCLE_SECTOR_COLOR);
 	}
 	void PlayerLabelRenderer::flushText() {

@@ -50,8 +50,8 @@ namespace card {
 		bool isAnimationActive = percentSkipAnimOrNone.has_value();
 		skipAnimElement->setVisible(isAnimationActive);
 
-		float const startWidth = 0.9f * playerLabelWidthRelativeOnScreen;
-		float const endWidth = 1.5f * playerLabelWidthRelativeOnScreen;
+		float const startWidth = 0.8f * playerLabelWidthRelativeOnScreen;
+		float const endWidth = 1.4f * playerLabelWidthRelativeOnScreen;
 		float width = 0;
 		if(isAnimationActive) {
 			if(*percentSkipAnimOrNone < 0.5f) {

@@ -14,6 +14,12 @@ namespace card {
         // ----------------------------------------------------------------------
         // ----------------------------STATIC-FIELDS-----------------------------
         // ----------------------------------------------------------------------
+        public:
+            static int const CIRCLE_DIAMETER;
+            static int const CIRCLE_RADIUS;
+            static int const CIRCLE_CENTER_OFFSET_PX_X;
+            static int const CIRCLE_CENTER_OFFSET_PX_Y;
+            
         private:
             static glm::vec4 const CIRCLE_SECTOR_COLOR;
 
