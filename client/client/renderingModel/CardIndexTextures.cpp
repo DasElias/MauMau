@@ -7,10 +7,10 @@
 namespace card {
 	CardIndexTextures::CardIndexTextures() :
 			textures({
-				loadCardIndexTex(cardIndex_heart, cardIndex_heart_size),
-				loadCardIndexTex(cardIndex_spade, cardIndex_spade_size),
-				loadCardIndexTex(cardIndex_diamond, cardIndex_diamond_size),
-				loadCardIndexTex(cardIndex_club, cardIndex_club_size)
+				loadCardIndexTex(tex_cardIndex_heart, tex_cardIndex_heart_size),
+				loadCardIndexTex(tex_cardIndex_spade, tex_cardIndex_spade_size),
+				loadCardIndexTex(tex_cardIndex_diamond, tex_cardIndex_diamond_size),
+				loadCardIndexTex(tex_cardIndex_club, tex_cardIndex_club_size)
 			}),
 			aspectRatio(-1) {
 		

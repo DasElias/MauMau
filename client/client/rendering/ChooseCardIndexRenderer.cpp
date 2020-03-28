@@ -13,7 +13,7 @@
 
 #include <iostream>
 #include "../utils/FileUtils.h"
-
+#include <res/cardIndex/CardIndexHover.png.h>
 namespace card {
 	ChooseCardIndexRenderer::ChooseCardIndexRenderer(egui::MasterRenderer& eguiRenderer, CardIndexTextures& cardIndexTextures, std::function<void(CardIndex)> chooseIndexFunction) :
 				eguiRenderer(eguiRenderer),
@@ -34,18 +34,22 @@ namespace card {
 			this->chooseIndexFunction(CardIndex::CLUB);
 		}});
 		indexButtons[0]->setBackground(std::make_shared<egui::TexturedBackground>(cardIndexTextures.getImage(CardIndex::CLUB)));
+		indexButtons[0]->setHoveredBackground(std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_cardIndex_clubHover, tex_cardIndex_clubHover_size)), egui::RenderMode::RENDER_EXCLUSIVELY);
 		indexButtons[1]->getActionEventManager().addEventHandler({[this](egui::ActionEvent&) {
 			this->chooseIndexFunction(CardIndex::DIAMOND);
 		}});
 		indexButtons[1]->setBackground(std::make_shared<egui::TexturedBackground>(cardIndexTextures.getImage(CardIndex::DIAMOND)));
+		indexButtons[1]->setHoveredBackground(std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_cardIndex_diamondHover, tex_cardIndex_diamondHover_size)), egui::RenderMode::RENDER_EXCLUSIVELY);
 		indexButtons[2]->getActionEventManager().addEventHandler({[this](egui::ActionEvent&) {
 			this->chooseIndexFunction(CardIndex::HEART);
 		}});
 		indexButtons[2]->setBackground(std::make_shared<egui::TexturedBackground>(cardIndexTextures.getImage(CardIndex::HEART)));
+		indexButtons[2]->setHoveredBackground(std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_cardIndex_heartHover, tex_cardIndex_heartHover_size)), egui::RenderMode::RENDER_EXCLUSIVELY);
 		indexButtons[3]->getActionEventManager().addEventHandler({[this](egui::ActionEvent&) {
 			this->chooseIndexFunction(CardIndex::SPADE);
 		}});
 		indexButtons[3]->setBackground(std::make_shared<egui::TexturedBackground>(cardIndexTextures.getImage(CardIndex::SPADE)));
+		indexButtons[3]->setHoveredBackground(std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_cardIndex_spadeHover, tex_cardIndex_spadeHover_size)), egui::RenderMode::RENDER_EXCLUSIVELY);
 
 		egui::Value buttonBarWidth(indexButtons.size() * BUTTON_WIDTH + (indexButtons.size() - 1) * DISTANCE_BETWEEN_BUTTONS, egui::RelativityMode::RELATIVE_ON_SCREEN);
 		egui::Value buttonBarHeight(0, egui::RelativityMode::RELATIVE_ON_SCREEN);
@@ -60,7 +64,7 @@ namespace card {
 		this->buttonBarBackground = std::make_shared<egui::Label>();
 		buttonBarBackground->setOwnPositioning(std::make_shared<egui::CenterAllInParentWrapper>());
 		buttonBarBackground->setPreferredDimension({1, egui::RelativityMode::RELATIVE_ON_SCREEN}, {0, egui::RelativityMode::RELATIVE_ON_SCREEN});
-		buttonBarBackground->setBackground(std::make_shared<egui::ColoredBackground>(egui::Color(1, 1, 1, 0.85f)));
+		buttonBarBackground->setBackground(std::make_shared<egui::ColoredBackground>(egui::Color(0.9f, 0.9f, 0.9f, 0.925f)));
 
 		std::shared_ptr<egui::UnorganizedParentElement> rootElem(new egui::UnorganizedParentElement({buttonBarBackground, buttonBar}));
 		rootElem->setBackground(std::make_shared<egui::ColoredBackground>(egui::Color(0, 0, 0, 0.55f)));

@@ -30,9 +30,9 @@ namespace card {
 			std::make_shared<egui::RelativePositioningOnScreen>(0.0f, 0.44f)
 		));
 		parentElement->setPreferredWidth({0.05f, egui::RelativityMode::RELATIVE_ON_SCREEN});
-		parentElement->setSpaceBetweenElements({10, egui::RelativityMode::ABSOLUTE_VALUE});
+		parentElement->setSpaceBetweenElements({5, egui::RelativityMode::ABSOLUTE_VALUE});
 		title->setPreferredHeight({50, egui::RelativityMode::ABSOLUTE_VALUE});
-		float const TITLE_STRETCH = 20;
+		float const TITLE_STRETCH = 15;
 		title->setXTranslation(-TITLE_STRETCH/2);
 		title->setStretchX(TITLE_STRETCH);
 		imageElement->setMaxWidth({1, egui::RelativityMode::RELATIVE_IN_PARENT});
