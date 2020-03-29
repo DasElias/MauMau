@@ -11,7 +11,7 @@ namespace card {
 	const glm::vec3 HAND_CARDS_OPPONENT_LEFT_POSITION = {-2, CardRenderer::HEIGHT / 2, 0};
 
 	const glm::vec3 DRAW_CARDS_ROTATION = {PI / 2, 0, 0};
-	const glm::vec3 PLAY_CARDS_ROTATION = {PI / 2, PI, 0};
+	const glm::vec3 PLAY_CARDS_ROTATION = {-PI / 2, 0, 0};
 	const glm::vec3 HAND_CARDS_LOCAL_ROTATION = {0, 0, 0};
 	const glm::vec3 HAND_CARDS_OPPONENT_VISAVIS_ROTATION = {PI, 0, 0};
 	const glm::vec3 HAND_CARDS_OPPONENT_RIGHT_ROTATION = {PI, PI / 2, 0};
