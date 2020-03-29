@@ -354,26 +354,17 @@ namespace card {
 			} else if(cardStacksOrNoneInCwOrder[0] && sourceStack.equalsId(cardStacksOrNoneInCwOrder[0]->getCardStack())) {
 				glm::vec3 startPosition = handCardStackPositionGenerator.getPositionOfCard_cardStackZ(animation.indexInSourceStack - 1, sourceStack.getSize(), HAND_CARDS_OPPONENT_LEFT_POSITION, LEFT_RIGHT_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
 				std::size_t drawCardStackSize = DrawCardStackClamper::getClampedSize(drawCardStack);
-
-				float const minYPositionAtDrawCardStack = DRAW_CARDS_POSITION.y + CardRenderer::HEIGHT * 0.25f + CardStackRenderer::ADDITION_PER_CARD * drawCardStackSize;
-				glm::vec3 minPositionAtDrawCardStack = {DRAW_CARDS_POSITION.x, minYPositionAtDrawCardStack, DRAW_CARDS_POSITION.z};
-				glm::vec3 middlePosition1 = startPosition + glm::vec3(0, CardRenderer::HEIGHT / 2, 0);
-				float distanceFromMiddlePosition2ToStart = glm::length(startPosition - minPositionAtDrawCardStack);
-				float distanceFromMiddlePosition2ToEnd = glm::length(positionEnd - minPositionAtDrawCardStack);
-				glm::vec3 middlePosition2 = weightedAvg(startPosition, distanceFromMiddlePosition2ToStart, positionEnd, distanceFromMiddlePosition2ToEnd);
-				middlePosition2.y = std::max(minYPositionAtDrawCardStack, avg(middlePosition1.y, positionEnd.y));
-
+				
 				cardInterpolator.interpolateAndRender(animation,
 									 startPosition, glm::vec3(0, -PI/2, 0),
-									 middlePosition1, glm::vec3(0, -PI/2, 0),
-									 middlePosition2, weightedAvg(glm::vec3(0, -PI / 2, 0), distanceFromMiddlePosition2ToStart, {rotationEnd.x, -rotationEnd.y, rotationEnd.z}, distanceFromMiddlePosition2ToEnd),
+									 startPosition + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), glm::vec3(0, -PI/2, 0),
 									 positionEnd, {rotationEnd.x, -rotationEnd.y, rotationEnd.z}
 				);
 			} else if(cardStacksOrNoneInCwOrder[1] && sourceStack.equalsId(cardStacksOrNoneInCwOrder[1]->getCardStack())) {
 				glm::vec3 startPosition = handCardStackPositionGenerator.getPositionOfCard_cardStackX(animation.indexInSourceStack - 1, sourceStack.getSize(), HAND_CARDS_OPPONENT_VISAVIS_POSITION, FRONT_BACK_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
 				cardInterpolator.interpolateAndRender(animation,
-									 startPosition, HAND_CARDS_OPPONENT_VISAVIS_ROTATION - glm::vec3(2*PI, 0, 0),
-									 startPosition + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), HAND_CARDS_OPPONENT_VISAVIS_ROTATION - glm::vec3(2 * PI, 0, 0),
+									 startPosition, {-PI, 0, 0},
+									 startPosition + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), {-PI, 0, 0},
 									 positionEnd, rotationEnd
 				);
 			} else if(cardStacksOrNoneInCwOrder[2] && sourceStack.equalsId(cardStacksOrNoneInCwOrder[2]->getCardStack())) {
