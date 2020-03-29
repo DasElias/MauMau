@@ -465,7 +465,8 @@ namespace card {
 	}
 
 	void ProxyMauMauGameData::tryRebalanceCardStacks() {
-		while(drawCardStack.getAvailableCardsSize() <= MIN_DRAW_CARD_STACK_SIZE && playCardStack.getAvailableCardsSize() > 1) {
+		// move card from play to draw stack while (there are too little cards on draw card stack and at least one card on play card stack) or (there are too much cards on play card stacks)
+		while((drawCardStack.getAvailableCardsSize() <= MIN_DRAW_CARD_STACK_SIZE && playCardStack.getAvailableCardsSize() > 1) || playCardStack.getAvailableCardsSize() > Card::MAX_CARDS) {
 			drawCardStack.addFirstCardFromImmediately(Card::NULLCARD, playCardStack, REBALANCE_DURATION);
 		}
 
@@ -473,7 +474,7 @@ namespace card {
 			for(int i = 1; i <= Card::MAX_CARDS; i++) {
 				drawCardStack.addFromPlainAtPosition(0, Card(i));
 			}
-		} 
+		}
 	}
 	void ProxyMauMauGameData::setLocalPlayerAtTheBeginOfPlayersVector() {
 		while(this->allPlayers[0] != localPlayer) {
