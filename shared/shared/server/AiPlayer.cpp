@@ -45,16 +45,15 @@ namespace card {
 	
 	bool AiPlayer::tryPlayCard() {
 		std::vector<Card> playableCards = getPlayableCards();
-
+		// no card available to play, we have to draw a card instead
 		if(playableCards.empty()) return false;
-		else {
-			tryMau();
 
-			std::size_t chosenIndex = randomInRange<std::size_t>(0, playableCards.size() - 1);
-			Card chosenCard = playableCards[chosenIndex];
-			playCardImpl(chosenCard, false);
-			return true;
-		}
+		tryMau();
+
+		std::size_t chosenIndex = randomInRange<std::size_t>(0, playableCards.size() - 1);
+		Card chosenCard = playableCards[chosenIndex];
+		playCardImpl(chosenCard, false);
+		return true;
 	}
 	std::vector<Card> AiPlayer::getPlayableCards() {
 		std::vector<Card> playableCards;
@@ -123,8 +122,11 @@ namespace card {
 
 		bool success;
 		if(playableCards.empty()) {
+			// no card to play available, we have to pass
 			success = game.pass(*this);
 		} else {
+			tryMau();
+
 			std::size_t randomIndex = randomInRange<std::size_t>(0, playableCards.size() - 1);
 			Card cardToPlay = playableCards[randomIndex];
 			success = game.playCardAndSetNextPlayerOnTurn(*this, cardToPlay, false);
