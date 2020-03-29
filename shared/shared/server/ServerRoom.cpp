@@ -201,6 +201,9 @@ namespace card {
 	void ServerRoom::onGameEnd() {
 		this->game = nullptr;
 	}
+	bool ServerRoom::operator==(const ServerRoom& other) const {
+		return roomCode == other.roomCode;
+	}
 	optionalSuccessAnswerPacket ServerRoom::listener_onChangeOptions(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant) {
 		if(!checkIfParticipant(participant)) return std::nullopt;
 		auto& casted = dynamic_cast<ChangeOptionsRequest_CTSPacket&>(p);

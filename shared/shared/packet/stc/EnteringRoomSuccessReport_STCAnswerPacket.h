@@ -17,6 +17,7 @@ namespace card {
 			static int const ROOM_NOT_FOUND_STATUS = 2;
 			static int const USERNAME_TAKEN_STATUS = 3;
 			static int const ROOM_FULL_STATUS = 4;
+			static int const ALREADY_IN_ROOM_STATUS = 5;
 
 		private:
 			static std::string const STATUS_CODE_KEY;

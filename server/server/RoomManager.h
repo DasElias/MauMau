@@ -7,6 +7,8 @@
 #include "ServerPacketTransmitter.h"
 #include <limits>
 #include <shared/model/RoomCode.h>
+#include <memory>
+
 
 namespace card {
 	class RoomManager {
@@ -23,6 +25,7 @@ namespace card {
 		private:
 			std::shared_ptr<ServerPacketTransmitter> packetTransmitter;
 			std::map<RoomCode, std::unique_ptr<ServerRoom>> rooms;
+			std::map<std::shared_ptr<ConnectionToClient>, std::reference_wrapper<ServerRoom>> users;
 
 			ClientPacketListenerCallbackWithConnection handler_onJoinRoom;
 			ClientPacketListenerCallbackWithConnection handler_onCreateRoom;
@@ -43,10 +46,12 @@ namespace card {
 			void createAndJoin(std::string username, Avatar avatar, std::map<std::string, int> roomOptions, const std::shared_ptr<ConnectionToClient>& conn);
 			void leave(std::shared_ptr<ConnectionToClient> conn);
 			[[nodiscard]] bool kick(std::string usernameOfPlayerToKick, std::shared_ptr<ConnectionToClient> requester);
+			bool isConnectionInRoom(const std::shared_ptr<ConnectionToClient>& conn) const;
+			ServerRoom& getRoomToConnection(const std::shared_ptr<ConnectionToClient>& conn);
 
 		private:
-			void closeRoomIfNecessary(const std::unique_ptr<ServerRoom>& room);
-			void closeRoom(const std::unique_ptr<ServerRoom>& room);
+			void closeRoomIfNecessary(const ServerRoom& room);
+			void closeRoom(const ServerRoom& room);
 			bool doesRoomExist(RoomCode roomCode);
 			std::vector<std::string> getUsernamesOfOtherParticipants(const std::unique_ptr<ServerRoom>& room, std::string participantToFilter);
 			std::vector<Avatar> getAvatarsOfOtherParticipants(const std::unique_ptr<ServerRoom>& room, std::string participantToFilter);

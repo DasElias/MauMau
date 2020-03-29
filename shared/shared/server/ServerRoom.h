@@ -67,6 +67,8 @@ namespace card {
 
 			void onGameEnd();
 
+			bool operator==(const ServerRoom&) const;
+
 			optionalSuccessAnswerPacket listener_onChangeOptions(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant); 
 			optionalSuccessAnswerPacket listener_onChangeRoomLeader(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);
 			optionalSuccessAnswerPacket listener_onStartGame(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant);

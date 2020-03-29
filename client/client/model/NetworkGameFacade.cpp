@@ -98,6 +98,9 @@ namespace card {
 			case EnteringRoomSuccessReport_STCAnswerPacket::USERNAME_TAKEN_STATUS:
 				this->errorMsgInPlainText = "Der gewünschte Nutzername ist bereits vergeben.";
 				break;
+			case EnteringRoomSuccessReport_STCAnswerPacket::ALREADY_IN_ROOM_STATUS:
+				this->errorMsgInPlainText = "Du bist bereits in einem Raum.";
+				break;
 			case EnteringRoomSuccessReport_STCAnswerPacket::UNKNOWN_ERROR_STATUS:
 			default:
 				this->errorMsgInPlainText = "Ein unbekannter Fehler ist aufgetreten.";

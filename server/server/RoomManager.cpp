@@ -26,6 +26,10 @@ namespace card {
 	void RoomManager::join(RoomCode roomCode, std::string username, Avatar avatar, const std::shared_ptr<ConnectionToClient>& conn) {
 		typedef EnteringRoomSuccessReport_STCAnswerPacket SuccessReport;
 
+		if(isConnectionInRoom(conn)) {
+			sendEnteringRoomSuccessReport(conn, SuccessReport::ALREADY_IN_ROOM_STATUS);
+			return;
+		}
 		if(! doesRoomExist(roomCode)) {
 			sendEnteringRoomSuccessReport(conn, SuccessReport::ROOM_NOT_FOUND_STATUS);
 			return;
@@ -48,6 +52,7 @@ namespace card {
 			return;
 		}
 		packetTransmitter->registerParticipant(conn, constructedParticipant);
+		users.insert({conn, *concernedRoom});
 
 		auto usernamesOfOtherParticipants = getUsernamesOfOtherParticipants(concernedRoom, username);
 		auto areOtherParticipantsAiPlayers = this->areOtherParticipantsAiPlayers(concernedRoom, username);
@@ -58,6 +63,11 @@ namespace card {
 	}
 	void RoomManager::createAndJoin(std::string username, Avatar avatar, std::map<std::string, int> roomOptions, const std::shared_ptr<ConnectionToClient>& conn) {
 		typedef EnteringRoomSuccessReport_STCAnswerPacket SuccessReport;
+
+		if(isConnectionInRoom(conn)) {
+			sendEnteringRoomSuccessReport(conn, SuccessReport::ALREADY_IN_ROOM_STATUS);
+			return;
+		}
 		
 		auto newRoomCode = getNewRoomCode();
 		this->rooms.insert(std::make_pair(newRoomCode, std::make_unique<ServerRoom>(newRoomCode, packetTransmitter, roomOptions)));
@@ -71,64 +81,62 @@ namespace card {
 
 		room->initRoomLeaderWithoutPermissionsChecking(constructedParticipant);
 		packetTransmitter->registerParticipant(conn, constructedParticipant);
+		users.insert({conn, *room});
 
 		auto allRoomOptions = room->getRoomOptions().getAllOptions();
 		sendEnteringRoomSuccessReport(conn, SuccessReport::SUCCESS_STATUS, {}, {}, {}, username, newRoomCode, allRoomOptions);
 	}
 	void RoomManager::leave(std::shared_ptr<ConnectionToClient> conn) {
 		if(packetTransmitter->wasParticipantRegistered(conn)) {
-			std::shared_ptr<ParticipantOnServer> participant = packetTransmitter->getRegisteredParticipant(conn);
-
-			for(auto& pair : this->rooms) {
-				auto& singleRoom = pair.second;
-
-				if(singleRoom->checkIfParticipant(participant)) {
-					singleRoom->leaveRoom(participant, false);
-					if(singleRoom->shouldCloseRoom()) {
-						closeRoom(singleRoom);
-					}
-					break;
-				}
+			if(isConnectionInRoom(conn)) {
+				auto& room = getRoomToConnection(conn);
+				std::shared_ptr<ParticipantOnServer> participant = packetTransmitter->getRegisteredParticipant(conn);
+					
+				room.leaveRoom(participant, false);
+				users.erase(users.find(conn));
+				closeRoomIfNecessary(room);
 			}
-
 			packetTransmitter->unregisterParticipant(conn);
 		}
 	}
 	bool RoomManager::kick(std::string usernameOfPlayerToKick, std::shared_ptr<ConnectionToClient> requester) {
-		if(packetTransmitter->wasParticipantRegistered(requester)) {
-			std::shared_ptr<ParticipantOnServer> requesterParticipant = packetTransmitter->getRegisteredParticipant(requester);
-			for(auto& pair : this->rooms) {
-				auto& singleRoom = pair.second;
+		if(! packetTransmitter->wasParticipantRegistered(requester)) return false;
+		if(! isConnectionInRoom(requester)) return false;
 
-				if(singleRoom->checkIfParticipant(requesterParticipant)) {
-					if(! singleRoom->checkIfLeader(requesterParticipant)) return false;
-					if(! singleRoom->checkIfParticipantByUsername(usernameOfPlayerToKick)) return false;
-					std::shared_ptr<ParticipantOnServer> participantToKick = singleRoom->lookupParticipantByUsername(usernameOfPlayerToKick);
-					if(participantToKick->isRealPlayer()) {
-						std::shared_ptr<ConnectionToClient> connOfParticipantToKick = packetTransmitter->getConnectionOrNull(participantToKick);
-						if(!connOfParticipantToKick) return false;
+		std::shared_ptr<ParticipantOnServer> requesterParticipant = packetTransmitter->getRegisteredParticipant(requester);
+		auto& room = getRoomToConnection(requester);
 
-						singleRoom->leaveRoom(participantToKick, true);
-						closeRoomIfNecessary(singleRoom);
+		if(!room.checkIfLeader(requesterParticipant)) return false;
+		if(!room.checkIfParticipantByUsername(usernameOfPlayerToKick)) return false;
 
-						connOfParticipantToKick->close();
-						packetTransmitter->unregisterParticipant(connOfParticipantToKick);
-					} else {
-						singleRoom->leaveRoom(participantToKick, true);
-						closeRoomIfNecessary(singleRoom);
-					}
+		std::shared_ptr<ParticipantOnServer> participantToKick = room.lookupParticipantByUsername(usernameOfPlayerToKick);
+		if(participantToKick->isRealPlayer()) {
+			std::shared_ptr<ConnectionToClient> connOfParticipantToKick = packetTransmitter->getConnectionOrNull(participantToKick);
+			if(!connOfParticipantToKick) return false;
 
-					return true;
-				}
-			}
+			room.leaveRoom(participantToKick, true);
+			closeRoomIfNecessary(room);
+
+			users.erase(users.find(connOfParticipantToKick));
+			connOfParticipantToKick->close();
+			packetTransmitter->unregisterParticipant(connOfParticipantToKick);
+		} else {
+			room.leaveRoom(participantToKick, true);
 		}
-		return false;
+		return true;
 	}
-	void RoomManager::closeRoomIfNecessary(const std::unique_ptr<ServerRoom>& room) {
-		if(room->shouldCloseRoom()) closeRoom(room);
+	bool RoomManager::isConnectionInRoom(const std::shared_ptr<ConnectionToClient>& conn) const {
+		return users.find(conn) != users.end();
 	}
-	void RoomManager::closeRoom(const std::unique_ptr<ServerRoom>& r) {
-		this->rooms.erase(r->getRoomCode());
+	ServerRoom& RoomManager::getRoomToConnection(const std::shared_ptr<ConnectionToClient>& conn) {
+		if(! isConnectionInRoom(conn)) throw std::runtime_error("No room was registered to connection.");
+		return (*users.find(conn)).second;
+	}
+	void RoomManager::closeRoomIfNecessary(const ServerRoom& room) {
+		if(room.shouldCloseRoom()) closeRoom(room);
+	}
+	void RoomManager::closeRoom(const ServerRoom& r) {
+		this->rooms.erase(r.getRoomCode());
 	}
 	bool RoomManager::doesRoomExist(RoomCode roomCode) {
 		return rooms.find(roomCode) != rooms.end();
