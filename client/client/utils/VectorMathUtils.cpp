@@ -18,4 +18,18 @@ namespace card {
 		returnValue.z = clamp(val.z, fmin(limit1.z, limit2.z), fmax(limit1.z, limit2.z));
 		return returnValue;
 	}
+	glm::vec3 avg(const glm::vec3& a, const glm::vec3& b) {
+		glm::vec3 returnValue;
+		returnValue.x = avg(a.x, b.x);
+		returnValue.y = avg(a.y, b.y);
+		returnValue.z = avg(a.z, b.z);
+		return returnValue;
+	}
+	glm::vec3 weightedAvg(const glm::vec3& a, float aWeight, const glm::vec3& b, float bWeight) {
+		glm::vec3 returnValue;
+		returnValue.x = weightedAvg(a.x, aWeight, b.x, bWeight);
+		returnValue.y = weightedAvg(a.y, aWeight, b.y, bWeight);
+		returnValue.z = weightedAvg(a.z, aWeight, b.z, bWeight);
+		return returnValue;
+	}
 }

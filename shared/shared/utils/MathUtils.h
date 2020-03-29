@@ -19,6 +19,9 @@ namespace card {
 	template<typename T = float>
 	T clamp(T val, T min, T max);
 
+	template<typename Value = float, typename Weight = float>
+	Value weightedAvg(Value a, Weight weightA, Value b, Weight weightB);
+
 	float avg(float a, float b);
 	int sgn(float value);
 	float toRadiands(float deg);
@@ -52,4 +55,9 @@ T card::clamp(T val, T min, T max) {
 	if(val < min) return min;
 	if(val > max) return max;
 	return val;
+}
+
+template<typename Value, typename Weight>
+Value card::weightedAvg(Value a, Weight weightA, Value b, Weight weightB) {
+	return (a * weightA + b * weightB) / (weightA + weightB);
 }
