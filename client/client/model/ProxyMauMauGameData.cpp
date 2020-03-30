@@ -350,6 +350,8 @@ namespace card {
 		if(roomOptions.getOption(Options::PASS_DRAW_TWO) && isInDrawTwoState() &&userOnTurn == localPlayer) {
 			messageQueue.appendMessagePermanently("Spiele eine 7 oder passe, um "+std::to_string(getSizeOfCardsToDrawDueToPlusTwo())+" Karten zu ziehen.", drawTwoMessageKey);
 		}
+
+		clearPermanentMessagesIfGameHasEnded();
 	}
 	void ProxyMauMauGameData::setNextPlayerOnTurnLocal() {
 		std::shared_ptr<ProxyPlayer> nextPlayer = getNextPlayer(userOnTurn);
