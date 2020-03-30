@@ -131,7 +131,7 @@ namespace card {
 			gameData.playCardFromLocalPlayerHandCards(index);
 			sendPlayCardPacket();
 		} else {
-			indexOfCardToPlayAfterColorChoose = index;
+			indexOfCardToPlayAfterColorChoose = static_cast<int>(index);
 		}
 	}
 
