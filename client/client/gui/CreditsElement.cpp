@@ -49,7 +49,7 @@ namespace card {
 		title->setPreferredHeight({TITLE_FONT_SIZE_PX, RelativityMode::ABSOLUTE_VALUE});
 		subtitle->setPreferredHeight({SUBTITLE_FONT_SIZE_PX + 20, RelativityMode::ABSOLUTE_VALUE});
 
-		appendContent("Karten", "David Bellot - www.svg-cards.sourceforge.net");
+		appendContent("Karten", "svg-cards\nDavid Bellot - www.svg-cards.sourceforge.net\nLGPL-Lizenz (www.gnu.org/licenses/lgpl-3.0.en.html)");
 		appendContent("Avatare", "Pablo Stanley - www.getavataaars.com");
 		appendContent(u8"Textur für Tisch", "Petr Kovar - www.freeimages.com");
 		appendContent("Icons", "Freepik - www.flaticon.com");
