@@ -179,6 +179,7 @@ namespace card {
 
 			drawCardStack.removeLast();
 			playCardStack.addFromPlain(card);
+			tryRebalanceCardStacks();
 			wasCardDrawn_thisTurn = true;
 		} else {
 			if(!player.containsHandCard(card)) {

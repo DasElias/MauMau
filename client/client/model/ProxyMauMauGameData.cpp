@@ -10,6 +10,7 @@
 #include <shared/model/TimeToSetNextPlayerOnTurnDuration.h>
 #include <shared/model/MinDrawCardStackSize.h>
 #include <shared/utils/Logger.h>
+#include <egui/input/IOHandler.h>
 
 namespace card {
 	ProxyMauMauGameData::ProxyMauMauGameData(std::vector<std::shared_ptr<ParticipantOnClient>> allParticipantsInclLocal, std::shared_ptr<ParticipantOnClient> localParticipant, std::vector<int> handCards, int startCard, RoomOptions& roomOptions, std::function<void(std::shared_ptr<ProxyPlayer>)> onTurnEnd) :
@@ -167,6 +168,7 @@ namespace card {
 		throwIfGameHasEnded();
 		field_wasCardDrawnIntoHandCards = true;
 		player->drawCardInHandCards(card, drawCardStack);
+		tryRebalanceCardStacks();
 	}
 
 	void ProxyMauMauGameData::drawInHandCardsFromTempCards() {
@@ -179,6 +181,7 @@ namespace card {
 		throwIfGameHasEnded();
 		Card cardToDraw = getDrawCardForNextPlayer();
 		localPlayer->drawSingleCardInTempCardStackLocal(cardToDraw, drawCardStack);
+		tryRebalanceCardStacks();
 	}
 
 	void ProxyMauMauGameData::throwIfGameHasEnded() {
