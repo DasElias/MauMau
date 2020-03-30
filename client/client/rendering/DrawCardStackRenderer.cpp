@@ -10,6 +10,7 @@
 #include <iostream>
 #include <shared/utils/VectorUtils.h>
 #include <shared/utils/MathUtils.h>
+#include <res/ingame/cardStackFront.png.h>
 
 namespace card {
 	float const DrawCardStackRenderer::BORDER_RADIUS_WIDTH = (6.0f / 350) * CardRenderer::WIDTH;
@@ -25,7 +26,14 @@ namespace card {
 			cardRenderer(cardRenderer),
 			renderer3D(renderer3D),
 			borderVao(VertexArrayObject::RenderMode::TRIANGLES, 3, genBorderData(), genColorData(10)),
-			texture(SimpleTextureFactory().setWrapS(TextureWrap::REPEAT).setWrapT(TextureWrap::REPEAT).setMinFilter(TextureMinFilter::LINEAR_MIPMAP_NEAREST).setMagFilter(TextureMagFilter::LINEAR).loadFromFile("C:\\Users\\Elias\\Downloads\\cardstack.png")) {
+			texture(
+				SimpleTextureFactory()
+				.setWrapS(TextureWrap::REPEAT)
+				.setWrapT(TextureWrap::REPEAT)
+				.setMinFilter(TextureMinFilter::LINEAR_MIPMAP_NEAREST)
+				.setMagFilter(TextureMagFilter::LINEAR)
+				.loadFromMemory(tex_cardStackFront, tex_cardStackFront_size)
+			) {
 	}
 	static void appendFace(std::vector<float>& data, glm::vec3 topLeft, glm::vec3 topRight, glm::vec3 bottomLeft, glm::vec3 bottomRight) {
 		data += {bottomRight.x, bottomRight.y, bottomRight.z};
