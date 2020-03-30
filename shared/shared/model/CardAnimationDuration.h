@@ -4,7 +4,7 @@
 namespace card {
 	static int const PLAY_DURATION_MS = 750;
 	static int const DRAW_DURATION_MS = 750;
-	static int const DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS = 500;
+	static int const DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS = 300;
 	// card is drawed and played in the same turn
 	static int const DELAY_BETWEEN_DRAW_AND_PLAY = 750;
 
