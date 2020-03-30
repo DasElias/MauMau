@@ -1,6 +1,7 @@
 #include "HandCardIntersectionChecker.h"
 #include "HandCardIntersectionChecker.h"
 #include "HandCardIntersectionChecker.h"
+#include "HandCardIntersectionChecker.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/ext.hpp>
 
@@ -12,6 +13,9 @@ namespace card {
 			IntersectionChecker(projectionMatrix, viewport) {
 	}
 	std::optional<int> HandCardIntersectionChecker::getIndexOfIntersectedCardInX(const CardAnimator& cardStack, glm::vec3 centerPosition, glm::vec3 rotation, float maxWidthOfCardStack, float widthOfSingleCard, float heightOfSingleCard) {
+		// if the cursor is outside of the screen, we don't have to consider a possible intersection
+		if(isCursorOutsideOfScreen()) return std::nullopt;
+		
 		auto positionedCards = positionGenerator.generateMatricies_cardStackX(cardStack, centerPosition, rotation, maxWidthOfCardStack, widthOfSingleCard);
 
 		// we need to iterate from back to front, since the cards further back can cover the ones before
@@ -42,6 +46,13 @@ namespace card {
 		}
 
 		return std::nullopt;
+	}
+
+	bool HandCardIntersectionChecker::isCursorOutsideOfScreen() {
+		auto& cursorHandler = egui::getCursorHandler();
+		auto& displayHandler = egui::getDisplayHandler();
+		return cursorHandler.getCursorX() < 0 || cursorHandler.getCursorX() > displayHandler.getWidth() || 
+				cursorHandler.getCursorY() < 0 || cursorHandler.getCursorY() > displayHandler.getHeight();
 	}
 
 	
