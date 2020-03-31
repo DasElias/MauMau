@@ -13,6 +13,7 @@ namespace card {
         // ----------------------------------------------------------------------
         private:
             static int const AVATARS_PER_ROW = 12;
+            static float const X_PADDING_BETWEEN_AVATARS;
             static float const WIDTH_PER_AVATAR;
 
         // ----------------------------------------------------------------------

@@ -6,8 +6,9 @@
 #include <egui/model/nodeComponents/background/ColoredBackground.h>
 
 namespace card {
-	float const AvatarGrid::WIDTH_PER_AVATAR = 1.0f / AvatarGrid::AVATARS_PER_ROW;
-
+	float const AvatarGrid::X_PADDING_BETWEEN_AVATARS = 0.005;
+	float const AvatarGrid::WIDTH_PER_AVATAR = 1.0f / AvatarGrid::AVATARS_PER_ROW - AvatarGrid::X_PADDING_BETWEEN_AVATARS;
+	 
 	AvatarGrid::AvatarGrid(AvatarTextures& avatarTextures, std::vector<Avatar> avatarsInGrid, Avatar defaultSelectedAvatar) :
 			avatarTextures(avatarTextures),
 			selectedAvatar(std::nullopt) {
@@ -97,7 +98,9 @@ namespace card {
 	std::shared_ptr<egui::Positioning> AvatarGrid::genPositioningForAvatar(std::size_t i) {
 		return std::make_shared<egui::FunctionalPositioningInParent>(
 			[i](PositionableElement& target) {
-				float offsetInParentX = (i % AVATARS_PER_ROW) / float(AVATARS_PER_ROW);		// the purpose of the second division is to convert the value to [0; 1]
+				std::size_t xIndex = i % AVATARS_PER_ROW;
+				float offsetInParentX = xIndex * (WIDTH_PER_AVATAR + X_PADDING_BETWEEN_AVATARS);
+
 				return offsetInParentX;
 			},
 			[i, this](PositionableElement& target) {
