@@ -32,7 +32,7 @@ namespace card {
 		basicPositioning->setX(positionRelativeOnScreen.x);
 		basicPositioning->setY(positionRelativeOnScreen.y);
 
-		if(renderSkipGrey && !percentSkipAnimOrNone.has_value()) percentSkipAnimOrNone = 0;
+		if(renderSkipGrey && !percentSkipAnimOrNone.has_value()) percentSkipAnimOrNone = 0.0f;
 
 		updateSkipElement(percentSkipAnimOrNone);
 		updateMauElement(percentMauAnimOrNone);
