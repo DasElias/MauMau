@@ -10,6 +10,9 @@ namespace card {
 	void ConnectionToClient::start() {
 		GeneralTCPTransmitter::startImpl();
 	}
+	void ConnectionToClient::send(std::string message) {
+		GeneralTCPTransmitter::send(message);
+	}
 	boost::asio::io_context& ConnectionToClient::getIoContext() {
 		return ioc;
 	}

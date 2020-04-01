@@ -1,11 +1,12 @@
-#include "ServerPacketTransmitter.h"
-#include "Acceptor.h"
-#include "RoomManager.h"
+#include "service/ServerPacketTransmitter.h"
+#include "service/Acceptor.h"
+#include "service/RoomManager.h"
 #include <memory>
-#include "Daemon.h"
+#include "service/Daemon.h"
 #include <shared/utils/Logger.h>
 #include <shared/utils/ThreadUtils.h>
-#include "ThreadSynchronizer.h"
+#include "service/ThreadSynchronizer.h"
+#include "service/RoomManagerAccessorFromClient.h"
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 	// windows
@@ -43,7 +44,7 @@ int main() {
 	try {	
 		auto packetTransmitter = std::make_shared<ServerPacketTransmitter>();
 		ba::io_context ioc;
-		RoomManager roomManager(packetTransmitter);
+		RoomManagerAccessorFromClient roomManager(packetTransmitter);
 		Acceptor acceptor(ioc, packetTransmitter, roomManager);
 
 		std::thread threadUtilsThread(&runThreadUtils);

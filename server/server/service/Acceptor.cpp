@@ -9,7 +9,7 @@ using namespace std::chrono_literals;
 using namespace std::string_literals;
 
 namespace card {
-	Acceptor::Acceptor(boost::asio::io_context& ioc, std::shared_ptr<ServerPacketTransmitter> packetTransmitter, RoomManager& roomManager) :
+	Acceptor::Acceptor(boost::asio::io_context& ioc, std::shared_ptr<ServerPacketTransmitter> packetTransmitter, RoomManagerAccessorFromClient& roomManager) :
 			ioc(ioc),
 			acceptor(ioc, tcp::v4()),
 			packetTransmitter(packetTransmitter),

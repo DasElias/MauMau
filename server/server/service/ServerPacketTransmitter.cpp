@@ -1,10 +1,10 @@
 #include "ServerPacketTransmitter.h"
 #include <shared/packet/CTSPacketConstructorFromJson.h>
-#include "ConnectionToClient.h"
+#include "AbstractConnectionToClient.h"
 #include "ThreadSynchronizer.h"
 
 namespace card {
-	void ServerPacketTransmitter::onReceive(std::string& msg, std::shared_ptr<ConnectionToClient> sender) {
+	void ServerPacketTransmitter::onReceive(std::string& msg, std::shared_ptr<AbstractConnectionToClient> sender) {
 		std::mutex& mutex = threadSyncronizer_getMutex();
 		std::lock_guard<std::mutex> lockGuard(mutex);
 
@@ -41,7 +41,7 @@ namespace card {
 			sendPacketToClient(pkt, rec);
 		}
 	}
-	void ServerPacketTransmitter::sendPacketToClient(Packet& pkt, const std::shared_ptr<ConnectionToClient> conn) {
+	void ServerPacketTransmitter::sendPacketToClient(Packet& pkt, const std::shared_ptr<AbstractConnectionToClient> conn) {
 		std::string jsonMsg = pkt.getJson();
 		conn->send(std::move(jsonMsg));
 	}
@@ -51,28 +51,28 @@ namespace card {
 	void ServerPacketTransmitter::removeListenerForClientPkt(int packetId, ClientPacketListenerCallbackWithConnection callback) {
 		permanentListeners.removeElement(packetId, callback);
 	}
-	bool ServerPacketTransmitter::wasParticipantRegistered(const std::shared_ptr<ConnectionToClient>& conn) {
+	bool ServerPacketTransmitter::wasParticipantRegistered(const std::shared_ptr<AbstractConnectionToClient>& conn) {
 		return participants.left.find(conn) != participants.left.end();
 	}
-	std::shared_ptr<ParticipantOnServer> ServerPacketTransmitter::getRegisteredParticipant(const std::shared_ptr<ConnectionToClient>& conn) {
+	std::shared_ptr<ParticipantOnServer> ServerPacketTransmitter::getRegisteredParticipant(const std::shared_ptr<AbstractConnectionToClient>& conn) {
 		if(!wasParticipantRegistered(conn)) {
 			throw std::runtime_error("This connection hasn't been registered before");
 		}
 
 		return participants.left.at(conn);
 	}
-	std::shared_ptr<ConnectionToClient> ServerPacketTransmitter::getConnectionOrNull(const std::shared_ptr<ParticipantOnServer>& participant) {
+	std::shared_ptr<AbstractConnectionToClient> ServerPacketTransmitter::getConnectionOrNull(const std::shared_ptr<ParticipantOnServer>& participant) {
 		if(participants.right.find(participant) == participants.right.end()) return nullptr;
 		return participants.right.at(participant);
 	}
-	void ServerPacketTransmitter::registerParticipant(const std::shared_ptr<ConnectionToClient>& conn, const std::shared_ptr<ParticipantOnServer>& newParticipant) {
+	void ServerPacketTransmitter::registerParticipant(const std::shared_ptr<AbstractConnectionToClient>& conn, const std::shared_ptr<ParticipantOnServer>& newParticipant) {
 		if(!conn || !newParticipant) throw std::runtime_error("Can't register a participiant where he or the connection is null");
 		if(participants.left.find(conn) != participants.left.end() || participants.right.find(newParticipant) != participants.right.end()) {
 			throw std::runtime_error("The connection or the participant has already been registered.");
 		}
 		this->participants.insert(participantsBimapType::value_type(conn, newParticipant));
 	}
-	void ServerPacketTransmitter::unregisterParticipant(std::shared_ptr<ConnectionToClient> conn) {
+	void ServerPacketTransmitter::unregisterParticipant(std::shared_ptr<AbstractConnectionToClient> conn) {
 		if(! conn) throw std::runtime_error("Connection is null");
 		if(! wasParticipantRegistered(conn)) {
 			throw std::runtime_error("This connection hasn't been registered before");

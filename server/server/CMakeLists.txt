@@ -1,3 +1,5 @@
+add_subdirectory(service)
+
 file(GLOB server_appl_source_files
     "*.h"
     "*.cpp"
@@ -9,5 +11,5 @@ target_link_libraries(server_appl
 	packet
 	shared_model
 	shared_server
-	
+	server_service
 )

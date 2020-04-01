@@ -2,6 +2,7 @@
 #include <boost/asio.hpp>
 #include <memory>
 #include <shared/packet/GeneralTCPTransmitter.h>
+#include "AbstractConnectionToClient.h"
 
 namespace ba = boost::asio;
 using ba::ip::tcp;
@@ -10,7 +11,7 @@ using namespace std::chrono_literals;
 using namespace std::string_literals;
 
 namespace card {
-	class ConnectionToClient : public GeneralTCPTransmitter {
+	class ConnectionToClient : public GeneralTCPTransmitter, public AbstractConnectionToClient {
 	// ----------------------------------------------------------------------
 	// --------------------------------FIELDS--------------------------------
 	// ----------------------------------------------------------------------
@@ -29,6 +30,7 @@ namespace card {
 	// ----------------------------------------------------------------------
 	public:
 		void start();
+		void send(std::string message);
 		boost::asio::io_context& getIoContext() override;
 		tcp::socket& getSocket() override;
 		void close() override;

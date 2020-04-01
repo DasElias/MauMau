@@ -2,7 +2,7 @@
 #include "ConnectionToClient.h"
 #include <boost/asio.hpp>
 #include "ServerPacketTransmitter.h"
-#include "RoomManager.h"
+#include "RoomManagerAccessorFromClient.h"
 
 namespace card {
 	class Acceptor {
@@ -19,13 +19,13 @@ namespace card {
 			boost::asio::io_context& ioc;
 			boost::asio::ip::tcp::acceptor acceptor;
 			std::shared_ptr<ServerPacketTransmitter> packetTransmitter;
-			RoomManager& roomManager;
+			RoomManagerAccessorFromClient& roomManager;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			Acceptor(boost::asio::io_context& ioc, std::shared_ptr<ServerPacketTransmitter> packetTransmitter, RoomManager& roomManager);
+			Acceptor(boost::asio::io_context& ioc, std::shared_ptr<ServerPacketTransmitter> packetTransmitter, RoomManagerAccessorFromClient& roomManager);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------

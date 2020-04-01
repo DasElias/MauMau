@@ -12,13 +12,6 @@ namespace card {
 		public:
 			static int const PACKET_ID = 301;
 
-			static int const SUCCESS_STATUS = 0;
-			static int const UNKNOWN_ERROR_STATUS = 1;
-			static int const ROOM_NOT_FOUND_STATUS = 2;
-			static int const USERNAME_TAKEN_STATUS = 3;
-			static int const ROOM_FULL_STATUS = 4;
-			static int const ALREADY_IN_ROOM_STATUS = 5;
-
 		private:
 			static std::string const STATUS_CODE_KEY;
 			static std::string const USERNAMES_OF_OTHER_PARTICIPANTS_KEY;

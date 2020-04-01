@@ -1,6 +1,7 @@
 #include "NetworkGameFacade.h"
 #include <boost/asio.hpp>
 #include <shared/packet/stc/EnteringRoomSuccessReport_STCAnswerPacket.h>
+#include <shared/model/EnteringRoomErrorCause.h>
 #include <shared/utils/Logger.h>
 
 namespace card {
@@ -63,7 +64,7 @@ namespace card {
 		this->isWaitingForResponse_field = false;
 
 		auto& casted = dynamic_cast<EnteringRoomSuccessReport_STCAnswerPacket&>(p);
-		if(casted.getStatusCode() == EnteringRoomSuccessReport_STCAnswerPacket::SUCCESS_STATUS) {
+		if(casted.getStatusCode() == EnteringRoomErrorCause::SUCCESS_STATUS) {
 			room = std::make_unique<ProxyRoom>(packetTransmitter, *roomLeaveHandler, *gameEndHandler, casted.getRoomCode(), casted.getUsernamesOfOtherParticipants(), casted.getAvatarsOfOtherParticipants(), casted.areOtherParticipantsAiPlayers(),usernameOfLocalPlayer, avatar, casted.getRoomLeader(), casted.getOptions());
 		} else {
 			setErrorMsgForSuccessReport(casted.getStatusCode());
@@ -86,22 +87,22 @@ namespace card {
 	}
 	void NetworkGameFacade::setErrorMsgForSuccessReport(int statusCode) {
 		switch(statusCode) {	
-			case EnteringRoomSuccessReport_STCAnswerPacket::SUCCESS_STATUS:
+			case EnteringRoomErrorCause::SUCCESS_STATUS:
 				this->errorMsgInPlainText = std::nullopt;
 				break;
-			case EnteringRoomSuccessReport_STCAnswerPacket::ROOM_NOT_FOUND_STATUS:
+			case EnteringRoomErrorCause::ROOM_NOT_FOUND_STATUS:
 				this->errorMsgInPlainText = "Der gewünschte Raum existiert nicht.";
 				break;
-			case EnteringRoomSuccessReport_STCAnswerPacket::ROOM_FULL_STATUS:
+			case EnteringRoomErrorCause::ROOM_FULL_STATUS:
 				this->errorMsgInPlainText = "Der gewünschte Raum ist bereits voll.";
 				break;
-			case EnteringRoomSuccessReport_STCAnswerPacket::USERNAME_TAKEN_STATUS:
+			case EnteringRoomErrorCause::USERNAME_TAKEN_STATUS:
 				this->errorMsgInPlainText = "Der gewünschte Nutzername ist bereits vergeben.";
 				break;
-			case EnteringRoomSuccessReport_STCAnswerPacket::ALREADY_IN_ROOM_STATUS:
+			case EnteringRoomErrorCause::ALREADY_IN_ROOM_STATUS:
 				this->errorMsgInPlainText = "Du bist bereits in einem Raum.";
 				break;
-			case EnteringRoomSuccessReport_STCAnswerPacket::UNKNOWN_ERROR_STATUS:
+			case EnteringRoomErrorCause::UNKNOWN_ERROR_STATUS:
 			default:
 				this->errorMsgInPlainText = "Ein unbekannter Fehler ist aufgetreten.";
 				log(LogSeverity::ERR, "Unknown error in EnteringRoomSuccessReport: " + std::to_string(statusCode));

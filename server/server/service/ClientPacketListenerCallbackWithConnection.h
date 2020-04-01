@@ -7,7 +7,7 @@
 
 namespace card {
 	typedef std::optional<OperationSuccessful_STCAnswerPacket> optionalSuccessAnswerPacket;
-	typedef std::function<optionalSuccessAnswerPacket(ClientToServerPacket&, const std::shared_ptr<ConnectionToClient>&)> cplWithConnFunction;
+	typedef std::function<optionalSuccessAnswerPacket(ClientToServerPacket&, const std::shared_ptr<AbstractConnectionToClient>&)> cplWithConnFunction;
 
 	class ClientPacketListenerCallbackWithConnection {
 		// ----------------------------------------------------------------------
@@ -37,7 +37,7 @@ namespace card {
 			inline cplWithConnFunction getFunction() const {
 				return function;
 			}
-			inline optionalSuccessAnswerPacket operator()(ClientToServerPacket& pkt, const std::shared_ptr<ConnectionToClient>& conn) {
+			inline optionalSuccessAnswerPacket operator()(ClientToServerPacket& pkt, const std::shared_ptr<AbstractConnectionToClient>& conn) {
 				return function(pkt, conn);
 			};
 
