@@ -66,7 +66,7 @@ namespace card {
 		auto gameTitleImage = egui::Image::loadFromMemory(tex_title, tex_title_size);
 		auto gameTitleImageElement = std::make_shared<egui::AspectRatioElement>(gameTitleImage->getAspectRatio());
 		addChildElement(gameTitleImageElement);
-		gameTitleImageElement->setMaxHeight({0.275f, egui::RelativityMode::RELATIVE_IN_PARENT});
+		gameTitleImageElement->setMaxHeight({0.325f, egui::RelativityMode::RELATIVE_IN_PARENT});
 		gameTitleImageElement->setOwnPositioning(std::make_shared<egui::CenterXInParentWrapper>(
 			std::make_shared<egui::RelativePositioningOnScreen>(
 				0.0f, 0.075f
