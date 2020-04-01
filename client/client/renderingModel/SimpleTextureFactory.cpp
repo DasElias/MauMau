@@ -32,7 +32,7 @@ namespace card {
 		this->anisotropicFiltering = a;
 		return *this;
 	}
-	SimpleTexture SimpleTextureFactory::loadFromFile(std::string path) {
+	SimpleTexture SimpleTextureFactory::loadFromFile(std::string path) const {
 		int32_t width, height;
 		unsigned char* stbiHandle = stbi_load(path.c_str(), &width, &height, 0, STBI_rgb_alpha);
 
@@ -44,7 +44,7 @@ namespace card {
 		free(stbiHandle);
 		return tex;
 	}
-	SimpleTexture SimpleTextureFactory::loadFromMemory(const unsigned char* imgData, std::size_t imgDataLength) {
+	SimpleTexture SimpleTextureFactory::loadFromMemory(const unsigned char* imgData, std::size_t imgDataLength) const {
 		int32_t width, height;
 		unsigned char* stbiHandle = stbi_load_from_memory(imgData, imgDataLength, &width, &height, 0, STBI_rgb_alpha);
 
@@ -56,7 +56,7 @@ namespace card {
 		free(stbiHandle);
 		return tex;
 	}
-	SimpleTexture SimpleTextureFactory::load(unsigned char* stbiHandle, int32_t width, int32_t height) {
+	SimpleTexture SimpleTextureFactory::load(unsigned char* stbiHandle, int32_t width, int32_t height) const {
 		uint32_t texId;
 		glGenTextures(1, &texId);
 		glBindTexture(GL_TEXTURE_2D, texId);
@@ -79,7 +79,7 @@ namespace card {
 
 		return SimpleTexture(texId, width, height);
 	}
-	void SimpleTextureFactory::free(unsigned char* stbiHandle) {
+	void SimpleTextureFactory::free(unsigned char* stbiHandle) const {
 		stbi_image_free(stbiHandle);
 	}
 }

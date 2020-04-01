@@ -32,7 +32,7 @@ namespace card {
 		this->anisotropicFiltering = a;
 		return *this;
 	}
-	TextureArray TextureArrayFactory::loadFromFiles(std::vector<std::string> paths) {
+	TextureArray TextureArrayFactory::loadFromFiles(std::vector<std::string> paths) const {
 		std::vector<TextureArrayData> texData;
 		for(auto& p : paths) {
 			int32_t width, height;
@@ -49,7 +49,7 @@ namespace card {
 		free(texData);
 		return texArray;
 	}
-	TextureArray TextureArrayFactory::loadFromMemory(std::vector<const unsigned char*> imageData, std::vector<std::size_t> imageDataLengths) {
+	TextureArray TextureArrayFactory::loadFromMemory(std::vector<const unsigned char*> imageData, std::vector<std::size_t> imageDataLengths) const {
 		if(imageData.size() != imageDataLengths.size()) {
 			throw std::runtime_error("Size of imageData and imageDataLengths must be the same");
 		}
@@ -74,7 +74,7 @@ namespace card {
 		free(texData);
 		return texArray;
 	}
-	TextureArray TextureArrayFactory::load(const std::vector<TextureArrayData>& texData) {
+	TextureArray TextureArrayFactory::load(const std::vector<TextureArrayData>& texData) const {
 		uint32_t texId;
 		int32_t width = -1, height = -1;
 		glGenTextures(1, &texId);
@@ -122,7 +122,7 @@ namespace card {
 
 		return TextureArray(texId, width, height);
 	}
-	void TextureArrayFactory::free(const std::vector<TextureArrayData>& texData) {
+	void TextureArrayFactory::free(const std::vector<TextureArrayData>& texData) const {
 		for(auto& img : texData) {
 			stbi_image_free(img.imgData);
 		}

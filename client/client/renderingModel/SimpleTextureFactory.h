@@ -30,11 +30,11 @@ namespace card {
             SimpleTextureFactory& setWrapT(TextureWrap wrap);
             SimpleTextureFactory& setAnisotropicFiltering(float a);
 
-            SimpleTexture loadFromFile(std::string path);
-            SimpleTexture loadFromMemory(const unsigned char* imgData, std::size_t imgDataLength);
+            SimpleTexture loadFromFile(std::string path) const;
+            SimpleTexture loadFromMemory(const unsigned char* imgData, std::size_t imgDataLength) const;
 
         private:
-            SimpleTexture load(unsigned char* stbiHandle, int32_t width, int32_t height);
-            void free(unsigned char* stbiHandle);
+            SimpleTexture load(unsigned char* stbiHandle, int32_t width, int32_t height) const;
+            void free(unsigned char* stbiHandle) const;
 	};
 }

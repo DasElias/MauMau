@@ -36,12 +36,12 @@ namespace card {
             TextureArrayFactory& setWrapT(TextureWrap wrap);
             TextureArrayFactory& setAnisotropicFiltering(float a);
 
-            TextureArray loadFromFiles(std::vector<std::string> paths);
-            TextureArray loadFromMemory(std::vector<const unsigned char*> imageData, std::vector<std::size_t> imageDataLength);
+            TextureArray loadFromFiles(std::vector<std::string> paths) const;
+            TextureArray loadFromMemory(std::vector<const unsigned char*> imageData, std::vector<std::size_t> imageDataLength) const;
 
         private:
-            TextureArray load(const std::vector<TextureArrayData>& texData);
-            void free(const std::vector<TextureArrayData>& texData);
+            TextureArray load(const std::vector<TextureArrayData>& texData) const;
+            void free(const std::vector<TextureArrayData>& texData) const;
 
 
     };
