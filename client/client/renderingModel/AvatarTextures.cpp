@@ -9,8 +9,10 @@
 #include <res/avatars/Avatars.png.h>
 
 namespace card {
+	static const SimpleTextureFactory textureFactory = SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).setWrapS(TextureWrap::MIRRORED_REPEAT).setWrapT(TextureWrap::MIRRORED_REPEAT);
+
 	AvatarTextures::AvatarTextures() :
-			avatarNotFoundTexture(SimpleTextureFactory().setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR).loadFromMemory(avatar_0, avatar_0_size)),
+			avatarNotFoundTexture(textureFactory.loadFromMemory(avatar_0, avatar_0_size)),
 			avatarNotFoundImage(egui::Image::loadFromOpenglTexture(avatarNotFoundTexture.getTexId(), avatarNotFoundTexture.getWidth(), avatarNotFoundTexture.getHeight())),
 			width(-1),
 			height(-1) {
@@ -52,9 +54,7 @@ namespace card {
 			const unsigned char* imgData = std::get<1>(avatarTuple);
 			std::size_t imgDataSize = std::get<2>(avatarTuple);
 
-			SimpleTexture tex = SimpleTextureFactory()
-				.setMinFilter(TextureMinFilter::LINEAR_MIPMAP_LINEAR)
-				.loadFromMemory(imgData, imgDataSize);
+			SimpleTexture tex = textureFactory.loadFromMemory(imgData, imgDataSize);
 
 			std::int32_t localWidth = tex.getWidth();
 			std::int32_t localHeight = tex.getHeight();
