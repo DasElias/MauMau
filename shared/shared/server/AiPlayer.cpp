@@ -10,7 +10,7 @@
 
 namespace card {
 	float const AiPlayer::MAU_MISS_PROBABILITY = 0.1f;
-	float const AiPlayer::DRAW_ALWAYS_PROBABILITY = 0.1f;
+	float const AiPlayer::DRAW_ALWAYS_PROBABILITY = 0.075f;
 
 	AiPlayer::AiPlayer(std::shared_ptr<ParticipantOnServer> wrappedParticipant, ServerMauMauGame& game, std::vector<Card> handCards) :
 			Player(wrappedParticipant, handCards),
@@ -22,7 +22,7 @@ namespace card {
 	void AiPlayer::onStartTurn() {
 		Player::onStartTurn();
 
-		int delay = randomInRange(1250, 1750);
+		int delay = randomInRange(1150, 1500);
 		auto& playCardStack = game.getPlayCardStack();
 		delay += getTimeToSetNextPlayerOnTurn(game.wasCardPlayedLastTurn(), game.wasCardDrawnLastTurn(), game.getAmountOfDrawedCardsDueToPlusTwoLastTurn());
 		threadUtils_invokeIn(delay, this, [this]() {
