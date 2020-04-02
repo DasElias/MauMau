@@ -6,6 +6,7 @@
 #include <egui/model/positioning/CenterXInParentWrapper.h>
 #include <array>
 #include "../utils/FileUtils.h"
+#include "ClickableCursorUtils.h"
 
 #include <res/menu/mainMenu.png.h>
 #include <res/menu/title.png.h>
@@ -60,7 +61,12 @@ namespace card {
 		));
 		infoBtn->setHoveredBackground(std::make_shared<egui::TexturedBackground>(
 			egui::Image::loadFromMemory(tex_mainMenu_informationHover, tex_mainMenu_informationHover_size)
-			), egui::RenderMode::RENDER_EXCLUSIVELY);
+		), egui::RenderMode::RENDER_EXCLUSIVELY);
+
+		setCursorToHandOnHoverAndResetOnClick(*singlePlayerBtn);
+		setCursorToHandOnHoverAndResetOnClick(*createOnlineRoomBtn);
+		setCursorToHandOnHoverAndResetOnClick(*joinOnlineRoomBtn);
+		setCursorToHandOnHoverAndResetOnClick(*infoBtn);
 
 		
 		auto gameTitleImage = egui::Image::loadFromMemory(tex_title, tex_title_size);

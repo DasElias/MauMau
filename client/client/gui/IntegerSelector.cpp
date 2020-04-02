@@ -1,6 +1,8 @@
 #include "IntegerSelector.h"
 #include "IntegerSelector.h"
 #include <stdexcept>
+#include "ClickableCursorUtils.h"
+
 #include <egui/model/positioning/RelativePositioningInParent.h>
 #include <egui/model/positioning/ValuedPositioningInParent.h>
 #include <egui/themes/ThemeManager.h>
@@ -81,6 +83,9 @@ namespace card {
 			decrementButton->setPreferredDimension({0.5, egui::RelativityMode::RELATIVE_IN_PARENT}, {{1, egui::RelativityMode::RELATIVE_IN_PARENT}, {-BORDER_WIDTH / 2, egui::RelativityMode::ABSOLUTE_VALUE}});
 
 		}
+
+		setCursorToHandOnHover(*incrementButton);
+		setCursorToHandOnHover(*decrementButton);
 
 		incrementButton->getMouseClickedEventManager().addEventHandler({[this](egui::MouseEvent&) {
 			this->increment();

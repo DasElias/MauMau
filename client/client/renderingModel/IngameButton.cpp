@@ -1,4 +1,5 @@
 #include "IngameButton.h"
+#include "../gui/ClickableCursorUtils.h"
 
 namespace card {
 	IngameButton::IngameButton(std::shared_ptr<egui::Background> background, std::shared_ptr<egui::Background> disabledBackground, float relativeWidthOnScreen) {
@@ -28,6 +29,8 @@ namespace card {
 
 		addChildElement(mauMauButtonBgElement);
 		addChildElement(mauMauButtonClickable);
+
+		setCursorToHandOnHover(*mauMauButtonClickable);
 	}
 	void IngameButton::setOwnPositioning(std::shared_ptr<egui::Positioning> positioning) {
 		mauMauButtonBgElement->setOwnPositioning(positioning);

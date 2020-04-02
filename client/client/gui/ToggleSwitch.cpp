@@ -5,6 +5,7 @@
 #include "../utils/VectorMathUtils.h"
 #include <shared/utils/MathUtils.h>
 #include <algorithm>
+#include "ClickableCursorUtils.h"
 
 namespace card {
 	float const ToggleSwitch::SWITCH_ELEM_PADDING = 0.025f;
@@ -41,6 +42,7 @@ namespace card {
 			unixToggleTimeMs = getMilliseconds();
 		}});	
 
+		setCursorToHandOnHover(*this);
 	}
 	
 	float ToggleSwitch::getSwitchElementXMargin() {

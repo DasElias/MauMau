@@ -15,6 +15,8 @@
 
 #include <egui/model/nodeComponents/background/LinearGradientBackground.h>
 #include <stdexcept>
+#include "ClickableCursorUtils.h"
+
 
 float const egui::MauMauTheme::BTN_HEIGHT = 0.0575f;
 
@@ -53,6 +55,8 @@ std::function<void(egui::Node* const)> egui::MauMauTheme::button_coloredButton_a
 		using namespace card;
 		ColoredButton* p_btn = dynamic_cast<ColoredButton*>(p_node);
 		if(!p_btn) throw std::logic_error("Component is not of type ColoredButton");
+
+		setCursorToHandOnHoverAndResetOnClick(*p_btn);
 
 		p_btn->getTextComponent()->setFont(egui::Font::getFont("NotoSans Medium"));
 		p_btn->getTextComponent()->setFontSize(0.5f, true);

@@ -5,6 +5,7 @@
 #include "../utils/FileUtils.h"
 #include <egui/model/nodeComponents/background/ColoredBackground.h>
 #include <res/menu/userhover.png.h>
+#include "ClickableCursorUtils.h"
 
 namespace card {
 	AvatarChooser::AvatarChooser(AvatarTextures& avatarTextures_local, Avatar defaultAvatar) :
@@ -57,6 +58,9 @@ namespace card {
 			chosenAvatar = popup->getSelectedAvatar();
 			avatarBackground->setImage(avatarTextures.getImage(chosenAvatar));
 		});
+
+		setCursorToHandOnHoverAndResetOnClick(*label);
+		setCursorToHandOnHoverAndResetOnClick(*backgroundElement);
 	}
 	Avatar AvatarChooser::getSelectedAvatar() const {
 		return chosenAvatar;
