@@ -14,25 +14,23 @@
 #include "CardStackRenderer.h"
 #include "HandCardStackRenderer.h"
 #include "CardSceneBackgroundRenderer.h"
-#include "DrawnCardRenderer.h"
 #include "ChooseCardIndexRenderer.h"
 #include "PlayerLabelRenderer.h"
 #include "MauMauPlayerLabelOverlayRenderer.h"
 #include "CircleSectorRenderer.h"
 #include "CardIndexRenderer.h"
 #include "GameEndRenderer.h"
-#include "MauMauButtonRenderer.h"
 #include "MessageRenderer.h"
 #include "LocalPlayerRenderer.h"
 #include "CardInterpolator.h"
 #include "OpponentRenderer.h"
-#include "PassButtonRenderer.h"
 #include "../renderingModel/CardStackIntersectionChecker.h"
 #include "../renderingModel/HandCardIntersectionChecker.h"
 #include "../renderingModel/MauMauCardStackMisalignmentGenerator.h"
 #include "../renderingModel/CardIndexTextures.h"
 #include "PlayerLabelPositionGenerator.h"
 #include "DrawCardStackRenderer.h"
+#include "ClickableOverlayRenderer.h"
 
 namespace card {
 	class CardSceneRenderer {
@@ -55,18 +53,15 @@ namespace card {
 			LocalPlayerRenderer localPlayerRenderer;
 			OpponentRenderer opponentRenderer;
 			CardSceneBackgroundRenderer bgRenderer;
-			DrawnCardRenderer drawnCardRenderer;
-			ChooseCardIndexRenderer chooseCardRenderer;
 			CircleSectorRenderer circleSectorRenderer;
 			PlayerLabelRenderer playerLabelRenderer;
 			MauMauPlayerLabelOverlayRenderer playerLabelOverlayRenderer;
 			CardIndexRenderer cardIndexRenderer;
 			ParticleRenderer particleRenderer;
 			GameEndRenderer fireworkRenderer;
-			MauMauButtonRenderer mauMauButtonRenderer;
-			PassButtonRenderer passButtonRenderer;
 			MessageRenderer messageRenderer;
 			DrawCardStackRenderer drawCardStackRenderer;
+			ClickableOverlayRenderer clickableOverlayRenderer;
 			CardStackIntersectionChecker cardStackIntersectionChecker;
 			HandCardIntersectionChecker handCardIntersectionChecker;
 			PlayerLabelPositionGenerator playerLabelPositionGenerator;
@@ -96,11 +91,6 @@ namespace card {
 			egui::FunctionWrapper<egui::MouseEvent> genOnMouseClickedHandler();
 
 			void renderPlayerLabels(std::array<std::shared_ptr<ProxyPlayer>, 3>& opponents);
-			void renderClickableOverlaysIfGameHasntEnded();
-			void tryRenderDrawnCardOverlay(std::optional<Card> drawnCardOrNone, bool suppressMouseClick);
-			void tryRenderChooseColorOverlay();
-			void renderMauButton(bool suppressMouseClick);
-			void renderPassButton();
 			void renderDrawCardStack();
 			void renderPlayCardStack();
 			void renderAnimationFromDrawToPlayStack(const CardAnimation& cardAnimation, glm::vec3 endPosition, glm::vec3 endRotation);

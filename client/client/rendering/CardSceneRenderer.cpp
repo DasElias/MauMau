@@ -27,33 +27,6 @@ namespace card {
 			opponentRenderer(cardRenderer, projectionMatrix, viewport),
 			cardInterpolator(cardRenderer, projectionMatrix, viewport),
 			bgRenderer(renderer2d, renderer3d),
-			drawnCardRenderer(cardRenderer, eguiRenderer, projectionMatrix, viewport,
-				[this]() {
-					auto& game = room->getGame();
-					auto& accessor = game.getAccessorFromClient();
-					if(accessor.canPlayDrawnCard()) {
-						chooseCardRenderer.discardPreviousMouseEvents();
-						accessor.playDrawnCard();
-					} else {
-						log(LogSeverity::WARNING, "Card was drawn but can't be played.");
-					}
-				},
-				[this]() {
-					auto& game = room->getGame();
-					auto& accessor = game.getAccessorFromClient();
-					if(accessor.canTakeDrawnCardIntoHandCards()) {
-						accessor.takeDrawnCardIntoHandCards();
-					} else {
-						log(LogSeverity::WARNING, "Card was drawn but can't be taken into hand cards.");
-					}
-				}
-			),
-			chooseCardRenderer(eguiRenderer,cardIndexTextures,
-				[this](CardIndex c) {
-					auto& game = room->getGame();
-					game.getAccessorFromClient().chooseColor(c);
-				}
-			),
 			circleSectorRenderer(),
 			playerLabelRenderer(eguiRenderer, avatarTextures, renderer2d, circleSectorRenderer),
 			playerLabelOverlayRenderer(renderer2d, PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN, avatarTextures.getAspectRatio()),
@@ -62,24 +35,45 @@ namespace card {
 			fireworkRenderer(particleRenderer, eguiRenderer, renderer2d, [this]() {
 				room->returnBackToMenu(ReturnBackToMenuCause::GAME_HAS_ENDED);
 			}),
-			mauMauButtonRenderer(eguiRenderer,
-				[this]() {
-					auto& game = room->getGame();
-					game.getAccessorFromClient().mau();
-				}
-			),
-			passButtonRenderer(eguiRenderer,
-				 [this]() {
-					 auto& game = room->getGame();
-					 game.getAccessorFromClient().pass();
-				 }
-			),
 			messageRenderer(eguiRenderer),
 			drawCardStackRenderer(cardRenderer, renderer3d),
+			clickableOverlayRenderer(eguiRenderer, cardRenderer, projectionMatrix, viewport, cardIndexTextures),
 			cardStackIntersectionChecker(projectionMatrix, viewport),
 			handCardIntersectionChecker(projectionMatrix, viewport),
 			playerLabelPositionGenerator(projectionMatrix, viewport),
 			onMouseClicked(genOnMouseClickedHandler()) {
+
+		clickableOverlayRenderer.addMauBtnClickHandler([this]() {
+			auto& game = room->getGame();
+			game.getAccessorFromClient().mau();
+		});
+		clickableOverlayRenderer.addPassBtnClickHandler([this]() {
+			auto& game = room->getGame();
+			game.getAccessorFromClient().pass();
+		});
+		clickableOverlayRenderer.addPlayDrawnCardClickHandler([this]() {
+			auto& game = room->getGame();
+			auto& accessor = game.getAccessorFromClient();
+			if(accessor.canPlayDrawnCard()) {
+				clickableOverlayRenderer.discardMouseEventsForChooseIndexRenderer();	// to prevent that a card index is immediately chosen after the card was played
+				accessor.playDrawnCard();
+			} else {
+				log(LogSeverity::WARNING, "Card was drawn but can't be played.");
+			}
+		});
+		clickableOverlayRenderer.addTakeDrawnCardIntoHandCardsClickHandler([this]() {
+			auto& game = room->getGame();
+			auto& accessor = game.getAccessorFromClient();
+			if(accessor.canTakeDrawnCardIntoHandCards()) {
+				accessor.takeDrawnCardIntoHandCards();
+			} else {
+				log(LogSeverity::WARNING, "Card was drawn but can't be taken into hand cards.");
+			}
+		});
+		clickableOverlayRenderer.addChooseCardIndexHandler([this](CardIndex c) {
+			auto& game = room->getGame();
+			game.getAccessorFromClient().chooseColor(c);
+		});
 	}
 
 	egui::FunctionWrapper<egui::MouseEvent> CardSceneRenderer::genOnMouseClickedHandler() {
@@ -159,7 +153,7 @@ namespace card {
 		cardRenderer.flush(true);
 		renderPlayerLabels(opponentsOrNoneInCwOrder);
 		renderCardIndexForNextCardIfGameHasntEnded();
-		renderClickableOverlaysIfGameHasntEnded();
+		clickableOverlayRenderer.renderClickableOverlays(game);
 
 		// flush CardRenderer
 		cardRenderer.flush();
@@ -185,86 +179,6 @@ namespace card {
 		if(opponents[1]) playerLabelOverlayRenderer.render(playerLabelPositionGenerator.getScreenPosForVisAVisPlayerLabel(), opponents[1]->getPercentOfSkipAnimationOrNone(), opponents[1]->isInSkipState(), opponents[1]->getPercentOfMauAnimationOrNone());
 		if(opponents[2]) playerLabelOverlayRenderer.render(playerLabelPositionGenerator.getScreenPosForRightPlayerLabel(), opponents[2]->getPercentOfSkipAnimationOrNone(), opponents[2]->isInSkipState(), opponents[2]->getPercentOfMauAnimationOrNone());
 		playerLabelOverlayRenderer.render(playerLabelPositionGenerator.getScreenPosForLocalPlayerLabel(), localPlayer->getPercentOfSkipAnimationOrNone(), localPlayer->isInSkipState(), localPlayer->getPercentOfMauAnimationOrNone());
-	}
-
-	void CardSceneRenderer::renderClickableOverlaysIfGameHasntEnded() {
-		auto& game = room->getGame();
-		if(game.hasGameEnded()) return;
-
-		auto& clientGameAccessor = game.getAccessorFromClient();
-		auto& localPlayer = game.getLocalPlayer();
-
-		bool shouldRenderColorChooseOverlay = clientGameAccessor.isWaitingForColorChoose();
-		bool shouldRenderDrawnCardOverlay = localPlayer->getCardInTempStack().has_value();
-
-		bool shouldSuppressMauButtonClick = shouldRenderColorChooseOverlay || shouldRenderDrawnCardOverlay;
-		bool shouldSuppressDrawnCardOverlayClick = shouldRenderColorChooseOverlay;
-
-		renderMauButton(shouldSuppressMauButtonClick);
-		renderPassButton();
-		tryRenderDrawnCardOverlay(localPlayer->getCardInTempStack(), shouldSuppressDrawnCardOverlayClick);
-		tryRenderChooseColorOverlay();
-	}
-
-	void CardSceneRenderer::tryRenderDrawnCardOverlay(std::optional<Card> drawnCardOrNone, bool suppressMouseClick) {
-		static std::optional<Card> drawnCardInLastPass = std::nullopt;
-		auto& game = room->getGame();
-		auto& clientGameAccessor = game.getAccessorFromClient();
-
-		if(drawnCardOrNone.has_value()) {
-			// if the overlay wasn't displayed in the last frame, we need to ensure that there
-			// are no previous mouse events which are going to fire
-			if(! drawnCardInLastPass.has_value() || suppressMouseClick) drawnCardRenderer.clearPreviousMouseEvents();
-			cardRenderer.flush();
-
-			if(clientGameAccessor.isWaitingForColorChoose()) {
-				drawnCardRenderer.renderOnlyCard(*drawnCardOrNone);
-			} else {
-				drawnCardRenderer.render(*drawnCardOrNone);
-			}
-		}
-
-		drawnCardInLastPass = drawnCardOrNone;
-	}
-
-	void CardSceneRenderer::tryRenderChooseColorOverlay() {
-		static MessageKey messageKey = {};
-		auto& game = room->getGame();
-		auto& messageQueue = game.getMessageQueue();
-
-		static bool wasWaitingForColorChooseInLastPass = false;
-		bool isWaitingForColorChoose = game.getAccessorFromClient().isWaitingForColorChoose();
-		if(isWaitingForColorChoose) {
-			if(!wasWaitingForColorChooseInLastPass) {
-				chooseCardRenderer.discardPreviousMouseEvents();
-				messageQueue.appendMessagePermanently(u8"Wähle die zu spielende Kartenfarbe aus.", messageKey);
-			}
-
-			cardRenderer.flush();
-			chooseCardRenderer.render();
-		} else if(wasWaitingForColorChooseInLastPass) {
-			messageQueue.removeMessagesWithKey(messageKey);
-		}
-
-		wasWaitingForColorChooseInLastPass = isWaitingForColorChoose;
-	}
-	void CardSceneRenderer::renderMauButton(bool suppressMouseClick) {
-		auto& game = room->getGame();
-		auto& clientGameAccessor = game.getAccessorFromClient();
-		auto& options = game.getGameData().getOptions();
-		if(! options.getOption(Options::HAVE_TO_MAU)) return;
-
-		bool canMau = clientGameAccessor.canMau();
-		bool canClickMauButton = canMau && !suppressMouseClick;
-		mauMauButtonRenderer.render(canClickMauButton);
-	}
-	void CardSceneRenderer::renderPassButton() {
-		auto& game = room->getGame();
-		auto& clientGameAccessor = game.getAccessorFromClient();
-
-		if(clientGameAccessor.canPass()) {
-			passButtonRenderer.render();
-		}
 	}
 	void CardSceneRenderer::handleInput() {
 		auto& game = room->getGame();

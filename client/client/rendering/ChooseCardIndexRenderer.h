@@ -17,8 +17,6 @@ namespace card {
 		// ----------------------------------------------------------------------
 		private:
 			egui::MasterRenderer& eguiRenderer;
-			std::function<void(CardIndex)> chooseIndexFunction;
-
 			std::vector<std::shared_ptr<egui::Button>> indexButtons;
 			std::shared_ptr<egui::HBox> buttonBar;
 			std::shared_ptr<egui::Label> buttonBarBackground;
@@ -28,7 +26,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			ChooseCardIndexRenderer(egui::MasterRenderer& eguiRenderer, CardIndexTextures& cardIndexTextures, std::function<void(CardIndex)> chooseIndexFunction);
+			ChooseCardIndexRenderer(egui::MasterRenderer& eguiRenderer, CardIndexTextures& cardIndexTextures);
 			ChooseCardIndexRenderer(const ChooseCardIndexRenderer&) = delete;
 
 		// ----------------------------------------------------------------------
@@ -37,6 +35,7 @@ namespace card {
 		public:
 			void discardPreviousMouseEvents();
 			void render();
+			void addChooseIndexHandler(std::function<void(CardIndex)> chooseIndexFunction);
 
 		private:
 			void adjustButtonBar();

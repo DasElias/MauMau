@@ -15,13 +15,14 @@ namespace card {
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            IngameButton(std::shared_ptr<egui::Background> background, std::shared_ptr<egui::Background> disabledBackground, float relativeWidthOnScreen, std::function<void(void)> clickHandler);
+            IngameButton(std::shared_ptr<egui::Background> background, std::shared_ptr<egui::Background> disabledBackground, float relativeWidthOnScreen);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
         // ----------------------------------------------------------------------
         public:
             void setOwnPositioning(std::shared_ptr<egui::Positioning> positioning) override;
+            void addClickHandler(std::function<void(void)> handler);
 
 	};
 }

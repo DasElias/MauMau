@@ -24,7 +24,7 @@ namespace card {
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            MauMauButtonRenderer(egui::MasterRenderer& eguiRenderer, std::function<void(void)> mauMauFunction);
+            MauMauButtonRenderer(egui::MasterRenderer& eguiRenderer);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
@@ -32,6 +32,7 @@ namespace card {
         public:
             void clearPreviousMouseEvents();
             void render(bool canMau);
+            void addClickHandler(std::function<void(void)> mauMauFunction);
 
 	};
 }

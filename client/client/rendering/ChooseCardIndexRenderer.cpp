@@ -15,9 +15,8 @@
 #include "../utils/FileUtils.h"
 #include <res/cardIndex/CardIndexHover.png.h>
 namespace card {
-	ChooseCardIndexRenderer::ChooseCardIndexRenderer(egui::MasterRenderer& eguiRenderer, CardIndexTextures& cardIndexTextures, std::function<void(CardIndex)> chooseIndexFunction) :
-				eguiRenderer(eguiRenderer),
-				chooseIndexFunction(chooseIndexFunction) {
+	ChooseCardIndexRenderer::ChooseCardIndexRenderer(egui::MasterRenderer& eguiRenderer, CardIndexTextures& cardIndexTextures) :
+				eguiRenderer(eguiRenderer) {
 		
 		float const BUTTON_WIDTH = 0.1f;
 		float const DISTANCE_BETWEEN_BUTTONS = 0.1f;
@@ -30,24 +29,16 @@ namespace card {
 			btn->setBorder(std::make_shared<egui::Border>(egui::Color(), egui::BorderType::DISABLED));
 		}
 
-		indexButtons[0]->getActionEventManager().addEventHandler({[this](egui::ActionEvent&) {
-			this->chooseIndexFunction(CardIndex::CLUB);
-		}});
+		
 		indexButtons[0]->setBackground(std::make_shared<egui::TexturedBackground>(cardIndexTextures.getImage(CardIndex::CLUB)));
 		indexButtons[0]->setHoveredBackground(std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_cardIndex_clubHover, tex_cardIndex_clubHover_size)), egui::RenderMode::RENDER_EXCLUSIVELY);
-		indexButtons[1]->getActionEventManager().addEventHandler({[this](egui::ActionEvent&) {
-			this->chooseIndexFunction(CardIndex::DIAMOND);
-		}});
+	
 		indexButtons[1]->setBackground(std::make_shared<egui::TexturedBackground>(cardIndexTextures.getImage(CardIndex::DIAMOND)));
 		indexButtons[1]->setHoveredBackground(std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_cardIndex_diamondHover, tex_cardIndex_diamondHover_size)), egui::RenderMode::RENDER_EXCLUSIVELY);
-		indexButtons[2]->getActionEventManager().addEventHandler({[this](egui::ActionEvent&) {
-			this->chooseIndexFunction(CardIndex::HEART);
-		}});
+		
 		indexButtons[2]->setBackground(std::make_shared<egui::TexturedBackground>(cardIndexTextures.getImage(CardIndex::HEART)));
 		indexButtons[2]->setHoveredBackground(std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_cardIndex_heartHover, tex_cardIndex_heartHover_size)), egui::RenderMode::RENDER_EXCLUSIVELY);
-		indexButtons[3]->getActionEventManager().addEventHandler({[this](egui::ActionEvent&) {
-			this->chooseIndexFunction(CardIndex::SPADE);
-		}});
+		
 		indexButtons[3]->setBackground(std::make_shared<egui::TexturedBackground>(cardIndexTextures.getImage(CardIndex::SPADE)));
 		indexButtons[3]->setHoveredBackground(std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_cardIndex_spadeHover, tex_cardIndex_spadeHover_size)), egui::RenderMode::RENDER_EXCLUSIVELY);
 
@@ -90,5 +81,19 @@ namespace card {
 
 		buttonBar->setPreferredHeight({preferredHeight});
 		buttonBarBackground->setPreferredHeight({{preferredHeight, {0.05f, egui::RelativityMode::RELATIVE_ON_SCREEN}}});
+	}
+	void ChooseCardIndexRenderer::addChooseIndexHandler(std::function<void(CardIndex)> chooseIndexFunction) {
+		indexButtons[0]->getActionEventManager().addEventHandler({[chooseIndexFunction](egui::ActionEvent&) {
+			chooseIndexFunction(CardIndex::CLUB);
+		}});
+		indexButtons[1]->getActionEventManager().addEventHandler({[chooseIndexFunction](egui::ActionEvent&) {
+			chooseIndexFunction(CardIndex::DIAMOND);
+		}});
+		indexButtons[2]->getActionEventManager().addEventHandler({[chooseIndexFunction](egui::ActionEvent&) {
+			chooseIndexFunction(CardIndex::HEART);
+		}});
+		indexButtons[3]->getActionEventManager().addEventHandler({[chooseIndexFunction](egui::ActionEvent&) {
+			chooseIndexFunction(CardIndex::SPADE);
+		}});
 	}
 }

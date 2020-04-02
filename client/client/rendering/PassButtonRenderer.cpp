@@ -8,14 +8,13 @@
 namespace card {
 	float const PassButtonRenderer::BTN_WIDTH_PERCENT = 0.0875f;
 
-	PassButtonRenderer::PassButtonRenderer(egui::MasterRenderer& eguiRenderer, std::function<void(void)> passFunction) :
+	PassButtonRenderer::PassButtonRenderer(egui::MasterRenderer& eguiRenderer) :
 			eguiRenderer(eguiRenderer) {
 
 		passBtn = std::make_shared<IngameButton>(
 			std::make_shared<egui::TexturedBackground>(egui::Image::loadTexture("C:\\Users\\Elias\\Documents\\PROJECT X\\passen.png")),
 			std::make_shared<egui::DisabledBackground>(),
-			BTN_WIDTH_PERCENT,
-			passFunction
+			BTN_WIDTH_PERCENT
 		);
 		passBtn->setOwnPositioning(std::make_shared<egui::RelativePositioningOnScreen>(0.775f, 0.65f));
 		scene.setRootElement(passBtn);
@@ -27,5 +26,8 @@ namespace card {
 		eguiRenderer.beginFrame();
 		scene.render(eguiRenderer);
 		eguiRenderer.endFrame();
+	}
+	void PassButtonRenderer::addClickHandler(std::function<void(void)> passFunction) {
+		passBtn->addClickHandler(passFunction);
 	}
 }

@@ -24,7 +24,7 @@ namespace card {
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            PassButtonRenderer(egui::MasterRenderer& eguiRenderer, std::function<void(void)> passFunction);
+            PassButtonRenderer(egui::MasterRenderer& eguiRenderer);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
@@ -32,6 +32,8 @@ namespace card {
         public:
             void clearPreviousMouseEvents();
             void render();
+            void addClickHandler(std::function<void(void)> passFunction);
+
 
 	};
 }

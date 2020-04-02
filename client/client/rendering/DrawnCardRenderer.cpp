@@ -12,25 +12,16 @@ namespace card {
 	glm::vec3 const DrawnCardRenderer::ROTATION = {0, 0, 0};
 
 	DrawnCardRenderer::DrawnCardRenderer(CardRenderer& cardRenderer, egui::MasterRenderer& eguiRenderer, 
-			ProjectionMatrix& projectionMatrix, Viewport& viewport, 
-			std::function<void(void)> playCard, std::function<void(void)> addToCardStack) :
+			ProjectionMatrix& projectionMatrix, Viewport& viewport) :
 				cardRenderer(cardRenderer),
 				eguiRenderer(eguiRenderer),
 				projectionMatrix(projectionMatrix),
 				viewport(viewport),
 				worldToScreenConverter(projectionMatrix, viewport),
-				playCardFunction(playCard),
-				takeIntoHandCardsFunction(addToCardStack),
 				buttonBarPositioning(std::make_shared<egui::RelativePositioningOnScreen>(0.0f, 0.65f)) {
 
 		this->playCardButton = std::make_shared<ColoredButton>(ColoredButtonType::BLUE, "Karte spielen");
-		this->playCardButton->getActionEventManager().addEventHandler({[this](egui::ActionEvent&) {
-			playCardFunction();
-		}});
 		this->takeIntoHandCardsButton = std::make_shared<ColoredButton>(ColoredButtonType::BLUE, "Karte in die Hand nehmen");
-		this->takeIntoHandCardsButton->getActionEventManager().addEventHandler({[this](egui::ActionEvent&) {
-			takeIntoHandCardsFunction();
-		}});
 
 		float const BUTTON_WIDTH = 0.2f;
 		float const BUTTON_HEIGHT = 0.07f;
@@ -66,5 +57,15 @@ namespace card {
 				PositionedCard(card, POSITION, ROTATION)
 		};
 		cardRenderer.renderInNextPass(positionedCards, projectionMatrix, viewport);
+	}
+	void DrawnCardRenderer::addPlayHandler(std::function<void(void)> handler) {
+		this->playCardButton->getActionEventManager().addEventHandler({[handler](egui::ActionEvent&) {
+			handler();
+		}});
+	}
+	void DrawnCardRenderer::addDrawHandler(std::function<void(void)> handler) {
+		this->takeIntoHandCardsButton->getActionEventManager().addEventHandler({[handler](egui::ActionEvent&) {
+			handler();
+		}});
 	}
 }

@@ -30,8 +30,6 @@ namespace card {
 			ProjectionMatrix& projectionMatrix;
 			Viewport& viewport;
 			WorldToScreenConverter worldToScreenConverter;
-			std::function<void(void)> playCardFunction;
-			std::function<void(void)> takeIntoHandCardsFunction;
 
 			std::shared_ptr<egui::RelativePositioningOnScreen> buttonBarPositioning;
 			egui::Scene scene;
@@ -42,7 +40,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			DrawnCardRenderer(CardRenderer& cardRenderer, egui::MasterRenderer& eguiRenderer, ProjectionMatrix& projectionMatrix, Viewport& viewport, std::function<void(void)> playCard = [](void){}, std::function<void(void)> addToCardStack = [](void){});
+			DrawnCardRenderer(CardRenderer& cardRenderer, egui::MasterRenderer& eguiRenderer, ProjectionMatrix& projectionMatrix, Viewport& viewport);
 			DrawnCardRenderer(const DrawnCardRenderer&) = delete;
 
 		// ----------------------------------------------------------------------
@@ -52,6 +50,9 @@ namespace card {
 			void clearPreviousMouseEvents();
 			void render(Card card);
 			void renderOnlyCard(Card card);
+
+			void addPlayHandler(std::function<void(void)> handler);
+			void addDrawHandler(std::function<void(void)> handler);
 
 	};
 }
