@@ -10,6 +10,7 @@
 
 namespace card {
 	float const AiPlayer::MAU_MISS_PROBABILITY = 0.1f;
+	float const AiPlayer::DRAW_ALWAYS_PROBABILITY = 0.1f;
 
 	AiPlayer::AiPlayer(std::shared_ptr<ParticipantOnServer> wrappedParticipant, ServerMauMauGame& game, std::vector<Card> handCards) :
 			Player(wrappedParticipant, handCards),
@@ -33,7 +34,11 @@ namespace card {
 			playIfIsInSkipOrDrawTwoState();
 			return;
 		}
-		if(tryPlayCard()) return;
+
+		// there is a probability that the AI player doesn't try to play a card, but rather draw one 
+		if(randomReal<float>() > DRAW_ALWAYS_PROBABILITY) {
+			if(tryPlayCard()) return;
+		}
 
 		// player cannot play, therefore no card was played
 		if(shouldPlayDrawnCard()) {

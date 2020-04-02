@@ -16,7 +16,7 @@ namespace card {
 		}
 	}
 
-	Card BestPlayableCardDecider::getCardToPlay(std::vector<Card>& playableCards, CardIndex activeCardIndex) {
+	static Card getBestCardToPlay(std::vector<Card>& playableCards, CardIndex activeCardIndex) {
 		TemporaryCardVector cardsOfCurrentIndex;
 		TemporaryCardVector cardsOfOtherIndex;
 
@@ -35,6 +35,18 @@ namespace card {
 		} else {
 			throw std::runtime_error("playableCards are empty");
 		}
+	}
+
+	static Card getRandomCardToPlay(std::vector<Card>& playableCards) {
+		std::size_t randomIndex = randomInRange<std::size_t>(0, playableCards.size() - 1);
+		return playableCards[randomIndex];
+	}
+
+	Card BestPlayableCardDecider::getCardToPlay(std::vector<Card>& playableCards, CardIndex activeCardIndex) {
+		static float const PROBABILITY_FOR_NOT_PLAYING_BEST_OPTION = 0.05f;
+
+		if(randomReal<float>() < PROBABILITY_FOR_NOT_PLAYING_BEST_OPTION) return getRandomCardToPlay(playableCards);
+		else return getBestCardToPlay(playableCards, activeCardIndex);
 	}
 }
 

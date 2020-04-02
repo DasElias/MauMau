@@ -9,6 +9,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		private:
 			static float const MAU_MISS_PROBABILITY;
+			static float const DRAW_ALWAYS_PROBABILITY;	// probability that the AI doesn't try to play a card
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
