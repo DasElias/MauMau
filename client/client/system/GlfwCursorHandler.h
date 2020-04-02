@@ -2,7 +2,7 @@
 
 #include <GLFW/glfw3.h>
 #include <egui/input/CursorHandler.h>
-
+#include <map>
 
 namespace card {
 	class GlfwCursorHandler : public egui::CursorHandler {
@@ -21,6 +21,7 @@ namespace card {
 			double cursorY;
 			double deltaCursorX;
 			double deltaCursorY;
+			std::map<egui::CursorType, GLFWcursor*> cursors;
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
@@ -32,5 +33,9 @@ namespace card {
 			float getCursorX() override;
 			float getCursorY() override;
 			void setCursorPosition(float x, float y) override;
+			void setCursorType(egui::CursorType type) override;
+
+		private:
+			GLFWcursor* createCursorIfNecessary(egui::CursorType type);
 	};
 }
