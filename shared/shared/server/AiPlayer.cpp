@@ -6,6 +6,7 @@
 #include "../model/CardAnimationDuration.h"
 #include "../model/TimeToSetNextPlayerOnTurnDuration.h"
 #include "../utils/Logger.h"
+#include "BestPlayableCardDecider.h"
 
 namespace card {
 	float const AiPlayer::MAU_MISS_PROBABILITY = 0.1f;
@@ -50,8 +51,7 @@ namespace card {
 
 		tryMau();
 
-		std::size_t chosenIndex = randomInRange<std::size_t>(0, playableCards.size() - 1);
-		Card chosenCard = playableCards[chosenIndex];
+		Card chosenCard = BestPlayableCardDecider::getCardToPlay(playableCards, game.getCardIndexToPlay());
 		playCardImpl(chosenCard, false);
 		return true;
 	}

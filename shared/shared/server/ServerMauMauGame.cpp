@@ -535,6 +535,9 @@ namespace card {
 	const CardStack& ServerMauMauGame::getDrawCardStack() const {
 		return drawCardStack;
 	}
+	CardIndex ServerMauMauGame::getCardIndexToPlay() const {
+		return this->indexForNextCard;
+	}
 	void ServerMauMauGame::tryRebalanceCardStacks() {
 		while(drawCardStack.getSize() <= MIN_DRAW_CARD_STACK_SIZE && playCardStack.getSize() > 1) {
 			drawCardStack.addFromPlainAtPosition(0, playCardStack.remove(0));

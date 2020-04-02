@@ -106,7 +106,7 @@ namespace card {
 
 			const CardStack& getPlayCardStack() const;
 			const CardStack& getDrawCardStack() const;
-
+			CardIndex getCardIndexToPlay() const;
 			
 
 		private:
