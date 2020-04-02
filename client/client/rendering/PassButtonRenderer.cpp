@@ -3,7 +3,7 @@
 #include <egui/model/nodeComponents/background/TexturedBackground.h>
 #include <egui/model/nodeComponents/background/DisabledBackground.h>
 #include <egui/model/positioning/RelativePositioningOnScreen.h>
-#include <res/ingame/maubutton.png.h>
+#include <res/ingame/passbutton.png.h>
 
 namespace card {
 	float const PassButtonRenderer::BTN_WIDTH_PERCENT = 0.0875f;
@@ -12,7 +12,7 @@ namespace card {
 			eguiRenderer(eguiRenderer) {
 
 		passBtn = std::make_shared<IngameButton>(
-			std::make_shared<egui::TexturedBackground>(egui::Image::loadTexture("C:\\Users\\Elias\\Documents\\PROJECT X\\passen.png")),
+			std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_passbutton, tex_passbutton_size)),
 			std::make_shared<egui::DisabledBackground>(),
 			BTN_WIDTH_PERCENT
 		);
