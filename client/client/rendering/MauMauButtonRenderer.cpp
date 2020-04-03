@@ -3,19 +3,24 @@
 #include <egui/model/nodeComponents/background/TexturedBackground.h>
 #include <egui/model/positioning/RelativePositioningOnScreen.h>
 #include <res/ingame/maubutton.png.h>
+#include "CardRenderer.h"
+#include "CardStackPositions.h"
+#include "../utils/VectorMathUtils.h"
 
 namespace card {
 	float const MauMauButtonRenderer::BTN_WIDTH_PERCENT = 0.075f;
 
-	MauMauButtonRenderer::MauMauButtonRenderer(egui::MasterRenderer& eguiRenderer) :
-			eguiRenderer(eguiRenderer) {
+	MauMauButtonRenderer::MauMauButtonRenderer(egui::MasterRenderer& eguiRenderer, ProjectionMatrix& pm, Viewport& vp) :
+			eguiRenderer(eguiRenderer),
+			worldToScreenConverter(pm, vp) {
 
 		mauMauBtn = std::make_shared<IngameButton>(
 			std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_maubutton, tex_maubutton_size)),
 			std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_maubuttondisabled, tex_maubuttondisabled_size)),
 			BTN_WIDTH_PERCENT
 		);
-		mauMauBtn->setOwnPositioning(std::make_shared<egui::RelativePositioningOnScreen>(0.7f, 0.6f));
+		mauMauBtnPositioning = std::make_shared<egui::RelativePositioningOnScreen>(0.7, 0.6);
+		mauMauBtn->setOwnPositioning(mauMauBtnPositioning);
 		scene.setRootElement(mauMauBtn);
 	}
 	void MauMauButtonRenderer::clearPreviousMouseEvents() {
@@ -23,6 +28,8 @@ namespace card {
 	}
 	void MauMauButtonRenderer::render(bool canMau) {
 		mauMauBtn->setDisabled(! canMau);
+
+		updateBtnPosition();
 		
 		eguiRenderer.beginFrame();
 		scene.render(eguiRenderer);
@@ -30,5 +37,13 @@ namespace card {
 	}
 	void MauMauButtonRenderer::addClickHandler(std::function<void(void)> mauMauFunction) {
 		mauMauBtn->addClickHandler(mauMauFunction);
+	}
+	void MauMauButtonRenderer::updateBtnPosition() {
+		static glm::vec3 worldPosition = {1.275f, 0.4f, 0.7f};
+		glm::vec2 positionOnScreenRelative = worldToScreenConverter.convertWorldToScreen_percent(worldPosition);
+		float posOnScreenX = worldToScreenConverter.convertWorldToScreen_percent(worldPosition).x;
+		float posOnScreenY = worldToScreenConverter.convertWorldToScreen_percent(worldPosition).y;
+		mauMauBtnPositioning->setX(posOnScreenX);
+		mauMauBtnPositioning->setY(posOnScreenY);
 	}
 }

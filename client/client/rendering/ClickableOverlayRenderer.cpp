@@ -4,7 +4,7 @@
 namespace card {
 	ClickableOverlayRenderer::ClickableOverlayRenderer(egui::MasterRenderer& eguiRenderer, CardRenderer& cardRenderer, ProjectionMatrix& pm, Viewport& vp, CardIndexTextures& cardIndexTextures) :
 			cardRenderer(cardRenderer),
-			mauMauButtonRenderer(eguiRenderer),
+			mauMauButtonRenderer(eguiRenderer, pm, vp),
 			passButtonRenderer(eguiRenderer),
 			drawnCardRenderer(cardRenderer, eguiRenderer, pm, vp),
 			chooseCardIndexRenderer(eguiRenderer, cardIndexTextures) {
@@ -40,6 +40,7 @@ namespace card {
 		if(clientGameAccessor.canPass() && !game.hasGameEnded()) {
 			passButtonRenderer.render();
 		}
+		passButtonRenderer.render();
 	}
 	void ClickableOverlayRenderer::renderDrawnCardOverlayIfGameHasntEnded(ProxyMauMauGame& game, bool suppressMouseClick) {
 		if(game.hasGameEnded()) return;

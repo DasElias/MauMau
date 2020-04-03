@@ -3,6 +3,8 @@
 #include <egui/model/nodes/Button.h>
 #include <egui/model/nodes/AspectRatioElement.h>
 #include "../renderingModel/IngameButton.h"
+#include "../renderingModel/WorldToScreenConverter.h"
+#include <egui/model/positioning/RelativePositioningOnScreen.h>
 
 namespace card {
 	class MauMauButtonRenderer {
@@ -17,14 +19,16 @@ namespace card {
         // ----------------------------------------------------------------------
         private:
             egui::MasterRenderer& eguiRenderer;
+            WorldToScreenConverter worldToScreenConverter;
             std::shared_ptr<IngameButton> mauMauBtn;
+            std::shared_ptr<egui::RelativePositioningOnScreen> mauMauBtnPositioning;
             egui::Scene scene;
 
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            MauMauButtonRenderer(egui::MasterRenderer& eguiRenderer);
+            MauMauButtonRenderer(egui::MasterRenderer& eguiRenderer, ProjectionMatrix& pm, Viewport& vp);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
@@ -33,6 +37,9 @@ namespace card {
             void clearPreviousMouseEvents();
             void render(bool canMau);
             void addClickHandler(std::function<void(void)> mauMauFunction);
+
+        private:
+            void updateBtnPosition();
 
 	};
 }
