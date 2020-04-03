@@ -10,9 +10,11 @@
 #include "CardStackPositions.h"
 #include <egui/model/nodeComponents/background/ColoredBackground.h>
 #include "CardRenderer.h"
+#include <cmath>
 
 namespace card {
 	const int CardIndexRenderer::SPACE_BETWEEN_TITLE_AND_IMAGE_PX = 5;
+	const int CardIndexRenderer::TITLE_STRETCH = 25;
 
 	CardIndexRenderer::CardIndexRenderer(Renderer2D& renderer2D, CardIndexTextures& cardIndexTextures, ProjectionMatrix& projectionMatrix, Viewport& viewport) :
 			renderer2D(renderer2D),
@@ -27,7 +29,7 @@ namespace card {
 
 		parentElement = std::make_shared<egui::VBox>();
 		parentElement->setBackground(std::make_shared<egui::ColoredBackground>(egui::Color(1, 1)));
-		title = std::make_shared<egui::Label>();
+		title = std::make_shared<egui::AspectRatioElement>(letteringTexture.getAspectRatio());
 		imageElement = std::make_shared<egui::AspectRatioElement>(cardIndexTextures.getAspectRatio());
 		parentElement->addChildElement(title);		
 		parentElement->addChildElement(imageElement);
@@ -39,16 +41,18 @@ namespace card {
 		));
 		parentElement->setPreferredWidth({0.05f, egui::RelativityMode::RELATIVE_ON_SCREEN});
 		parentElement->setSpaceBetweenElements({SPACE_BETWEEN_TITLE_AND_IMAGE_PX, egui::RelativityMode::ABSOLUTE_VALUE});
-		title->setPreferredHeight({50, egui::RelativityMode::ABSOLUTE_VALUE});
-		float const TITLE_STRETCH = 15;
+		title->setMaxWidth({{1, egui::RelativityMode::RELATIVE_IN_PARENT}, {TITLE_STRETCH, egui::RelativityMode::ABSOLUTE_VALUE}});
 		title->setXTranslation(-TITLE_STRETCH/2);
-		title->setStretchX(TITLE_STRETCH);
+	/*	float const TITLE_STRETCH = 15;
+		title->setXTranslation(-TITLE_STRETCH/2);
+		title->setStretchX(TITLE_STRETCH);*/
 		imageElement->setMaxWidth({1, egui::RelativityMode::RELATIVE_IN_PARENT});
 	}
 	void CardIndexRenderer::renderCardIndexForNextCard(CardIndex indexToRender) {
 		if(indexToRender == CardIndex::NULLINDEX) return;
 
-		updateParentElementPositioning();
+		updateParentElementPositioning();	
+		updateParentElementWidth();
 
 		cardIndexTextures.getTexture(indexToRender).bind();
 		renderer2D.render(imageElement, true);
@@ -57,11 +61,27 @@ namespace card {
 		renderer2D.render(title, true);
 	}
 	void CardIndexRenderer::updateParentElementPositioning() {
-		glm::vec3 position3d = DRAW_CARDS_POSITION - glm::vec3(0, 0, CardRenderer::HEIGHT * 0.25f);
+		glm::vec3 position3d = DRAW_CARDS_POSITION - glm::vec3(0, 0, CardRenderer::HEIGHT * 0.33f);
 		float drawCardStack_yOnScreenPercent = worldToScreenConverter.convertWorldToScreen_percent(position3d).y;
 		drawCardStack_yOnScreenPercent -= title->getComputedHeight() / 2;
 		drawCardStack_yOnScreenPercent -= imageElement->getComputedHeight() / 2;
 		drawCardStack_yOnScreenPercent -= egui::y_pixelToPercent(SPACE_BETWEEN_TITLE_AND_IMAGE_PX) / 2;
 		parentElementPositioning->setY(drawCardStack_yOnScreenPercent);
+	}
+	void CardIndexRenderer::updateParentElementWidth() {
+		float distanceBetweenCardStacks = getDistanceBetweenCardStacks();
+		distanceBetweenCardStacks -= egui::x_pixelToPercent(TITLE_STRETCH);
+		distanceBetweenCardStacks *= 0.65f;
+
+		distanceBetweenCardStacks = std::max<float>(egui::x_pixelToPercent(1), distanceBetweenCardStacks);
+
+		parentElement->setPreferredWidth({distanceBetweenCardStacks, egui::RelativityMode::RELATIVE_ON_SCREEN});
+	}
+	float CardIndexRenderer::getDistanceBetweenCardStacks() {
+		glm::vec3 drawCardsPosition = DRAW_CARDS_POSITION + glm::vec3(CardRenderer::WIDTH / 2, 0, 0);
+		glm::vec3 playCardsPosition = PLAY_CARDS_POSITION - glm::vec3(CardRenderer::WIDTH / 2, 0, 0);
+		float drawCardsX = worldToScreenConverter.convertWorldToScreen_percent(drawCardsPosition).x;
+		float playCardsX = worldToScreenConverter.convertWorldToScreen_percent(playCardsPosition).x;
+		return abs(playCardsX - drawCardsX);
 	}
 }

@@ -18,6 +18,7 @@ namespace card {
         // ----------------------------------------------------------------------
         private:
             static int const SPACE_BETWEEN_TITLE_AND_IMAGE_PX;
+            static int const TITLE_STRETCH;
 
         // ----------------------------------------------------------------------
         // --------------------------------FIELDS--------------------------------
@@ -30,7 +31,7 @@ namespace card {
 
             std::shared_ptr<egui::RelativePositioningOnScreen> parentElementPositioning;
             std::shared_ptr<egui::VBox> parentElement;
-            std::shared_ptr<egui::Label> title;
+            std::shared_ptr<egui::AspectRatioElement> title;
             std::shared_ptr<egui::AspectRatioElement> imageElement;
             egui::Scene scene;
 
@@ -48,6 +49,8 @@ namespace card {
 
         private:
             void updateParentElementPositioning();
+            void updateParentElementWidth();
+            float getDistanceBetweenCardStacks();
 
 	};
 }
