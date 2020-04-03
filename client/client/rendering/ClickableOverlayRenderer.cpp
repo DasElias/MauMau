@@ -40,7 +40,6 @@ namespace card {
 		if(clientGameAccessor.canPass() && !game.hasGameEnded()) {
 			passButtonRenderer.render();
 		}
-		passButtonRenderer.render();
 	}
 	void ClickableOverlayRenderer::renderDrawnCardOverlayIfGameHasntEnded(ProxyMauMauGame& game, bool suppressMouseClick) {
 		if(game.hasGameEnded()) return;
