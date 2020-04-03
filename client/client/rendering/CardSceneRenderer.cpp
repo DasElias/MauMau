@@ -30,7 +30,7 @@ namespace card {
 			circleSectorRenderer(),
 			playerLabelRenderer(eguiRenderer, avatarTextures, renderer2d, circleSectorRenderer),
 			playerLabelOverlayRenderer(renderer2d, PlayerLabel::IMAGE_WIDTH_RELATIVE_ON_SCREEN, avatarTextures.getAspectRatio()),
-			cardIndexRenderer(renderer2d, cardIndexTextures),
+			cardIndexRenderer(renderer2d, cardIndexTextures, projectionMatrix, viewport),
 			particleRenderer(),
 			fireworkRenderer(particleRenderer, eguiRenderer, renderer2d, [this]() {
 				room->returnBackToMenu(ReturnBackToMenuCause::GAME_HAS_ENDED);

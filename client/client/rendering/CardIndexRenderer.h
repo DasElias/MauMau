@@ -9,17 +9,26 @@
 #include <egui/model/nodes/AspectRatioElement.h>
 #include <egui/model/positioning/RelativePositioningOnScreen.h>
 #include "../renderingModel/CardIndexTextures.h"
+#include "../renderingModel/WorldToScreenConverter.h"
 
 namespace card {
-	class CardIndexRenderer {     
+	class CardIndexRenderer {  
+        // ----------------------------------------------------------------------
+        // ----------------------------STATIC-FIELDS-----------------------------
+        // ----------------------------------------------------------------------
+        private:
+            static int const SPACE_BETWEEN_TITLE_AND_IMAGE_PX;
+
         // ----------------------------------------------------------------------
         // --------------------------------FIELDS--------------------------------
         // ----------------------------------------------------------------------
         private:
             Renderer2D& renderer2D;
+            WorldToScreenConverter worldToScreenConverter;
             CardIndexTextures& cardIndexTextures;
             SimpleTexture letteringTexture;
 
+            std::shared_ptr<egui::RelativePositioningOnScreen> parentElementPositioning;
             std::shared_ptr<egui::VBox> parentElement;
             std::shared_ptr<egui::Label> title;
             std::shared_ptr<egui::AspectRatioElement> imageElement;
@@ -29,13 +38,16 @@ namespace card {
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            CardIndexRenderer(Renderer2D& renderer2D, CardIndexTextures& cardIndexTextures);
+            CardIndexRenderer(Renderer2D& renderer2D, CardIndexTextures& cardIndexTextures, ProjectionMatrix& projectionMatrix, Viewport& viewport);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
         // ----------------------------------------------------------------------
         public:
             void renderCardIndexForNextCard(CardIndex indexToRender);
+
+        private:
+            void updateParentElementPositioning();
 
 	};
 }
