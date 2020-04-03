@@ -4,6 +4,7 @@
 #include <egui/model/positioning/FunctionalPositioningInParent.h>
 #include <egui/model/utils/PositioningUtils.h>
 #include <egui/model/nodeComponents/background/ColoredBackground.h>
+#include "ClickableCursorUtils.h"
 
 namespace card {
 	float const AvatarGrid::X_PADDING_BETWEEN_AVATARS = 0.005;
@@ -64,6 +65,7 @@ namespace card {
 				if(evt.isHovered()) hoveredAvatar = avatar;
 				updateOverlay(hoveredAvatar, hover);
 			}});
+			setCursorToHandOnHover(*avatarElem);
 		}
 
 	}
