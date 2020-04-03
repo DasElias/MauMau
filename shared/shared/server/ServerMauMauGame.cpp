@@ -350,11 +350,16 @@ namespace card {
 		bool isMauDisabledByOptions = !roomOptions.getOption(Options::HAVE_TO_MAU);
 		if(isMauDisabledByOptions) return;
 
+		if(wasCardDrawn_thisTurn && wasMauedCorrectly_thisTurn) {
+			sendMauPunishmentPacket(*playerOnTurn, MauPunishmentCause::DRAWED_EVEN_THOUGH_MAUED);
+			return;
+		}
+
 		if(wasCardDrawn_thisTurn && wasCardPlayed_thisTurn) {
-			// we don't check for mau if the player has drawed and played a card in the same turn
+			// we don't check for mau if the player has drawed and played a card in the same turn, but only if he doesn't have maued
 			return;
 		} else if(wasCardDrawn_thisTurn) {
-			throw std::runtime_error("Logic error. Can't check for mau if the player has drawed but not played a card-");
+			log(LogSeverity::WARNING, "Logic error. Can't check for mau if the player has drawed but not played a card.");
 		}
 
 		bool hasJustPlayedLastButOneCard = playerOnTurn->getHandCards().getSize() == 1;
