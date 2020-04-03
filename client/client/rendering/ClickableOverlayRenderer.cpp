@@ -5,7 +5,7 @@ namespace card {
 	ClickableOverlayRenderer::ClickableOverlayRenderer(egui::MasterRenderer& eguiRenderer, CardRenderer& cardRenderer, ProjectionMatrix& pm, Viewport& vp, CardIndexTextures& cardIndexTextures) :
 			cardRenderer(cardRenderer),
 			mauMauButtonRenderer(eguiRenderer, pm, vp),
-			passButtonRenderer(eguiRenderer),
+			passButtonRenderer(eguiRenderer, pm, vp),
 			drawnCardRenderer(cardRenderer, eguiRenderer, pm, vp),
 			chooseCardIndexRenderer(eguiRenderer, cardIndexTextures) {
 	}

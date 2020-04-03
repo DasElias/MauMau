@@ -5,6 +5,7 @@
 #include "../renderingModel/IngameButton.h"
 #include "../renderingModel/WorldToScreenConverter.h"
 #include <egui/model/positioning/RelativePositioningOnScreen.h>
+#include "../renderingModel/MauMauButtonPositionGenerator.h"
 
 namespace card {
 	class MauMauButtonRenderer {
@@ -19,7 +20,7 @@ namespace card {
         // ----------------------------------------------------------------------
         private:
             egui::MasterRenderer& eguiRenderer;
-            WorldToScreenConverter worldToScreenConverter;
+            MauMauButtonPositionGenerator mauMauPositionGenerator;
             std::shared_ptr<IngameButton> mauMauBtn;
             std::shared_ptr<egui::RelativePositioningOnScreen> mauMauBtnPositioning;
             egui::Scene scene;

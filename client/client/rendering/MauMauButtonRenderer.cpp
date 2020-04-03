@@ -12,14 +12,14 @@ namespace card {
 
 	MauMauButtonRenderer::MauMauButtonRenderer(egui::MasterRenderer& eguiRenderer, ProjectionMatrix& pm, Viewport& vp) :
 			eguiRenderer(eguiRenderer),
-			worldToScreenConverter(pm, vp) {
+			mauMauPositionGenerator(pm, vp) {
 
 		mauMauBtn = std::make_shared<IngameButton>(
 			std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_maubutton, tex_maubutton_size)),
 			std::make_shared<egui::TexturedBackground>(egui::Image::loadFromMemory(tex_maubuttondisabled, tex_maubuttondisabled_size)),
 			BTN_WIDTH_PERCENT
 		);
-		mauMauBtnPositioning = std::make_shared<egui::RelativePositioningOnScreen>(0.7, 0.6);
+		mauMauBtnPositioning = std::make_shared<egui::RelativePositioningOnScreen>();
 		mauMauBtn->setOwnPositioning(mauMauBtnPositioning);
 		scene.setRootElement(mauMauBtn);
 	}
@@ -39,11 +39,8 @@ namespace card {
 		mauMauBtn->addClickHandler(mauMauFunction);
 	}
 	void MauMauButtonRenderer::updateBtnPosition() {
-		static glm::vec3 worldPosition = {1.275f, 0.4f, 0.7f};
-		glm::vec2 positionOnScreenRelative = worldToScreenConverter.convertWorldToScreen_percent(worldPosition);
-		float posOnScreenX = worldToScreenConverter.convertWorldToScreen_percent(worldPosition).x;
-		float posOnScreenY = worldToScreenConverter.convertWorldToScreen_percent(worldPosition).y;
-		mauMauBtnPositioning->setX(posOnScreenX);
-		mauMauBtnPositioning->setY(posOnScreenY);
+		glm::vec2 posOnScreen = mauMauPositionGenerator.getPositionOnScreen();
+		mauMauBtnPositioning->setX(posOnScreen.x);
+		mauMauBtnPositioning->setY(posOnScreen.y);
 	}
 }
