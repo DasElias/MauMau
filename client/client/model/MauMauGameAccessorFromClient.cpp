@@ -14,7 +14,8 @@ namespace card {
 	}
 	bool MauMauGameAccessorFromClient::canMau() const {
 		if(gameData.hasGameEnded() ||
-		   !gameData.hasInitialCardBeenDistributed() ||
+			! gameData.isReadyToPerformLocalPlayerTurn() ||
+		    ! gameData.hasInitialCardBeenDistributed() ||
 			gameData.getLocalPlayer()->wasMauDemandedThisTurn() ||
 			! gameData.getOptions().getOption(Options::HAVE_TO_MAU)) {
 			return false;
