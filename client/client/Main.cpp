@@ -204,7 +204,7 @@ namespace card {
 
 
 		glfwShowWindow(p_window);
-		glfwSetWindowPos(p_window, 20, 20);
+		glfwMaximizeWindow(p_window);
 		glfwFocusWindow(p_window);
 
 		glfwSwapInterval(VSYNC);
