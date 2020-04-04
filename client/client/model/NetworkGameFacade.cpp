@@ -102,6 +102,9 @@ namespace card {
 			case EnteringRoomErrorCause::ALREADY_IN_ROOM_STATUS:
 				this->errorMsgInPlainText = "Du bist bereits in einem Raum.";
 				break;
+			case EnteringRoomErrorCause::PROTOCOL_VERSION_MISMATCH_STATUS:
+				this->errorMsgInPlainText = "Deine Version von MauMau ist leider nicht kompatibel mit dem Server. Bitte update deine App auf die neueste Version.";
+				break;
 			case EnteringRoomErrorCause::UNKNOWN_ERROR_STATUS:
 			default:
 				this->errorMsgInPlainText = "Ein unbekannter Fehler ist aufgetreten.";

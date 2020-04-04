@@ -10,5 +10,6 @@ namespace card {
 		EnteringRoomErrorCause_t const USERNAME_TAKEN_STATUS = 3;
 		EnteringRoomErrorCause_t const ROOM_FULL_STATUS = 4;
 		EnteringRoomErrorCause_t const ALREADY_IN_ROOM_STATUS = 5;
+		EnteringRoomErrorCause_t const PROTOCOL_VERSION_MISMATCH_STATUS = 6;
 	}
 }

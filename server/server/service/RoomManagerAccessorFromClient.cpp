@@ -6,6 +6,8 @@
 #include "InvalidInputException.h"
 #include <shared/model/EnteringRoomErrorCause.h>
 #include <shared/utils/Logger.h>
+#include <shared/packet/ProtocolVersion.h>
+#include <shared/model/EnteringRoomErrorCause.h>
 
 namespace card {
 	RoomManagerAccessorFromClient::RoomManagerAccessorFromClient(std::shared_ptr<ServerPacketTransmitter> packetTransmitter) :
@@ -38,18 +40,22 @@ namespace card {
 		RoomCode roomCode = 0;
 		std::map<std::string, int> options;
 
-		try {
-			std::string usernameOfPlayerToJoin = casted.getOwnUsername();
-			RoomManager::RoomJoinReturnValue rv = roomManager.join(casted.getRoomCode(), usernameOfPlayerToJoin, casted.getAvatar(), conn);
+		if(casted.getClientProtocolVersion() == PROTOCOL_VERSION) {
+			try {
+				std::string usernameOfPlayerToJoin = casted.getOwnUsername();
+				RoomManager::RoomJoinReturnValue rv = roomManager.join(casted.getRoomCode(), usernameOfPlayerToJoin, casted.getAvatar(), conn);
 
-			usernamesOfOtherParticipants = getUsernamesOfOtherParticipants(rv.room, usernameOfPlayerToJoin);
-			avatarsOfOtherParticipants = getAvatarsOfOtherParticipants(rv.room, usernameOfPlayerToJoin);
-			areOtherParticipantsAiPlayers = this->areOtherParticipantsAiPlayers(rv.room, usernameOfPlayerToJoin);
-			roomLeaderUsername = rv.room.getRoomLeader()->getUsername();
-			roomCode = rv.room.getRoomCode();
-			options = rv.room.getRoomOptions().getAllOptions();
-		} catch(const InvalidInputException& e) {
-			statusCode = e.getStatusCode();
+				usernamesOfOtherParticipants = getUsernamesOfOtherParticipants(rv.room, usernameOfPlayerToJoin);
+				avatarsOfOtherParticipants = getAvatarsOfOtherParticipants(rv.room, usernameOfPlayerToJoin);
+				areOtherParticipantsAiPlayers = this->areOtherParticipantsAiPlayers(rv.room, usernameOfPlayerToJoin);
+				roomLeaderUsername = rv.room.getRoomLeader()->getUsername();
+				roomCode = rv.room.getRoomCode();
+				options = rv.room.getRoomOptions().getAllOptions();
+			} catch(const InvalidInputException& e) {
+				statusCode = e.getStatusCode();
+			}
+		} else {
+			statusCode = EnteringRoomErrorCause::PROTOCOL_VERSION_MISMATCH_STATUS;
 		}
 
 		EnteringRoomSuccessReport_STCAnswerPacket answerPacket(statusCode, usernamesOfOtherParticipants, avatarsOfOtherParticipants, areOtherParticipantsAiPlayers, roomLeaderUsername, roomCode, options);
@@ -69,13 +75,17 @@ namespace card {
 		std::string roomLeaderUsername = "";
 		RoomCode roomCode = 0;
 
-		try {
-			RoomManager::RoomJoinReturnValue rv = roomManager.createAndJoin(casted.getOwnUsername(), casted.getAvatar(), options, conn);
-			
-			roomCode = rv.room.getRoomCode();
-			roomLeaderUsername = casted.getOwnUsername();
-		} catch(const InvalidInputException& e) {
-			statusCode = e.getStatusCode();
+		if(casted.getClientProtocolVersion() == PROTOCOL_VERSION) {
+			try {
+				RoomManager::RoomJoinReturnValue rv = roomManager.createAndJoin(casted.getOwnUsername(), casted.getAvatar(), options, conn);
+
+				roomCode = rv.room.getRoomCode();
+				roomLeaderUsername = casted.getOwnUsername();
+			} catch(const InvalidInputException & e) {
+				statusCode = e.getStatusCode();
+			}
+		} else {
+			statusCode = EnteringRoomErrorCause::PROTOCOL_VERSION_MISMATCH_STATUS;
 		}
 
 		EnteringRoomSuccessReport_STCAnswerPacket answerPacket(statusCode, usernamesOfOtherParticipants, avatarsOfOtherParticipants, areOtherParticipantsAiPlayers, roomLeaderUsername, roomCode, options);
