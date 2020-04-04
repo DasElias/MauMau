@@ -300,9 +300,13 @@ namespace card {
 		appendMessage("Zeit ist abgelaufen!");
 	}
 	void ProxyMauMauGameData::onSuccessfulMau(std::shared_ptr<ProxyPlayer> player) {
-		player->onSuccessfulMau();
+		if(roomOptions.getOption(Options::HAVE_TO_MAU)) {
+			player->onSuccessfulMau();
+		}
 	}
 	void ProxyMauMauGameData::onMauPunishment(std::shared_ptr<ProxyPlayer> punishedPlayer, std::vector<Card> cardsToDraw, MauPunishmentCause cause) {
+		if(! roomOptions.getOption(Options::HAVE_TO_MAU)) return;
+
 		int delay = (cause == MauPunishmentCause::NO_MAU_RECEIVED) ? PLAY_DURATION_MS : 0;
 		playerHasToDrawCards(punishedPlayer, cardsToDraw, delay);
 

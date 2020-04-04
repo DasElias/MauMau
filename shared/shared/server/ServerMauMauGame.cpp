@@ -116,6 +116,8 @@ namespace card {
 	}
 
 	void ServerMauMauGame::mau(Player& player) {
+		if(! roomOptions.getOption(Options::HAVE_TO_MAU)) return;
+
 		if(!canMau(player)) {
 			sendMauPunishmentPacket(player, MauPunishmentCause::TOO_EARLY);
 			return;
