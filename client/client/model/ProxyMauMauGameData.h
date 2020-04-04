@@ -80,7 +80,7 @@ namespace card {
 			bool wasCardDrawnIntoHandCardsThisTurn() const;
 			bool wasCardPlayedThisTurn() const;
 
-			void abortTurnOnTimeExpires(const std::vector<Card>& cardsToDraw);
+			void abortTurnOnTimeExpires(const std::vector<Card>& cardsToDraw, int amountOfCardsToDrawBefore);
 			// player has to draw cards after other player has played 7, for instance 
 			void playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, std::size_t amountOfCards, int delayMs = 0);
 			void playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, const std::vector<Card>& cards, int delayMs = 0);

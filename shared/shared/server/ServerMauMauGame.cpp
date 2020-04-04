@@ -416,13 +416,15 @@ namespace card {
 
 		std::vector<int> cardsToDrawAsNullCards = cardsToDraw;
 		std::fill(cardsToDrawAsNullCards.begin(), cardsToDrawAsNullCards.end(), Card::NULLCARD.getCardNumber());
+
+		int amountOfCardsToDrawBefore = this->cardsToDrawDueToPlusTwo.size();
 		
 		for(auto& p : players) {
 			if(p == playerOnTurn) {
-				TurnWasAborted_STCPacket packet(cardsToDraw);
+				TurnWasAborted_STCPacket packet(cardsToDraw, amountOfCardsToDrawBefore);
 				packetTransmitter->sendPacketToClient(packet, p->getWrappedParticipant());
 			} else {
-				TurnWasAborted_STCPacket packet(cardsToDrawAsNullCards);
+				TurnWasAborted_STCPacket packet(cardsToDrawAsNullCards, amountOfCardsToDrawBefore);
 				packetTransmitter->sendPacketToClient(packet, p->getWrappedParticipant());
 			}
 		}

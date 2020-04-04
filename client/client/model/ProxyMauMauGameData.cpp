@@ -288,12 +288,13 @@ namespace card {
 		return roomOptions;
 	}
 	
-	void ProxyMauMauGameData::abortTurnOnTimeExpires(const std::vector<Card>& cardsToDraw) {
+	void ProxyMauMauGameData::abortTurnOnTimeExpires(const std::vector<Card>& cardsToDraw, int amountOfCardsToDrawBefore) {
 		if(isLocalPlayerOnTurn() && cardsToDraw[0] == Card::NULLCARD) {
 			throw std::runtime_error("Local player can't draw NULLCARD on time expire!");
 		}
 
-		playerHasToDrawCards(userOnTurn, cardsToDraw);
+		int delayMs = amountOfCardsToDrawBefore * DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS;
+		playerHasToDrawCards(userOnTurn, cardsToDraw, delayMs);
 
 		setNextPlayerOnTurnLocal();
 		appendMessage("Zeit ist abgelaufen!");

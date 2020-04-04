@@ -96,7 +96,7 @@ namespace card {
 		std::vector<int> cardNumbersToDraw = casted.getCardsToDraw();
 		std::vector<Card> cardsToDraw = Card::getVectorFromCardNumber(cardNumbersToDraw);
 
-		gameData.abortTurnOnTimeExpires(cardsToDraw);
+		gameData.abortTurnOnTimeExpires(cardsToDraw, casted.getAmountOfCardsToDrawBefore());
 	}
 	void MauMauGameAccessorFromServer::listener_onMauPunishment(Packet& p) {
 		auto& casted = dynamic_cast<MauPunishment_STCPacket&>(p);
