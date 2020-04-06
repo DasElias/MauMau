@@ -18,6 +18,5 @@ void main(void) {
 		out_Color = texColor;
 	}
 
-	if(out_Color.a < 0.5) discard;
 }
 )";
