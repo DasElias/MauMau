@@ -47,7 +47,7 @@ namespace card {
 	void RoomManager::leave(std::shared_ptr<AbstractConnectionToClient> conn) {
 		if(isConnectionInRoom(conn) && packetTransmitter->wasParticipantRegistered(conn)) {
 			auto& room = getRoomToConnection(conn);
-			auto& participant = getParticipantToConnection(conn);
+			auto participant = getParticipantToConnection(conn);
 
 			room.leaveRoom(participant, false);
 			users.erase(users.find(conn));
