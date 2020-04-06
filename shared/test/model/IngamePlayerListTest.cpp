@@ -27,8 +27,8 @@ TEST_CASE("IngamePlayerList", "[IngamePlayerList]") {
 		REQUIRE(players[1] == ingamePlayerList.getNextPlayerOnTurn(Direction::CW));
 		REQUIRE(players[9] == ingamePlayerList.getNextPlayerOnTurn(Direction::CCW));
 
-		REQUIRE(players[4] == ingamePlayerList.getNextPlayerOnTurn(Direction::CW, players[5]));
-		REQUIRE(players[6] == ingamePlayerList.getNextPlayerOnTurn(Direction::CCW, players[5]));
+		REQUIRE(players[6] == ingamePlayerList.getNextPlayerOnTurn(Direction::CW, players[5]));
+		REQUIRE(players[4] == ingamePlayerList.getNextPlayerOnTurn(Direction::CCW, players[5]));
 	}
 	SECTION("isPlayerOnTurn") {
 		REQUIRE(ingamePlayerList.isPlayerOnTurn(players[0]));
