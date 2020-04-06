@@ -459,11 +459,19 @@ namespace card {
 	}
 
 	void ProxyMauMauGameData::tryRebalanceCardStacks() {
-		// move card from play to draw stack while (there are too little cards on draw card stack and at least one card on play card stack) or (there are too much cards on play card stacks)
-		while((drawCardStack.getAvailableCardsSize() <= MIN_DRAW_CARD_STACK_SIZE && playCardStack.getAvailableCardsSize() > 1) || playCardStack.getAvailableCardsSize() > Card::MAX_CARDS) {
+		// move card from play to draw stack while there are too little cards on draw card stack and at least one card on play card stack
+		while(drawCardStack.getAvailableCardsSize() <= MIN_DRAW_CARD_STACK_SIZE && playCardStack.getAvailableCardsSize() > 1) {
 			drawCardStack.addFirstCardFromImmediately(Card::NULLCARD, playCardStack, REBALANCE_DURATION);
 		}
 
+		// move card from play to draw stack if there are too many cards on the play stack
+		if(playCardStack.getAvailableCardsSize() > Card::MAX_CARDS) {
+			while(playCardStack.getAvailableCardsSize() > 1) {
+				drawCardStack.addFirstCardFromImmediately(Card::NULLCARD, playCardStack, REBALANCE_DURATION);
+			}
+		}
+
+		// if there are still to little cards on draw card stack, add additional card stack
 		if(drawCardStack.getAvailableCardsSize() == 0 || drawCardStack.getAvailableCardsSize() + drawCardStack.getNumberOfIncomingAnimations() < MIN_DRAW_CARD_STACK_SIZE) {
 			for(int i = 1; i <= Card::MAX_CARDS; i++) {
 				drawCardStack.addFromPlainAtPosition(0, Card(i));
