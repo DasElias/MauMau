@@ -6,52 +6,40 @@
 
 using namespace card;
 
-struct FunctorObject {
-	std::reference_wrapper<boost::optional<ClientToServerPacket&>> packet;
-	FunctorObject(boost::optional<ClientToServerPacket&>& packet) :
-		packet(packet) {
-
-	}
-	void operator()(ClientToServerPacket& p) {
-		packet.get() = p;
-	}
-	bool hasValue() const {
-		return packet.get().has_value();
-	}
-	ClientToServerPacket& getPacket() {
-		return packet.get().get();
-	}
+auto const requireNotExecuted = [](ClientToServerPacket&) {
+	REQUIRE(false);
 };
 
 TEST_CASE("CTSPacketConstructorFromJson", "[CTSPacketConstructorFromJson]") {
-	boost::optional<ClientToServerPacket&> packet;
-	FunctorObject callback(packet);
 	SECTION("call with invalid json #1") {
 		std::string json = "";
-		constructAndProcessCTSPacketFromJson(json, callback);
-		REQUIRE_FALSE(callback.hasValue());
+		constructAndProcessCTSPacketFromJson(json, requireNotExecuted);
 	}
 	SECTION("call with invalid json #2") {
 		std::string json = "{pType: \"HALLO\"}";
-		constructAndProcessCTSPacketFromJson(json, callback);
-		REQUIRE_FALSE(callback.hasValue());
+		constructAndProcessCTSPacketFromJson(json, requireNotExecuted);
 	}
 	SECTION("call with invalid json #2") {
 		std::string json = "{pType: \"401\"}";
-		constructAndProcessCTSPacketFromJson(json, callback);
-		REQUIRE_FALSE(callback.hasValue());
+		constructAndProcessCTSPacketFromJson(json, requireNotExecuted);
 	}
 	SECTION("call with correct json") {
 		std::string const username = "Ha";
 		RoomCode const roomCode = 212;
 		Avatar const avatar = 1;
-		RoomJoinRequest_CTSPacket packet(username, avatar, roomCode);
-		constructAndProcessCTSPacketFromJson(packet.getJson(), callback);
+		std::string const clientProtocolVersion = "A";
+		RoomJoinRequest_CTSPacket roomJoinRequestPacket(username, avatar, roomCode, clientProtocolVersion);
+		bool wasCallbackExecuted = false;
 
-		REQUIRE(callback.hasValue());
-		auto returnedPacket = dynamic_cast<RoomJoinRequest_CTSPacket&>(callback.getPacket());
-		REQUIRE(returnedPacket.getOwnUsername() == username);
-		REQUIRE(returnedPacket.getRoomCode() == roomCode);
-		REQUIRE(returnedPacket.getAvatar() == avatar);
+		constructAndProcessCTSPacketFromJson(roomJoinRequestPacket.getJson(), [&](ClientToServerPacket& p) {
+			wasCallbackExecuted = true;
+			auto& returnedPacket = dynamic_cast<RoomJoinRequest_CTSPacket&>(p);
+			REQUIRE(returnedPacket.getOwnUsername() == username);
+			REQUIRE(returnedPacket.getRoomCode() == roomCode);
+			REQUIRE(returnedPacket.getAvatar() == avatar);
+			REQUIRE(returnedPacket.getClientProtocolVersion() == clientProtocolVersion);
+		});
+
+		REQUIRE(wasCallbackExecuted);
 	}
 }
