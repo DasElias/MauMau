@@ -1,4 +1,4 @@
-#include <catch/catch.hpp>
+#include <catch2/catch.hpp>
 #include <packet/stc/EnteringRoomSuccessReport_STCAnswerPacket.h>
 using namespace card;
 

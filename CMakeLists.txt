@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.15.5 FATAL_ERROR)
 project(card)
 
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if(MSVC)
@@ -54,6 +53,7 @@ if(BUILD_SERVER_AS_DAEMON)
     add_compile_definitions(BUILD_SERVER_AS_DAEMON)
 endif(BUILD_SERVER_AS_DAEMON)
 
+find_package(Catch2 REQUIRED)
 enable_testing()
 
 add_subdirectory(deps)
@@ -67,3 +67,4 @@ endif(BUILD_SERVER)
 
 set(CTEST_PROJECT_NAME "MauMau")
 include(CTest)
+include(Catch)

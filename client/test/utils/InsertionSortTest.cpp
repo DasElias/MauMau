@@ -1,4 +1,4 @@
-#include <catch/catch.hpp>
+#include <catch2/catch.hpp>
 #include <utils/InsertionSort.h>
 
 using namespace card;

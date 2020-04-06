@@ -1,4 +1,3 @@
-include_directories("${CMAKE_SOURCE_DIR}/deps/catch")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../server")
 
 file(GLOB_RECURSE server_test_files
@@ -7,8 +6,15 @@ file(GLOB_RECURSE server_test_files
 )
 
 add_executable(server_test ${server_test_files})
+enable_testing()
+add_test(server_test server_test)
 
 target_link_libraries(server_test
+	Catch2::Catch2
 	${Boost_LIBRARIES}
 	server_service
 )
+
+include(CTest)
+include(Catch)
+catch_discover_tests(server_test)

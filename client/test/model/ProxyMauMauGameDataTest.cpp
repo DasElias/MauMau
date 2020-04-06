@@ -1,11 +1,11 @@
-#include <catch/catch.hpp>
+#include <catch2/catch.hpp>
 #include <model/ProxyMauMauGame.h>
 #include <shared/model/AvatarUtils.h>
 #include <shared/utils/ThreadUtils.h>
 #include <shared/utils/InstantExecutionThreadUtilsProvider.h>
 using namespace card;
 
-TEST_CASE("", "[ProxyMauMauGameData]") {
+TEST_CASE("ProxyMauMauGameData", "[ProxyMauMauGameData]") {
 	threadUtils_setProvider(std::make_unique<InstantExecutionThreadUtilsProvider>());
 	
 	std::shared_ptr<ParticipantOnClient> const localParticipant = std::make_shared<ParticipantOnClient>("Lokaler Spieler", getRandomMaleAvatar(), false);

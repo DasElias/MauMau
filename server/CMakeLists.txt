@@ -8,5 +8,7 @@ include_directories("${CMAKE_SOURCE_DIR}/shared")
 include_directories("${CMAKE_SOURCE_DIR}/deps/loguru")
 include_directories("${CMAKE_SOURCE_DIR}/deps/json")
 
+enable_testing()
+
 add_subdirectory(server)
 add_subdirectory(test)

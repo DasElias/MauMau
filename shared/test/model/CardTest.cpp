@@ -1,4 +1,4 @@
-#include <catch/catch.hpp>
+#include <catch2/catch.hpp>
 #include <model/Card.h>
 
 using namespace card;

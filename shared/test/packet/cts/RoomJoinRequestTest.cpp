@@ -1,4 +1,4 @@
-#include <catch/catch.hpp>
+#include <catch2/catch.hpp>
 #include <packet/cts/RoomJoinRequest_CTSPacket.h>
 using namespace card;
 

@@ -1,4 +1,4 @@
-#include <catch/catch.hpp>
+#include <catch2/catch.hpp>
 #include <packet/cts/ChangeOptionsRequest_CTSPacket.h>
 using namespace card;
 

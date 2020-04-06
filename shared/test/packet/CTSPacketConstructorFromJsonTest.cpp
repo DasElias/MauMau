@@ -1,4 +1,4 @@
-#include <catch/catch.hpp>
+#include <catch2/catch.hpp>
 #include <packet/CTSPacketConstructorFromJson.h>
 #include <packet/cts/RoomJoinRequest_CTSPacket.h>
 #include <optional>

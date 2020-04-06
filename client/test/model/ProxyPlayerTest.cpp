@@ -1,4 +1,4 @@
-#include <catch/catch.hpp>
+#include <catch2/catch.hpp>
 #include <model/ProxyPlayer.h>
 #include <shared/model/CardStack.h>
 #include <shared/utils/ThreadUtils.h>
@@ -7,7 +7,7 @@
 
 using namespace card;
 
-TEST_CASE("ProxyPlayer can draw and play cards", "[ProxyPlayer]") {
+TEST_CASE("ProxyPlayer", "[ProxyPlayer]") {
 	threadUtils_setProvider(std::make_unique<InstantExecutionThreadUtilsProvider>());
 
 	const std::string username = "Testnutzer";

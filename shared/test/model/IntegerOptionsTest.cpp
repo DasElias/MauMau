@@ -1,4 +1,4 @@
-#include <catch/catch.hpp>
+#include <catch2/catch.hpp>
 #include <model/IntegerOptions.h>
 
 using namespace card;
