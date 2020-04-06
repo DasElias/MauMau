@@ -166,7 +166,8 @@ namespace card {
 		}
 	}
 	void ProxyMauMauGameData::updateDirection(Card playedCard) {
-		if(playedCard.getValue() == CHANGE_DIRECTION_VALUE && roomOptions.getOption(Options::DIRECTION_CHANGE_ON_NINE)) {
+		if(playedCard.getValue() == CHANGE_DIRECTION_VALUE && roomOptions.getOption(Options::DIRECTION_CHANGE_ON_NINE) && playerList.getAmountOfPlayers() > 2) {
+			// we have to execute this code only if there are more than two players ingame, since otherways a direction change has no effect
 			appendMessage("Richtungswechsel!");
 			if(direction == Direction::CW) direction = Direction::CCW;
 			else direction = Direction::CW;
