@@ -53,7 +53,7 @@ namespace card {
 
 	void ProxyMauMauGameData::initStartCards(const std::vector<int>& handCardNumbersOfLocalPlayer, Card cardOnPlayStack) {
 		// init draw card stack
-		drawCardStack.addFromPlain(Card::NULLCARD, Card::MAX_CARDS * roomOptions.getOption(Options::AMOUNT_OF_START_CARD_DECKS));
+		drawCardStack.addFromPlain(Card::NULLCARD, Card::MAX_CARDS * std::size_t(roomOptions.getOption(Options::AMOUNT_OF_START_CARD_DECKS)));
 
 		std::size_t cardsPerPlayer = handCardNumbersOfLocalPlayer.size();
 		std::vector<Card> nullHandCards = Card::getVectorWithCards(Card::NULLCARD, cardsPerPlayer);
