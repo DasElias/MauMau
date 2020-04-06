@@ -9,6 +9,7 @@
 #include "ServerGameEndHandler.h"
 #include "../model/MauPunishmentCause.h"
 #include "../model/RoomOptions.h"
+#include "../model/IngamePlayerList.h"
 
 namespace card {
 	class ServerMauMauGame {
@@ -30,8 +31,7 @@ namespace card {
 			ServerGameEndHandler& gameEndHandler;
 			RoomOptions& roomOptions;
 
-			std::shared_ptr<Player> playerOnTurn;
-			std::vector<std::shared_ptr<Player>> players;
+			IngamePlayerList<std::shared_ptr<Player>> allPlayers;
 
 			CardStack drawCardStack;
 			CardStack playCardStack;
@@ -74,7 +74,6 @@ namespace card {
 
 			void setNextPlayerOnTurnAndUpdateSkipState(Card playedCard);
 			void setNextPlayerOnTurn();
-			std::shared_ptr<Player> getNextPlayer(std::shared_ptr<Player> playerOnTurn);
 			void setNextButOnePlayerOnTurn();
 			void setPlayerOnTurn(std::shared_ptr<Player> player);
 
@@ -99,7 +98,6 @@ namespace card {
 			std::shared_ptr<Player> getPlayerOnTurn();
 			std::shared_ptr<Player> lookupPlayerByParticipant(const std::shared_ptr<ParticipantOnServer>& participant);
 			std::shared_ptr<Player> lookupPlayerByUsername(std::string username);
-			std::shared_ptr<Player> getRandomPlayer();
 			void removePlayer(std::shared_ptr<Player> player);
 			const RoomOptions& getOptions() const;
 			std::size_t getAmountOfParticipants() const;

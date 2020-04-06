@@ -9,6 +9,7 @@
 #include <shared/model/MauPunishmentCause.h>
 #include <optional>
 #include <functional>
+#include <shared/model/IngamePlayerList.h>
 
 namespace card {
 	class ProxyMauMauGameData {
@@ -30,8 +31,7 @@ namespace card {
 			Direction direction = Direction::CW;
 			MessageQueue messageQueue;
 
-			std::shared_ptr<ProxyPlayer> userOnTurn;
-			std::vector<std::shared_ptr<ProxyPlayer>> allPlayers;
+			IngamePlayerList<std::shared_ptr<ProxyPlayer>> playerList;
 			std::vector<std::shared_ptr<ProxyPlayer>> opponents;
 			std::shared_ptr<LocalPlayer> localPlayer;
 
@@ -88,7 +88,6 @@ namespace card {
 			void setNextPlayerOnTurnAndUpdateSkipAndDrawTwoState(Card playedCard);
 			void setNextPlayerOnTurnLocal();
 			void setNextButOnePlayerOnTurnLocal();
-			std::shared_ptr<ProxyPlayer> getNextPlayer(std::shared_ptr<ProxyPlayer> playerOnTurn);
 			void setOnTurnLocal(std::shared_ptr<ProxyPlayer> player);
 			void setInitialPlayerOnTurnLocal(std::shared_ptr<ProxyPlayer> player, Card nextCardOnDrawStack);
 
@@ -130,7 +129,6 @@ namespace card {
 		private:
 			void initStartCards(const std::vector<int>& handCardNumbersOfLocalPlayer, Card cardOnPlayStack);
 			void tryRebalanceCardStacks();
-			void setLocalPlayerAtTheBeginOfPlayersVector();
 
 			void updateCardIndex(Card playedCard, CardIndex newCardIndex);
 			void updateDirection(Card playedCard);
