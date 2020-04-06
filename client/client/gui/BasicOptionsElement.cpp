@@ -5,6 +5,7 @@
 #include <egui/model/positioning/RelativePositioningOnScreen.h>
 #include <egui/model/positioning/CenterXInParentWrapper.h>
 #include <cassert>
+#include <shared/model/OptionLimitValues.h>
 
 namespace card {
 	BasicOptionsElement::BasicOptionsElement(std::string title) :
@@ -29,10 +30,10 @@ namespace card {
 		directionChangeOnNine_option = std::make_shared<BoolOptionElement>("Richtungswechsel bei 9");
 		addStandaloneOption(directionChangeOnNine_option);
 
-		amountOfStartCards_option = std::make_shared<IntegerOptionElement>("Anzahl Startkarten", 6, 1, 9);
+		amountOfStartCards_option = std::make_shared<IntegerOptionElement>("Anzahl Startkarten", 6, MIN_AMOUNT_OF_START_CARDS, MAX_AMOUNT_OF_START_CARDS);
 		contentBox->addChildElement(amountOfStartCards_option);
 
-		amountOfStartCardDecks_option = std::make_shared<IntegerOptionElement>("Anzahl Kartendecks auf Ziehstapel", 1, 1, 2);
+		amountOfStartCardDecks_option = std::make_shared<IntegerOptionElement>("Anzahl Kartendecks auf Ziehstapel", 1, MIN_AMOUNT_OF_CARD_DECKS, MAX_AMOUNT_OF_CARD_DECKS);
 		contentBox->addChildElement(amountOfStartCardDecks_option);
 		
 		contentBox->setSpaceBetweenElements({0.05f, egui::RelativityMode::RELATIVE_IN_PARENT});

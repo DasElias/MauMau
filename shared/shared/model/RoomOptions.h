@@ -44,6 +44,7 @@ namespace card {
 
         private:
             std::string keyToString(Options key) const;
+            void validate() const;
 
 	};
 }
