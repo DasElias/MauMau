@@ -2,7 +2,7 @@
 #include <shared/model/PlayerNotFoundException.h>
 
 #include <shared/model/MauMauCardValueMeanings.h>
-
+#include "MauMauPunishmentMessageGenerator.h"
 
 #include <iostream>
 #include <shared/model/CardAnimationDuration.h>
@@ -321,7 +321,7 @@ namespace card {
 		playerHasToDrawCards(punishedPlayer, cardsToDraw, delay);
 
 		std::string punishedUsername = punishedPlayer->getUsername();
-		appendMauPunishmentMessage(punishedUsername, cause);
+		MauMauPunishmentMessageGenerator::appendMessage(messageQueue, punishedUsername, cause);
 
 		if(punishedPlayer == localPlayer) {
 			localPlayer->onMauFailure();
@@ -332,21 +332,6 @@ namespace card {
 	}
 	bool ProxyMauMauGameData::wasCardPlayedThisTurn() const {
 		return field_wasCardPlayed;
-	}
-	void ProxyMauMauGameData::appendMauPunishmentMessage(std::string punishedUsername, MauPunishmentCause cause) {
-		switch(cause) {
-			case MauPunishmentCause::TOO_EARLY:
-				appendMessage(punishedUsername + u8" rief zu früh \"Mau!\"");
-				break;
-			case MauPunishmentCause::NO_MAU_RECEIVED:
-				appendMessage(punishedUsername + u8" vergaß, \"Mau!\" zu rufen!");
-				break;
-			case MauPunishmentCause::DRAWED_EVEN_THOUGH_MAUED:
-				appendMessage(punishedUsername + " spielte keine Karte, obwohl er \"Mau!\" rief.");
-				break;
-			default:
-				log(LogSeverity::WARNING, "Unknown MauPunishmentCause: " + std::to_string(static_cast<int>(cause)));
-		}
 	}
 	void ProxyMauMauGameData::setNextPlayerOnTurnAndUpdateSkipAndDrawTwoState(Card playedCard) {
 		if(roomOptions.getOption(Options::PASS_SKIP)) {

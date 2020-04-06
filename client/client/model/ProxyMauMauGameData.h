@@ -135,8 +135,5 @@ namespace card {
 			void throwIfGameHasEnded();
 			void clearPermanentMessagesIfGameHasEnded();
 			void clearPermanentMessages();
-
-			void appendMauPunishmentMessage(std::string punishedUsername, MauPunishmentCause cause);
-
 	};
 }
