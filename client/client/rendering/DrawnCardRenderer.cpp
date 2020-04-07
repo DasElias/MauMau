@@ -6,6 +6,7 @@
 #include <egui/model/nodes/HBox.h>
 #include <egui/model/nodes/vBox.h>
 #include <egui/model/positioning/CenterXInParentWrapper.h>
+#include "../renderingModel/ZIndicies.h"
 
 namespace card {
 	glm::vec3 const DrawnCardRenderer::POSITION = {0, 0, 0.25f};
@@ -53,10 +54,8 @@ namespace card {
 		renderOnlyCard(card);
 	}
 	void DrawnCardRenderer::renderOnlyCard(Card card) {
-		std::vector<PositionedCard> positionedCards = {
-				PositionedCard(card, POSITION, ROTATION)
-		};
-		cardRenderer.renderInNextPass(positionedCards, projectionMatrix, viewport);
+		PositionedCard positionedCard(card, POSITION, ROTATION, TEMP_LOCAL_START_Z_INDEX);
+		cardRenderer.renderInNextPass(positionedCard, projectionMatrix, viewport);
 	}
 	void DrawnCardRenderer::addPlayHandler(std::function<void(void)> handler) {
 		this->playCardButton->getActionEventManager().addEventHandler({[handler](egui::ActionEvent&) {

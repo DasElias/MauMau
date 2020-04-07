@@ -22,9 +22,11 @@ namespace card {
 	static float const END_Y = CardRenderer::HEIGHT / 2;
 	static float const START_Z = -1;
 	static float const END_Z = 0;
-	DrawCardStackRenderer::DrawCardStackRenderer(CardRenderer& cardRenderer, Renderer3D& renderer3D) :
+	DrawCardStackRenderer::DrawCardStackRenderer(CardRenderer& cardRenderer, Renderer3D& renderer3D, ProjectionMatrix& pm, Viewport& vp) :
 			cardRenderer(cardRenderer),
 			renderer3D(renderer3D),
+			projectionMatrix(pm),
+			viewport(vp),
 			borderVao(VertexArrayObject::RenderMode::TRIANGLES, 3, genBorderData(), genColorData(10)),
 			texture(
 				SimpleTextureFactory()
@@ -93,16 +95,19 @@ namespace card {
 			1, 0,
 		};
 	}
-	void DrawCardStackRenderer::render(const CardAnimator& cardStack, glm::vec3 position, glm::vec3 rotation, ProjectionMatrix& projectionMatrix, Viewport& viewport, bool shouldRenderDisabled) {
-		int cardStackSize = DrawCardStackClamper::getClampedSize(cardStack);
-		PositionedCard p = {Card::NULLCARD, position, rotation};
+	void DrawCardStackRenderer::render(PositionedCardStack positionedCardStack, bool shouldRenderDisabled) {
+		int cardStackSize = DrawCardStackClamper::getClampedSize(positionedCardStack.getCardAnimator());
+
+		PositionedCard p = {Card::NULLCARD, positionedCardStack.getCenterPosition(), positionedCardStack.getRotation(), positionedCardStack.getStartZIndex()};
 		glm::mat4 modelMatrix = p.getModelMatrix();
 		float height = (cardStackSize - 1) * CardStackRenderer::ADDITION_PER_CARD;
 		modelMatrix = glm::scale(modelMatrix, {1, 1, height});
 
+		glDisable(GL_DEPTH_TEST);
 		borderVao.updateTexture(genColorData(cardStackSize / 64.0f));
 		texture.bind();
 		renderer3D.render(borderVao, projectionMatrix, viewport, modelMatrix);
+		glEnable(GL_DEPTH_TEST);
 
 		p.changePosition({0, height, 0});
 		cardRenderer.renderInNextPass(p, projectionMatrix, viewport, shouldRenderDisabled);

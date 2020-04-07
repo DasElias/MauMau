@@ -6,6 +6,7 @@
 #include "shaderPrograms/VertexFragmentShaderProgram.h"
 #include "../renderingModel/CardTextures.h"
 #include "../renderingModel/PositionedCard.h"
+#include "../renderingModel/CardDimensions.h"
 
 namespace card {
 	#pragma pack(push, 1)
@@ -14,6 +15,7 @@ namespace card {
 		glm::vec4 modelViewProjection_col2;
 		glm::vec4 modelViewProjection_col3;
 		glm::vec4 modelViewProjection_col4;
+		float zIndex;
 		std::uint32_t textureId;
 	};
 	#pragma pack(pop)
@@ -27,7 +29,8 @@ namespace card {
 			// 16 floats for MVP-matricies
 			// 1 uint32_t for card texture id, but the last bit represents whether the card should be rendered in grey scale
 			// this bit is 1, if the card should be rendered in grey scale
-			static int const BYTES_PER_CARD = (16 * sizeof(float) + 1 * sizeof(std::uint32_t));
+			// 1 float for z-index
+			static int const BYTES_PER_CARD = (16 * sizeof(float) + 1 * sizeof(std::uint32_t) + 1 * sizeof(float));
 
 			DataTextureVertexArrayObject vao;
 			std::uint32_t vboId;
@@ -48,6 +51,7 @@ namespace card {
 		public:
 			static float const WIDTH;
 			static float const HEIGHT;
+			static CardDimensions const CARD_DIMENSIONS;
 
 		private:
 			static std::vector<float> const VERTEX_DATA;

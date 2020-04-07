@@ -3,6 +3,7 @@
 #include "../model/CardAnimator.h"
 #include "../renderingModel/SimpleTexture.h"
 #include "CardRenderer.h"
+#include "../renderingModel/PositionedCardStack.h"
 
 namespace card {
 	class DrawCardStackRenderer {
@@ -19,6 +20,8 @@ namespace card {
 		private:
 			Renderer3D& renderer3D;
 			CardRenderer& cardRenderer;
+			ProjectionMatrix& projectionMatrix;
+			Viewport& viewport;
 			DataTextureVertexArrayObject borderVao;
 			SimpleTexture texture;
 
@@ -26,7 +29,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			DrawCardStackRenderer(CardRenderer& cardRenderer, Renderer3D& renderer3D);
+			DrawCardStackRenderer(CardRenderer& cardRenderer, Renderer3D& renderer3D, ProjectionMatrix& pm, Viewport& vp);
 
 		// ----------------------------------------------------------------------
 		// ---------------------------STATIC-METHODS-----------------------------
@@ -39,6 +42,6 @@ namespace card {
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			void render(const CardAnimator& cardStack, glm::vec3 position, glm::vec3 rotation, ProjectionMatrix& projectionMatrix, Viewport& viewport, bool shouldRenderDisabled);
+			void render(PositionedCardStack positionedCardStack, bool shouldRenderDisabled);
 	};
 }

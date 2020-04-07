@@ -54,10 +54,14 @@ namespace card {
 
 	void CircleSectorRenderer::renderImpl(glm::vec4 color) {
 		shader.startProgram();
+		glDisable(GL_DEPTH_TEST);
+
 		glBindVertexArray(vao.getVertexArrayObjectId());
 		shader.loadColor(color);
 		glDrawArrays(vao.getRenderMode(), 0, vao.getIndiciesCount());
 		glBindVertexArray(0);
+
+		glEnable(GL_DEPTH_TEST);
 		shader.stopProgram();
 	}
 

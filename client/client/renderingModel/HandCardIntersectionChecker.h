@@ -26,7 +26,7 @@ namespace card {
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			std::optional<int> getIndexOfIntersectedCardInX(const CardAnimator& cardStack, glm::vec3 centerPosition, glm::vec3 rotation, float maxWidthOfCardStack, float widthOfSingleCard, float heightOfSingleCard);
+			std::optional<int> getIndexOfIntersectedCardInX(PositionedCardStack positionedCardStack, CardDimensions cardDimensions, float maxWidthOfCardStack);
 
 		private:
 			bool isCursorOutsideOfScreen();

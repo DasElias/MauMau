@@ -16,20 +16,22 @@ namespace card {
 		// ----------------------------------------------------------------------
 		private:
 			CardRenderer& cardRendererImpl;
+			ProjectionMatrix& projectionMatrix;
+			Viewport& viewport;
 			HandCardStackPositionGenerator positionGenerator;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			HandCardStackRenderer(CardRenderer& cardRendererImpl);
+			HandCardStackRenderer(CardRenderer& cardRendererImpl, ProjectionMatrix& projectionMatrix, Viewport& viewport);
 			HandCardStackRenderer(const HandCardStackRenderer&) = delete;
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			void renderCardStackInX(const CardAnimator& cardStack, glm::vec3 centerPosition, glm::vec3 rotation, ProjectionMatrix& projectionMatrix, Viewport& viewport, float maxWidth, int selectedCardIndex = -1, float selectedCardAddition = 0, std::vector<bool> shouldRenderInGreyScale = {});
-			void renderCardStackInZ(const CardAnimator& cardStack, glm::vec3 centerPosition, glm::vec3 rotation, ProjectionMatrix& projectionMatrix, Viewport& viewport, float maxWidth, int selectedCardIndex = -1, float selectedCardAddition = 0, std::vector<bool> shouldRenderInGreyScale = {});
+			void renderCardStackInX(PositionedCardStack positionedCardStack, float maxWidth, int selectedCardIndex = -1, float selectedCardAddition = 0, std::vector<bool> shouldRenderInGreyScale = {});
+			void renderCardStackInZ(PositionedCardStack positionedCardStack, float maxWidth, int selectedCardIndex = -1, float selectedCardAddition = 0, std::vector<bool> shouldRenderInGreyScale = {});
 	};
 }

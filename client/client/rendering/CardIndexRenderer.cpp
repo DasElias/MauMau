@@ -54,11 +54,13 @@ namespace card {
 		updateParentElementPositioning();	
 		updateParentElementWidth();
 
+		glDisable(GL_DEPTH_TEST);
 		cardIndexTextures.getTexture(indexToRender).bind();
 		renderer2D.render(imageElement, true);
 
 		letteringTexture.bind();
 		renderer2D.render(title, true);
+		glEnable(GL_DEPTH_TEST);
 	}
 	void CardIndexRenderer::updateParentElementPositioning() {
 		glm::vec3 position3d = DRAW_CARDS_POSITION - glm::vec3(0, 0, CardRenderer::HEIGHT * 0.33f);

@@ -8,16 +8,24 @@
 
 namespace card {
 	float const CardStackRenderer::ADDITION_PER_CARD = 0.0075f;
+	float const CardStackRenderer::Z_INDEX_STEP = 0.5f;
 
-	CardStackRenderer::CardStackRenderer(CardRenderer& cardRendererImpl, CardStackMisalignmentGenerator& misalignmentGenerator) :
+	CardStackRenderer::CardStackRenderer(CardRenderer& cardRendererImpl, CardStackMisalignmentGenerator& misalignmentGenerator, ProjectionMatrix& projectionMatrix, Viewport& viewport) :
 			cardRendererImpl(cardRendererImpl),
-			misalignmentGenerator(misalignmentGenerator) {
+			misalignmentGenerator(misalignmentGenerator),
+			projectionMatrix(projectionMatrix),
+			viewport(viewport) {
 	}
-	void CardStackRenderer::renderCardStack(const CardAnimator& cardStack, glm::vec3 position, glm::vec3 rotation, ProjectionMatrix& projectionMatrix, Viewport& viewport, bool shouldDisable) {
+	void CardStackRenderer::renderCardStack(PositionedCardStack positionedCardStack, bool shouldDisable) {
+		const CardAnimator& cardStack = positionedCardStack.getCardAnimator();
+		glm::vec3 position = positionedCardStack.getCenterPosition();
+		glm::vec3 rotation = positionedCardStack.getRotation();
 		
 		std::vector<PositionedCard> cards;
-		for(auto c : cardStack) {	
-			cards.push_back({c, position, rotation});
+		for(int i = 0; i < cardStack.getSize(); i++) {	
+			auto& c = cardStack.get(i);
+			float zIndex = positionedCardStack.getStartZIndex() + i * Z_INDEX_STEP;
+			cards.push_back({c, position, rotation, zIndex});
 			position.y += ADDITION_PER_CARD;
 		}
 
@@ -29,12 +37,18 @@ namespace card {
 		}
 	}
 
-	void CardStackRenderer::renderCardStackWithMisalignment(const CardAnimator& cardStack, glm::vec3 position, glm::vec3 rotation, ProjectionMatrix& projectionMatrix, Viewport& viewport, bool shouldDisable) {
+	void CardStackRenderer::renderCardStackWithMisalignment(PositionedCardStack positionedCardStack, bool shouldDisable) {
+		const CardAnimator& cardStack = positionedCardStack.getCardAnimator();
+		glm::vec3 position = positionedCardStack.getCenterPosition();
+		glm::vec3 rotation = positionedCardStack.getRotation();
+
 		std::vector<PositionedCard> cards;
 		for(std::size_t i = 0; i < cardStack.getSize(); i++) {
 			auto c = cardStack.get(i);
 
-			cards.push_back({c, position, rotation + misalignmentGenerator.computeRotationMisalignment(i)});
+			float zIndex = positionedCardStack.getStartZIndex() + i * Z_INDEX_STEP;
+
+			cards.push_back({c, position, rotation + misalignmentGenerator.computeRotationMisalignment(i), zIndex});
 			position.y += ADDITION_PER_CARD;
 		}
 

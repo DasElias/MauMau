@@ -12,6 +12,8 @@ namespace card {
 			glm::vec3 position;
 			glm::vec3 rotation;
 			float scale;
+			float zIndex;
+
 
 			glm::mat4x4 modelMatrix;
 
@@ -19,7 +21,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			PositionedCard(Card wrappedCard, glm::vec3 position = {0,0,0}, glm::vec3 rotation = {0, 0, 0}, float scale = 1);
+			PositionedCard(Card wrappedCard, glm::vec3 position, glm::vec3 rotation, float zIndex, float scale = 1.0f);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
@@ -39,6 +41,7 @@ namespace card {
 			glm::vec3 getPosition() const;
 			glm::vec3 getRotation() const;
 			float getScale() const;
+			float getZIndex() const;
 
 		private:
 			void update();

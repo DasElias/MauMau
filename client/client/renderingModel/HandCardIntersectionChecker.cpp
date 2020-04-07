@@ -12,11 +12,13 @@ namespace card {
 	HandCardIntersectionChecker::HandCardIntersectionChecker(ProjectionMatrix& projectionMatrix, Viewport& viewport) :
 			IntersectionChecker(projectionMatrix, viewport) {
 	}
-	std::optional<int> HandCardIntersectionChecker::getIndexOfIntersectedCardInX(const CardAnimator& cardStack, glm::vec3 centerPosition, glm::vec3 rotation, float maxWidthOfCardStack, float widthOfSingleCard, float heightOfSingleCard) {
+	std::optional<int> HandCardIntersectionChecker::getIndexOfIntersectedCardInX(PositionedCardStack positionedCardStack, CardDimensions cardDimensions, float maxWidthOfCardStack) {
 		// if the cursor is outside of the screen, we don't have to consider a possible intersection
 		if(isCursorOutsideOfScreen()) return std::nullopt;
 		
-		auto positionedCards = positionGenerator.generateMatricies_cardStackX(cardStack, centerPosition, rotation, maxWidthOfCardStack, widthOfSingleCard);
+		auto positionedCards = positionGenerator.generateMatricies_cardStackX(positionedCardStack, cardDimensions, maxWidthOfCardStack);
+		float widthOfSingleCard = cardDimensions.cardWidth;
+		float heightOfSingleCard = cardDimensions.cardHeight;
 
 		// we need to iterate from back to front, since the cards further back can cover the ones before
 		for(int counter = positionedCards.size() - 1; counter >= 0; counter--) {

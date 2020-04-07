@@ -2,6 +2,7 @@
 #include "CardRenderer.h"
 #include "../model/CardAnimator.h"
 #include "../renderingModel/CardStackMisalignmentGenerator.h"
+#include "../renderingModel/PositionedCardStack.h"
 
 
 namespace card {
@@ -11,6 +12,7 @@ namespace card {
 		// ----------------------------------------------------------------------
 		public:
 			static float const ADDITION_PER_CARD;
+			static float const Z_INDEX_STEP;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
@@ -18,20 +20,22 @@ namespace card {
 		private:
 			CardRenderer& cardRendererImpl;
 			CardStackMisalignmentGenerator& misalignmentGenerator;
+			ProjectionMatrix& projectionMatrix;
+			Viewport& viewport;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			CardStackRenderer(CardRenderer& cardRendererImpl, CardStackMisalignmentGenerator& misalignmentGenerator);
+			CardStackRenderer(CardRenderer& cardRendererImpl, CardStackMisalignmentGenerator& misalignmentGenerator, ProjectionMatrix& pm, Viewport& vp);
 			CardStackRenderer(const CardStackRenderer&) = delete;
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			void renderCardStack(const CardAnimator& cardStack, glm::vec3 position, glm::vec3 rotation, ProjectionMatrix& projectionMatrix, Viewport& viewport, bool shouldDisable = false);
-			void renderCardStackWithMisalignment(const CardAnimator& cardStack, glm::vec3 position, glm::vec3 rotation, ProjectionMatrix& projectionMatrix, Viewport& viewport, bool shouldDisable = false);
+			void renderCardStack(PositionedCardStack positionedCardStack, bool shouldDisable = false);
+			void renderCardStackWithMisalignment(PositionedCardStack positionedCardStack, bool shouldDisable = false);
 
 	};
 }

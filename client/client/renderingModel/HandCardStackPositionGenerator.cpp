@@ -5,13 +5,18 @@
 
 namespace card {
 	float const HandCardStackPositionGenerator::CARD_OVERLAPPING_FACTOR = 0.5f;
+	float const HandCardStackPositionGenerator::Z_INDEX_STEP = 1.0f;
 
-	std::vector<PositionedCard> HandCardStackPositionGenerator::generateMatricies_cardStackX(const CardAnimator& cardStack, glm::vec3 centerPosition, glm::vec3 rotation, float maxWidthOfCardStack, float widthOfSingleCard, int selectedCardIndex, float selectedCardAddition) {
+	std::vector<PositionedCard> HandCardStackPositionGenerator::generateMatricies_cardStackX(PositionedCardStack positionedCardStack, CardDimensions cardDimensions, float maxWidthOfCardStack, int selectedCardIndex, float selectedCardAddition) {
+		const CardAnimator& cardStack = positionedCardStack.getCardAnimator();
+		glm::vec3 centerPosition = positionedCardStack.getCenterPosition();
+		glm::vec3 rotation = positionedCardStack.getRotation();
+		
 		float computedWidth = 0;
 		float computedOverlappingFactor = 0;
-		computeCardStackWidth(cardStack.getSize(), maxWidthOfCardStack, widthOfSingleCard, computedWidth, computedOverlappingFactor);
+		computeCardStackWidth(cardStack.getSize(), maxWidthOfCardStack, cardDimensions.cardWidth, computedWidth, computedOverlappingFactor);
 
-		float cardCenterX = centerPosition.x - (computedWidth / 2) + widthOfSingleCard / 2;
+		float cardCenterX = centerPosition.x - (computedWidth / 2) + cardDimensions.cardWidth / 2;
 
 		glm::mat4 modelMatrix(1.0);
 		modelMatrix = glm::rotate(modelMatrix, rotation.x, {1, 0, 0});
@@ -24,20 +29,26 @@ namespace card {
 			float cardCenterY = centerPosition.y;
 			if(i == selectedCardIndex) cardCenterY += selectedCardAddition;
 
-			glm::vec3 singleCardPosition(cardCenterX, cardCenterY, centerPosition.z);
-			cards.push_back({c, singleCardPosition, rotation});
+			float zIndex = positionedCardStack.getStartZIndex() + (i * Z_INDEX_STEP);
 
-			cardCenterX += widthOfSingleCard * (1 - computedOverlappingFactor);
+			glm::vec3 singleCardPosition(cardCenterX, cardCenterY, centerPosition.z);
+			cards.push_back({c, singleCardPosition, rotation, zIndex});
+
+			cardCenterX += cardDimensions.cardWidth * (1 - computedOverlappingFactor);
 		}
 
 		return cards;
 	}
-	std::vector<PositionedCard> HandCardStackPositionGenerator::generateMatricies_cardStackZ(const CardAnimator& cardStack, glm::vec3 centerPosition, glm::vec3 rotation, float maxWidthOfCardStack, float widthOfSingleCard, int selectedCardIndex, float selectedCardAddition) {
+	std::vector<PositionedCard> HandCardStackPositionGenerator::generateMatricies_cardStackZ(PositionedCardStack positionedCardStack, CardDimensions cardDimensions, float maxWidthOfCardStack, int selectedCardIndex, float selectedCardAddition) {
+		const CardAnimator& cardStack = positionedCardStack.getCardAnimator();
+		glm::vec3 centerPosition = positionedCardStack.getCenterPosition();
+		glm::vec3 rotation = positionedCardStack.getRotation();
+		
 		float computedWidth = 0;
 		float computedOverlappingFactor = 0;
-		computeCardStackWidth(cardStack.getSize(), maxWidthOfCardStack, widthOfSingleCard, computedWidth, computedOverlappingFactor);
+		computeCardStackWidth(cardStack.getSize(), maxWidthOfCardStack, cardDimensions.cardWidth, computedWidth, computedOverlappingFactor);
 
-		float cardCenterZ = centerPosition.z - (computedWidth / 2) + widthOfSingleCard / 2;
+		float cardCenterZ = centerPosition.z - (computedWidth / 2) + cardDimensions.cardWidth / 2;
 
 		glm::mat4 modelMatrix(1.0);
 		modelMatrix = glm::rotate(modelMatrix, rotation.x, {1, 0, 0});
@@ -50,10 +61,12 @@ namespace card {
 			float cardCenterY = centerPosition.y;
 			if(i == selectedCardIndex) cardCenterY += selectedCardAddition;
 
-			glm::vec3 singleCardPosition(centerPosition.x, cardCenterY, cardCenterZ);
-			cards.push_back({c, singleCardPosition, rotation});
+			float zIndex = positionedCardStack.getStartZIndex() + (i * Z_INDEX_STEP);
 
-			cardCenterZ += widthOfSingleCard * (1 - computedOverlappingFactor);
+			glm::vec3 singleCardPosition(centerPosition.x, cardCenterY, cardCenterZ);
+			cards.push_back({c, singleCardPosition, rotation, zIndex});
+
+			cardCenterZ += cardDimensions.cardWidth * (1 - computedOverlappingFactor);
 		}
 
 		return cards;

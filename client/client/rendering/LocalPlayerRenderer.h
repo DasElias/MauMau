@@ -44,5 +44,7 @@ namespace card {
             void renderHandCards(ProxyMauMauGame& game);
             void renderAnimations(ProxyMauMauGame& data);
             bool shouldDisableCard(ProxyMauMauGame& game, Card c);
+
+            PositionedCardStack getPositionedCardStackOfLocalPlayer(ProxyMauMauGame& game);
 	};
 }
