@@ -98,7 +98,7 @@ namespace card {
 	void DrawCardStackRenderer::render(PositionedCardStack positionedCardStack, bool shouldRenderDisabled) {
 		int cardStackSize = DrawCardStackClamper::getClampedSize(positionedCardStack.getCardAnimator());
 
-		PositionedCard p = {Card::NULLCARD, positionedCardStack.getCenterPosition(), positionedCardStack.getRotation(), positionedCardStack.getStartZIndex()};
+		PositionedCard p = {Card::NULLCARD, positionedCardStack.getCenterPosition(), positionedCardStack.getRotation()};
 		glm::mat4 modelMatrix = p.getModelMatrix();
 		float height = (cardStackSize - 1) * CardStackRenderer::ADDITION_PER_CARD;
 		modelMatrix = glm::scale(modelMatrix, {1, 1, height});

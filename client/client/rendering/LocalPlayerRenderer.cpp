@@ -6,7 +6,6 @@
 #include "DrawnCardRenderer.h"
 #include "CardStackRenderer.h"
 #include "../renderingModel/DrawCardStackClamper.h"
-#include "../renderingModel/ZIndicies.h"
 
 namespace card {
 	float const LocalPlayerRenderer::HOVERED_CARD_Y_ADDITION = 0.1f;
@@ -69,14 +68,12 @@ namespace card {
 	}
 	PositionedCardStack LocalPlayerRenderer::getPositionedCardStackOfLocalPlayer(ProxyMauMauGame& game) {
 		auto localPlayer = game.getLocalPlayer();
-		return {localPlayer->getCardStack(), HAND_CARDS_LOCAL_POSITION, HAND_CARDS_LOCAL_ROTATION, LOCAL_START_Z_INDEX};
+		return {localPlayer->getCardStack(), HAND_CARDS_LOCAL_POSITION, HAND_CARDS_LOCAL_ROTATION};
 	}
 	void LocalPlayerRenderer::renderAnimations(ProxyMauMauGame& game) {
 		auto& localPlayer = game.getLocalPlayer();
 		const auto& drawStack = game.getDrawStack();
 		std::size_t drawStackSize = DrawCardStackClamper::getClampedSize(drawStack);
-
-		std::size_t animationCount = 0;
 
 		// render cards to hand cards
 		// please note that we iterate over the set from the end to the begin (we use a reverse-iterator),
@@ -91,7 +88,6 @@ namespace card {
 				// render cards from draw card stack to hand cards
 				float cardStackHeightAddition = CardStackRenderer::ADDITION_PER_CARD * drawStackSize;
 				cardInterpolator.interpolateAndRender(animation,
-										   DRAW_CARD_TO_LOCAL_HAND_CARDS_Z_INDEX + animationCount * ANIMATION_Z_INDEX_ADDITION,
 										   DRAW_CARDS_POSITION + glm::vec3(0, cardStackHeightAddition, 0),
 										   DRAW_CARDS_ROTATION,
 										   DRAW_CARDS_POSITION + glm::vec3(0, cardStackHeightAddition + CardRenderer::HEIGHT / 4, CardRenderer::HEIGHT * 0.75f),
@@ -103,21 +99,17 @@ namespace card {
 			} else if(animation.source.get().equalsId(localPlayer->getTempCardStack())) {
 				// render cards from temporary card stack to hand cards
 				cardInterpolator.interpolateAndRender(animation,
-										   TEMP_STACK_TO_LOCAL_HAND_CARDS_Z_INDEX + animationCount * ANIMATION_Z_INDEX_ADDITION,
 										   DrawnCardRenderer::POSITION,
 										   DrawnCardRenderer::ROTATION,
 										   HAND_CARDS_LOCAL_POSITION,
 										   HAND_CARDS_LOCAL_ROTATION
 				);
 			}
-
-			animationCount++;
 		}
 
 		// render cards from draw card stack to temporary card stack
 		for(auto& animation : localPlayer->getTempCardStack().getCardAnimations()) {
 			cardInterpolator.interpolateAndRender(animation,
-									   DRAW_CARD_TO_TEMP_STACK_Z_INDEX + animationCount * ANIMATION_Z_INDEX_ADDITION,
 									   DRAW_CARDS_POSITION + glm::vec3(0, CardStackRenderer::ADDITION_PER_CARD * drawStackSize, 0),
 									   DRAW_CARDS_ROTATION,
 									   DRAW_CARDS_POSITION + glm::vec3(0, CardStackRenderer::ADDITION_PER_CARD * drawStackSize, CardRenderer::HEIGHT),
@@ -125,7 +117,6 @@ namespace card {
 									   DrawnCardRenderer::POSITION,
 									   DrawnCardRenderer::ROTATION
 			);
-			animationCount++;
 		}
 	}
 	std::optional<int> LocalPlayerRenderer::checkIntersectionWithHandCards(ProxyMauMauGame& game) {

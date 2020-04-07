@@ -2,7 +2,6 @@ const char* cards_fragment = R"(
 #version 400 core
 
 in vec3 pass_texCoords;
-in float pass_zIndex;
 flat in uint pass_shouldRenderInGrayScale;
 
 out vec4 out_Color;
@@ -18,8 +17,6 @@ void main(void) {
 	} else {
 		out_Color = texColor;
 	}
-
-	gl_FragDepth = pass_zIndex;
 
 }
 )";

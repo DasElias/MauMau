@@ -48,8 +48,7 @@ namespace card {
 		addInstancedFloatAttribute(3, 4 * sizeof(float), 4);
 		addInstancedFloatAttribute(4, 8 * sizeof(float), 4);
 		addInstancedFloatAttribute(5, 12 * sizeof(float), 4);
-		addInstancedFloatAttribute(6, 16 * sizeof(float), 1);
-		addInstacedIntegerAttribute(7, 17 * sizeof(float), 1);
+		addInstacedIntegerAttribute(6, 16 * sizeof(float), 1);
 
 	}
 	void InstancedCardRenderingVao::addInstancedFloatAttribute(std::uint32_t index, std::uint32_t offsetInBytes, std::uint32_t amountOfFloats) {
@@ -79,8 +78,7 @@ namespace card {
 				this->createShaderVariable(0, "position");
 				this->createShaderVariable(1, "texCoords");
 				this->createShaderVariable(2, "modelViewProjectionMatrix");
-				this->createShaderVariable(6, "zIndex");
-				this->createShaderVariable(7, "textureId");
+				this->createShaderVariable(6, "textureId");
 			}) {
 	}
 	CardRenderer::CardRenderer(Renderer3D& renderer3d, CardTextures cardTextures) :
@@ -96,7 +94,7 @@ namespace card {
 		glm::mat4 frontMVPMatrix = projectionMatrix.getProjectionMatrix() * viewport.getViewMatrix() * card.getModelMatrix();
 		uint32_t frontTextureID = card.getCardNumber();
 		if(shouldRenderInGreyScale) frontTextureID |= GREY_SCALE_BIT_MASK;
-		this->cardsToRenderInNextPass.push_back({frontMVPMatrix[0], frontMVPMatrix[1], frontMVPMatrix[2], frontMVPMatrix[3], card.getZIndex(), frontTextureID});
+		this->cardsToRenderInNextPass.push_back({frontMVPMatrix[0], frontMVPMatrix[1], frontMVPMatrix[2], frontMVPMatrix[3], frontTextureID});
 
 		// draw back side of the card
 		PositionedCard backside = card;
@@ -105,7 +103,7 @@ namespace card {
 		glm::mat4 backMVPMatrix = projectionMatrix.getProjectionMatrix() * viewport.getViewMatrix() * backside.getModelMatrix();
 		uint32_t backTextureId = backside.getCardNumber();
 		if(shouldRenderInGreyScale) backTextureId |= GREY_SCALE_BIT_MASK;
-		this->cardsToRenderInNextPass.push_back({backMVPMatrix[0], backMVPMatrix[1], backMVPMatrix[2], backMVPMatrix[3], card.getZIndex(), backTextureId});
+		this->cardsToRenderInNextPass.push_back({backMVPMatrix[0], backMVPMatrix[1], backMVPMatrix[2], backMVPMatrix[3], backTextureId});
 	}
 	void CardRenderer::renderInNextPass(const std::vector<PositionedCard>& cards, ProjectionMatrix& projectionMatrix, Viewport& viewport, std::vector<bool> shouldRenderInGrayScale) {
 		for(int i = 0; i < cards.size(); i++) {

@@ -8,7 +8,6 @@
 
 namespace card {
 	float const CardStackRenderer::ADDITION_PER_CARD = 0.0075f;
-	float const CardStackRenderer::Z_INDEX_STEP = 0.5f;
 
 	CardStackRenderer::CardStackRenderer(CardRenderer& cardRendererImpl, CardStackMisalignmentGenerator& misalignmentGenerator, ProjectionMatrix& projectionMatrix, Viewport& viewport) :
 			cardRendererImpl(cardRendererImpl),
@@ -24,8 +23,7 @@ namespace card {
 		std::vector<PositionedCard> cards;
 		for(int i = 0; i < cardStack.getSize(); i++) {	
 			auto& c = cardStack.get(i);
-			float zIndex = positionedCardStack.getStartZIndex() + i * Z_INDEX_STEP;
-			cards.push_back({c, position, rotation, zIndex});
+			cards.push_back({c, position, rotation});
 			position.y += ADDITION_PER_CARD;
 		}
 
@@ -46,9 +44,7 @@ namespace card {
 		for(std::size_t i = 0; i < cardStack.getSize(); i++) {
 			auto c = cardStack.get(i);
 
-			float zIndex = positionedCardStack.getStartZIndex() + i * Z_INDEX_STEP;
-
-			cards.push_back({c, position, rotation + misalignmentGenerator.computeRotationMisalignment(i), zIndex});
+			cards.push_back({c, position, rotation + misalignmentGenerator.computeRotationMisalignment(i)});
 			position.y += ADDITION_PER_CARD;
 		}
 

@@ -8,7 +8,6 @@
 #include <shared/utils/MathUtils.h>
 #include "CardStackPositions.h"
 #include "../renderingModel/DrawCardStackClamper.h"
-#include "../renderingModel/ZIndicies.h"
 
 #include <shared/utils/TimeUtils.h>
 #include <shared/utils/Logger.h>
@@ -108,39 +107,42 @@ namespace card {
 	}
 
 	void CardSceneRenderer::render(float deltaSeconds) {
-
 		bgRenderer.render(projectionMatrix, viewport);
 
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glDisable(GL_BLEND);
-		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
-		glDepthFunc(GL_GEQUAL);
 
 		auto& game = room->getGame();
 		auto opponents = game.getOpponents();
 		auto opponentsOrNoneInCwOrder = mapOpponentsToTablePositionsInCwOrder(opponents);
 
 		// render opponents
-		opponentRenderer.renderOpponentIfHasValue_z(0, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_LEFT_POSITION, HAND_CARDS_OPPONENT_LEFT_ROTATION, OPPONENT_LEFT_Z_INDEX);
-		opponentRenderer.renderOpponentIfHasValue_x(1, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_VISAVIS_POSITION, HAND_CARDS_OPPONENT_VISAVIS_ROTATION, OPPONENT_VISAVIS_Z_INDEX);
-		opponentRenderer.renderOpponentIfHasValue_z(2, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_RIGHT_POSITION, HAND_CARDS_OPPONENT_RIGHT_ROTATION, OPPONENT_RIGHT_Z_INDEX);
-
-
-		// render animations of the opponents
-		opponentRenderer.renderDrawedCardAnimationsOfOpponentIfHasValue(game, 0, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_LEFT_POSITION, HAND_CARDS_OPPONENT_LEFT_ROTATION, OPPONENT_LEFT_Z_INDEX);
-		opponentRenderer.renderDrawedCardAnimationsOfOpponentIfHasValue(game, 1, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_VISAVIS_POSITION, HAND_CARDS_OPPONENT_VISAVIS_ROTATION, OPPONENT_VISAVIS_Z_INDEX);
-		opponentRenderer.renderDrawedCardAnimationsOfOpponentIfHasValue(game, 2, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_RIGHT_POSITION, HAND_CARDS_OPPONENT_RIGHT_ROTATION, PLAY_CARDS_POSITION + glm::vec3(0, CardRenderer::HEIGHT / 2, -CardRenderer::HEIGHT), {PI, 0, 0}, OPPONENT_RIGHT_Z_INDEX);
+		opponentRenderer.renderOpponentIfHasValue_z(0, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_LEFT_POSITION, HAND_CARDS_OPPONENT_LEFT_ROTATION);
+		opponentRenderer.renderOpponentIfHasValue_x(1, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_VISAVIS_POSITION, HAND_CARDS_OPPONENT_VISAVIS_ROTATION);
+		opponentRenderer.renderOpponentIfHasValue_z(2, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_RIGHT_POSITION, HAND_CARDS_OPPONENT_RIGHT_ROTATION);
 
 		cardRenderer.flush();
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_ALWAYS);
+		glDepthMask(GL_TRUE);
+
+		// render animations of the opponents
+		opponentRenderer.renderDrawedCardAnimationsOfOpponentIfHasValue(game, 0, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_LEFT_POSITION, HAND_CARDS_OPPONENT_LEFT_ROTATION);
+		opponentRenderer.renderDrawedCardAnimationsOfOpponentIfHasValue(game, 1, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_VISAVIS_POSITION, HAND_CARDS_OPPONENT_VISAVIS_ROTATION);
+		opponentRenderer.renderDrawedCardAnimationsOfOpponentIfHasValue(game, 2, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_RIGHT_POSITION, HAND_CARDS_OPPONENT_RIGHT_ROTATION, PLAY_CARDS_POSITION + glm::vec3(0, CardRenderer::HEIGHT / 2, -CardRenderer::HEIGHT), {PI, 0, 0});
 
 		// render card stack
+		cardRenderer.flush();
+		glDepthMask(GL_TRUE);
+		glDepthFunc(GL_LESS);
 		renderDrawCardStack();
 
 		cardRenderer.flush();
+		glDisable(GL_DEPTH_TEST);
 
 
-		
 
 		renderPlayCardStack();
 
@@ -158,7 +160,7 @@ namespace card {
 		renderGameEndScreenIfGameHasEnded(deltaSeconds);
 		messageRenderer.render(game.getGameData().getMessageQueue());
 
-		glDepthFunc(GL_LESS);
+		glEnable(GL_DEPTH_TEST);
 	}
 
 	void CardSceneRenderer::renderPlayerLabels(std::array<std::shared_ptr<ProxyPlayer>, 3>& opponents) {
@@ -219,7 +221,7 @@ namespace card {
 		auto& drawCardStack = game.getDrawStack();
 		bool shouldDisable = gameData.isReadyToPerformLocalPlayerTurn() && (game.getLocalPlayer()->isInSkipState() || gameData.isInDrawTwoState());
 
-		PositionedCardStack positionedDrawCardStack(drawCardStack, DRAW_CARDS_POSITION, DRAW_CARDS_ROTATION, DRAW_STACK_Z_INDEX);
+		PositionedCardStack positionedDrawCardStack(drawCardStack, DRAW_CARDS_POSITION, DRAW_CARDS_ROTATION);
 		drawCardStackRenderer.render(positionedDrawCardStack, shouldDisable);
 
 		// cards from play card stack to draw card stack
@@ -229,7 +231,6 @@ namespace card {
 
 			glm::vec3 heightAddition(0, i * CardStackRenderer::ADDITION_PER_CARD, 0);
 			cardInterpolator.interpolateAndRender(animation,
-								 PLAY_TO_DRAW_CARD_STACK_Z_INDEX + i * ANIMATION_Z_INDEX_ADDITION,
 								 PLAY_CARDS_POSITION + heightAddition, DRAW_CARDS_ROTATION,
 								 DRAW_CARDS_POSITION + heightAddition, DRAW_CARDS_ROTATION
 			);
@@ -245,7 +246,7 @@ namespace card {
 		auto& opponents = game.getOpponents();
 		auto cardStacksOrNoneInCwOrder = mapOpponentsToTablePositionsInCwOrder(opponents);
 
-		PositionedCardStack positionedPlayCardStack(playCardStack, PLAY_CARDS_POSITION, PLAY_CARDS_ROTATION, PLAY_STACK_Z_INDEX);
+		PositionedCardStack positionedPlayCardStack(playCardStack, PLAY_CARDS_POSITION, PLAY_CARDS_ROTATION);
 		cardStackRenderer.renderCardStackWithMisalignment(positionedPlayCardStack);
 
 		int animationCounter = 0;
@@ -256,14 +257,12 @@ namespace card {
 
 			if(sourceStack.equalsId(localPlayer->getTempCardStack())) {
 				cardInterpolator.interpolateAndRender(animation,
-									TEMP_LOCAL_START_Z_INDEX,
 									DrawnCardRenderer::POSITION, HAND_CARDS_LOCAL_ROTATION, 
 									positionEnd, rotationEnd
 				);
 			} else if(sourceStack.equalsId(localPlayer->getCardStack())) {
 				glm::vec3 startPosition = glm::vec3(0, LocalPlayerRenderer::HOVERED_CARD_Y_ADDITION, 0) + handCardStackPositionGenerator.getPositionOfCard_cardStackX(animation.indexInSourceStack, sourceStack.getSize() + 1, HAND_CARDS_LOCAL_POSITION, FRONT_BACK_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
 				cardInterpolator.interpolateAndRender(animation,
-								     LOCAL_START_Z_INDEX + (animation.indexInSourceStack) * HandCardStackPositionGenerator::Z_INDEX_STEP,
 									 startPosition, HAND_CARDS_LOCAL_ROTATION,
 									 startPosition + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), HAND_CARDS_LOCAL_ROTATION,
 									 positionEnd, rotationEnd
@@ -273,7 +272,6 @@ namespace card {
 				std::size_t drawCardStackSize = DrawCardStackClamper::getClampedSize(drawCardStack);
 				
 				cardInterpolator.interpolateAndRender(animation,
-									 OPPONENT_LEFT_Z_INDEX + animation.indexInSourceStack * HandCardStackPositionGenerator::Z_INDEX_STEP,
 									 startPosition, glm::vec3(0, -PI/2, 0),
 									 startPosition + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), glm::vec3(0, -PI/2, 0),
 									 positionEnd, {rotationEnd.x, -rotationEnd.y, rotationEnd.z}
@@ -281,7 +279,6 @@ namespace card {
 			} else if(cardStacksOrNoneInCwOrder[1] && sourceStack.equalsId(cardStacksOrNoneInCwOrder[1]->getCardStack())) {
 				glm::vec3 startPosition = handCardStackPositionGenerator.getPositionOfCard_cardStackX(animation.indexInSourceStack, sourceStack.getSize() + 1, HAND_CARDS_OPPONENT_VISAVIS_POSITION, FRONT_BACK_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
 				cardInterpolator.interpolateAndRender(animation,
-									 OPPONENT_VISAVIS_Z_INDEX + animation.indexInSourceStack * HandCardStackPositionGenerator::Z_INDEX_STEP,
 									 startPosition, {-PI, 0, 0},
 									 startPosition + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), {-PI, 0, 0},
 									 positionEnd, rotationEnd
@@ -289,7 +286,6 @@ namespace card {
 			} else if(cardStacksOrNoneInCwOrder[2] && sourceStack.equalsId(cardStacksOrNoneInCwOrder[2]->getCardStack())) {
 				glm::vec3 startPosition = handCardStackPositionGenerator.getPositionOfCard_cardStackZ(animation.indexInSourceStack, sourceStack.getSize() + 1, HAND_CARDS_OPPONENT_RIGHT_POSITION, LEFT_RIGHT_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
 				cardInterpolator.interpolateAndRender(animation,
-									 OPPONENT_RIGHT_Z_INDEX + animation.indexInSourceStack * HandCardStackPositionGenerator::Z_INDEX_STEP,
 									 HAND_CARDS_OPPONENT_RIGHT_POSITION, glm::vec3(0, PI / 2, 0),
 									 HAND_CARDS_OPPONENT_RIGHT_POSITION + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), glm::vec3(0, PI / 2, 0),
 									 positionEnd, rotationEnd
@@ -327,12 +323,10 @@ namespace card {
 			//glm::vec2 interpolatedAddition = interpolateInCircle(firstAnimation, {-CardRenderer::WIDTH / 2, 0}, {0, CardRenderer::WIDTH / 2}, startArc, endArc);
 			cardRenderer.renderInNextPass({firstAnimationPart.mutatesTo,
 								DRAW_CARDS_POSITION + glm::vec3(-xAddition + CardRenderer::WIDTH / 2, drawCardStackHeightAddition + yAddition, 0),
-								glm::vec3(DRAW_CARDS_ROTATION.x, -arc, DRAW_CARDS_ROTATION.z), 
-								DRAW_TO_PLAY_CARD_STACK_Z_INDEX},
+								glm::vec3(DRAW_CARDS_ROTATION.x, -arc, DRAW_CARDS_ROTATION.z)},
 										  projectionMatrix, viewport);
 		} else {
 			cardInterpolator.interpolateAndRender(secondAnimationPart,
-												  DRAW_TO_PLAY_CARD_STACK_Z_INDEX,
 												  DRAW_CARDS_POSITION + glm::vec3(CardRenderer::WIDTH / 2, drawCardStackHeightAddition + CardRenderer::WIDTH / 2, 0),
 												  glm::vec3(-PI/2, -PI / 2, DRAW_CARDS_ROTATION.z),
 												  endPosition,

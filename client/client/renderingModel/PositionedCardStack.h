@@ -11,13 +11,12 @@ namespace card {
             std::reference_wrapper<const CardAnimator> cardAnimator;
             glm::vec3 centerPosition;
             glm::vec3 rotation;
-            float startZIndex;
 
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            PositionedCardStack(const CardAnimator& ca, glm::vec3 centerPosition, glm::vec3 rotation, float startZIndex);
+            PositionedCardStack(const CardAnimator& ca, glm::vec3 centerPosition, glm::vec3 rotation);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
@@ -26,6 +25,5 @@ namespace card {
             const CardAnimator& getCardAnimator() const;
             glm::vec3 getCenterPosition() const;
             glm::vec3 getRotation() const;
-            float getStartZIndex() const;
 	};
 }

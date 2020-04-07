@@ -5,7 +5,6 @@
 
 namespace card {
 	float const HandCardStackPositionGenerator::CARD_OVERLAPPING_FACTOR = 0.5f;
-	float const HandCardStackPositionGenerator::Z_INDEX_STEP = 1.0f;
 
 	std::vector<PositionedCard> HandCardStackPositionGenerator::generateMatricies_cardStackX(PositionedCardStack positionedCardStack, CardDimensions cardDimensions, float maxWidthOfCardStack, int selectedCardIndex, float selectedCardAddition) {
 		const CardAnimator& cardStack = positionedCardStack.getCardAnimator();
@@ -29,10 +28,8 @@ namespace card {
 			float cardCenterY = centerPosition.y;
 			if(i == selectedCardIndex) cardCenterY += selectedCardAddition;
 
-			float zIndex = positionedCardStack.getStartZIndex() + (i * Z_INDEX_STEP);
-
 			glm::vec3 singleCardPosition(cardCenterX, cardCenterY, centerPosition.z);
-			cards.push_back({c, singleCardPosition, rotation, zIndex});
+			cards.push_back({c, singleCardPosition, rotation});
 
 			cardCenterX += cardDimensions.cardWidth * (1 - computedOverlappingFactor);
 		}
@@ -61,10 +58,8 @@ namespace card {
 			float cardCenterY = centerPosition.y;
 			if(i == selectedCardIndex) cardCenterY += selectedCardAddition;
 
-			float zIndex = positionedCardStack.getStartZIndex() + (i * Z_INDEX_STEP);
-
 			glm::vec3 singleCardPosition(centerPosition.x, cardCenterY, cardCenterZ);
-			cards.push_back({c, singleCardPosition, rotation, zIndex});
+			cards.push_back({c, singleCardPosition, rotation});
 
 			cardCenterZ += cardDimensions.cardWidth * (1 - computedOverlappingFactor);
 		}

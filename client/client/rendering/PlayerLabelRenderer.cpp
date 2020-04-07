@@ -79,12 +79,10 @@ namespace card {
 	}
 	void PlayerLabelRenderer::flushImages() {
 		glActiveTexture(GL_TEXTURE0);
-		glDisable(GL_DEPTH_TEST);
 		flushImageOfPlayer(labelElementForLocal, playerLocal);
 		flushImageOfPlayer(labelElementForVisAVis, playerVisAVis);
 		flushImageOfPlayer(labelElementForLeft, playerLeft);
 		flushImageOfPlayer(labelElementForRight, playerRight);
-		glEnable(GL_DEPTH_TEST);
 	}
 	void PlayerLabelRenderer::flushImageOfPlayer(const std::shared_ptr<PlayerLabel>& element, std::weak_ptr<ProxyPlayer> participant_wp) {
 		if(element->isVisible()) {

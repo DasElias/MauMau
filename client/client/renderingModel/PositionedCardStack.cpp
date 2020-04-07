@@ -1,11 +1,10 @@
 #include "PositionedCardStack.h"
 
 namespace card {
-	PositionedCardStack::PositionedCardStack(const CardAnimator& ca, glm::vec3 centerPosition, glm::vec3 rotation, float startZIndex) :
+	PositionedCardStack::PositionedCardStack(const CardAnimator& ca, glm::vec3 centerPosition, glm::vec3 rotation) :
 			cardAnimator(ca),
 			centerPosition(centerPosition),
-			rotation(rotation),
-			startZIndex(startZIndex) {
+			rotation(rotation) {
 	}
 	const CardAnimator& PositionedCardStack::getCardAnimator() const {
 		return cardAnimator;
@@ -15,8 +14,5 @@ namespace card {
 	}
 	glm::vec3 PositionedCardStack::getRotation() const {
 		return rotation;
-	}
-	float PositionedCardStack::getStartZIndex() const {
-		return startZIndex;
 	}
 }

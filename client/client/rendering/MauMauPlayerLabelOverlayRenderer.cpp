@@ -40,7 +40,6 @@ namespace card {
 		updateSkipElement(percentSkipAnimOrNone);
 		updateMauElement(percentMauAnimOrNone);
 
-		glDisable(GL_DEPTH_TEST);
 		if(percentSkipAnimOrNone.has_value()) {
 			textureSkip.bind();
 			renderer2D.render(skipAnimElement, true);
@@ -49,7 +48,6 @@ namespace card {
 			textureMau.bind();
 			renderer2D.render(mauAnimElement, true);
 		}
-		glEnable(GL_DEPTH_TEST);
 	}
 	void MauMauPlayerLabelOverlayRenderer::updateSkipElement(std::optional<float> percentSkipAnimOrNone) {
 		bool isAnimationActive = percentSkipAnimOrNone.has_value();

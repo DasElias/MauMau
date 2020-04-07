@@ -6,12 +6,11 @@
 #include <glm/glm.hpp>
 
 namespace card {
-	PositionedCard::PositionedCard(Card wrappedCard, glm::vec3 position, glm::vec3 rotation, float zIndex, float scale) :
+	PositionedCard::PositionedCard(Card wrappedCard, glm::vec3 position, glm::vec3 rotation) :
 			wrappedCard(wrappedCard),
 			position(position),
 			rotation(rotation),
-			scale(scale),
-			zIndex(zIndex) {
+			scale(1.0f) {
 
 		update();
 	}
@@ -67,10 +66,6 @@ namespace card {
 	}
 	float PositionedCard::getScale() const {
 		return scale;
-	}
-
-	float PositionedCard::getZIndex() const {
-		return zIndex;
 	}
 	
 }
