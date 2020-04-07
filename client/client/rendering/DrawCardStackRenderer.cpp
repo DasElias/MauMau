@@ -103,11 +103,9 @@ namespace card {
 		float height = (cardStackSize - 1) * CardStackRenderer::ADDITION_PER_CARD;
 		modelMatrix = glm::scale(modelMatrix, {1, 1, height});
 
-		glDisable(GL_DEPTH_TEST);
 		borderVao.updateTexture(genColorData(cardStackSize / 64.0f));
 		texture.bind();
 		renderer3D.render(borderVao, projectionMatrix, viewport, modelMatrix);
-		glEnable(GL_DEPTH_TEST);
 
 		p.changePosition({0, height, 0});
 		cardRenderer.renderInNextPass(p, projectionMatrix, viewport, shouldRenderDisabled);
