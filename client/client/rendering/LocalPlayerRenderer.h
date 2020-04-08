@@ -5,6 +5,8 @@
 #include "../renderingModel/HandCardIntersectionChecker.h"
 #include <optional>
 #include "../renderingModel/MauMauCardStackMisalignmentGenerator.h"
+#include "AnimatorToPlayStack.h"
+#include "HandCardsWithAnimationToPlayStackRenderer.h"
 
 namespace card {
 	class LocalPlayerRenderer {
@@ -21,10 +23,9 @@ namespace card {
             ProjectionMatrix& projectionMatrix;
             Viewport& viewport;
             CardRenderer& cardRenderer;
-            MauMauCardStackMisalignmentGenerator& misalignmentGenerator;
+            HandCardsWithAnimationToPlayStackRenderer handCardsRenderer;
 
             HandCardIntersectionChecker intersectionChecker;
-            HandCardStackRenderer handCardStackRenderer;
             CardInterpolator cardInterpolator;
 
             int intersectedCardIndexInLastFrame = -1;
@@ -34,7 +35,7 @@ namespace card {
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            LocalPlayerRenderer(ProjectionMatrix& projectionMatrix, Viewport& viewport, CardRenderer& cardRenderer, MauMauCardStackMisalignmentGenerator& misalignmentGenerator);
+            LocalPlayerRenderer(ProjectionMatrix& projectionMatrix, Viewport& viewport, CardRenderer& cardRenderer, CardStackMisalignmentGenerator& misalignmentGenerator);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
@@ -48,7 +49,6 @@ namespace card {
             std::pair<int, float> getIntersectedIndexAndAddition(ProxyMauMauGame& game);
             void renderAnimations(ProxyMauMauGame& data);
             bool shouldDisableCard(ProxyMauMauGame& game, Card c);
-            std::vector<CardAnimation> getAnimationsFromLocalPlayerHandCardsToPlayStack(ProxyMauMauGame& game);
 
             PositionedCardStack getPositionedCardStackOfLocalPlayer(ProxyMauMauGame& game);
 	};

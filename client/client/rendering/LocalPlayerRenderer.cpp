@@ -10,13 +10,12 @@
 namespace card {
 	float const LocalPlayerRenderer::HOVERED_CARD_Y_ADDITION = 0.1f;
 
-	LocalPlayerRenderer::LocalPlayerRenderer(ProjectionMatrix& projectionMatrix, Viewport& viewport, CardRenderer& cardRenderer, MauMauCardStackMisalignmentGenerator& misalignmentGenerator) :
+	LocalPlayerRenderer::LocalPlayerRenderer(ProjectionMatrix& projectionMatrix, Viewport& viewport, CardRenderer& cardRenderer, CardStackMisalignmentGenerator& misalignmentGenerator) :
 				projectionMatrix(projectionMatrix),
 				viewport(viewport),
 				cardRenderer(cardRenderer),
-				misalignmentGenerator(misalignmentGenerator),
+				handCardsRenderer(cardRenderer, projectionMatrix, viewport, misalignmentGenerator),
 				intersectionChecker(projectionMatrix, viewport),
-				handCardStackRenderer(cardRenderer, projectionMatrix, viewport),
 				cardInterpolator(cardRenderer, projectionMatrix, viewport),
 				unixTimeIntersectedCardIndexHasChanged(getMilliseconds()) {
 	}
@@ -26,42 +25,15 @@ namespace card {
 	}
 	void LocalPlayerRenderer::renderHandCards(ProxyMauMauGame& game) {
 		auto& localPlayer = game.getLocalPlayer();
+		auto& playStack = game.getPlayStack();
 		auto[intersectedCardIndex, additionForIntersectedCard] = getIntersectedIndexAndAddition(game);
+
 		HandCardStackPositionGenerator handCardPositionGenerator;
-
-		auto animationFuncToPlayStack = [&](const CardAnimation& animatedCard) {
-			auto& playStack = game.getPlayStack();
-			auto& sourceStack = animatedCard.source.get();
-			glm::vec3 positionEnd = PLAY_CARDS_POSITION + glm::vec3(0, playStack.getSize() * CardStackRenderer::ADDITION_PER_CARD, 0);
-			glm::vec3 rotationEnd = PLAY_CARDS_ROTATION + misalignmentGenerator.computeRotationMisalignment(playStack.getSize());
-			glm::vec3 startPosition = glm::vec3(0, LocalPlayerRenderer::HOVERED_CARD_Y_ADDITION, 0) + handCardPositionGenerator.getPositionOfCard_cardStackX(animatedCard.indexInSourceStack, sourceStack.getSize() + 1, HAND_CARDS_LOCAL_POSITION, FRONT_BACK_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
-			cardInterpolator.interpolateAndRender(animatedCard,
-												  startPosition, HAND_CARDS_LOCAL_ROTATION,
-												  startPosition + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), HAND_CARDS_LOCAL_ROTATION,
-												  positionEnd, rotationEnd
-			);
-		};
-
 		std::vector<PositionedCard> positionedHandCards = handCardPositionGenerator.generateMatricies_cardStackX(getPositionedCardStackOfLocalPlayer(game), CardRenderer::CARD_DIMENSIONS, FRONT_BACK_OPPONENT_CARDS_WIDTH, intersectedCardIndex, additionForIntersectedCard);
-		std::vector<CardAnimation> animationsToPlayCardStack = getAnimationsFromLocalPlayerHandCardsToPlayStack(game);
-		for(int i = 0; i < positionedHandCards.size(); i++) {
-			auto& handCard = positionedHandCards[i];
-
-			animationsToPlayCardStack.erase(std::remove_if(animationsToPlayCardStack.begin(), animationsToPlayCardStack.end(), [&](auto& animatedCard) {
-				if(animatedCard.indexInSourceStack == i) {
-					animationFuncToPlayStack(animatedCard);
-					return true;
-				} else return false;
-			}), animationsToPlayCardStack.end());
-
-			bool shouldRenderInGreyScale = shouldDisableCard(game, handCard.getCard());
-			cardRenderer.renderInNextPass(handCard, projectionMatrix, viewport, shouldRenderInGreyScale);
-		}
-
-		// now we have to proceed the remaining animations
-		for(auto& remainingAnimation : animationsToPlayCardStack) {
-			animationFuncToPlayStack(remainingAnimation);
-		}
+		auto shouldDisableFunc = [&](Card c) {
+			return shouldDisableCard(game, c);
+		};
+		handCardsRenderer.renderHandCardsOfLocalPlayer(positionedHandCards, game, shouldDisableFunc);
 	}
 	std::pair<int, float> LocalPlayerRenderer::getIntersectedIndexAndAddition(ProxyMauMauGame& game) {
 		auto& gameData = game.getGameData();
@@ -97,20 +69,6 @@ namespace card {
 		if(localPlayer->isInSkipState()) return !gameData.canSkipPlayer(c);
 		else if(gameData.isInDrawTwoState()) return gameData.getAmountsOfCardsToDrawForNextPlayer(c) == 0;
 		else return false;
-	}
-	std::vector<CardAnimation> LocalPlayerRenderer::getAnimationsFromLocalPlayerHandCardsToPlayStack(ProxyMauMauGame& game) {
-		std::vector<CardAnimation> relevantAnimations;
-
-		HandCardStackPositionGenerator handCardPositionGenerator;
-		auto& playStack = game.getPlayStack();
-		auto& localPlayer = game.getLocalPlayer();
-
-		for(auto animation : playStack.getCardAnimations()) {
-			auto& sourceStack = animation.source.get();
-			if(sourceStack.equalsId(localPlayer->getCardStack())) relevantAnimations.push_back(animation);
-		}
-
-		return relevantAnimations;
 	}
 	PositionedCardStack LocalPlayerRenderer::getPositionedCardStackOfLocalPlayer(ProxyMauMauGame& game) {
 		auto localPlayer = game.getLocalPlayer();
