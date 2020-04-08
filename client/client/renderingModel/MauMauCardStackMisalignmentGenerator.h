@@ -18,6 +18,7 @@ namespace card {
         // ----------------------------------------------------------------------
         public:
             MauMauCardStackMisalignmentGenerator(std::size_t precomputeNIndicies);
+            MauMauCardStackMisalignmentGenerator(const MauMauCardStackMisalignmentGenerator&) = delete;
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
