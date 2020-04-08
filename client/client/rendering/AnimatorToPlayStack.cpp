@@ -29,12 +29,6 @@ namespace card {
 											  positionEnd, rotationEnd
 		);
 	}
-	void AnimatorToPlayStack::animateFromLeftOpponent(const CardAnimator& cardAnimator, const CardAnimator& playStack) {
-	}
-	void AnimatorToPlayStack::animateFromRightOpponent(const CardAnimator& cardAnimator, const CardAnimator& playStack) {
-	}
-	void AnimatorToPlayStack::animateFromVisavisOpponent(const CardAnimator& cardAnimator, const CardAnimator& playStack) {
-	}
 	std::pair<glm::vec3, glm::vec3> AnimatorToPlayStack::getEndPositionAndRotation(const CardAnimator& playStack) {
 		glm::vec3 positionEnd = PLAY_CARDS_POSITION + glm::vec3(0, playStack.getSize() * CardStackRenderer::ADDITION_PER_CARD, 0);
 		glm::vec3 rotationEnd = PLAY_CARDS_ROTATION + misalignmentGenerator.computeRotationMisalignment(playStack.getSize());

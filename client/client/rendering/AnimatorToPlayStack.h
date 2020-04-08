@@ -25,9 +25,6 @@ namespace card {
         public:
             void animateFromLocalPlayerHandCards(const CardAnimation& animation, const CardAnimator& playStack);
             void animateFromLocalPlayerTemp(const CardAnimation& animation, const CardAnimator& playStack);
-            void animateFromLeftOpponent(const CardAnimator& cardAnimator, const CardAnimator& playStack);
-            void animateFromRightOpponent(const CardAnimator& cardAnimator, const CardAnimator& playStack);
-            void animateFromVisavisOpponent(const CardAnimator& cardAnimator, const CardAnimator& playStack);
 
         private:
             std::pair<glm::vec3, glm::vec3> getEndPositionAndRotation(const CardAnimator& playStack);   // first parameter of the pair is position, second one the rotation
