@@ -1,7 +1,4 @@
 #include "HandCardsWithAnimationToPlayStackRenderer.h"
-#include "HandCardsWithAnimationToPlayStackRenderer.h"
-#include "HandCardsWithAnimationToPlayStackRenderer.h"
-#include "HandCardsWithAnimationToPlayStackRenderer.h"
 #include <functional>
 #include "../renderingModel/AnimationsToPlayStackFilter.h"
 
@@ -12,31 +9,10 @@ namespace card {
 			viewport(vp),
 			animatorToPlayStack(cardRenderer, projectionMatrix, viewport, misalignmentGenerator) {
 	}
-	void HandCardsWithAnimationToPlayStackRenderer::renderHandCardsOfLocalPlayer(std::vector<PositionedCard> positionedHandCards, const CardAnimator& handCardStack, ProxyMauMauGame& game, std::function<bool(Card)> shouldDisable) {
-		auto animationsToPlayCardStack = AnimationsToPlayStackFilterer::getAnimationsFromParticularHandCards(game, handCardStack);		
+	void HandCardsWithAnimationToPlayStackRenderer::renderHandCardsOfLocalPlayer(std::vector<PositionedCard> positionedHandCards, ProxyMauMauGame& game, std::function<bool(Card)> shouldDisable) {
+		auto animationsToPlayCardStack = AnimationsToPlayStackFilterer::getAnimationsFromParticularHandCards(game, game.getLocalPlayer()->getCardStack());		
 		auto animateFunction = [&](CardAnimation a) {
 			animatorToPlayStack.animateFromLocalPlayerHandCards(a, game.getPlayStack());
-		};
-		renderImpl(positionedHandCards, animationsToPlayCardStack, animateFunction, shouldDisable);
-	}
-	void HandCardsWithAnimationToPlayStackRenderer::renderHandCardsOfVisavisOpponent(std::vector<PositionedCard> positionedHandCards, const CardAnimator& handCardStack, ProxyMauMauGame& game, std::function<bool(Card)> shouldDisable) {
-		auto animationsToPlayCardStack = AnimationsToPlayStackFilterer::getAnimationsFromParticularHandCards(game, handCardStack);
-		auto animateFunction = [&](CardAnimation a) {
-			animatorToPlayStack.animateFromVisavisOpponent(a, game.getPlayStack());
-		};
-		renderImpl(positionedHandCards, animationsToPlayCardStack, animateFunction, shouldDisable);
-	}
-	void HandCardsWithAnimationToPlayStackRenderer::renderHandCardsOfLeftOpponent(std::vector<PositionedCard> positionedHandCards, const CardAnimator& handCardStack, ProxyMauMauGame& game, std::function<bool(Card)> shouldDisable) {
-		auto animationsToPlayCardStack = AnimationsToPlayStackFilterer::getAnimationsFromParticularHandCards(game, handCardStack);
-		auto animateFunction = [&](CardAnimation a) {
-			animatorToPlayStack.animateFromLeftOpponent(a, game.getPlayStack());
-		};
-		renderImpl(positionedHandCards, animationsToPlayCardStack, animateFunction, shouldDisable);
-	}
-	void HandCardsWithAnimationToPlayStackRenderer::renderHandCardsOfRightOpponent(std::vector<PositionedCard> positionedHandCards, const CardAnimator& handCardStack, ProxyMauMauGame& game, std::function<bool(Card)> shouldDisable) {
-		auto animationsToPlayCardStack = AnimationsToPlayStackFilterer::getAnimationsFromParticularHandCards(game, handCardStack);
-		auto animateFunction = [&](CardAnimation a) {
-			animatorToPlayStack.animateFromRightOpponent(a, game.getPlayStack());
 		};
 		renderImpl(positionedHandCards, animationsToPlayCardStack, animateFunction, shouldDisable);
 	}

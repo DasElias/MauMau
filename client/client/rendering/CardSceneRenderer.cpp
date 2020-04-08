@@ -24,7 +24,7 @@ namespace card {
 			cardStackRenderer(cardRenderer, misalignmentGenerator, projectionMatrix, viewport),
 			handCardRenderer(cardRenderer, projectionMatrix, viewport),
 			localPlayerRenderer(projectionMatrix, viewport, cardRenderer, misalignmentGenerator),
-			opponentRenderer(cardRenderer, projectionMatrix, viewport, misalignmentGenerator),
+			opponentRenderer(cardRenderer, projectionMatrix, viewport),
 			cardInterpolator(cardRenderer, projectionMatrix, viewport),
 			bgRenderer(renderer2d, renderer3d),
 			circleSectorRenderer(),
@@ -120,17 +120,21 @@ namespace card {
 
 		renderDrawCardStack();
 
-		if(opponentsOrNoneInCwOrder[0]) opponentRenderer.renderHandCardsOfLeftOpponent(game, *opponentsOrNoneInCwOrder[0]);
-		if(opponentsOrNoneInCwOrder[1]) opponentRenderer.renderHandCardsOfVisAVisOpponent(game, *opponentsOrNoneInCwOrder[1]);
-		if(opponentsOrNoneInCwOrder[2]) opponentRenderer.renderHandCardsOfRightOpponent(game, *opponentsOrNoneInCwOrder[2]);
+		// render opponents
+		opponentRenderer.renderOpponentIfHasValue_z(0, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_LEFT_POSITION, HAND_CARDS_OPPONENT_LEFT_ROTATION);
+		opponentRenderer.renderOpponentIfHasValue_x(1, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_VISAVIS_POSITION, HAND_CARDS_OPPONENT_VISAVIS_ROTATION);
+		opponentRenderer.renderOpponentIfHasValue_z(2, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_RIGHT_POSITION, HAND_CARDS_OPPONENT_RIGHT_ROTATION);
 
-		if(opponentsOrNoneInCwOrder[0]) opponentRenderer.renderAnimationsFromDrawStackOfLeftOpponent(game, *opponentsOrNoneInCwOrder[0]);
-		if(opponentsOrNoneInCwOrder[1]) opponentRenderer.renderAnimationsFromDrawStackOfVisAVisOpponent(game, *opponentsOrNoneInCwOrder[1]);
-		if(opponentsOrNoneInCwOrder[2]) opponentRenderer.renderAnimationsFromDrawStackOfRightOpponent(game, *opponentsOrNoneInCwOrder[2]);
+		// render animations of the opponents
+		opponentRenderer.renderDrawedCardAnimationsOfOpponentIfHasValue(game, 0, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_LEFT_POSITION, HAND_CARDS_OPPONENT_LEFT_ROTATION);
+		opponentRenderer.renderDrawedCardAnimationsOfOpponentIfHasValue(game, 1, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_VISAVIS_POSITION, HAND_CARDS_OPPONENT_VISAVIS_ROTATION);
+		opponentRenderer.renderDrawedCardAnimationsOfOpponentIfHasValue(game, 2, opponentsOrNoneInCwOrder, HAND_CARDS_OPPONENT_RIGHT_POSITION, HAND_CARDS_OPPONENT_RIGHT_ROTATION, PLAY_CARDS_POSITION + glm::vec3(0, CardRenderer::HEIGHT / 2, -CardRenderer::HEIGHT), {PI, 0, 0});
 
 		cardRenderer.flush();
 
+
 		renderPlayCardStack();
+
 
 		// render local player
 		localPlayerRenderer.render(game);
@@ -245,11 +249,28 @@ namespace card {
 			} else if(sourceStack.equalsId(localPlayer->getCardStack())) {
 				// do nothing, will be considered in LocalPlayerRenderer
 			} else if(cardStacksOrNoneInCwOrder[0] && sourceStack.equalsId(cardStacksOrNoneInCwOrder[0]->getCardStack())) {
-				// do nothing, will be considered in OpponentRenderer
+				glm::vec3 startPosition = handCardStackPositionGenerator.getPositionOfCard_cardStackZ(animation.indexInSourceStack, sourceStack.getSize() + 1, HAND_CARDS_OPPONENT_LEFT_POSITION, LEFT_RIGHT_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
+				std::size_t drawCardStackSize = DrawCardStackClamper::getClampedSize(drawCardStack);
+				
+				cardInterpolator.interpolateAndRender(animation,
+									 startPosition, glm::vec3(0, -PI/2, 0),
+									 startPosition + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), glm::vec3(0, -PI/2, 0),
+									 positionEnd, {rotationEnd.x, -rotationEnd.y, rotationEnd.z}
+				);
 			} else if(cardStacksOrNoneInCwOrder[1] && sourceStack.equalsId(cardStacksOrNoneInCwOrder[1]->getCardStack())) {
-				// do nothing, will be considered in OpponentRenderer
+				glm::vec3 startPosition = handCardStackPositionGenerator.getPositionOfCard_cardStackX(animation.indexInSourceStack, sourceStack.getSize() + 1, HAND_CARDS_OPPONENT_VISAVIS_POSITION, FRONT_BACK_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
+				cardInterpolator.interpolateAndRender(animation,
+									 startPosition, {-PI, 0, 0},
+									 startPosition + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), {-PI, 0, 0},
+									 positionEnd, rotationEnd
+				);
 			} else if(cardStacksOrNoneInCwOrder[2] && sourceStack.equalsId(cardStacksOrNoneInCwOrder[2]->getCardStack())) {
-				// do nothing, will be considered in OpponentRenderer
+				glm::vec3 startPosition = handCardStackPositionGenerator.getPositionOfCard_cardStackZ(animation.indexInSourceStack, sourceStack.getSize() + 1, HAND_CARDS_OPPONENT_RIGHT_POSITION, LEFT_RIGHT_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
+				cardInterpolator.interpolateAndRender(animation,
+									 HAND_CARDS_OPPONENT_RIGHT_POSITION, glm::vec3(0, PI / 2, 0),
+									 HAND_CARDS_OPPONENT_RIGHT_POSITION + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), glm::vec3(0, PI / 2, 0),
+									 positionEnd, rotationEnd
+				);
 			} else if (sourceStack.equalsId(drawCardStack)) {
 				renderAnimationFromDrawToPlayStack(animation, positionEnd, rotationEnd);
 			} else {
