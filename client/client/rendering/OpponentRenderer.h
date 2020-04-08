@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include "HandCardStackRenderer.h"
 #include "CardInterpolator.h"
+#include "HandCardsWithAnimationToPlayStackRenderer.h"
 
 namespace card {
 	class OpponentRenderer {
@@ -12,6 +13,9 @@ namespace card {
         private:
             HandCardStackRenderer handCardsRenderer;
             CardInterpolator cardInterpolator;
+            HandCardsWithAnimationToPlayStackRenderer handCardsWithInterpolationRenderer;
+
+            HandCardStackPositionGenerator handCardStackPositionGenerator;
             ProjectionMatrix& projectionMatrix;
             Viewport& viewport;
 
@@ -19,20 +23,25 @@ namespace card {
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            OpponentRenderer(CardRenderer& cardRenderer, ProjectionMatrix& projectionMatrix, Viewport& viewport);
+            OpponentRenderer(CardRenderer& cardRenderer, ProjectionMatrix& projectionMatrix, Viewport& viewport, CardStackMisalignmentGenerator& playStackMisalignmentGenerator);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
         // ----------------------------------------------------------------------
         public:
-            void renderOpponentIfHasValue_x(std::size_t index, std::array<std::shared_ptr<ProxyPlayer>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation);
-            void renderOpponent_x(PositionedCardStack positionedCardStack);
-            void renderOpponentIfHasValue_z(std::size_t index, std::array<std::shared_ptr<ProxyPlayer>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation);
-            void renderOpponent_z(PositionedCardStack positionedCardStack);
+            void renderHandCardsOfVisAVisOpponent(ProxyMauMauGame& game, ProxyPlayer& player);
+            void renderHandCardsOfLeftOpponent(ProxyMauMauGame& game, ProxyPlayer& player);
+            void renderHandCardsOfRightOpponent(ProxyMauMauGame& game, ProxyPlayer& player);
 
-            void renderDrawedCardAnimationsOfOpponentIfHasValue(ProxyMauMauGame& game, std::size_t index, std::array<std::shared_ptr<ProxyPlayer>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation);
-            void renderDrawedCardAnimationsOfOpponent(ProxyMauMauGame& game, const CardAnimator& handCardStack, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation);
-            void renderDrawedCardAnimationsOfOpponentIfHasValue(ProxyMauMauGame& game, std::size_t index, std::array<std::shared_ptr<ProxyPlayer>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, glm::vec3 middlePosition, glm::vec3 middleRotation);
-            void renderDrawedCardAnimationsOfOpponent(ProxyMauMauGame& game, const CardAnimator& handCardStack, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, glm::vec3 middlePosition, glm::vec3 middleRotation);
+            void renderAnimationsFromDrawStackOfVisAVisOpponent(ProxyMauMauGame& game, ProxyPlayer& player);
+            void renderAnimationsFromDrawStackOfLeftOpponent(ProxyMauMauGame& game, ProxyPlayer& player);
+            void renderAnimationsFromDrawStackOfRightOpponent(ProxyMauMauGame& game, ProxyPlayer& player);
+
+        private:
+            void renderAnimationsFromDrawStack(ProxyMauMauGame& game, const CardAnimator& handCardStack, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation);
+            void renderAnimationsFromDrawStack(ProxyMauMauGame& game, const CardAnimator& handCardStack, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, glm::vec3 middlePosition, glm::vec3 middleRotation);
+
+
+
     };
 }

@@ -35,7 +35,7 @@ namespace card {
 		auto shouldDisableFunc = [&](Card c) {
 			return shouldDisableCard(game, c);
 		};
-		handCardsRenderer.renderHandCardsOfLocalPlayer(positionedHandCards, game, shouldDisableFunc);
+		handCardsRenderer.renderHandCardsOfLocalPlayer(positionedHandCards, game.getLocalPlayer()->getCardStack(), game, shouldDisableFunc);
 
 		// render animation to play card stack from temp card stack
 		auto animationsToPlayCardStack = AnimationsToPlayStackFilterer::getAnimationsFromParticularHandCards(game, game.getLocalPlayer()->getTempCardStack());

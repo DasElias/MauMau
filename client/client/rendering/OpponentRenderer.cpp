@@ -5,39 +5,38 @@
 #include "../renderingModel/DrawCardStackClamper.h"
 
 namespace card {
-	OpponentRenderer::OpponentRenderer(CardRenderer& cardRenderer, ProjectionMatrix& projectionMatrix, Viewport& viewport) :
+	OpponentRenderer::OpponentRenderer(CardRenderer& cardRenderer, ProjectionMatrix& projectionMatrix, Viewport& viewport, CardStackMisalignmentGenerator& playStackMisalignmentGenerator) :
 			handCardsRenderer(cardRenderer, projectionMatrix, viewport),
 			cardInterpolator(cardRenderer, projectionMatrix, viewport),
+			handCardsWithInterpolationRenderer(cardRenderer, projectionMatrix, viewport, playStackMisalignmentGenerator),
 			projectionMatrix(projectionMatrix),
 			viewport(viewport) {
 	}
-	void OpponentRenderer::renderOpponentIfHasValue_x(std::size_t index, std::array<std::shared_ptr<ProxyPlayer>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation) {
-		auto& opp = opponentsOrNullInCwOrder[index];
-		if(opp) {
-			renderOpponent_x({opp->getCardStack(), handCardsPosition, handCardsRotation});
-		}
+	void OpponentRenderer::renderHandCardsOfVisAVisOpponent(ProxyMauMauGame& game, ProxyPlayer& player) {
+		PositionedCardStack handCards(player.getCardStack(), HAND_CARDS_OPPONENT_VISAVIS_POSITION, HAND_CARDS_OPPONENT_VISAVIS_ROTATION);
+		auto positionedCards = handCardStackPositionGenerator.generateMatricies_cardStackX(handCards, CardRenderer::CARD_DIMENSIONS, FRONT_BACK_OPPONENT_CARDS_WIDTH);
+		handCardsWithInterpolationRenderer.renderHandCardsOfVisavisOpponent(positionedCards, player.getCardStack(), game);		
 	}
-	void OpponentRenderer::renderOpponent_x(PositionedCardStack positionedCardStack) {
-		handCardsRenderer.renderCardStackInX(positionedCardStack, FRONT_BACK_OPPONENT_CARDS_WIDTH);
+	void OpponentRenderer::renderHandCardsOfLeftOpponent(ProxyMauMauGame& game, ProxyPlayer& player) {
+		PositionedCardStack handCards(player.getCardStack(), HAND_CARDS_OPPONENT_LEFT_POSITION, HAND_CARDS_OPPONENT_LEFT_ROTATION);
+		auto positionedCards = handCardStackPositionGenerator.generateMatricies_cardStackZ(handCards, CardRenderer::CARD_DIMENSIONS, LEFT_RIGHT_OPPONENT_CARDS_WIDTH);
+		handCardsWithInterpolationRenderer.renderHandCardsOfLeftOpponent(positionedCards, player.getCardStack(), game);
 	}
-	void OpponentRenderer::renderOpponentIfHasValue_z(std::size_t index, std::array<std::shared_ptr<ProxyPlayer>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation) {
-		auto& opp = opponentsOrNullInCwOrder[index];
-		if(opp) {
-			renderOpponent_z({opp->getCardStack(), handCardsPosition, handCardsRotation});
-		}
+	void OpponentRenderer::renderHandCardsOfRightOpponent(ProxyMauMauGame& game, ProxyPlayer& player) {
+		PositionedCardStack handCards(player.getCardStack(), HAND_CARDS_OPPONENT_RIGHT_POSITION, HAND_CARDS_OPPONENT_RIGHT_ROTATION);
+		auto positionedCards = handCardStackPositionGenerator.generateMatricies_cardStackZ(handCards, CardRenderer::CARD_DIMENSIONS, LEFT_RIGHT_OPPONENT_CARDS_WIDTH);
+		handCardsWithInterpolationRenderer.renderHandCardsOfRightOpponent(positionedCards, player.getCardStack(), game);
 	}
-	void OpponentRenderer::renderOpponent_z(PositionedCardStack positionedCardStack) {
-		handCardsRenderer.renderCardStackInZ(positionedCardStack, LEFT_RIGHT_OPPONENT_CARDS_WIDTH);
+	void OpponentRenderer::renderAnimationsFromDrawStackOfVisAVisOpponent(ProxyMauMauGame& game, ProxyPlayer& player) {
+		renderAnimationsFromDrawStack(game, player.getCardStack(), HAND_CARDS_OPPONENT_VISAVIS_POSITION, HAND_CARDS_OPPONENT_VISAVIS_ROTATION);
 	}
-
-
-	void OpponentRenderer::renderDrawedCardAnimationsOfOpponentIfHasValue(ProxyMauMauGame& game, std::size_t index, std::array<std::shared_ptr<ProxyPlayer>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation) {
-		auto& opp = opponentsOrNullInCwOrder[index];
-		if(opp) {
-			renderDrawedCardAnimationsOfOpponent(game, opp->getCardStack(), handCardsPosition, handCardsRotation);
-		}
+	void OpponentRenderer::renderAnimationsFromDrawStackOfLeftOpponent(ProxyMauMauGame& game, ProxyPlayer& player) {
+		renderAnimationsFromDrawStack(game, player.getCardStack(), HAND_CARDS_OPPONENT_LEFT_POSITION, HAND_CARDS_OPPONENT_LEFT_ROTATION);
 	}
-	void OpponentRenderer::renderDrawedCardAnimationsOfOpponent(ProxyMauMauGame& game, const CardAnimator& handCardStack, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation) {
+	void OpponentRenderer::renderAnimationsFromDrawStackOfRightOpponent(ProxyMauMauGame& game, ProxyPlayer& player) {
+		renderAnimationsFromDrawStack(game, player.getCardStack(), HAND_CARDS_OPPONENT_RIGHT_POSITION, HAND_CARDS_OPPONENT_RIGHT_ROTATION, PLAY_CARDS_POSITION + glm::vec3(0, CardRenderer::HEIGHT / 2, -CardRenderer::HEIGHT), {PI, 0, 0});
+	}
+	void OpponentRenderer::renderAnimationsFromDrawStack(ProxyMauMauGame& game, const CardAnimator& handCardStack, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation) {
 		const auto& drawStack = game.getDrawStack();
 		std::size_t cardStackSize = DrawCardStackClamper::getClampedSize(drawStack);
 
@@ -53,13 +52,7 @@ namespace card {
 												  0.33f, 0.66f);
 		}
 	}
-	void OpponentRenderer::renderDrawedCardAnimationsOfOpponentIfHasValue(ProxyMauMauGame& game, std::size_t index, std::array<std::shared_ptr<ProxyPlayer>, 3>& opponentsOrNullInCwOrder, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, glm::vec3 middlePosition, glm::vec3 middleRotation) {
-		auto& opp = opponentsOrNullInCwOrder[index];
-		if(opp) {
-			renderDrawedCardAnimationsOfOpponent(game, opp->getCardStack(), handCardsPosition, handCardsRotation, middlePosition, middleRotation);
-		}
-	}
-	void OpponentRenderer::renderDrawedCardAnimationsOfOpponent(ProxyMauMauGame& game, const CardAnimator& handCardStack, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, glm::vec3 middlePosition, glm::vec3 middleRotation) {
+	void OpponentRenderer::renderAnimationsFromDrawStack(ProxyMauMauGame& game, const CardAnimator& handCardStack, glm::vec3 handCardsPosition, glm::vec3 handCardsRotation, glm::vec3 middlePosition, glm::vec3 middleRotation) {
 		const auto& drawStack = game.getDrawStack();
 		std::size_t drawStackSize = DrawCardStackClamper::getClampedSize(drawStack);
 
