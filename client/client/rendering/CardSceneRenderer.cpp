@@ -245,10 +245,7 @@ namespace card {
 			CardAnimator& sourceStack = animation.source.get();
 
 			if(sourceStack.equalsId(localPlayer->getTempCardStack())) {
-				cardInterpolator.interpolateAndRender(animation,
-									DrawnCardRenderer::POSITION, HAND_CARDS_LOCAL_ROTATION, 
-									positionEnd, rotationEnd
-				);
+				// do nothing, will be considered in LocalPlayerRenderer
 			} else if(sourceStack.equalsId(localPlayer->getCardStack())) {
 				// do nothing, will be considered in LocalPlayerRenderer
 			} else if(cardStacksOrNoneInCwOrder[0] && sourceStack.equalsId(cardStacksOrNoneInCwOrder[0]->getCardStack())) {

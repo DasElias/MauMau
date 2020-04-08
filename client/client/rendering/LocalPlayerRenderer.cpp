@@ -6,6 +6,7 @@
 #include "DrawnCardRenderer.h"
 #include "CardStackRenderer.h"
 #include "../renderingModel/DrawCardStackClamper.h"
+#include "../renderingModel/AnimationsToPlayStackFilter.h"
 
 namespace card {
 	float const LocalPlayerRenderer::HOVERED_CARD_Y_ADDITION = 0.1f;
@@ -15,6 +16,7 @@ namespace card {
 				viewport(viewport),
 				cardRenderer(cardRenderer),
 				handCardsRenderer(cardRenderer, projectionMatrix, viewport, misalignmentGenerator),
+				animatorToPlayStack(cardRenderer, projectionMatrix, viewport, misalignmentGenerator),
 				intersectionChecker(projectionMatrix, viewport),
 				cardInterpolator(cardRenderer, projectionMatrix, viewport),
 				unixTimeIntersectedCardIndexHasChanged(getMilliseconds()) {
@@ -24,16 +26,22 @@ namespace card {
 		renderHandCards(game);
 	}
 	void LocalPlayerRenderer::renderHandCards(ProxyMauMauGame& game) {
-		auto& localPlayer = game.getLocalPlayer();
 		auto& playStack = game.getPlayStack();
 		auto[intersectedCardIndex, additionForIntersectedCard] = getIntersectedIndexAndAddition(game);
 
+		// render hand cards and animation to play card stack
 		HandCardStackPositionGenerator handCardPositionGenerator;
 		std::vector<PositionedCard> positionedHandCards = handCardPositionGenerator.generateMatricies_cardStackX(getPositionedCardStackOfLocalPlayer(game), CardRenderer::CARD_DIMENSIONS, FRONT_BACK_OPPONENT_CARDS_WIDTH, intersectedCardIndex, additionForIntersectedCard);
 		auto shouldDisableFunc = [&](Card c) {
 			return shouldDisableCard(game, c);
 		};
 		handCardsRenderer.renderHandCardsOfLocalPlayer(positionedHandCards, game, shouldDisableFunc);
+
+		// render animation to play card stack from temp card stack
+		auto animationsToPlayCardStack = AnimationsToPlayStackFilterer::getAnimationsFromParticularHandCards(game, game.getLocalPlayer()->getTempCardStack());
+		for(auto& a : animationsToPlayCardStack) {
+			animatorToPlayStack.animateFromLocalPlayerTemp(a, playStack);
+		}
 	}
 	std::pair<int, float> LocalPlayerRenderer::getIntersectedIndexAndAddition(ProxyMauMauGame& game) {
 		auto& gameData = game.getGameData();

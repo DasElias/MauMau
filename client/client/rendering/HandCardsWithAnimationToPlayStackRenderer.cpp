@@ -1,5 +1,6 @@
 #include "HandCardsWithAnimationToPlayStackRenderer.h"
 #include <functional>
+#include "../renderingModel/AnimationsToPlayStackFilter.h"
 
 namespace card {
 	HandCardsWithAnimationToPlayStackRenderer::HandCardsWithAnimationToPlayStackRenderer(CardRenderer& cardRenderer, ProjectionMatrix& pm, Viewport& vp, CardStackMisalignmentGenerator& misalignmentGenerator) :
@@ -9,22 +10,11 @@ namespace card {
 			animatorToPlayStack(cardRenderer, projectionMatrix, viewport, misalignmentGenerator) {
 	}
 	void HandCardsWithAnimationToPlayStackRenderer::renderHandCardsOfLocalPlayer(std::vector<PositionedCard> positionedHandCards, ProxyMauMauGame& game, std::function<bool(Card)> shouldDisable) {
-		auto animationsToPlayCardStack = getAnimationsFromParticularHandCards(game, game.getLocalPlayer()->getCardStack());		
+		auto animationsToPlayCardStack = AnimationsToPlayStackFilterer::getAnimationsFromParticularHandCards(game, game.getLocalPlayer()->getCardStack());		
 		auto animateFunction = [&](CardAnimation a) {
 			animatorToPlayStack.animateFromLocalPlayerHandCards(a, game.getPlayStack());
 		};
 		renderImpl(positionedHandCards, animationsToPlayCardStack, animateFunction, shouldDisable);
-	}
-	std::vector<CardAnimation> HandCardsWithAnimationToPlayStackRenderer::getAnimationsFromParticularHandCards(ProxyMauMauGame& game, const CardAnimator& handCards) {
-		std::vector<CardAnimation> relevantAnimations;
-		
-		auto& playStack = game.getPlayStack();
-		for(auto& animation : playStack.getCardAnimations()) {
-			auto& sourceStack = animation.source.get();
-			if(sourceStack.equalsId(handCards)) relevantAnimations.push_back(animation);
-		}
-
-		return relevantAnimations;
 	}
 	void HandCardsWithAnimationToPlayStackRenderer::renderImpl(const std::vector<PositionedCard>& positionedHandCards, std::vector<CardAnimation>& animationsToPlayCardStack, std::function<void(CardAnimation)> animateFunc, std::function<bool(Card)> shouldDisableFunc) {
 		for(int i = 0; i < positionedHandCards.size(); i++) {

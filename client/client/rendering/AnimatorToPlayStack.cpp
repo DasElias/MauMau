@@ -2,6 +2,7 @@
 #include "CardStackPositions.h"
 #include "CardStackRenderer.h"
 #include "LocalPlayerRenderer.h"
+#include "DrawnCardRenderer.h"
 
 namespace card {
 	AnimatorToPlayStack::AnimatorToPlayStack(CardRenderer& cardRenderer, ProjectionMatrix& pm, Viewport& vp, CardStackMisalignmentGenerator& misalignmentGenerator) :
@@ -20,6 +21,13 @@ namespace card {
 		);
 	}
 	void AnimatorToPlayStack::animateFromLocalPlayerTemp(const CardAnimation& animation, const CardAnimator& playStack) {
+		auto& sourceStack = animation.source.get();
+		auto [positionEnd, rotationEnd] = getEndPositionAndRotation(playStack);
+
+		cardInterpolator.interpolateAndRender(animation,
+											  DrawnCardRenderer::POSITION, HAND_CARDS_LOCAL_ROTATION,
+											  positionEnd, rotationEnd
+		);
 	}
 	void AnimatorToPlayStack::animateFromLeftOpponent(const CardAnimator& cardAnimator, const CardAnimator& playStack) {
 	}

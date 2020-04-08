@@ -26,7 +26,6 @@ namespace card {
            void renderHandCardsOfLocalPlayer(std::vector<PositionedCard> positionedHandCards, ProxyMauMauGame& game, std::function<bool(Card)> shouldDisable = [](Card){return false;});
 
         private:
-            std::vector<CardAnimation> getAnimationsFromParticularHandCards(ProxyMauMauGame& game, const CardAnimator& handCards);
             void renderImpl(const std::vector<PositionedCard>& positionedHandCards, std::vector<CardAnimation>& animationsToPlayCardStack, std::function<void(CardAnimation)> animateFunc, std::function<bool(Card)> shouldDisableFunc);
 	};
 }

@@ -24,6 +24,7 @@ namespace card {
             Viewport& viewport;
             CardRenderer& cardRenderer;
             HandCardsWithAnimationToPlayStackRenderer handCardsRenderer;
+            AnimatorToPlayStack animatorToPlayStack;
 
             HandCardIntersectionChecker intersectionChecker;
             CardInterpolator cardInterpolator;
