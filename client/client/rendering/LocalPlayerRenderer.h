@@ -4,6 +4,7 @@
 #include "CardInterpolator.h"
 #include "../renderingModel/HandCardIntersectionChecker.h"
 #include <optional>
+#include "../renderingModel/MauMauCardStackMisalignmentGenerator.h"
 
 namespace card {
 	class LocalPlayerRenderer {
@@ -19,6 +20,8 @@ namespace card {
         private:
             ProjectionMatrix& projectionMatrix;
             Viewport& viewport;
+            CardRenderer& cardRenderer;
+            MauMauCardStackMisalignmentGenerator& misalignmentGenerator;
 
             HandCardIntersectionChecker intersectionChecker;
             HandCardStackRenderer handCardStackRenderer;
@@ -31,7 +34,7 @@ namespace card {
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            LocalPlayerRenderer(ProjectionMatrix& projectionMatrix, Viewport& viewport, CardRenderer& cardRenderer);
+            LocalPlayerRenderer(ProjectionMatrix& projectionMatrix, Viewport& viewport, CardRenderer& cardRenderer, MauMauCardStackMisalignmentGenerator& misalignmentGenerator);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
@@ -42,8 +45,10 @@ namespace card {
 
         private:
             void renderHandCards(ProxyMauMauGame& game);
+            std::pair<int, float> getIntersectedIndexAndAddition(ProxyMauMauGame& game);
             void renderAnimations(ProxyMauMauGame& data);
             bool shouldDisableCard(ProxyMauMauGame& game, Card c);
+            std::vector<CardAnimation> getAnimationsFromLocalPlayerHandCardsToPlayStack(ProxyMauMauGame& game);
 
             PositionedCardStack getPositionedCardStackOfLocalPlayer(ProxyMauMauGame& game);
 	};

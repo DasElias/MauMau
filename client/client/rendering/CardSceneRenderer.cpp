@@ -23,7 +23,7 @@ namespace card {
 			cardRenderer(renderer3d, cardTextures),
 			cardStackRenderer(cardRenderer, misalignmentGenerator, projectionMatrix, viewport),
 			handCardRenderer(cardRenderer, projectionMatrix, viewport),
-			localPlayerRenderer(projectionMatrix, viewport, cardRenderer),
+			localPlayerRenderer(projectionMatrix, viewport, cardRenderer, misalignmentGenerator),
 			opponentRenderer(cardRenderer, projectionMatrix, viewport),
 			cardInterpolator(cardRenderer, projectionMatrix, viewport),
 			bgRenderer(renderer2d, renderer3d),
@@ -250,12 +250,7 @@ namespace card {
 									positionEnd, rotationEnd
 				);
 			} else if(sourceStack.equalsId(localPlayer->getCardStack())) {
-				glm::vec3 startPosition = glm::vec3(0, LocalPlayerRenderer::HOVERED_CARD_Y_ADDITION, 0) + handCardStackPositionGenerator.getPositionOfCard_cardStackX(animation.indexInSourceStack, sourceStack.getSize() + 1, HAND_CARDS_LOCAL_POSITION, FRONT_BACK_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
-				cardInterpolator.interpolateAndRender(animation,
-									 startPosition, HAND_CARDS_LOCAL_ROTATION,
-									 startPosition + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), HAND_CARDS_LOCAL_ROTATION,
-									 positionEnd, rotationEnd
-				);
+				// do nothing, will be considered in LocalPlayerRenderer
 			} else if(cardStacksOrNoneInCwOrder[0] && sourceStack.equalsId(cardStacksOrNoneInCwOrder[0]->getCardStack())) {
 				glm::vec3 startPosition = handCardStackPositionGenerator.getPositionOfCard_cardStackZ(animation.indexInSourceStack, sourceStack.getSize() + 1, HAND_CARDS_OPPONENT_LEFT_POSITION, LEFT_RIGHT_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
 				std::size_t drawCardStackSize = DrawCardStackClamper::getClampedSize(drawCardStack);

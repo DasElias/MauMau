@@ -10,9 +10,11 @@
 namespace card {
 	float const LocalPlayerRenderer::HOVERED_CARD_Y_ADDITION = 0.1f;
 
-	LocalPlayerRenderer::LocalPlayerRenderer(ProjectionMatrix& projectionMatrix, Viewport& viewport, CardRenderer& cardRenderer) :
+	LocalPlayerRenderer::LocalPlayerRenderer(ProjectionMatrix& projectionMatrix, Viewport& viewport, CardRenderer& cardRenderer, MauMauCardStackMisalignmentGenerator& misalignmentGenerator) :
 				projectionMatrix(projectionMatrix),
 				viewport(viewport),
+				cardRenderer(cardRenderer),
+				misalignmentGenerator(misalignmentGenerator),
 				intersectionChecker(projectionMatrix, viewport),
 				handCardStackRenderer(cardRenderer, projectionMatrix, viewport),
 				cardInterpolator(cardRenderer, projectionMatrix, viewport),
@@ -23,16 +25,53 @@ namespace card {
 		renderHandCards(game);
 	}
 	void LocalPlayerRenderer::renderHandCards(ProxyMauMauGame& game) {
-		auto& accessorFromClient = game.getAccessorFromClient();
-		auto& gameData = game.getGameData();
 		auto& localPlayer = game.getLocalPlayer();
-		auto& handCards = localPlayer->getCardStack();
+		auto[intersectedCardIndex, additionForIntersectedCard] = getIntersectedIndexAndAddition(game);
+		HandCardStackPositionGenerator handCardPositionGenerator;
+
+		auto animationFuncToPlayStack = [&](const CardAnimation& animatedCard) {
+			auto& playStack = game.getPlayStack();
+			auto& sourceStack = animatedCard.source.get();
+			glm::vec3 positionEnd = PLAY_CARDS_POSITION + glm::vec3(0, playStack.getSize() * CardStackRenderer::ADDITION_PER_CARD, 0);
+			glm::vec3 rotationEnd = PLAY_CARDS_ROTATION + misalignmentGenerator.computeRotationMisalignment(playStack.getSize());
+			glm::vec3 startPosition = glm::vec3(0, LocalPlayerRenderer::HOVERED_CARD_Y_ADDITION, 0) + handCardPositionGenerator.getPositionOfCard_cardStackX(animatedCard.indexInSourceStack, sourceStack.getSize() + 1, HAND_CARDS_LOCAL_POSITION, FRONT_BACK_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
+			cardInterpolator.interpolateAndRender(animatedCard,
+												  startPosition, HAND_CARDS_LOCAL_ROTATION,
+												  startPosition + glm::vec3(0, CardRenderer::HEIGHT / 2, 0), HAND_CARDS_LOCAL_ROTATION,
+												  positionEnd, rotationEnd
+			);
+		};
+
+		std::vector<PositionedCard> positionedHandCards = handCardPositionGenerator.generateMatricies_cardStackX(getPositionedCardStackOfLocalPlayer(game), CardRenderer::CARD_DIMENSIONS, FRONT_BACK_OPPONENT_CARDS_WIDTH, intersectedCardIndex, additionForIntersectedCard);
+		std::vector<CardAnimation> animationsToPlayCardStack = getAnimationsFromLocalPlayerHandCardsToPlayStack(game);
+		for(int i = 0; i < positionedHandCards.size(); i++) {
+			auto& handCard = positionedHandCards[i];
+
+			animationsToPlayCardStack.erase(std::remove_if(animationsToPlayCardStack.begin(), animationsToPlayCardStack.end(), [&](auto& animatedCard) {
+				if(animatedCard.indexInSourceStack == i) {
+					animationFuncToPlayStack(animatedCard);
+					return true;
+				} else return false;
+			}), animationsToPlayCardStack.end());
+
+			bool shouldRenderInGreyScale = shouldDisableCard(game, handCard.getCard());
+			cardRenderer.renderInNextPass(handCard, projectionMatrix, viewport, shouldRenderInGreyScale);
+		}
+
+		// now we have to proceed the remaining animations
+		for(auto& remainingAnimation : animationsToPlayCardStack) {
+			animationFuncToPlayStack(remainingAnimation);
+		}
+	}
+	std::pair<int, float> LocalPlayerRenderer::getIntersectedIndexAndAddition(ProxyMauMauGame& game) {
+		auto& gameData = game.getGameData();
+		auto& handCards = game.getLocalPlayer()->getCardStack();
 
 		std::optional<int> intersectedCardIndexOrNone = checkIntersectionWithHandCards(game);
 		int intersectedCardIndex = -1;
 		if(intersectedCardIndexOrNone.has_value()) {
 			Card intersectedCard = handCards.get(*intersectedCardIndexOrNone);
-			if(! shouldDisableCard(game, intersectedCard) && gameData.isReadyToPerformLocalPlayerTurn()) {
+			if(!shouldDisableCard(game, intersectedCard) && gameData.isReadyToPerformLocalPlayerTurn()) {
 				intersectedCardIndex = *intersectedCardIndexOrNone;
 			}
 		}
@@ -47,14 +86,7 @@ namespace card {
 		float const x2 = 100;
 		float addition = interpolateLinear(x, x1, 0, x2, HOVERED_CARD_Y_ADDITION);
 		addition = std::clamp<float>(addition, 0, HOVERED_CARD_Y_ADDITION);
-
-		std::vector<bool> shouldRenderInGreyScale(handCards.getSize());
-		for(int i = 0; i < shouldRenderInGreyScale.size(); i++) {
-			Card& c = handCards.get(i);
-			shouldRenderInGreyScale[i] = shouldDisableCard(game, c);
-		}
-
-		handCardStackRenderer.renderCardStackInX(getPositionedCardStackOfLocalPlayer(game), FRONT_BACK_OPPONENT_CARDS_WIDTH, intersectedCardIndex, addition, shouldRenderInGreyScale);
+		return std::make_pair(intersectedCardIndex, addition);
 	}
 	bool LocalPlayerRenderer::shouldDisableCard(ProxyMauMauGame& game, Card c) {
 		auto& gameData = game.getGameData();
@@ -65,6 +97,20 @@ namespace card {
 		if(localPlayer->isInSkipState()) return !gameData.canSkipPlayer(c);
 		else if(gameData.isInDrawTwoState()) return gameData.getAmountsOfCardsToDrawForNextPlayer(c) == 0;
 		else return false;
+	}
+	std::vector<CardAnimation> LocalPlayerRenderer::getAnimationsFromLocalPlayerHandCardsToPlayStack(ProxyMauMauGame& game) {
+		std::vector<CardAnimation> relevantAnimations;
+
+		HandCardStackPositionGenerator handCardPositionGenerator;
+		auto& playStack = game.getPlayStack();
+		auto& localPlayer = game.getLocalPlayer();
+
+		for(auto animation : playStack.getCardAnimations()) {
+			auto& sourceStack = animation.source.get();
+			if(sourceStack.equalsId(localPlayer->getCardStack())) relevantAnimations.push_back(animation);
+		}
+
+		return relevantAnimations;
 	}
 	PositionedCardStack LocalPlayerRenderer::getPositionedCardStackOfLocalPlayer(ProxyMauMauGame& game) {
 		auto localPlayer = game.getLocalPlayer();
