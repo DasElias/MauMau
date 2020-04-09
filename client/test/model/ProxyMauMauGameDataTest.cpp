@@ -19,7 +19,7 @@ TEST_CASE("ProxyMauMauGameData", "[ProxyMauMauGameData]") {
 
 	bool wasTurnEndCallbackInvoked = false;
 	ProxyMauMauGameData gameData(allParticipants, localParticipant, handCards, lastCardOnPlayStack, options,
-		[&wasTurnEndCallbackInvoked](std::shared_ptr<ProxyPlayer> playerTurnEnd) {
+		[&wasTurnEndCallbackInvoked](ProxyPlayer& playerTurnEnd) {
 			wasTurnEndCallbackInvoked = true;
 		}
 	);
@@ -30,8 +30,8 @@ TEST_CASE("ProxyMauMauGameData", "[ProxyMauMauGameData]") {
 		REQUIRE(playCardStack.getLast().getCardNumber() == lastCardOnPlayStack);
 	}
 	SECTION("getLocalPlayer") {
-		auto localPlayer = gameData.getLocalPlayer();
-		REQUIRE(localPlayer->getWrappedParticipiant() == localParticipant);
+		auto& localPlayer = gameData.getLocalPlayer();
+		REQUIRE(localPlayer.getWrappedParticipiant() == localParticipant);
 	}
 	/*SECTION("change player on turn") {
 		REQUIRE(gameData.isLocalPlayerOnTurn());
@@ -56,13 +56,13 @@ TEST_CASE("ProxyMauMauGameData", "[ProxyMauMauGameData]") {
 
 	}*/
 	SECTION("player has to draw cards") {
-		auto player = gameData.lookupPlayer(opponent1->getUsername());
-		std::size_t handCardSizeBefore = player->getCardStack().getSize();
+		auto& player = gameData.lookupPlayer(opponent1->getUsername());
+		std::size_t handCardSizeBefore = player.getCardStack().getSize();
 		gameData.playerHasToDrawCards(player, 5);
-		REQUIRE(player->getCardStack().getSize() == handCardSizeBefore + 5);
+		REQUIRE(player.getCardStack().getSize() == handCardSizeBefore + 5);
 	}
 	SECTION("local player plays card") {
-		auto localPlayer = gameData.getLocalPlayer();
+		auto& localPlayer = gameData.getLocalPlayer();
 
 		SECTION("local player tries to play card not in he's hand cards") {
 			REQUIRE_THROWS(
@@ -82,23 +82,23 @@ TEST_CASE("ProxyMauMauGameData", "[ProxyMauMauGameData]") {
 		}
 		SECTION("lookupPlayer") {
 			REQUIRE_THROWS(gameData.lookupPlayer("abcdef"));
-			REQUIRE(gameData.lookupPlayer(localParticipant->getUsername())->getWrappedParticipiant() == localParticipant);
-			REQUIRE(gameData.lookupPlayer(opponent1->getUsername())->getWrappedParticipiant() == opponent1);
+			REQUIRE(gameData.lookupPlayer(localParticipant->getUsername()).getWrappedParticipiant() == localParticipant);
+			REQUIRE(gameData.lookupPlayer(opponent1->getUsername()).getWrappedParticipiant() == opponent1);
 		}
 		SECTION("lookupOpponent") {
 			REQUIRE_THROWS(gameData.lookupOpponent("abcdef"));
-			REQUIRE_THROWS(gameData.lookupOpponent(localParticipant->getUsername())->getWrappedParticipiant());
-			REQUIRE(gameData.lookupOpponent(opponent1->getUsername())->getWrappedParticipiant() == opponent1);
+			REQUIRE_THROWS(gameData.lookupOpponent(localParticipant->getUsername()).getWrappedParticipiant());
+			REQUIRE(gameData.lookupOpponent(opponent1->getUsername()).getWrappedParticipiant() == opponent1);
 		}
 		SECTION("remove opponent") {
-			REQUIRE_THROWS(gameData.removeOpponentLocal(localParticipant));
+			REQUIRE_THROWS(gameData.removeOpponentLocal(*localParticipant));
 			REQUIRE_THROWS(gameData.removeOpponentLocal(
-				std::make_shared<ParticipantOnClient>("abc", 1, false)
+				*std::make_shared<ParticipantOnClient>("abc", 1, false)
 			));
 			
-			auto opponent1Player = gameData.lookupOpponent(opponent1->getUsername());
+			auto& opponent1Player = gameData.lookupOpponent(opponent1->getUsername());
 			gameData.setOnTurnLocal(opponent1Player);
-			gameData.removeOpponentLocal(opponent1);
+			gameData.removeOpponentLocal(*opponent1);
 
 			REQUIRE(gameData.getOpponents().size() == 1);
 			REQUIRE(gameData.getPlayerOnTurn() != opponent1Player);

@@ -3,42 +3,77 @@
 #include <vector>
 #include <stdexcept>
 #include "../utils/MathUtils.h"
+#include "../utils/SharedPointerComparisonUtils.h"
 
 namespace card {
 	template<typename T>
 	class IngamePlayerList {
         public:
-            typedef typename std::vector<T>::iterator iterator;
-            typedef typename std::vector<T>::const_iterator const_iterator;
+            struct iterator {
+                using value_type = T;
+                using reference = T&;
+                using pointer = T*;
+                using difference_type = std::ptrdiff_t;
+                using iterator_category = std::forward_iterator_tag;
+
+                reference operator*() { return **curr; }
+                pointer operator->() { return &**this; }
+                iterator& operator++() { ++curr; return *this; }
+                iterator operator++(int) { const auto temp(*this); ++*this; return temp; }
+                bool operator==(const iterator& other) const { return curr == other.curr; }
+                bool operator!=(const iterator& other) const { return !(*this == other); }
+
+                typename std::vector<std::shared_ptr<T>>::iterator curr;
+                typename std::vector<std::shared_ptr<T>>::iterator end;
+            };
+            struct const_iterator {
+                using value_type = T;
+                using reference = const T&;
+                using pointer = const T*;
+                using difference_type = std::ptrdiff_t;
+                using iterator_category = std::forward_iterator_tag;
+
+                reference operator*() { return **curr; }
+                pointer operator->() { return &**this; }
+                const_iterator& operator++() { ++curr; return *this; }
+                const_iterator operator++(int) { const auto temp(*this); ++* this; return temp; }
+                bool operator==(const const_iterator& other) const { return curr == other.curr; }
+                bool operator!=(const const_iterator& other) const { return !(*this == other); }
+
+                typename std::vector<std::shared_ptr<T>>::const_iterator curr;
+                typename std::vector<std::shared_ptr<T>>::const_iterator end;
+            };
 
         // ----------------------------------------------------------------------
         // --------------------------------FIELDS--------------------------------
         // ----------------------------------------------------------------------
         private:
-            std::vector<T> allPlayers;
-            T playerOnTurn;
+            std::vector<std::shared_ptr<T>> allPlayers;
+            std::shared_ptr<T> playerOnTurn;
 
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            IngamePlayerList(std::vector<T> allPlayers, T playerOnTurn);
+            IngamePlayerList(std::vector<std::shared_ptr<T>> allPlayers, std::shared_ptr<T> playerOnTurn);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
         // ----------------------------------------------------------------------
         public:
-            T getPlayerOnTurn() const;
-            T getNextPlayerOnTurn(Direction direction) const;
-            T getNextPlayerOnTurn(Direction direction, T playerOnTurn) const;
+            T& getPlayerOnTurn();
+            const T& getPlayerOnTurn() const;
+            T& getNextPlayerOnTurn(Direction direction);
+            T& getNextPlayerOnTurn(Direction direction, const T& playerOnTurn);
             bool isPlayerOnTurn(const T& otherPlayer) const;
 
-            void setPlayerOnTurn(T playerOnTurn);
-            void appendPlayer(T player);
-            void removePlayer(T player);
+            void setPlayerOnTurn(const T& playerOnTurn);
+            void appendPlayer(std::shared_ptr<T> player);
+            void removePlayer(const T& player);
 
-            T getRandomPlayer() const;
-            const std::vector<T>& getAllPlayers() const;
+            T& getRandomPlayer();
+            const T& getRandomPlayer() const;
+            const std::vector<std::shared_ptr<T>>& getAllPlayers() const;
             std::size_t getAmountOfPlayers() const;
             iterator begin();
             const_iterator begin() const;
@@ -47,25 +82,30 @@ namespace card {
             const_iterator end() const;
             const_iterator cend() const;
 
-	};
+        private:
+            typename std::vector<std::shared_ptr<T>>::iterator findInAllPlayers(const T& val);
 
+	};
     template<typename T>
-    inline IngamePlayerList<T>::IngamePlayerList(std::vector<T> allPlayers, T playerOnTurn) :
+    inline IngamePlayerList<T>::IngamePlayerList(std::vector<std::shared_ptr<T>> allPlayers, std::shared_ptr<T> playerOnTurn) :
             allPlayers(allPlayers),
             playerOnTurn(playerOnTurn) {
-
     }
     template<typename T>
-    inline T IngamePlayerList<T>::getPlayerOnTurn() const {
-        return playerOnTurn;
+    inline T& IngamePlayerList<T>::getPlayerOnTurn() {
+       return *playerOnTurn;
     }
     template<typename T>
-    inline T IngamePlayerList<T>::getNextPlayerOnTurn(Direction direction) const {
+    inline const T& IngamePlayerList<T>::getPlayerOnTurn() const {
+        return *playerOnTurn;
+    }
+    template<typename T>
+    inline T& IngamePlayerList<T>::getNextPlayerOnTurn(Direction direction) {
         return getNextPlayerOnTurn(direction, getPlayerOnTurn());
     }
     template<typename T>
-    inline T IngamePlayerList<T>::getNextPlayerOnTurn(Direction direction, T player) const {
-        auto playerOnTurnIter = std::find(allPlayers.begin(), allPlayers.end(), player);
+    inline T& IngamePlayerList<T>::getNextPlayerOnTurn(Direction direction, const T& player) {
+        auto playerOnTurnIter = findInAllPlayers(player);
 
         if(direction == Direction::CW) {
             playerOnTurnIter++;
@@ -75,32 +115,42 @@ namespace card {
             playerOnTurnIter--;
         }
 
-        return *playerOnTurnIter;
+        return **playerOnTurnIter;
     }
     template<typename T>
     inline bool IngamePlayerList<T>::isPlayerOnTurn(const T& otherPlayer) const {
-        return playerOnTurn == otherPlayer;
+        return otherPlayer == playerOnTurn;
     }
     template<typename T>
-    inline void IngamePlayerList<T>::setPlayerOnTurn(T playerOnTurn) {
-        this->playerOnTurn = playerOnTurn;
+    inline void IngamePlayerList<T>::setPlayerOnTurn(const T& playerOnTurn) {
+        // find shared_ptr to playerOnTurn
+        auto playerOnTurnIter = findInAllPlayers(playerOnTurn);
+        if(playerOnTurnIter == allPlayers.end()) throw std::runtime_error("Can't set playerOnTurn to a non-existing player.");
+        this->playerOnTurn = *playerOnTurnIter;
     }
     template<typename T>
-    inline void IngamePlayerList<T>::appendPlayer(T player) {
+    inline void IngamePlayerList<T>::appendPlayer(std::shared_ptr<T> player) {
         allPlayers.push_back(player);
     }
     template<typename T>
-    inline void IngamePlayerList<T>::removePlayer(T player) {
-        if(player == playerOnTurn) throw std::runtime_error("Can't remove player on turn!");
-        allPlayers.erase(std::find(allPlayers.begin(), allPlayers.end(), player));
+    inline void IngamePlayerList<T>::removePlayer(const T& player) {
+        auto playerIter = findInAllPlayers(player);
+        if(playerIter == allPlayers.end()) throw std::runtime_error("Can't remove a non-existing player.");
+        if(player == playerOnTurn) throw std::runtime_error("Can't remove the player on turn");
+        allPlayers.erase(playerIter);
     }
     template<typename T>
-    inline T IngamePlayerList<T>::getRandomPlayer() const {
+    inline T& IngamePlayerList<T>::getRandomPlayer() {
         auto rand = randomInRange<std::size_t>(0, allPlayers.size() - 1);
-        return allPlayers[rand];
+        return *allPlayers[rand];
     }
     template<typename T>
-    inline const std::vector<T>& IngamePlayerList<T>::getAllPlayers() const {
+    inline const T& IngamePlayerList<T>::getRandomPlayer() const {
+        auto rand = randomInRange<std::size_t>(0, allPlayers.size() - 1);
+        return *allPlayers[rand];
+    }
+    template<typename T>
+    inline const std::vector<std::shared_ptr<T>>& IngamePlayerList<T>::getAllPlayers() const {
         return allPlayers;
     }
     template<typename T>
@@ -109,26 +159,32 @@ namespace card {
     }
     template<typename T>
     inline typename IngamePlayerList<T>::iterator IngamePlayerList<T>::begin() {
-        return allPlayers.begin();
+        return {allPlayers.begin(), allPlayers.end()};
     }
     template<typename T>
     inline typename IngamePlayerList<T>::const_iterator IngamePlayerList<T>::begin() const {
-        return allPlayers.begin();
+        return {allPlayers.begin(), allPlayers.end()};
     }
     template<typename T>
     inline typename IngamePlayerList<T>::const_iterator IngamePlayerList<T>::cbegin() const {
-        return allPlayers.cbegin();
+        return {allPlayers.begin(), allPlayers.end()};
     }
     template<typename T>
     inline typename IngamePlayerList<T>::iterator IngamePlayerList<T>::end() {
-        return allPlayers.end();
+        return {allPlayers.end(), allPlayers.end()};
     }
     template<typename T>
     inline typename IngamePlayerList<T>::const_iterator IngamePlayerList<T>::end() const {
-        return allPlayers.end();
+        return {allPlayers.end(), allPlayers.end()};
     }
     template<typename T>
     inline typename IngamePlayerList<T>::const_iterator IngamePlayerList<T>::cend() const {
-        return allPlayers.cend();
+        return {allPlayers.end(), allPlayers.end()};
+    }
+    template<typename T>
+    inline typename std::vector<std::shared_ptr<T>>::iterator IngamePlayerList<T>::findInAllPlayers(const T& val) {
+        return std::find_if(allPlayers.begin(), allPlayers.end(), [&](const std::shared_ptr<T>& p) {
+            return p == val;
+        });
     }
 }

@@ -31,7 +31,7 @@ namespace card {
 			ServerGameEndHandler& gameEndHandler;
 			RoomOptions& roomOptions;
 
-			IngamePlayerList<std::shared_ptr<Player>> allPlayers;
+			IngamePlayerList<Player> allPlayers;
 
 			CardStack drawCardStack;
 			CardStack playCardStack;
@@ -75,7 +75,7 @@ namespace card {
 			void setNextPlayerOnTurnAndUpdateSkipState(Card playedCard);
 			void setNextPlayerOnTurn();
 			void setNextButOnePlayerOnTurn();
-			void setPlayerOnTurn(std::shared_ptr<Player> player);
+			void setPlayerOnTurn(Player& player);
 
 			bool canPlay(Player& player, Card card) const;
 			bool canDraw(Player& player) const;
@@ -92,13 +92,13 @@ namespace card {
 			bool wasCardPlayedLastTurn() const;
 			bool wasCardDrawnAndPlayedLastTurn() const;
 			int getAmountOfDrawedCardsDueToPlusTwoLastTurn() const;
-			bool checkIfPlayerByParticipant(const std::shared_ptr<ParticipantOnServer>& participant);
+			bool checkIfPlayerByParticipant(const ParticipantOnServer& participant);
 			bool checkIfPlayerByUsername(std::string username);
 			bool checkIfOnTurn(Player& p) const;
-			std::shared_ptr<Player> getPlayerOnTurn();
-			std::shared_ptr<Player> lookupPlayerByParticipant(const std::shared_ptr<ParticipantOnServer>& participant);
-			std::shared_ptr<Player> lookupPlayerByUsername(std::string username);
-			void removePlayer(std::shared_ptr<Player> player);
+			Player& getPlayerOnTurn();
+			Player& lookupPlayerByParticipant(const ParticipantOnServer& participant);
+			Player& lookupPlayerByUsername(std::string username);
+			void removePlayer(Player& player);
 			const RoomOptions& getOptions() const;
 			std::size_t getAmountOfParticipants() const;
 

@@ -62,4 +62,7 @@ namespace card {
 	bool Player::operator==(const Player& p2) const {
 		return this->wrappedParticipant == p2.wrappedParticipant;
 	}
+	bool Player::operator!=(const Player& p2) const {
+		return !operator==(p2);
+	}
 }

@@ -74,6 +74,7 @@ namespace card {
 			virtual void onEndTurn();
 
 			bool operator==(const ProxyPlayer& p2) const;
+			bool operator!=(const ProxyPlayer& p2) const;
 
 
 	};

@@ -53,5 +53,6 @@ namespace card {
 			virtual void onEndTurn();
 
 			bool operator==(const Player& p2) const;
+			bool operator!=(const Player& p2) const;
 	};
 }

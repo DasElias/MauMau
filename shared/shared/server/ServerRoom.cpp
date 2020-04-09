@@ -150,9 +150,9 @@ namespace card {
 		}
 
 		allParticipants.erase(std::remove(allParticipants.begin(), allParticipants.end(), participant), allParticipants.end());
-		if(isGameRunning() && getGame().checkIfPlayerByParticipant(participant)) {
+		if(isGameRunning() && getGame().checkIfPlayerByParticipant(*participant)) {
 			auto& game = getGame();
-			auto player = game.lookupPlayerByParticipant(participant);
+			auto& player = game.lookupPlayerByParticipant(*participant);
 			game.removePlayer(player);
 			if(game.getAmountOfParticipants() == 1) this->game.reset();
 		};
@@ -190,8 +190,8 @@ namespace card {
 		int cardNumberOfFirstCardOnPlayStack = game->getPlayCardStack().getLast().getCardNumber();
 
 		for(auto& participant : allParticipants) {
-			auto player = game->lookupPlayerByUsername(participant->getUsername());
-			std::vector<int> handCards = player->getHandCards().getCardNumbers();
+			auto& player = game->lookupPlayerByUsername(participant->getUsername());
+			std::vector<int> handCards = player.getHandCards().getCardNumbers();
 
 			GameHasBeenStarted_STCPacket packet(usernameOfAllPlayers, handCards, cardNumberOfFirstCardOnPlayStack);
 			packetTransmitter->sendPacketToClient(packet, participant);

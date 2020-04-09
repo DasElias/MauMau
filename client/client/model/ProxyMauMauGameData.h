@@ -9,7 +9,6 @@
 #include <shared/model/MauPunishmentCause.h>
 #include <optional>
 #include <functional>
-#include "TemporaryIngamePlayerList.h"
 #include <shared/model/IngamePlayerList.h>
 #include <boost/optional.hpp>
 
@@ -33,7 +32,7 @@ namespace card {
 			Direction direction = Direction::CW;
 			MessageQueue messageQueue;
 
-			TemporaryIngamePlayerList<ProxyPlayer> playerList;
+			IngamePlayerList<ProxyPlayer> playerList;
 			std::vector<std::shared_ptr<ProxyPlayer>> opponents;
 			std::shared_ptr<LocalPlayer> localPlayer;
 

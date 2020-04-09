@@ -113,4 +113,7 @@ namespace card {
 	bool ProxyPlayer::operator==(const ProxyPlayer& p2) const {
 		return p2.wrappedParticipant == this->wrappedParticipant;
 	}
+	bool ProxyPlayer::operator!=(const ProxyPlayer& p2) const {
+		return !operator==(p2);
+	}
 }

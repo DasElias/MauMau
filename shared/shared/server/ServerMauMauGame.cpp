@@ -102,16 +102,16 @@ namespace card {
 		int startCardsPerPlayer = roomOptions.getOption(Options::AMOUNT_OF_START_CARDS);
 		int timeUntilCardsDistributed = getDurationUntilInitialCardsAreDistributed(allPlayers.getAmountOfPlayers(), startCardsPerPlayer);
 		threadUtils_invokeIn(timeUntilCardsDistributed, this, [this]() {
-			auto newPlayerOnTurn = allPlayers.getRandomPlayer();
+			auto& newPlayerOnTurn = allPlayers.getRandomPlayer();
 			allPlayers.setPlayerOnTurn(newPlayerOnTurn);
 
-			newPlayerOnTurn->onStartTurn();
+			newPlayerOnTurn.onStartTurn();
 			startTurnAbortTimer();
 
 			for(auto& p : allPlayers) {
-				Card nextCardOnDrawStack = (newPlayerOnTurn->getUsername() == p->getUsername()) ? drawCardStack.getLast() : Card::NULLCARD;
-				InitialPlayerIsOnTurn_STCPacket packet(newPlayerOnTurn->getUsername(), nextCardOnDrawStack.getCardNumber());
-				packetTransmitter->sendPacketToClient(packet, p->getWrappedParticipant());
+				Card nextCardOnDrawStack = (newPlayerOnTurn == p) ? drawCardStack.getLast() : Card::NULLCARD;
+				InitialPlayerIsOnTurn_STCPacket packet(newPlayerOnTurn.getUsername(), nextCardOnDrawStack.getCardNumber());
+				packetTransmitter->sendPacketToClient(packet, p.getWrappedParticipant());
 			}
 		});
 	}
@@ -157,13 +157,13 @@ namespace card {
 		setNextPlayerOnTurnAndUpdateSkipState(card);		
 
 		// send packet to players
-		auto senderPlayerPtr = lookupPlayerByUsername(player.getUsername());
+		auto& senderPlayerPtr = lookupPlayerByUsername(player.getUsername());
 		for(auto& p : allPlayers) {
 			if(senderPlayerPtr == p) continue;
 
 			std::vector<int>& cardsToDrawToSend = (allPlayers.isPlayerOnTurn(p)) ? cardsToDrawDueToPlusTwo_backup : cardsToDrawDueToPlusTwo_filledWithNullcards;
 			OtherPlayerHasPlayedCard_STCPacket packet(player.getUsername(), card.getCardNumber(), static_cast<int>(chosenIndex), cardsToDrawToSend, wasCardJustDrawn);
-			packetTransmitter->sendPacketToClient(packet, p->getWrappedParticipant());
+			packetTransmitter->sendPacketToClient(packet, p.getWrappedParticipant());
 		}
 
 		callGameEndFunctIfGameHasEnded();
@@ -250,8 +250,8 @@ namespace card {
 		// send packet to other players
 		OtherPlayerHasDrawnCards_STCPacket otherPlayerHasDrawnPacket(player.getUsername());
 		for(auto& p : allPlayers) {
-			if(*p == player) continue;
-			packetTransmitter->sendPacketToClient(otherPlayerHasDrawnPacket, p->getWrappedParticipant());
+			if(p == player) continue;
+			packetTransmitter->sendPacketToClient(otherPlayerHasDrawnPacket, p.getWrappedParticipant());
 		}
 
 		return true;
@@ -261,11 +261,10 @@ namespace card {
 		if(! canPass(player)) return false;
 		setNextPlayerOnTurn();
 
-		std::string playerUsername = player.getUsername();
-		OtherPlayerHasPassed_STCPacket packet(playerUsername);
+		OtherPlayerHasPassed_STCPacket packet(player.getUsername());
 		for(auto& p : allPlayers) {
-			if(p->getUsername() == playerUsername) continue;
-			packetTransmitter->sendPacketToClient(packet, p->getWrappedParticipant());
+			if(p == player) continue;
+			packetTransmitter->sendPacketToClient(packet, p.getWrappedParticipant());
 		}
 
 		return true;
@@ -284,26 +283,26 @@ namespace card {
 	}
 
 	void ServerMauMauGame::setNextPlayerOnTurn() {
-		std::shared_ptr<Player> nextPlayer = allPlayers.getNextPlayerOnTurn(direction);
+		auto& nextPlayer = allPlayers.getNextPlayerOnTurn(direction);
 		setPlayerOnTurn(nextPlayer);
 	}
 
 	void ServerMauMauGame::setNextButOnePlayerOnTurn() {
-		std::shared_ptr<Player> nextPlayer = allPlayers.getNextPlayerOnTurn(direction);
-		std::shared_ptr<Player> nextButOnePlayer = allPlayers.getNextPlayerOnTurn(direction, nextPlayer);
+		auto& nextPlayer = allPlayers.getNextPlayerOnTurn(direction);
+		auto& nextButOnePlayer = allPlayers.getNextPlayerOnTurn(direction, nextPlayer);
 
 		setPlayerOnTurn(nextButOnePlayer);
 	}
 
-	void ServerMauMauGame::setPlayerOnTurn(std::shared_ptr<Player> player) {
+	void ServerMauMauGame::setPlayerOnTurn(Player& player) {
 		amountOfDrawedCardsDueToPlusTwoLastTurn = 0;
 
-		auto lastPlayerOnTurn = allPlayers.getPlayerOnTurn();
+		auto& lastPlayerOnTurn = allPlayers.getPlayerOnTurn();
 
 		if(isInDrawTwoState() && !wasCardPlayed_thisTurn) {
 			// if there was a card played, the +2 was passed on to the next player
 			amountOfDrawedCardsDueToPlusTwoLastTurn = cardsToDrawDueToPlusTwo.size();
-			lastPlayerOnTurn->addHandCards(cardsToDrawDueToPlusTwo);
+			lastPlayerOnTurn.addHandCards(cardsToDrawDueToPlusTwo);
 			cardsToDrawDueToPlusTwo.clear();
 		}
 		if(isInDrawTwoState() && !roomOptions.getOption(Options::PASS_DRAW_TWO)) {
@@ -323,27 +322,27 @@ namespace card {
 
 		startTurnAbortTimer();
 
-		lastPlayerOnTurn->onEndTurn();
+		lastPlayerOnTurn.onEndTurn();
 		allPlayers.setPlayerOnTurn(player);
-		player->onStartTurn();
+		player.onStartTurn();
 
 		// if there are still cards to draw and the option PASS_DRAW_TWO is not set, we draw the punishment cards
 		if(isInDrawTwoState() && !roomOptions.getOption(Options::PASS_DRAW_TWO)) {
-			player->addHandCards(cardsToDrawDueToPlusTwo);
+			player.addHandCards(cardsToDrawDueToPlusTwo);
 			cardsToDrawDueToPlusTwo.clear();
 		}
 
 		Card nextOnDrawStackToSend = drawCardStack.getLast();
 		LocalPlayerIsOnTurn_STCPacket packet(nextOnDrawStackToSend.getCardNumber());
-		packetTransmitter->sendPacketToClient(packet, player->getWrappedParticipant());
+		packetTransmitter->sendPacketToClient(packet, player.getWrappedParticipant());
 	}
 	void ServerMauMauGame::checkForMauIfNeeded() {
 		bool isMauDisabledByOptions = !roomOptions.getOption(Options::HAVE_TO_MAU);
 		if(isMauDisabledByOptions) return;
 
-		auto playerOnTurn = allPlayers.getPlayerOnTurn();
+		auto& playerOnTurn = allPlayers.getPlayerOnTurn();
 		if(wasCardDrawn_thisTurn && wasMauedCorrectly_thisTurn) {
-			sendMauPunishmentPacket(*playerOnTurn, MauPunishmentCause::DRAWED_EVEN_THOUGH_MAUED);
+			sendMauPunishmentPacket(playerOnTurn, MauPunishmentCause::DRAWED_EVEN_THOUGH_MAUED);
 			return;
 		}
 
@@ -354,10 +353,10 @@ namespace card {
 			log(LogSeverity::WARNING, "Logic error. Can't check for mau if the player has drawed but not played a card.");
 		}
 
-		bool hasJustPlayedLastButOneCard = playerOnTurn->getHandCards().getSize() == 1;
+		bool hasJustPlayedLastButOneCard = playerOnTurn.getHandCards().getSize() == 1;
 		bool wasntMaued = !wasMauedCorrectly_thisTurn;
 		if(hasJustPlayedLastButOneCard && wasntMaued) {
-			sendMauPunishmentPacket(*playerOnTurn, MauPunishmentCause::NO_MAU_RECEIVED);
+			sendMauPunishmentPacket(playerOnTurn, MauPunishmentCause::NO_MAU_RECEIVED);
 		}
 	}
 	void ServerMauMauGame::sendMauPunishmentPacket(Player& responsiblePlayer, MauPunishmentCause cause) {
@@ -369,12 +368,12 @@ namespace card {
 		std::fill(cardsToDrawAsNullCards.begin(), cardsToDrawAsNullCards.end(), Card::NULLCARD.getCardNumber());
 
 		for(auto& p : allPlayers) {
-			if(*p == responsiblePlayer) {
+			if(p == responsiblePlayer) {
 				MauPunishment_STCPacket packet(responsiblePlayerUsername, cardsToDraw, cause);
-				packetTransmitter->sendPacketToClient(packet, p->getWrappedParticipant());
+				packetTransmitter->sendPacketToClient(packet, p.getWrappedParticipant());
 			} else {
 				MauPunishment_STCPacket packet(responsiblePlayerUsername, cardsToDrawAsNullCards, cause);
-				packetTransmitter->sendPacketToClient(packet, p->getWrappedParticipant());
+				packetTransmitter->sendPacketToClient(packet, p.getWrappedParticipant());
 			}
 		}
 	}
@@ -403,9 +402,9 @@ namespace card {
 		// if we wouldn't shuffle the draw card stack, he would draw the same card again
 		drawCardStack.shuffle();
 
-		auto playerOnTurn = allPlayers.getPlayerOnTurn();
+		auto& playerOnTurn = allPlayers.getPlayerOnTurn();
 		std::vector<int> cardsToDraw = popCardsFromDrawStack(CARDS_TO_DRAW_ON_TIME_EXPIRED);
-		playerOnTurn->addHandCards(cardsToDraw);
+		playerOnTurn.addHandCards(cardsToDraw);
 
 		std::vector<int> cardsToDrawAsNullCards = cardsToDraw;
 		std::fill(cardsToDrawAsNullCards.begin(), cardsToDrawAsNullCards.end(), Card::NULLCARD.getCardNumber());
@@ -415,17 +414,17 @@ namespace card {
 		for(auto& p : allPlayers) {
 			if(p == playerOnTurn) {
 				TurnWasAborted_STCPacket packet(cardsToDraw, amountOfCardsToDrawBefore);
-				packetTransmitter->sendPacketToClient(packet, p->getWrappedParticipant());
+				packetTransmitter->sendPacketToClient(packet, p.getWrappedParticipant());
 			} else {
 				TurnWasAborted_STCPacket packet(cardsToDrawAsNullCards, amountOfCardsToDrawBefore);
-				packetTransmitter->sendPacketToClient(packet, p->getWrappedParticipant());
+				packetTransmitter->sendPacketToClient(packet, p.getWrappedParticipant());
 			}
 		}
 
 		setNextPlayerOnTurn();
 	}
 	bool ServerMauMauGame::canPlay(Player& player, Card card) const {
-		if(allPlayers.getPlayerOnTurn()->getUsername() != player.getUsername()) return false;
+		if(allPlayers.getPlayerOnTurn() != player) return false;
 		if(isInSkipState() && card.getValue() != SKIP_VALUE) return false;
 		if(isInDrawTwoState() && card.getValue() != DRAW_2_VALUE) return false;
 
@@ -438,7 +437,7 @@ namespace card {
 		return card.getCardIndex() == indexForNextCard || card.getValue() == lastCardOnPlayStack.getValue();
 	}
 	bool ServerMauMauGame::canDraw(Player& player) const {
-		if(allPlayers.getPlayerOnTurn()->getUsername() != player.getUsername()) return false;
+		if(allPlayers.getPlayerOnTurn() != player) return false;
 		if(canPass(player)) return false;
 		return true;
 	}
@@ -479,39 +478,39 @@ namespace card {
 	int ServerMauMauGame::getAmountOfDrawedCardsDueToPlusTwoLastTurn() const {
 		return amountOfDrawedCardsDueToPlusTwoLastTurn;
 	}
-	bool ServerMauMauGame::checkIfPlayerByParticipant(const std::shared_ptr<ParticipantOnServer>& participant) {
+	bool ServerMauMauGame::checkIfPlayerByParticipant(const ParticipantOnServer& participant) {
 		for(auto& p : allPlayers) {
-			if(p->getWrappedParticipant() == participant) return true;
+			if(p.getWrappedParticipant() == participant) return true;
 		}
 		return false;
 	}
 	bool ServerMauMauGame::checkIfPlayerByUsername(std::string username) {
 		for(auto& p : allPlayers) {
-			if(p->getUsername() == username) return true;
+			if(p.getUsername() == username) return true;
 		}
 		return false;
 	}
 	bool ServerMauMauGame::checkIfOnTurn(Player& p) const {
-		return *(allPlayers.getPlayerOnTurn()) == p;
+		return allPlayers.getPlayerOnTurn() == p;
 	}
-	std::shared_ptr<Player> ServerMauMauGame::getPlayerOnTurn() {
+	Player& ServerMauMauGame::getPlayerOnTurn() {
 		return allPlayers.getPlayerOnTurn();
 	}
-	std::shared_ptr<Player> ServerMauMauGame::lookupPlayerByParticipant(const std::shared_ptr<ParticipantOnServer>& participant) {
+	Player& ServerMauMauGame::lookupPlayerByParticipant(const ParticipantOnServer& participant) {
 		for(auto& p : allPlayers) {
-			if(p->getWrappedParticipant() == participant) return p;
+			if(p.getWrappedParticipant() == participant) return p;
 		}
 
 		throw PlayerNotFoundException("This participant is not a player.");
 	}
-	std::shared_ptr<Player> ServerMauMauGame::lookupPlayerByUsername(std::string username) {
+	Player& ServerMauMauGame::lookupPlayerByUsername(std::string username) {
 		for(auto& p : allPlayers) {
-			if(p->getUsername() == username) return p;
+			if(p.getUsername() == username) return p;
 		}
 
 		throw PlayerNotFoundException("\"" + username + "\" is not a player.");
 	}
-	void ServerMauMauGame::removePlayer(std::shared_ptr<Player> player) {
+	void ServerMauMauGame::removePlayer(Player& player) {
 		if(allPlayers.isPlayerOnTurn(player)) {
 			setNextPlayerOnTurn();
 		}
@@ -565,41 +564,41 @@ namespace card {
 	}
 	bool ServerMauMauGame::hasPlayerWon() {
 		for(auto& p : allPlayers) {
-			if(p->getHandCards().isEmpty()) {
+			if(p.getHandCards().isEmpty()) {
 				return true;
 			}
 		}
 		return false;
 	}
 	std::optional<OperationSuccessful_STCAnswerPacket> ServerMauMauGame::listener_onPlayCard(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant) {
-		if(! checkIfPlayerByParticipant(participant)) return std::nullopt;
+		if(! checkIfPlayerByParticipant(*participant)) return std::nullopt;
 		auto& casted = dynamic_cast<PlayCardRequest_CTSPacket&>(p);
 
-		auto player = lookupPlayerByParticipant(participant);
-		bool wasSuccessful = playCardAndSetNextPlayerOnTurn(*player, Card(casted.getCardNumber()), casted.wasJustDrawn(), static_cast<CardIndex>(casted.getNewCardIndex()));
+		auto& player = lookupPlayerByParticipant(*participant);
+		bool wasSuccessful = playCardAndSetNextPlayerOnTurn(player, Card(casted.getCardNumber()), casted.wasJustDrawn(), static_cast<CardIndex>(casted.getNewCardIndex()));
 		return OperationSuccessful_STCAnswerPacket(wasSuccessful);
 	}
 	std::optional<OperationSuccessful_STCAnswerPacket> ServerMauMauGame::listener_onDrawCard(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant) {
-		if(!checkIfPlayerByParticipant(participant)) return std::nullopt;
+		if(!checkIfPlayerByParticipant(*participant)) return std::nullopt;
 		auto& casted = dynamic_cast<DrawCardRequest_CTSPacket&>(p);
 
-		auto player = lookupPlayerByParticipant(participant);
-		bool wasSuccessful = drawCardAndSetNextPlayerOnTurn(*player);
+		auto& player = lookupPlayerByParticipant(*participant);
+		bool wasSuccessful = drawCardAndSetNextPlayerOnTurn(player);
 		return OperationSuccessful_STCAnswerPacket(wasSuccessful);
 	}
 	std::optional<OperationSuccessful_STCAnswerPacket> ServerMauMauGame::listener_onMau(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant) {
-		if(!checkIfPlayerByParticipant(participant)) return std::nullopt;
+		if(!checkIfPlayerByParticipant(*participant)) return std::nullopt;
 		auto& casted = dynamic_cast<MauRequest_CTSPacket&>(p);
 
-		auto player = lookupPlayerByParticipant(participant);
-		mau(*player);
+		auto& player = lookupPlayerByParticipant(*participant);
+		mau(player);
 		return OperationSuccessful_STCAnswerPacket(true);
 	}
 	std::optional<OperationSuccessful_STCAnswerPacket> ServerMauMauGame::listener_onPass(ClientToServerPacket& p, const std::shared_ptr<ParticipantOnServer>& participant) {
-		if(!checkIfPlayerByParticipant(participant)) return std::nullopt;
+		if(!checkIfPlayerByParticipant(*participant)) return std::nullopt;
 		auto& casted = dynamic_cast<PassRequest_CTSPacket&>(p);
-		auto player = lookupPlayerByParticipant(participant);
-		bool wasSuccessful = pass(*player);
+		auto& player = lookupPlayerByParticipant(*participant);
+		bool wasSuccessful = pass(player);
 		return OperationSuccessful_STCAnswerPacket(wasSuccessful);
 
 
