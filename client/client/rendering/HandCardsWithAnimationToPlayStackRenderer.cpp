@@ -10,7 +10,7 @@ namespace card {
 			animatorToPlayStack(cardRenderer, projectionMatrix, viewport, misalignmentGenerator) {
 	}
 	void HandCardsWithAnimationToPlayStackRenderer::renderHandCardsOfLocalPlayer(std::vector<PositionedCard> positionedHandCards, ProxyMauMauGame& game, std::function<bool(Card)> shouldDisable) {
-		auto animationsToPlayCardStack = AnimationsToPlayStackFilterer::getAnimationsFromParticularHandCards(game, game.getLocalPlayer()->getCardStack());		
+		auto animationsToPlayCardStack = AnimationsToPlayStackFilterer::getAnimationsFromParticularHandCards(game, game.getLocalPlayer().getCardStack());		
 		auto animateFunction = [&](CardAnimation a) {
 			animatorToPlayStack.animateFromLocalPlayerHandCards(a, game.getPlayStack());
 		};

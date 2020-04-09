@@ -46,7 +46,7 @@ namespace card {
 
 	}
 	void MauMauGameAccessorFromServer::playCardAndSetNextPlayerOnTurnLocal(std::string username, Card card, CardIndex newCardIndex, std::vector<Card> cardsToDraw, bool wasDrawedJustBefore) {
-		auto player = gameData.lookupOpponent(username);
+		auto& player = gameData.lookupOpponent(username);
 
 		int delayMs = 0;
 		if(wasDrawedJustBefore) {
@@ -59,7 +59,7 @@ namespace card {
 		gameData.setNextPlayerOnTurnAndUpdateSkipAndDrawTwoState(card);
 	}
 	void MauMauGameAccessorFromServer::drawCardAndSetNextPlayerOnTurnLocal(std::string username) {
-		auto player = gameData.lookupOpponent(username);
+		auto& player = gameData.lookupOpponent(username);
 		gameData.drawInHandCardsFromCardStack(player, Card::NULLCARD);
 		gameData.setNextPlayerOnTurnLocal();
 	}
@@ -103,19 +103,19 @@ namespace card {
 		std::vector<int> cardNumbersToDraw = casted.getCardsToDraw();
 		std::vector<Card> cardsToDraw = Card::getVectorFromCardNumber(cardNumbersToDraw);
 
-		auto player = gameData.lookupPlayer(casted.getConcernedUsername());
+		auto& player = gameData.lookupPlayer(casted.getConcernedUsername());
 		gameData.onMauPunishment(player, cardsToDraw, casted.getCause());
 	}
 	void MauMauGameAccessorFromServer::listener_onOtherPlayerHasSuccessfullyMaued(Packet& p) {
 		auto& casted = dynamic_cast<PlayerHasMauedSuccessfully_STCPacket&>(p);
 
-		auto player = gameData.lookupPlayer(casted.getUsername());
+		auto& player = gameData.lookupPlayer(casted.getUsername());
 		gameData.onSuccessfulMau(player);
 	}
 	void MauMauGameAccessorFromServer::listener_initialPlayerIsOnTurn(Packet& p) {
 		auto& casted = dynamic_cast<InitialPlayerIsOnTurn_STCPacket&>(p);
 
-		auto player = gameData.lookupPlayer(casted.getUsername());
+		auto& player = gameData.lookupPlayer(casted.getUsername());
 		gameData.setInitialPlayerOnTurnLocal(player, Card(casted.getNextCardOnDrawStack()));
 	}
 }

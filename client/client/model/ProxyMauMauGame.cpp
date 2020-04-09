@@ -5,7 +5,7 @@ namespace card {
 									std::shared_ptr<ParticipantOnClient> localParticipant, std::vector<int> handCards, 
 									int startCard, RoomOptions& roomOptions) :
 											gameData(allParticipantsInclLocal, localParticipant, handCards, startCard, roomOptions,
-												[this](std::shared_ptr<ProxyPlayer> turnEndPlayer) {
+												[this](ProxyPlayer& turnEndPlayer) {
 													accessorFromClient.onTurnEnd();
 												}
 											),
@@ -24,13 +24,13 @@ namespace card {
 	const CardAnimator& ProxyMauMauGame::getPlayStack() const {
 		return gameData.getPlayStack();
 	}
-	std::shared_ptr<LocalPlayer> ProxyMauMauGame::getLocalPlayer() {
+	LocalPlayer& ProxyMauMauGame::getLocalPlayer() {
 		return gameData.getLocalPlayer();
 	}
 	std::vector<std::shared_ptr<ProxyPlayer>> ProxyMauMauGame::getOpponents() {
 		return gameData.getOpponents();
 	}
-	void ProxyMauMauGame::removeOpponentLocal(std::shared_ptr<ParticipantOnClient> player) {
+	void ProxyMauMauGame::removeOpponentLocal(ParticipantOnClient& player) {
 		gameData.removeOpponentLocal(player);
 	}
 	bool ProxyMauMauGame::checkIfIsOpponent(std::string username) const {
@@ -42,7 +42,7 @@ namespace card {
 	bool ProxyMauMauGame::hasInitialCardBeenDistributed() const {
 		return gameData.hasInitialCardBeenDistributed();
 	}
-	std::shared_ptr<ProxyPlayer> ProxyMauMauGame::getWinnerOrNull() {
+	boost::optional<ProxyPlayer&> ProxyMauMauGame::getWinnerOrNull() {
 		return gameData.getWinnerOrNull();
 	}
 	MessageQueue& ProxyMauMauGame::getMessageQueue() {

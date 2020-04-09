@@ -8,6 +8,7 @@
 #include "../renderingModel/AvatarTextures.h"
 #include <egui/model/positioning/RelativePositioningOnScreen.h>
 #include "CircleSectorRenderer.h"
+#include <boost/optional.hpp>
 
 namespace card {
 	class PlayerLabelRenderer {
@@ -39,10 +40,10 @@ namespace card {
             std::shared_ptr<PlayerLabel> labelElementForLeft;
             std::shared_ptr<PlayerLabel> labelElementForRight;
             
-            std::weak_ptr<ProxyPlayer> playerLocal;
-            std::weak_ptr<ProxyPlayer> playerVisAVis;
-            std::weak_ptr<ProxyPlayer> playerLeft;
-            std::weak_ptr<ProxyPlayer> playerRight;
+            boost::optional<const ProxyPlayer&> playerLocal;
+            boost::optional<const ProxyPlayer&> playerVisAVis;
+            boost::optional<const ProxyPlayer&> playerLeft;
+            boost::optional<const ProxyPlayer&> playerRight;
             
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------
@@ -54,18 +55,18 @@ namespace card {
         // -------------------------------METHODS--------------------------------
         // ----------------------------------------------------------------------
         public:
-             void renderLocal(const std::shared_ptr<ProxyPlayer>& participant, glm::vec2 positionOnScreen);
-             void renderVisAVis(const std::shared_ptr<ProxyPlayer>& participant, glm::vec2 positionOnScreen);
-             void renderLeft(const std::shared_ptr<ProxyPlayer>& participant, glm::vec2 positionOnScreen);
-             void renderRight(const std::shared_ptr<ProxyPlayer>& participant, glm::vec2 positionOnScreen);
+             void renderLocal(const ProxyPlayer& participant, glm::vec2 positionOnScreen);
+             void renderVisAVis(const ProxyPlayer& participant, glm::vec2 positionOnScreen);
+             void renderLeft(const ProxyPlayer& participant, glm::vec2 positionOnScreen);
+             void renderRight(const ProxyPlayer& participant, glm::vec2 positionOnScreen);
              void flush();
             
         private:
-            void renderImpl(const std::shared_ptr<ProxyPlayer>& participant, std::shared_ptr<PlayerLabel>& labelElementField, std::weak_ptr<ProxyPlayer>& proxyPlayerField);
+            void renderImpl(const ProxyPlayer& participant, std::shared_ptr<PlayerLabel>& labelElementField, boost::optional<const ProxyPlayer&>& proxyPlayerField);
             void renderCircleSector(const std::shared_ptr<PlayerLabel>& playerLabel, float percentExpired);
             void flushText();
             void flushImages();
-            void flushImageOfPlayer(const std::shared_ptr<PlayerLabel>& element, std::weak_ptr<ProxyPlayer> participant);
+            void flushImageOfPlayer(const std::shared_ptr<PlayerLabel>& element, boost::optional<const ProxyPlayer&> participant);
             void endFlush();
 
 	};

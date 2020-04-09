@@ -32,13 +32,13 @@ namespace card {
 
 			const CardAnimator& getDrawStack() const;
 			const CardAnimator& getPlayStack() const;
-			std::shared_ptr<LocalPlayer> getLocalPlayer();
+			LocalPlayer& getLocalPlayer();
 			std::vector<std::shared_ptr<ProxyPlayer>> getOpponents();
-			void removeOpponentLocal(std::shared_ptr<ParticipantOnClient> player);
+			void removeOpponentLocal(ParticipantOnClient& player);
 			bool checkIfIsOpponent(std::string username) const;
 			bool hasGameEnded() const;
 			bool hasInitialCardBeenDistributed() const;
-			std::shared_ptr<ProxyPlayer> getWinnerOrNull();
+			boost::optional<ProxyPlayer&> getWinnerOrNull();
 			MessageQueue& getMessageQueue();
 	};
 }

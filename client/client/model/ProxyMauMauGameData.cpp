@@ -20,7 +20,7 @@ namespace card {
 		}
 	}
 
-	ProxyMauMauGameData::ProxyMauMauGameData(std::vector<std::shared_ptr<ParticipantOnClient>> allParticipantsInclLocal, std::shared_ptr<ParticipantOnClient> localParticipant, std::vector<int> handCards, int startCard, RoomOptions& roomOptions, std::function<void(std::shared_ptr<ProxyPlayer>)> onTurnEnd) :
+	ProxyMauMauGameData::ProxyMauMauGameData(std::vector<std::shared_ptr<ParticipantOnClient>> allParticipantsInclLocal, std::shared_ptr<ParticipantOnClient> localParticipant, std::vector<int> handCards, int startCard, RoomOptions& roomOptions, std::function<void(ProxyPlayer&)> onTurnEnd) :
 			drawCardStack(std::make_unique<CardStack>()),
 			playCardStack(std::make_unique<CardStack>()),
 			indexForNextCard(Card(startCard).getCardIndex()),
@@ -94,7 +94,7 @@ namespace card {
 	}
 
 	bool ProxyMauMauGameData::isLocalPlayerOnTurn() const {
-		return playerList.isPlayerOnTurn(localPlayer);
+		return playerList.isPlayerOnTurn(*localPlayer);
 	}
 
 	bool ProxyMauMauGameData::areAllPreviousCardTransactionsCompleted() const {
@@ -102,7 +102,7 @@ namespace card {
 		if(! localPlayer->getTempCardStack().getCardAnimations().empty()) return false;
 
 		for(auto& player : playerList) {
-			if(! player->getCardStack().getCardAnimations().empty()) return false;
+			if(! player.getCardStack().getCardAnimations().empty()) return false;
 		}
 		
 		return true;
@@ -127,10 +127,10 @@ namespace card {
 		return (playedCard.getValue() == DRAW_2_VALUE) ? 2 : 0;
 	}
 
-	void ProxyMauMauGameData::playCardFromHandCards(std::shared_ptr<ProxyPlayer> player, Card card, CardIndex newCardIndex, int delay) {
+	void ProxyMauMauGameData::playCardFromHandCards(ProxyPlayer& player, Card card, CardIndex newCardIndex, int delay) {
 		throwIfGameHasEnded();
 		field_wasCardPlayed = true;
-		player->playCardFromHandCardsAfterDelay(card, playCardStack, delay);
+		player.playCardFromHandCardsAfterDelay(card, playCardStack, delay);
 		updateCardIndex(card, newCardIndex);
 		updateDirection(card);
 		clearPermanentMessagesIfGameHasEnded();
@@ -173,10 +173,10 @@ namespace card {
 			else direction = Direction::CW;
 		}
 	}
-	void ProxyMauMauGameData::drawInHandCardsFromCardStack(std::shared_ptr<ProxyPlayer> player, Card card) {
+	void ProxyMauMauGameData::drawInHandCardsFromCardStack(ProxyPlayer& player, Card card) {
 		throwIfGameHasEnded();
 		field_wasCardDrawnIntoHandCards = true;
-		player->drawCardInHandCards(card, drawCardStack);
+		player.drawCardInHandCards(card, drawCardStack);
 		tryRebalanceCardStacks();
 	}
 
@@ -216,11 +216,11 @@ namespace card {
 		return playCardStack;
 	}
 
-	std::shared_ptr<LocalPlayer> ProxyMauMauGameData::getLocalPlayer() {
-		return localPlayer;
+	LocalPlayer& ProxyMauMauGameData::getLocalPlayer() {
+		return *localPlayer;
 	}
 
-	std::shared_ptr<ProxyPlayer> ProxyMauMauGameData::getPlayerOnTurn() {
+	ProxyPlayer& ProxyMauMauGameData::getPlayerOnTurn() {
 		return playerList.getPlayerOnTurn();
 	}
 
@@ -228,13 +228,13 @@ namespace card {
 		return opponents;
 	}
 
-	void ProxyMauMauGameData::removeOpponentLocal(std::shared_ptr<ParticipantOnClient> participant) {
-		std::string participantUsername = participant->getUsername();
+	void ProxyMauMauGameData::removeOpponentLocal(ParticipantOnClient& participant) {
+		std::string participantUsername = participant.getUsername();
 		appendMessage(participantUsername + u8" verließ das Spiel.");
 		clearPermanentMessagesIfGameHasEnded();
 
 		if(hasGameEnded()) return;
-		auto player = lookupOpponent(participantUsername);
+		auto& player = lookupOpponent(participantUsername);
 
 		if(playerList.isPlayerOnTurn(player)) {
 			setNextPlayerOnTurnLocal();
@@ -253,46 +253,51 @@ namespace card {
 
 	bool ProxyMauMauGameData::checkIfIsParticipant(std::string username) const {
 		for(auto& o : playerList) {
-			if(o->getUsername() == username) return true;
+			if(o.getUsername() == username) return true;
 		}
 		return false;
 	}
 
-	std::shared_ptr<ProxyPlayer> ProxyMauMauGameData::lookupPlayer(std::string username) {
+	bool ProxyMauMauGameData::checkIfLocalPlayer(ProxyPlayer& p) const {
+		std::shared_ptr<ProxyPlayer> localPlayerCasted = static_cast<std::shared_ptr<ProxyPlayer>>(localPlayer);
+		return localPlayerCasted == p;
+	}
+
+	ProxyPlayer& ProxyMauMauGameData::lookupPlayer(std::string username) {
 		for(auto& o : playerList) {
-			if(o->getUsername() == username) return o;
+			if(o.getUsername() == username) return o;
 		}
 
 		throw PlayerNotFoundException("\"" + username + "\" is not a player.");
 	}
-	std::shared_ptr<ProxyPlayer> ProxyMauMauGameData::lookupOpponent(std::string username) {
+	ProxyPlayer& ProxyMauMauGameData::lookupOpponent(std::string username) {
 		for(auto& o : opponents) {
-			if(o->getUsername() == username) return o;
+			if(o->getUsername() == username) return *o;
 		}
 
 		throw PlayerNotFoundException("\"" + username + "\" is not an opponent.");
 	}
 	bool ProxyMauMauGameData::hasGameEnded() const {
-		return getWinnerOrNull() != nullptr;
+		return getWinnerOrNull().has_value();
 	}
 	bool ProxyMauMauGameData::hasInitialCardBeenDistributed() const {
 		return field_hasInitialCardsBeenDistributed;
 	}
-	std::shared_ptr<ProxyPlayer> ProxyMauMauGameData::getWinnerOrNull() const {
+	boost::optional<ProxyPlayer&> ProxyMauMauGameData::getWinnerOrNull() const {
 		const auto& allPlayers = playerList.getAllPlayers();
 
 		// if there's only one player ingame, he has won the game
-		if(allPlayers.size() == 1) return allPlayers[0];
+		if(allPlayers.size() == 1) return *allPlayers[0];
 
 		// if the distribution of the initial cards hasn't been finished, no player can have won 
-		if(! field_hasInitialCardsBeenDistributed) return nullptr;
+		if(! field_hasInitialCardsBeenDistributed) return boost::none;
 
 		for(auto& player : allPlayers) {
 			if(player->getCardStack().isEmptyAndNoPendingTransactions()) {
-				return player;
+				return *player;
 			}
 		}
-		return nullptr;
+		return boost::none;
 	}
 
 	const RoomOptions& ProxyMauMauGameData::getOptions() const {
@@ -310,21 +315,21 @@ namespace card {
 		setNextPlayerOnTurnLocal();
 		appendMessage("Zeit ist abgelaufen!");
 	}
-	void ProxyMauMauGameData::onSuccessfulMau(std::shared_ptr<ProxyPlayer> player) {
+	void ProxyMauMauGameData::onSuccessfulMau(ProxyPlayer& player) {
 		if(roomOptions.getOption(Options::HAVE_TO_MAU)) {
-			player->onSuccessfulMau();
+			player.onSuccessfulMau();
 		}
 	}
-	void ProxyMauMauGameData::onMauPunishment(std::shared_ptr<ProxyPlayer> punishedPlayer, std::vector<Card> cardsToDraw, MauPunishmentCause cause) {
+	void ProxyMauMauGameData::onMauPunishment(ProxyPlayer& punishedPlayer, std::vector<Card> cardsToDraw, MauPunishmentCause cause) {
 		if(! roomOptions.getOption(Options::HAVE_TO_MAU)) return;
 
 		int delay = (cause == MauPunishmentCause::NO_MAU_RECEIVED) ? PLAY_DURATION_MS : 0;
 		playerHasToDrawCards(punishedPlayer, cardsToDraw, delay);
 
-		std::string punishedUsername = punishedPlayer->getUsername();
+		std::string punishedUsername = punishedPlayer.getUsername();
 		MauMauPunishmentMessageGenerator::appendMessage(messageQueue, punishedUsername, cause);
 
-		if(punishedPlayer == localPlayer) {
+		if(checkIfLocalPlayer(punishedPlayer)) {
 			localPlayer->onMauFailure();
 		}
 	}
@@ -338,9 +343,9 @@ namespace card {
 		if(roomOptions.getOption(Options::PASS_SKIP)) {
 			setNextPlayerOnTurnLocal();
 			if(canSkipPlayer(playedCard)) {
-				auto userOnTurn = playerList.getPlayerOnTurn();
-				userOnTurn->setSkipState();
-				if(userOnTurn == localPlayer) {
+				auto& userOnTurn = playerList.getPlayerOnTurn();
+				userOnTurn.setSkipState();
+				if(checkIfLocalPlayer(userOnTurn)) {
 					messageQueue.appendMessagePermanently("Du wurdest ausgelassen. Spiele eine 8 oder passe.", skipStateMessageKey);
 				}
 			}
@@ -349,28 +354,28 @@ namespace card {
 			else setNextPlayerOnTurnLocal();
 		}
 		
-		if(roomOptions.getOption(Options::PASS_DRAW_TWO) && isInDrawTwoState() && playerList.isPlayerOnTurn(localPlayer)) {
+		if(roomOptions.getOption(Options::PASS_DRAW_TWO) && isInDrawTwoState() && playerList.isPlayerOnTurn(*localPlayer)) {
 			messageQueue.appendMessagePermanently("Spiele eine 7 oder passe, um "+std::to_string(getSizeOfCardsToDrawDueToPlusTwo())+" Karten zu ziehen.", drawTwoMessageKey);
 		}
 
 		clearPermanentMessagesIfGameHasEnded();
 	}
 	void ProxyMauMauGameData::setNextPlayerOnTurnLocal() {
-		std::shared_ptr<ProxyPlayer> nextPlayer = playerList.getNextPlayerOnTurn(direction);
+		auto& nextPlayer = playerList.getNextPlayerOnTurn(direction);
 		setOnTurnLocal(nextPlayer);
 	}
 	void ProxyMauMauGameData::setNextButOnePlayerOnTurnLocal() {
-		std::shared_ptr<ProxyPlayer> nextPlayer = playerList.getNextPlayerOnTurn(direction);
-		nextPlayer->startSkippedAnimation();
-		std::shared_ptr<ProxyPlayer> nextButOnePlayer = playerList.getNextPlayerOnTurn(direction, nextPlayer);
+		auto& nextPlayer = playerList.getNextPlayerOnTurn(direction);
+		nextPlayer.startSkippedAnimation();
+		auto& nextButOnePlayer = playerList.getNextPlayerOnTurn(direction, nextPlayer);
 		setOnTurnLocal(nextButOnePlayer);
 	}
-	void ProxyMauMauGameData::setOnTurnLocal(std::shared_ptr<ProxyPlayer> player) {	
+	void ProxyMauMauGameData::setOnTurnLocal(ProxyPlayer& player) {	
 		int cardsToDrawDueToPlusTwoAmount = 0;
 
 		// if field_wasCardPlayed would be true, the player on turn would have passed skip to the next player
-		if(playerList.getPlayerOnTurn()->isInSkipState() && !field_wasCardPlayed) {
-			playerList.getPlayerOnTurn()->startSkippedAnimation();
+		if(playerList.getPlayerOnTurn().isInSkipState() && !field_wasCardPlayed) {
+			playerList.getPlayerOnTurn().startSkippedAnimation();
 		}
 		if(isInDrawTwoState() && !field_wasCardPlayed) {
 			if(! roomOptions.getOption(Options::PASS_DRAW_TWO)) throw std::runtime_error("It isn't possible that a player has to draw cards due to a plus two, even though no (+2)-card was played when +2 cards can't be passed on.");
@@ -386,13 +391,13 @@ namespace card {
 		int delayForDrawDueToPlusTwo = PLAY_DURATION_MS + ((field_wasCardDrawnIntoHandCards) ? (DRAW_DURATION_MS + DELAY_BETWEEN_DRAW_AND_PLAY) : 0);
 		int delayToSetNextPlayerOnTurn = getTimeToSetNextPlayerOnTurn(field_wasCardPlayed, field_wasCardDrawnIntoHandCards, cardsToDrawDueToPlusTwoAmount);
 		int delayToFreezeAnimation = getTimeToEndCurrentTurn(field_wasCardPlayed, field_wasCardDrawnIntoHandCards);
-		if(field_wasCardDrawnIntoHandCards && field_wasCardPlayed && playerList.isPlayerOnTurn(localPlayer)) {
+		if(field_wasCardDrawnIntoHandCards && field_wasCardPlayed && playerList.isPlayerOnTurn(*localPlayer)) {
 			// we don't have to take the time for drawing the card into consideration
 			delayToFreezeAnimation = 0;
 		}
 
-		std::shared_ptr<ProxyPlayer> lastUserOnTurn = playerList.getPlayerOnTurn();
-		lastUserOnTurn->onEndTurn();
+		ProxyPlayer& lastUserOnTurn = playerList.getPlayerOnTurn();
+		lastUserOnTurn.onEndTurn();
 		onTurnEndCallback(lastUserOnTurn);
 		playerList.setPlayerOnTurn(player);
 
@@ -403,12 +408,12 @@ namespace card {
 		}
 		field_wasCardDrawnIntoHandCards = false;
 		field_wasCardPlayed = false;
-		threadUtils_invokeIn(delayToSetNextPlayerOnTurn, this, [this, player, lastUserOnTurn]() {			
-			lastUserOnTurn->endRemainingTimeAnimation();
-			player->onStartTurn();
+		threadUtils_invokeIn(delayToSetNextPlayerOnTurn, this, [this, &player, &lastUserOnTurn]() {			
+			lastUserOnTurn.endRemainingTimeAnimation();
+			player.onStartTurn();
 		});
-		threadUtils_invokeIn(delayToFreezeAnimation, this, [this, lastUserOnTurn]() {
-			lastUserOnTurn->freezeRemainingTimeAnimation();
+		threadUtils_invokeIn(delayToFreezeAnimation, this, [this, &lastUserOnTurn]() {
+			lastUserOnTurn.freezeRemainingTimeAnimation();
 		});
 
 		if(isInDrawTwoState() && !roomOptions.getOption(Options::PASS_DRAW_TWO)) {
@@ -417,9 +422,9 @@ namespace card {
 		}
 	}
 
-	void ProxyMauMauGameData::setInitialPlayerOnTurnLocal(std::shared_ptr<ProxyPlayer> player, Card nextCardOnDrawStack) {
+	void ProxyMauMauGameData::setInitialPlayerOnTurnLocal(ProxyPlayer& player, Card nextCardOnDrawStack) {
 		playerList.setPlayerOnTurn(player);
-		player->onStartTurn();
+		player.onStartTurn();
 
 		this->drawCardForNextPlayer = Card(nextCardOnDrawStack);
 		field_hasInitialCardsBeenDistributed = true;
@@ -442,16 +447,16 @@ namespace card {
 		return drawCardForNextPlayer;
 	}
 	
-	void ProxyMauMauGameData::playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, std::size_t amountOfCards, int delayMs) {
+	void ProxyMauMauGameData::playerHasToDrawCards(ProxyPlayer& player, std::size_t amountOfCards, int delayMs) {
 		if(amountOfCards == 0) return;
 
 		auto cards = Card::getVectorWithCards(Card::NULLCARD, amountOfCards);
 		playerHasToDrawCards(player, cards, delayMs);
 	}
 
-	void ProxyMauMauGameData::playerHasToDrawCards(std::shared_ptr<ProxyPlayer> player, const std::vector<Card>& cards, int delayMs) {
+	void ProxyMauMauGameData::playerHasToDrawCards(ProxyPlayer& player, const std::vector<Card>& cards, int delayMs) {
 		for(const Card& c : cards) {
-			player->drawCardInHandCards(c, drawCardStack, delayMs);
+			player.drawCardInHandCards(c, drawCardStack, delayMs);
 			tryRebalanceCardStacks();
 
 			delayMs += DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS;

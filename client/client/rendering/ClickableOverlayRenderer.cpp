@@ -14,7 +14,7 @@ namespace card {
 		auto& localPlayer = game.getLocalPlayer();
 
 		bool shouldRenderColorChooseOverlay = clientGameAccessor.isWaitingForColorChoose();
-		bool shouldRenderDrawnCardOverlay = localPlayer->getCardInTempStack().has_value();
+		bool shouldRenderDrawnCardOverlay = localPlayer.getCardInTempStack().has_value();
 		bool shouldSuppressMauButtonClick = shouldRenderColorChooseOverlay || shouldRenderDrawnCardOverlay;
 		bool shouldSuppressDrawnCardOverlayClick = shouldRenderColorChooseOverlay;
 
@@ -45,7 +45,7 @@ namespace card {
 		if(game.hasGameEnded()) return;
 
 		static std::optional<Card> drawnCardInLastPass = std::nullopt;
-		std::optional<Card> drawnCardOrNone = game.getLocalPlayer()->getCardInTempStack();
+		std::optional<Card> drawnCardOrNone = game.getLocalPlayer().getCardInTempStack();
 
 		auto& clientGameAccessor = game.getAccessorFromClient();
 		if(drawnCardOrNone.has_value()) {

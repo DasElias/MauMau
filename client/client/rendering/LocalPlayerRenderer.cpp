@@ -38,14 +38,14 @@ namespace card {
 		handCardsRenderer.renderHandCardsOfLocalPlayer(positionedHandCards, game, shouldDisableFunc);
 
 		// render animation to play card stack from temp card stack
-		auto animationsToPlayCardStack = AnimationsToPlayStackFilterer::getAnimationsFromParticularHandCards(game, game.getLocalPlayer()->getTempCardStack());
+		auto animationsToPlayCardStack = AnimationsToPlayStackFilterer::getAnimationsFromParticularHandCards(game, game.getLocalPlayer().getTempCardStack());
 		for(auto& a : animationsToPlayCardStack) {
 			animatorToPlayStack.animateFromLocalPlayerTemp(a, playStack);
 		}
 	}
 	std::pair<int, float> LocalPlayerRenderer::getIntersectedIndexAndAddition(ProxyMauMauGame& game) {
 		auto& gameData = game.getGameData();
-		auto& handCards = game.getLocalPlayer()->getCardStack();
+		auto& handCards = game.getLocalPlayer().getCardStack();
 
 		std::optional<int> intersectedCardIndexOrNone = checkIntersectionWithHandCards(game);
 		int intersectedCardIndex = -1;
@@ -74,13 +74,13 @@ namespace card {
 
 		if(! gameData.isReadyToPerformLocalPlayerTurn()) return false;
 
-		if(localPlayer->isInSkipState()) return !gameData.canSkipPlayer(c);
+		if(localPlayer.isInSkipState()) return !gameData.canSkipPlayer(c);
 		else if(gameData.isInDrawTwoState()) return gameData.getAmountsOfCardsToDrawForNextPlayer(c) == 0;
 		else return false;
 	}
 	PositionedCardStack LocalPlayerRenderer::getPositionedCardStackOfLocalPlayer(ProxyMauMauGame& game) {
-		auto localPlayer = game.getLocalPlayer();
-		return {localPlayer->getCardStack(), HAND_CARDS_LOCAL_POSITION, HAND_CARDS_LOCAL_ROTATION};
+		auto& localPlayer = game.getLocalPlayer();
+		return {localPlayer.getCardStack(), HAND_CARDS_LOCAL_POSITION, HAND_CARDS_LOCAL_ROTATION};
 	}
 	void LocalPlayerRenderer::renderAnimations(ProxyMauMauGame& game) {
 		auto& localPlayer = game.getLocalPlayer();
@@ -92,7 +92,7 @@ namespace card {
 		// since we want to render animations added later also to be rendered later
 		// this is important when we have multiple CardAnimations from the draw card stack to the hand card stack,
 		// for example when the player was forced to draw 2 cards
-		auto localPlayerAnimations = localPlayer->getCardStack().getCardAnimations();
+		auto localPlayerAnimations = localPlayer.getCardStack().getCardAnimations();
 		for(auto it = localPlayerAnimations.rbegin(); it != localPlayerAnimations.rend(); ++it) {
 			auto& animation = *it;
 
@@ -108,7 +108,7 @@ namespace card {
 										   DRAW_CARDS_ROTATION - glm::vec3(PI / 2, 0, 0),
 										   HAND_CARDS_LOCAL_POSITION,
 										   HAND_CARDS_LOCAL_ROTATION);
-			} else if(animation.source.get().equalsId(localPlayer->getTempCardStack())) {
+			} else if(animation.source.get().equalsId(localPlayer.getTempCardStack())) {
 				// render cards from temporary card stack to hand cards
 				cardInterpolator.interpolateAndRender(animation,
 										   DrawnCardRenderer::POSITION,
@@ -120,7 +120,7 @@ namespace card {
 		}
 
 		// render cards from draw card stack to temporary card stack
-		for(auto& animation : localPlayer->getTempCardStack().getCardAnimations()) {
+		for(auto& animation : localPlayer.getTempCardStack().getCardAnimations()) {
 			cardInterpolator.interpolateAndRender(animation,
 									   DRAW_CARDS_POSITION + glm::vec3(0, CardStackRenderer::ADDITION_PER_CARD * drawStackSize, 0),
 									   DRAW_CARDS_ROTATION,

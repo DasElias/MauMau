@@ -32,27 +32,27 @@ namespace card {
 		parentElement->addChildElement(labelElementForRight);
 		scene.setRootElement(parentElement);
 	}
-	void PlayerLabelRenderer::renderLocal(const std::shared_ptr<ProxyPlayer>& participant, glm::vec2 positionOnScreen) {
+	void PlayerLabelRenderer::renderLocal(const ProxyPlayer& participant, glm::vec2 positionOnScreen) {
 		labelElementForLocal->setPositionOnScreen(positionOnScreen);
 		renderImpl(participant, labelElementForLocal, playerLocal);
 	}
-	void PlayerLabelRenderer::renderVisAVis(const std::shared_ptr<ProxyPlayer>& participant, glm::vec2 positionOnScreen) {
+	void PlayerLabelRenderer::renderVisAVis(const ProxyPlayer& participant, glm::vec2 positionOnScreen) {
 		labelElementForVisAVis->setPositionOnScreen(positionOnScreen);
 		renderImpl(participant, labelElementForVisAVis, playerVisAVis);
 	}
-	void PlayerLabelRenderer::renderLeft(const std::shared_ptr<ProxyPlayer>& participant, glm::vec2 positionOnScreen) {
+	void PlayerLabelRenderer::renderLeft(const ProxyPlayer& participant, glm::vec2 positionOnScreen) {
 		labelElementForLeft->setPositionOnScreen(positionOnScreen);
 		renderImpl(participant, labelElementForLeft, playerLeft);
 	}
-	void PlayerLabelRenderer::renderRight(const std::shared_ptr<ProxyPlayer>& participant, glm::vec2 positionOnScreen) {
+	void PlayerLabelRenderer::renderRight(const ProxyPlayer& participant, glm::vec2 positionOnScreen) {
 		labelElementForRight->setPositionOnScreen(positionOnScreen);
 		renderImpl(participant, labelElementForRight, playerRight);
 	}
-	void PlayerLabelRenderer::renderImpl(const std::shared_ptr<ProxyPlayer>& participant, std::shared_ptr<PlayerLabel>& labelElementField, std::weak_ptr<ProxyPlayer>& proxyPlayerField) {
+	void PlayerLabelRenderer::renderImpl(const ProxyPlayer& participant, std::shared_ptr<PlayerLabel>& labelElementField, boost::optional<const ProxyPlayer&>& proxyPlayerField) {
 		proxyPlayerField = participant;
-		labelElementField->set(participant->getUsername());
+		labelElementField->set(participant.getUsername());
 
-		if(participant->isRemainingTimeAnimationActive()) renderCircleSector(labelElementField, *participant->getPercentOfRemainingTime());
+		if(participant.isRemainingTimeAnimationActive()) renderCircleSector(labelElementField, *participant.getPercentOfRemainingTime());
 	}
 	void PlayerLabelRenderer::flush() {
 		flushText();
@@ -84,9 +84,8 @@ namespace card {
 		flushImageOfPlayer(labelElementForLeft, playerLeft);
 		flushImageOfPlayer(labelElementForRight, playerRight);
 	}
-	void PlayerLabelRenderer::flushImageOfPlayer(const std::shared_ptr<PlayerLabel>& element, std::weak_ptr<ProxyPlayer> participant_wp) {
-		if(element->isVisible()) {
-			auto participant = participant_wp.lock();
+	void PlayerLabelRenderer::flushImageOfPlayer(const std::shared_ptr<PlayerLabel>& element, boost::optional<const ProxyPlayer&> participant) {
+		if(element->isVisible() && participant.has_value()) {
 			Avatar avatar = participant->getAvatar();
 			avatarTextures.bind(avatar);
 			renderer2D.render(element->getImageElement(), true);

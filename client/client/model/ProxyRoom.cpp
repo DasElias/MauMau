@@ -204,7 +204,7 @@ namespace card {
 		std::shared_ptr<ParticipantOnClient> player = lookupParticipant(username);
 		allParticipants.erase(std::find(allParticipants.begin(), allParticipants.end(), player));
 
-		if(isGameRunning() && getGame().checkIfIsOpponent(username)) getGame().removeOpponentLocal(player);
+		if(isGameRunning() && getGame().checkIfIsOpponent(username)) getGame().removeOpponentLocal(*player);
 	}
 
 	void ProxyRoom::changeOptionsLocal(RoomOptions newOptions) {

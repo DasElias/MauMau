@@ -156,16 +156,16 @@ namespace card {
 		auto& game = room->getGame();
 		const auto& localPlayer = game.getLocalPlayer();
 
-		if(opponents[0]) playerLabelRenderer.renderLeft(opponents[0], playerLabelPositionGenerator.getScreenPosForLeftPlayerLabel());
-		if(opponents[1]) playerLabelRenderer.renderVisAVis(opponents[1], playerLabelPositionGenerator.getScreenPosForVisAVisPlayerLabel());
-		if(opponents[2]) playerLabelRenderer.renderRight(opponents[2], playerLabelPositionGenerator.getScreenPosForRightPlayerLabel());
+		if(opponents[0]) playerLabelRenderer.renderLeft(*opponents[0], playerLabelPositionGenerator.getScreenPosForLeftPlayerLabel());
+		if(opponents[1]) playerLabelRenderer.renderVisAVis(*opponents[1], playerLabelPositionGenerator.getScreenPosForVisAVisPlayerLabel());
+		if(opponents[2]) playerLabelRenderer.renderRight(*opponents[2], playerLabelPositionGenerator.getScreenPosForRightPlayerLabel());
 		playerLabelRenderer.renderLocal(game.getLocalPlayer(), playerLabelPositionGenerator.getScreenPosForLocalPlayerLabel());
 		playerLabelRenderer.flush();
 
 		if(opponents[0]) playerLabelOverlayRenderer.render(playerLabelPositionGenerator.getScreenPosForLeftPlayerLabel(), opponents[0]->getPercentOfSkipAnimationOrNone(), opponents[0]->isInSkipState(), opponents[0]->getPercentOfMauAnimationOrNone());
 		if(opponents[1]) playerLabelOverlayRenderer.render(playerLabelPositionGenerator.getScreenPosForVisAVisPlayerLabel(), opponents[1]->getPercentOfSkipAnimationOrNone(), opponents[1]->isInSkipState(), opponents[1]->getPercentOfMauAnimationOrNone());
 		if(opponents[2]) playerLabelOverlayRenderer.render(playerLabelPositionGenerator.getScreenPosForRightPlayerLabel(), opponents[2]->getPercentOfSkipAnimationOrNone(), opponents[2]->isInSkipState(), opponents[2]->getPercentOfMauAnimationOrNone());
-		playerLabelOverlayRenderer.render(playerLabelPositionGenerator.getScreenPosForLocalPlayerLabel(), localPlayer->getPercentOfSkipAnimationOrNone(), localPlayer->isInSkipState(), localPlayer->getPercentOfMauAnimationOrNone());
+		playerLabelOverlayRenderer.render(playerLabelPositionGenerator.getScreenPosForLocalPlayerLabel(), localPlayer.getPercentOfSkipAnimationOrNone(), localPlayer.isInSkipState(), localPlayer.getPercentOfMauAnimationOrNone());
 	}
 	void CardSceneRenderer::handleInput() {
 		auto& game = room->getGame();
@@ -208,7 +208,7 @@ namespace card {
 		auto& game = room->getGame();
 		auto& gameData = game.getGameData();
 		auto& drawCardStack = game.getDrawStack();
-		bool shouldDisable = gameData.isReadyToPerformLocalPlayerTurn() && (game.getLocalPlayer()->isInSkipState() || gameData.isInDrawTwoState());
+		bool shouldDisable = gameData.isReadyToPerformLocalPlayerTurn() && (game.getLocalPlayer().isInSkipState() || gameData.isInDrawTwoState());
 
 		PositionedCardStack positionedDrawCardStack(drawCardStack, DRAW_CARDS_POSITION, DRAW_CARDS_ROTATION);
 		drawCardStackRenderer.render(positionedDrawCardStack, shouldDisable);
@@ -244,9 +244,9 @@ namespace card {
 			glm::vec3 rotationEnd = PLAY_CARDS_ROTATION + misalignmentGenerator.computeRotationMisalignment(playCardStack.getSize() + animationCounter);
 			CardAnimator& sourceStack = animation.source.get();
 
-			if(sourceStack.equalsId(localPlayer->getTempCardStack())) {
+			if(sourceStack.equalsId(localPlayer.getTempCardStack())) {
 				// do nothing, will be considered in LocalPlayerRenderer
-			} else if(sourceStack.equalsId(localPlayer->getCardStack())) {
+			} else if(sourceStack.equalsId(localPlayer.getCardStack())) {
 				// do nothing, will be considered in LocalPlayerRenderer
 			} else if(cardStacksOrNoneInCwOrder[0] && sourceStack.equalsId(cardStacksOrNoneInCwOrder[0]->getCardStack())) {
 				glm::vec3 startPosition = handCardStackPositionGenerator.getPositionOfCard_cardStackZ(animation.indexInSourceStack, sourceStack.getSize() + 1, HAND_CARDS_OPPONENT_LEFT_POSITION, LEFT_RIGHT_OPPONENT_CARDS_WIDTH, CardRenderer::WIDTH);
@@ -323,7 +323,7 @@ namespace card {
 		const RoomOptions& options = game.getGameData().getOptions();
 		bool doesColorIndexChangeOnJack = options.getOption(Options::CHOOSE_COLOR_ON_JACK);
 		bool isGameRunning = !game.hasGameEnded();
-		bool hasNotDrawnPlayableCard = !game.getLocalPlayer()->getCardInTempStack().has_value();
+		bool hasNotDrawnPlayableCard = !game.getLocalPlayer().getCardInTempStack().has_value();
 		if(cardIndexForNextCardOrNone.has_value() && isGameRunning && doesColorIndexChangeOnJack && hasNotDrawnPlayableCard) {
 			cardIndexRenderer.renderCardIndexForNextCard(*cardIndexForNextCardOrNone);
 		}

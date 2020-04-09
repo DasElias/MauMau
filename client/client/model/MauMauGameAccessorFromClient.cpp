@@ -16,7 +16,7 @@ namespace card {
 		if(gameData.hasGameEnded() ||
 			! gameData.isReadyToPerformLocalPlayerTurn() ||
 		    ! gameData.hasInitialCardBeenDistributed() ||
-			gameData.getLocalPlayer()->wasMauDemandedThisTurn() ||
+			gameData.getLocalPlayer().wasMauDemandedThisTurn() ||
 			! gameData.getOptions().getOption(Options::HAVE_TO_MAU)) {
 			return false;
 		}
@@ -24,20 +24,19 @@ namespace card {
 		return true;
 	}
 	bool MauMauGameAccessorFromClient::canPlay(std::size_t indexInLocalPlayerHandCards) const {
-		const CardAnimator& handCardStack = gameData.getLocalPlayer()->getCardStack();
+		const CardAnimator& handCardStack = gameData.getLocalPlayer().getCardStack();
 		Card c = handCardStack.get(indexInLocalPlayerHandCards);
 		return canPlay(c);
 	}
 	bool MauMauGameAccessorFromClient::canPlay(Card card) const {
 		if(!gameData.isReadyToPerformLocalPlayerTurn() ||
-		   gameData.getLocalPlayer()->hasPlayedCard() ||
-		   gameData.getLocalPlayer()->hasTimeExpired()) {
+		   gameData.getLocalPlayer().hasPlayedCard() ||
+		   gameData.getLocalPlayer().hasTimeExpired()) {
 
 			return false;
 		}
 
-		// TODO check: what happens if skipping/drawing two is disabled
-		if(gameData.getLocalPlayer()->isInSkipState() && card.getValue() != SKIP_VALUE) return false;
+		if(gameData.getLocalPlayer().isInSkipState() && card.getValue() != SKIP_VALUE) return false;
 		if(gameData.isInDrawTwoState() && card.getValue() != DRAW_2_VALUE) return false;
 
 		auto& roomOptions = gameData.getOptions();
@@ -54,8 +53,8 @@ namespace card {
 	bool MauMauGameAccessorFromClient::canDraw() const {
 		if(!gameData.isReadyToPerformLocalPlayerTurn() ||
 		   isWaitingForColorChoose() ||
-		   gameData.getLocalPlayer()->hasTimeExpired() ||
-		   gameData.getLocalPlayer()->hasStartedToDrawCard() ||
+		   gameData.getLocalPlayer().hasTimeExpired() ||
+		   gameData.getLocalPlayer().hasStartedToDrawCard() ||
 		   canPass() ||
 		   gameData.getDrawCardForNextPlayer() == Card::NULLCARD) {
 			
@@ -65,26 +64,26 @@ namespace card {
 		return true;
 	}
 	bool MauMauGameAccessorFromClient::canPlayDrawnCard() const {
-		auto localPlayer = gameData.getLocalPlayer();
+		auto& localPlayer = gameData.getLocalPlayer();
 
-		if(! localPlayer->isCardInTemporaryStack()) return false;
-		else return canPlay(* localPlayer->getCardInTempStack());
+		if(! localPlayer.isCardInTemporaryStack()) return false;
+		else return canPlay(* localPlayer.getCardInTempStack());
 	}
 	bool MauMauGameAccessorFromClient::canTakeDrawnCardIntoHandCards() const {
-		auto localPlayer = gameData.getLocalPlayer();
-		return localPlayer->isCardInTemporaryStack();
+		auto& localPlayer = gameData.getLocalPlayer();
+		return localPlayer.isCardInTemporaryStack();
 	}
 	bool MauMauGameAccessorFromClient::isWaitingForColorChoose() const {
 		return indexOfCardToPlayAfterColorChoose.has_value();
 	}
 	bool MauMauGameAccessorFromClient::canPass() const {
-		auto localPlayer = gameData.getLocalPlayer();
-		return gameData.isReadyToPerformLocalPlayerTurn() && (localPlayer->isInSkipState() || gameData.isInDrawTwoState());
+		auto& localPlayer = gameData.getLocalPlayer();
+		return gameData.isReadyToPerformLocalPlayerTurn() && (localPlayer.isInSkipState() || gameData.isInDrawTwoState());
 	}
 	void MauMauGameAccessorFromClient::mau() {
 		if(! canMau()) throw std::runtime_error("Can't mau card in the current situation!");
-		auto localPlayer = gameData.getLocalPlayer();
-		localPlayer->onMauDemand();
+		auto& localPlayer = gameData.getLocalPlayer();
+		localPlayer.onMauDemand();
 
 		MauRequest_CTSPacket pkt;
 		packetTransmitter->sendPacketToServer(pkt);
@@ -100,7 +99,7 @@ namespace card {
 			
 			gameData.drawInLocalPlayerTempCards();
 		} else {
-			auto localPlayer = gameData.getLocalPlayer();
+			auto& localPlayer = gameData.getLocalPlayer();
 			gameData.drawInHandCardsFromCardStack(localPlayer, cardToDraw);
 		
 			DrawCardRequest_CTSPacket p;
@@ -123,8 +122,8 @@ namespace card {
 	}
 
 	void MauMauGameAccessorFromClient::playCard(std::size_t index) {
-		auto localPlayer = gameData.getLocalPlayer();
-		Card card = localPlayer->getCardStack().get(index);
+		auto& localPlayer = gameData.getLocalPlayer();
+		Card card = localPlayer.getCardStack().get(index);
 		if(! canPlay(card)) throw std::runtime_error("Can't play card!");
 
 		bool canChangeColor = gameData.canChangeColor(card);
@@ -139,8 +138,8 @@ namespace card {
 
 	void MauMauGameAccessorFromClient::playDrawnCard() {
 		if(! canPlayDrawnCard()) throw std::runtime_error("Can't play drawn card!");
-		auto localPlayer = gameData.getLocalPlayer();
-		Card card = *localPlayer->getCardInTempStack();
+		auto& localPlayer = gameData.getLocalPlayer();
+		Card card = *localPlayer.getCardInTempStack();
 
 		bool canChangeColor = gameData.canChangeColor(card);
 		if(!canChangeColor || gameData.hasGameEnded()) {
@@ -154,7 +153,7 @@ namespace card {
 
 	void MauMauGameAccessorFromClient::pass() {
 		if(! canPass()) throw std::runtime_error("Can't pass!");
-		auto localPlayer = gameData.getLocalPlayer();
+		auto& localPlayer = gameData.getLocalPlayer();
 		PassRequest_CTSPacket p;
 		packetTransmitter->sendPacketToServer(p);
 
@@ -163,16 +162,16 @@ namespace card {
 
 	void MauMauGameAccessorFromClient::chooseColor(CardIndex color) {
 		if(!isWaitingForColorChoose()) throw std::runtime_error("Can't choose color!");
-		auto localPlayer = gameData.getLocalPlayer();
+		auto& localPlayer = gameData.getLocalPlayer();
 
 		playPremarkedCardAfterColorChoose(color);
 		sendPlayCardPacket(color);
 	}
 
 	void MauMauGameAccessorFromClient::playPremarkedCardAfterColorChoose(CardIndex newCardIndex) {
-		auto localPlayer = gameData.getLocalPlayer();
+		auto& localPlayer = gameData.getLocalPlayer();
 		if(indexOfCardToPlayAfterColorChoose.has_value()) {
-			std::optional<Card> drawnCard = localPlayer->getCardInTempStack();
+			std::optional<Card> drawnCard = localPlayer.getCardInTempStack();
 			if(drawnCard.has_value()) {
 				gameData.playCardFromLocalPlayerTempCards(newCardIndex);
 			} else {
@@ -185,8 +184,8 @@ namespace card {
 	}
 
 	void MauMauGameAccessorFromClient::sendPlayCardPacket(CardIndex newCardIndex) {
-		auto localPlayer = gameData.getLocalPlayer();
-		Card playedCard = *localPlayer->getPlayedCard();
+		auto& localPlayer = gameData.getLocalPlayer();
+		Card playedCard = *localPlayer.getPlayedCard();
 
 		PlayCardRequest_CTSPacket p(playedCard.getCardNumber(), wasCardDrawnThisTurn, static_cast<int>(newCardIndex));
 		packetTransmitter->sendPacketToServer(p);
