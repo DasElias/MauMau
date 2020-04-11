@@ -15,7 +15,7 @@ namespace card {
 		setOption(Options::PASS_DRAW_TWO, true);
 		setOption(Options::DIRECTION_CHANGE_ON_NINE, false);
 		setOption(Options::AMOUNT_OF_START_CARDS, 6);
-		setOption(Options::AMOUNT_OF_START_CARD_DECKS, 1);
+		setOption(Options::AMOUNT_OF_START_CARD_DECKS, 2);
 
 		assert(getSize() == OPTIONS_SIZE);
 	}
