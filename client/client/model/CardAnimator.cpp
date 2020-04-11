@@ -243,6 +243,9 @@ namespace card {
 	std::vector<int> CardAnimator::getCardNumbers() const {
 		return wrappedCardCollection->getCardNumbers();
 	}
+	const std::vector<Card>& CardAnimator::getCards() const {
+		return wrappedCardCollection->getCards();
+	}
 	bool CardAnimator::contains(Card c) const {
 		return wrappedCardCollection->contains(c);
 	}

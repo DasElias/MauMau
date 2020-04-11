@@ -47,6 +47,7 @@ namespace card {
 			const_iterator end() const;
 			const_iterator cend() const;
 			std::vector<int> getCardNumbers() const;
+			const std::vector<Card>& getCards() const;
 			bool contains(Card c) const;
 			
 			int find(Card c) const;

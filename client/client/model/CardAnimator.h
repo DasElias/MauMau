@@ -84,6 +84,7 @@ namespace card {
 			CardCollection::const_iterator end() const;
 			CardCollection::const_iterator cend() const;
 			std::vector<int> getCardNumbers() const;
+			const std::vector<Card>& getCards() const;
 			bool contains(Card c) const;
 
 			std::size_t find(Card c) const;
