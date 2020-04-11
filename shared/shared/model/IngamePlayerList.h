@@ -14,12 +14,18 @@ namespace card {
                 using reference = T&;
                 using pointer = T*;
                 using difference_type = std::ptrdiff_t;
-                using iterator_category = std::forward_iterator_tag;
+                using iterator_category = std::random_access_iterator_tag;
 
                 reference operator*() { return **curr; }
                 pointer operator->() { return &**this; }
                 iterator& operator++() { ++curr; return *this; }
                 iterator operator++(int) { const auto temp(*this); ++*this; return temp; }
+                iterator& operator+=(const difference_type off) { curr += off; return *this; }
+                iterator operator+(const difference_type off) const { auto temp(*this); temp += off; return temp; }
+                iterator& operator--() { --curr; return *this; }
+                iterator operator--(int) { const auto temp(*this); --* this; return temp; }
+                iterator& operator-=(const difference_type off) { curr -= off; return *this; }
+                iterator operator-(const difference_type off) const { auto temp(*this); temp -= off; return temp; }
                 bool operator==(const iterator& other) const { return curr == other.curr; }
                 bool operator!=(const iterator& other) const { return !(*this == other); }
 
@@ -31,12 +37,18 @@ namespace card {
                 using reference = const T&;
                 using pointer = const T*;
                 using difference_type = std::ptrdiff_t;
-                using iterator_category = std::forward_iterator_tag;
+                using iterator_category = std::random_access_iterator_tag;
 
                 reference operator*() { return **curr; }
                 pointer operator->() { return &**this; }
                 const_iterator& operator++() { ++curr; return *this; }
                 const_iterator operator++(int) { const auto temp(*this); ++* this; return temp; }
+                const_iterator& operator+=(const difference_type off) { curr += off; return *this; }
+                const_iterator operator+(const difference_type off) const { auto temp(*this); temp += off; return temp; }
+                const_iterator& operator--() { --curr; return *this; }
+                const_iterator operator--(int) { const auto temp(*this); --* this; return temp; }
+                const_iterator& operator-=(const difference_type off) { curr -= off; return *this; }
+                const_iterator operator-(const difference_type off) const { auto temp(*this); temp -= off; return temp; }
                 bool operator==(const const_iterator& other) const { return curr == other.curr; }
                 bool operator!=(const const_iterator& other) const { return !(*this == other); }
 

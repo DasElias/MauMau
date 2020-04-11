@@ -70,8 +70,8 @@ TEST_CASE("IngamePlayerList", "[IngamePlayerList]") {
 		REQUIRE(**players.begin() == *(const_cast<const IngamePlayerList<TestPlayer>&>(ingamePlayerList).cbegin()));
 	}
 	SECTION("end") {
-		REQUIRE(**players.end() == *ingamePlayerList.end());
-		REQUIRE(**players.end() == *(const_cast<const IngamePlayerList<TestPlayer>&>(ingamePlayerList).end()));
-		REQUIRE(**players.end() == *(const_cast<const IngamePlayerList<TestPlayer>&>(ingamePlayerList).cend()));
+		REQUIRE(**(players.end() - 1) == *(ingamePlayerList.end() - 1));
+		REQUIRE(**(players.end() - 1) == *(const_cast<const IngamePlayerList<TestPlayer>&>(ingamePlayerList).end() - 1));
+		REQUIRE(**(players.end() - 1) == *(const_cast<const IngamePlayerList<TestPlayer>&>(ingamePlayerList).cend() - 1));
 	}
 }
