@@ -2,7 +2,7 @@
 #include <cstddef>
 
 namespace card {
-	static int const PLAY_DURATION_MS = 4000;
+	static int const PLAY_DURATION_MS = 825;
 	static int const DRAW_DURATION_MS = 750;
 	static int const DRAW_MULTIPLE_DELAY_BETWEEN_CARDS_MS = 300;
 	// card is drawed and played in the same turn
