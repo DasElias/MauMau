@@ -7,7 +7,6 @@
 #include "CardStackRenderer.h"
 #include "../renderingModel/DrawCardStackClamper.h"
 #include "../renderingModel/AnimationsToPlayStackFilter.h"
-#include "../renderingModel/DrawnCardPositionComputer.h"
 
 namespace card {
 	float const LocalPlayerRenderer::HOVERED_CARD_Y_ADDITION = 0.1f;
@@ -87,7 +86,6 @@ namespace card {
 		auto& localPlayer = game.getLocalPlayer();
 		const auto& drawStack = game.getDrawStack();
 		std::size_t drawStackSize = DrawCardStackClamper::getClampedSize(drawStack);
-		DrawnCardPositionComputer drawnCardPositonComputer(CardRenderer::CARD_DIMENSIONS);
 
 		// render cards to hand cards
 		// please note that we iterate over the set from the end to the begin (we use a reverse-iterator),
@@ -97,8 +95,6 @@ namespace card {
 		auto localPlayerAnimations = localPlayer.getCardStack().getCardAnimations();
 		for(auto it = localPlayerAnimations.rbegin(); it != localPlayerAnimations.rend(); ++it) {
 			auto& animation = *it;
-
-			glm::vec3 endPosition = drawnCardPositonComputer.computePosition_x(localPlayer.getCardStack(), animation.mutatesTo, HAND_CARDS_LOCAL_POSITION, LEFT_RIGHT_OPPONENT_CARDS_WIDTH);
 
 			if(animation.source.get().equalsId(drawStack)) {
 				// render cards from draw card stack to hand cards
@@ -110,14 +106,14 @@ namespace card {
 										   DRAW_CARDS_ROTATION - glm::vec3(PI / 4, 0, 0),
 										   DRAW_CARDS_POSITION + glm::vec3(0, cardStackHeightAddition + CardRenderer::HEIGHT, CardRenderer::HEIGHT * 1.5f),
 										   DRAW_CARDS_ROTATION - glm::vec3(PI / 2, 0, 0),
-										   endPosition,
+										   HAND_CARDS_LOCAL_POSITION,
 										   HAND_CARDS_LOCAL_ROTATION);
 			} else if(animation.source.get().equalsId(localPlayer.getTempCardStack())) {
 				// render cards from temporary card stack to hand cards
 				cardInterpolator.interpolateAndRender(animation,
 										   DrawnCardRenderer::POSITION,
 										   DrawnCardRenderer::ROTATION,
-										   endPosition,
+										   HAND_CARDS_LOCAL_POSITION,
 										   HAND_CARDS_LOCAL_ROTATION
 				);
 			}

@@ -84,10 +84,6 @@ namespace card {
 		return cardNumbers;
 	}
 
-	const std::vector<Card>& CardCollection::getCards() const {
-		return cards;
-	}
-
 	bool CardCollection::contains(Card c) const {
 		return std::find(cards.begin(), cards.end(), c) != cards.end();
 	}
