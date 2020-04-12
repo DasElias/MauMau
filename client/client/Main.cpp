@@ -220,10 +220,9 @@ namespace card {
 		//glEnable(GL_DEPTH_CLAMP);
 		glClearColor(0, 0, 0, 1);
 
-		const GLubyte* vendor = glGetString(GL_VENDOR);
-		const GLubyte* model = glGetString(GL_RENDERER);
-		std::cout << vendor << std::endl;
-		std::cout << model << std::endl;
+		const char* vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+		const char* model = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+		log(LogSeverity::INFO, std::string(vendor) + " | " + model);
 
 		egui::EGuiContext ctx = {};
 		egui::NvgRenderer nvgRenderer(ctx);
