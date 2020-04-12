@@ -11,22 +11,25 @@ namespace card {
 	bool MessageKey::operator==(const MessageKey& other) const {
 		return value == other.value;
 	}
-	MessageQueue::MessageQueue(int msgDisplayDuration) :
-			msgDisplayDuration(msgDisplayDuration) {
+	MessageQueue::MessageQueue(int defaultMsgDisplayDuration) :
+		defaultMsgDisplayDuration(defaultMsgDisplayDuration) {
 	}
 	void MessageQueue::appendMessage(std::string message) {
+		appendMessage(message, defaultMsgDisplayDuration);
+
+	}
+	void MessageQueue::appendMessage(std::string message, int displayDuration) {
 		static MessageKey defaultKey = {};
 
-		Message msgObj = {message, getMilliseconds(), defaultKey};
+		long long removeTime = getMilliseconds() + displayDuration;
+		Message msgObj = {message, removeTime, defaultKey};
 		if(messages.size() >= MAX_MSG_AMOUNT) {
 			messages.pop_front();
 		}
 		messages.push_back(msgObj);
 	}
 	void MessageQueue::appendMessagePermanently(std::string message, const MessageKey& removeKey) {
-		// we can't use LLONG_MAX since otherwise we would get an integer overflow on checking if the message should be visible
-		long long infiniteAdditionTime = LLONG_MAX - msgDisplayDuration;
-		Message msgObj = {message, infiniteAdditionTime, removeKey};
+		Message msgObj = {message, LLONG_MAX, removeKey};
 		if(messages.size() >= MAX_MSG_AMOUNT) {
 			messages.pop_front();
 		}
@@ -44,7 +47,7 @@ namespace card {
 	std::vector<Message> MessageQueue::getLastVisibleMessages() const {
 		std::vector<Message> lastVisibleMessages;
 		for(auto& msg : messages) {
-			if(msg.appendUnixTimeMs + msgDisplayDuration > getMilliseconds()) {
+			if(msg.removeUnixTimeMs > getMilliseconds()) {
 				lastVisibleMessages.push_back(msg);
 			}
 		}

@@ -17,7 +17,7 @@ namespace card {
 
     struct Message {
         std::string content;
-        long long appendUnixTimeMs;
+        long long removeUnixTimeMs;
         MessageKey removeKey;
     };
 
@@ -36,20 +36,21 @@ namespace card {
         // --------------------------------FIELDS--------------------------------
         // ----------------------------------------------------------------------
         private:
-           int msgDisplayDuration;
+           int defaultMsgDisplayDuration;
            std::list<Message> messages;
            
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            MessageQueue(int msgDisplayDuration = DEFAULT_MSG_DISPLAY_DURATION);
+            MessageQueue(int defaultMsgDisplayDuration = DEFAULT_MSG_DISPLAY_DURATION);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
         // ----------------------------------------------------------------------
         public:
             void appendMessage(std::string message);
+            void appendMessage(std::string message, int displayDuration);
             void appendMessagePermanently(std::string message, const MessageKey& removeKey);
             void removeMessagesWithKey(const MessageKey& removeKey);
             void clear();
