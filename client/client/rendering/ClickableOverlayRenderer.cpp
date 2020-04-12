@@ -64,21 +64,15 @@ namespace card {
 		drawnCardInLastPass = drawnCardOrNone;
 	}
 	void ClickableOverlayRenderer::renderChooseColorOverlayIfGameHasntEnded(ProxyMauMauGame& game) {
-		static MessageKey messageKey = {};
-		auto& messageQueue = game.getMessageQueue();
-
 		static bool wasWaitingForColorChooseInLastPass = false;
 		bool isWaitingForColorChoose = !game.hasGameEnded() && game.getAccessorFromClient().isWaitingForColorChoose();
 		if(isWaitingForColorChoose) {
 			if(!wasWaitingForColorChooseInLastPass) {
 				chooseCardIndexRenderer.discardPreviousMouseEvents();
-				messageQueue.appendMessagePermanently(u8"Wähle die zu spielende Kartenfarbe aus.", messageKey);
 			}
 
 			cardRenderer.flush();
 			chooseCardIndexRenderer.render();
-		} else if(wasWaitingForColorChooseInLastPass) {
-			messageQueue.removeMessagesWithKey(messageKey);
 		}
 
 		wasWaitingForColorChooseInLastPass = isWaitingForColorChoose;

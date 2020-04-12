@@ -35,7 +35,7 @@ namespace card {
 			fireworkRenderer(particleRenderer, eguiRenderer, renderer2d, [this]() {
 				room->returnBackToMenu(ReturnBackToMenuCause::GAME_HAS_ENDED);
 			}),
-			messageRenderer(eguiRenderer),
+			bottomMessageRenderer(eguiRenderer),
 			drawCardStackRenderer(cardRenderer, renderer3d, projectionMatrix, viewport),
 			clickableOverlayRenderer(eguiRenderer, cardRenderer, projectionMatrix, viewport, cardIndexTextures),
 			cardStackIntersectionChecker(projectionMatrix, viewport),
@@ -147,7 +147,7 @@ namespace card {
 		cardRenderer.flush();
 
 		renderGameEndScreenIfGameHasEnded(deltaSeconds);
-		messageRenderer.render(game.getGameData().getMessageQueue());
+		bottomMessageRenderer.render(game.getGameData().getMessageQueue());
 
 		glEnable(GL_DEPTH_TEST);
 	}

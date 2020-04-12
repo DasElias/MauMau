@@ -6,6 +6,7 @@
 #include "../model/MessageQueue.h"
 #include <egui/model/nodes/UnorganizedParentElement.h>
 #include <array>
+#include <egui/model/positioning/RelativePositioningOnScreen.h>
 
 namespace card {
     class BottomMessageRenderer {
@@ -32,6 +33,7 @@ namespace card {
         private:
             static float const MESSAGE_WIDTH_ON_SCREEN;
             static float const MESSAGE_RIGHT_MARGIN_ON_SCREEN;
+            static int const PADDING_BETWEEN_MESSAGE_BOXES_PX;
         
         // ----------------------------------------------------------------------
         // --------------------------------FIELDS--------------------------------
@@ -40,6 +42,7 @@ namespace card {
             egui::MasterRenderer& eguiRenderer;
             TextBoxesArray textBoxesArray;
             egui::Scene scene;
+            std::shared_ptr<egui::RelativePositioningOnScreen> parentPositioning;
 
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------

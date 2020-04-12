@@ -9,6 +9,7 @@
 namespace card {
 	float const BottomMessageRenderer::MESSAGE_WIDTH_ON_SCREEN = 0.2f;
 	float const BottomMessageRenderer::MESSAGE_RIGHT_MARGIN_ON_SCREEN = 0.02f;
+	int const BottomMessageRenderer::PADDING_BETWEEN_MESSAGE_BOXES_PX = 5;
 
 	BottomMessageRenderer::TextToRender::TextToRender(int fontSizePx, egui::MasterRenderer& eguiRenderer) :
 			eguiRenderer(eguiRenderer),
@@ -17,7 +18,7 @@ namespace card {
 		addChildElement(text);
 
 
-		setPreferredHeight({float(5 * fontSizePx), egui::RelativityMode::ABSOLUTE_VALUE});
+		setPreferredHeight({float(fontSizePx), egui::RelativityMode::ABSOLUTE_VALUE});
 		text->setXTranslation(X_TRANSLATION);
 		text->setYTranslation(Y_TRANSLATION);
 		text->setStretchX(-2 * X_TRANSLATION);
@@ -39,9 +40,10 @@ namespace card {
 		setPreferredHeight({float(lastCharY + fontSizePx + 2 * Y_TRANSLATION), egui::RelativityMode::ABSOLUTE_VALUE});
 	}
 	BottomMessageRenderer::BottomMessageRenderer(egui::MasterRenderer& eguiRenderer) :
-			eguiRenderer(eguiRenderer) {
+			eguiRenderer(eguiRenderer),
+			parentPositioning(std::make_shared<egui::RelativePositioningOnScreen>(MESSAGE_RIGHT_MARGIN_ON_SCREEN, 0)) {
 
-		int const FONT_SIZE_PX = 23;
+		int const FONT_SIZE_PX = 25;
 		auto parent = std::make_shared<egui::VBox>();
 		for(int i = 0; i < textBoxesArray.size(); i++) {
 			auto textBox = std::make_shared<TextToRender>(FONT_SIZE_PX, eguiRenderer);
@@ -53,21 +55,26 @@ namespace card {
 
 		scene.setRootElement(parent);
 		parent->setPreferredWidth({MESSAGE_WIDTH_ON_SCREEN, egui::RelativityMode::RELATIVE_ON_SCREEN});
-		parent->setOwnPositioning(std::make_shared<egui::RelativePositioningOnScreen>(1 - MESSAGE_WIDTH_ON_SCREEN - MESSAGE_RIGHT_MARGIN_ON_SCREEN, 0));
-		parent->setSpaceBetweenElements({4, egui::RelativityMode::ABSOLUTE_VALUE});
+		parent->setOwnPositioning(parentPositioning);
+		parent->setSpaceBetweenElements({PADDING_BETWEEN_MESSAGE_BOXES_PX, egui::RelativityMode::ABSOLUTE_VALUE});
 	}
 	void BottomMessageRenderer::render(const MessageQueue& msgQueue) {
 		makeAllTextBoxesInvisible();
 
+		float height = 0;
 		std::vector<Message> messages = msgQueue.getLastVisibleMessages();
-		for(int i = 0; i < messages.size(); i++) {
+		for(int i = messages.size() - 1; i >= 0; i--) {
 			auto textBox = textBoxesArray[i];
 			Message& msg = messages[i];
 			std::string msgContent = msg.content;
 
 			textBox->setText(msgContent);
 			textBox->setVisible(true);
+
+			height += textBox->getComputedHeight() + egui::y_pixelToPercent(PADDING_BETWEEN_MESSAGE_BOXES_PX);
 		}
+
+		parentPositioning->setY(0.825f - height);
 
 		eguiRenderer.beginFrame();
 		scene.render(eguiRenderer);

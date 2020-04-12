@@ -31,6 +31,7 @@
 #include "PlayerLabelPositionGenerator.h"
 #include "DrawCardStackRenderer.h"
 #include "ClickableOverlayRenderer.h"
+#include "BottomMessageRenderer.h"
 
 namespace card {
 	class CardSceneRenderer {
@@ -59,7 +60,7 @@ namespace card {
 			CardIndexRenderer cardIndexRenderer;
 			ParticleRenderer particleRenderer;
 			GameEndRenderer fireworkRenderer;
-			MessageRenderer messageRenderer;
+			BottomMessageRenderer bottomMessageRenderer;
 			DrawCardStackRenderer drawCardStackRenderer;
 			ClickableOverlayRenderer clickableOverlayRenderer;
 			CardStackIntersectionChecker cardStackIntersectionChecker;

@@ -16,7 +16,11 @@
 #include <res/cardIndex/CardIndexHover.png.h>
 namespace card {
 	ChooseCardIndexRenderer::ChooseCardIndexRenderer(egui::MasterRenderer& eguiRenderer, CardIndexTextures& cardIndexTextures) :
-				eguiRenderer(eguiRenderer) {
+				eguiRenderer(eguiRenderer),
+				messageRenderer(eguiRenderer) {
+		
+		MessageKey msgKey;
+		messageQueue.appendMessagePermanently(u8"Wähle die zu spielende Kartenfarbe aus.", msgKey);
 		
 		float const BUTTON_WIDTH = 0.1f;
 		float const DISTANCE_BETWEEN_BUTTONS = 0.1f;
@@ -70,6 +74,8 @@ namespace card {
 		eguiRenderer.beginFrame();
 		scene.render(eguiRenderer);
 		eguiRenderer.endFrame();
+
+		messageRenderer.render(messageQueue);
 	}
 	void ChooseCardIndexRenderer::adjustButtonBar() {
 		int btnWidthInPixels = egui::x_percentToPixel(indexButtons[0]->getComputedWidth());

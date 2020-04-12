@@ -9,6 +9,7 @@
 #include <egui/model/nodes/HBox.h>
 #include <egui/model/nodes/Label.h>
 #include "../renderingModel/CardIndexTextures.h"
+#include "MessageRenderer.h"
 
 namespace card {
 	class ChooseCardIndexRenderer {
@@ -21,6 +22,8 @@ namespace card {
 			std::shared_ptr<egui::HBox> buttonBar;
 			std::shared_ptr<egui::Label> buttonBarBackground;
 			egui::Scene scene;
+			MessageRenderer messageRenderer;
+			MessageQueue messageQueue;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
