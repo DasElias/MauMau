@@ -30,7 +30,7 @@ namespace card {
 		addChildElement(mauMauButtonBgElement);
 		addChildElement(mauMauButtonClickable);
 
-		setCursorToHandOnHover(*mauMauButtonClickable);
+		setCursorToHandOnHoverAndResetOnClick(*mauMauButtonClickable);
 	}
 	void IngameButton::setOwnPositioning(std::shared_ptr<egui::Positioning> positioning) {
 		mauMauButtonBgElement->setOwnPositioning(positioning);
