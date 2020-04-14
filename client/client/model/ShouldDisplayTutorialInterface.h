@@ -27,7 +27,6 @@ namespace card {
         // -------------------------------METHODS--------------------------------
         // ----------------------------------------------------------------------
         public:
-            virtual bool shouldDisplay(TutorialMessage msg) =0;
             virtual bool shouldDisplayAndClear(TutorialMessage msg) =0;
             virtual void clear(TutorialMessage msg) =0;
 
