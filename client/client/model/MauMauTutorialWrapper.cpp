@@ -17,6 +17,12 @@ namespace card {
 				tutorial.onTurnEnd(p);
 			});
 		});
+		gameData.getPlayEventManager().addEventHandler([&](Card& c) {
+			threadUtils_invokeIn(0, [this, playedCard = c]() {
+				tutorial.onPlay(playedCard);
+			});
+		});
+
 		tutorial.onGameStart();
 	}
 }

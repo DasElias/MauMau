@@ -133,6 +133,7 @@ namespace card {
 		updateCardIndex(card, newCardIndex);
 		updateDirection(card);
 		clearPermanentMessagesIfGameHasEnded();
+		onPlayEventManager.fireEvent(card);
 	}
 	void ProxyMauMauGameData::playCardFromLocalPlayerHandCards(std::size_t indexInHandCards, CardIndex newCardIndex, int delayMs) {
 		Card card = localPlayer->getCardStack().get(indexInHandCards);
@@ -142,6 +143,7 @@ namespace card {
 		updateCardIndex(card, newCardIndex);
 		updateDirection(card);
 		clearPermanentMessagesIfGameHasEnded();
+		onPlayEventManager.fireEvent(card);
 	}
 	void ProxyMauMauGameData::playCardFromLocalPlayerTempCards(CardIndex newCardIndex, int delay) {
 		auto drawnCardOrNone = localPlayer->getCardInTempStack();
@@ -156,6 +158,7 @@ namespace card {
 		updateCardIndex(drawnCard, newCardIndex);
 		updateDirection(drawnCard);
 		clearPermanentMessagesIfGameHasEnded();
+		onPlayEventManager.fireEvent(drawnCard);
 	}
 	void ProxyMauMauGameData::updateCardIndex(Card playedCard, CardIndex newCardIndex) {
 		if(newCardIndex == CardIndex::NULLINDEX) {
@@ -501,6 +504,10 @@ namespace card {
 
 	EventManager<ProxyPlayer>& ProxyMauMauGameData::getTurnStartEventManager() {
 		return onTurnStartEventManager;
+	}
+
+	EventManager<Card>& ProxyMauMauGameData::getPlayEventManager() {
+		return onPlayEventManager;
 	}
 	
 }

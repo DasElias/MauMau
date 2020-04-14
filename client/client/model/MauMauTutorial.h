@@ -28,6 +28,7 @@ namespace card {
         public:
             void onGameStart();
             void onTurnStart(ProxyPlayer& playerWhichTurnWasStarted);
+            void onPlay(Card c);
             void onTurnEnd(ProxyPlayer& playerWhichTurnHasEnded);
 
         private:

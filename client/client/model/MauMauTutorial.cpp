@@ -21,22 +21,18 @@ namespace card {
 
 			if(playerWhichTurnWasStarted.isInSkipState() && canLocalPlayerPlayAnyCard) {
 				if(shouldDisplayTutorialInterface.shouldDisplayAndClear(TutorialMessage::SKIP_STATE_AND_CAN_PLAY)) {
-					gameMessageQueue.appendMessagePermanently(u8"Das Spielen einer Karte mit dem Wert 8 führt dazu, dass der nächste Spieler ausgelassen wird, es sei denn, er kann ebenfalls eine Karte mit dem Wert 8 spielen.", turnStartKey);
 					gameMessageQueue.appendMessagePermanently(u8"Spiele nun eine Karte mit dem Wert 8, indem du auf eine passende Handkarte klickst, um den nächsten Spieler auszulassen.", turnStartKey);
 				}
 			} else if(playerWhichTurnWasStarted.isInSkipState()) {
 				if(shouldDisplayTutorialInterface.shouldDisplayAndClear(TutorialMessage::SKIP_STATE)) {
-					gameMessageQueue.appendMessagePermanently(u8"Das Spielen einer Karte mit dem Wert 8 führt dazu, dass der nächste Spieler ausgelassen wird, es sei denn, er kann ebenfalls eine Karte mit dem Wert 8 spielen.", turnStartKey);
 					gameMessageQueue.appendMessagePermanently(u8"Leider hast du keine Karte mit dem Wert 8, um das Aussetzen weiterzureichen. Drücke deshalb den Passen-Knopf rechts.", turnStartKey);
 				}
 			} else if(gameData.isInDrawTwoState() && canLocalPlayerPlayAnyCard) {
 				if(shouldDisplayTutorialInterface.shouldDisplayAndClear(TutorialMessage::DRAW_TWO_STATE_AND_CAN_PLAY)) {
-					gameMessageQueue.appendMessagePermanently(u8"Das Spielen einer Karte mit dem Wert 7 führt dazu, dass der nächste Spieler zwei Karten ziehen muss, es sei denn, er kann ebenfalls eine Karte mit dem Wert 7 spielen.", turnStartKey);
 					gameMessageQueue.appendMessagePermanently(u8"Spiele nun eine Karte mit dem Wert 7, indem du auf eine passende Handkarte klickst.", turnStartKey);
 				}
 			} else if(gameData.isInDrawTwoState()) {
 				if(shouldDisplayTutorialInterface.shouldDisplayAndClear(TutorialMessage::DRAW_TWO_STATE)) {
-					gameMessageQueue.appendMessagePermanently(u8"Das Spielen einer Karte mit dem Wert 7 führt dazu, dass der nächste Spieler zwei Karten ziehen muss, es sei denn, er kann ebenfalls eine Karte mit dem Wert 7 spielen.", turnStartKey);
 					gameMessageQueue.appendMessagePermanently(u8"Leider hast du keine Karte mit dem Wert 7. Drücke deshalb den Passen-Knopf rechts.", turnStartKey);
 				}
 			} else if(canLocalPlayerPlayAnyCard) {
@@ -54,6 +50,14 @@ namespace card {
 					gameMessageQueue.appendMessage(u8"Denke daran, BEVOR du die vorletzte Karte spielst, den Mau-Button auf der rechten Seite zu betätigen.");
 				}
 			}
+		}
+	}
+	void MauMauTutorial::onPlay(Card c) {
+		std::cout << "ON PLAY " << std::endl;
+		if(gameData.canSkipPlayer(c) && shouldDisplayTutorialInterface.shouldDisplayAndClear(TutorialMessage::SKIP_CARD_EXPLANATION)) {
+			gameMessageQueue.appendMessage(u8"Das Spielen einer Karte mit dem Wert 8 führt dazu, dass der nächste Spieler ausgelassen wird, es sei denn, er kann ebenfalls eine Karte mit dem Wert 8 spielen.");
+		} else if(gameData.getAmountsOfCardsToDrawForNextPlayer(c) > 0 && shouldDisplayTutorialInterface.shouldDisplayAndClear(TutorialMessage::DRAW_TWO_CARD_EXPLANATION)) {
+			gameMessageQueue.appendMessage(u8"Das Spielen einer Karte mit dem Wert 7 führt dazu, dass der nächste Spieler zwei Karten ziehen muss, es sei denn, er kann ebenfalls eine Karte mit dem Wert 7 spielen.");
 		}
 	}
 	void MauMauTutorial::onTurnEnd(ProxyPlayer& playerWhichTurnHasEnded) {

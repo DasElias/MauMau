@@ -47,6 +47,7 @@ namespace card {
 
 			EventManager<ProxyPlayer> onTurnStartEventManager;	// will be fired when the particular player is already on turn
 			EventManager<ProxyPlayer> onTurnEndEventManager;	// will be fired when the particular player is still on turn
+			EventManager<Card> onPlayEventManager;
 
 			// message that the game is in skip state
 			MessageKey skipStateMessageKey;
@@ -130,6 +131,7 @@ namespace card {
 			MessageQueue& getMessageQueue();
 			EventManager<ProxyPlayer>& getTurnEndEventManager();
 			EventManager<ProxyPlayer>& getTurnStartEventManager();
+			EventManager<Card>& getPlayEventManager();
 
 		private:
 			void initStartCards(const std::vector<int>& handCardNumbersOfLocalPlayer, Card cardOnPlayStack);
