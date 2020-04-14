@@ -17,7 +17,6 @@ namespace card {
 	void MauMauTutorial::onTurnStart(ProxyPlayer& playerWhichTurnWasStarted) {
 		if(gameData.getLocalPlayer() == playerWhichTurnWasStarted) {
 			bool canLocalPlayerPlayAnyCard = this->canLocalPlayerPlayAnyCard();
-			std::cout << "ON TURN START " << canLocalPlayerPlayAnyCard << std::endl;
 
 			if(playerWhichTurnWasStarted.isInSkipState() && canLocalPlayerPlayAnyCard) {
 				if(shouldDisplayTutorialInterface.shouldDisplayAndClear(TutorialMessage::SKIP_STATE_AND_CAN_PLAY)) {
@@ -53,7 +52,6 @@ namespace card {
 		}
 	}
 	void MauMauTutorial::onPlay(Card c) {
-		std::cout << "ON PLAY " << std::endl;
 		if(gameData.canSkipPlayer(c) && shouldDisplayTutorialInterface.shouldDisplayAndClear(TutorialMessage::SKIP_CARD_EXPLANATION)) {
 			gameMessageQueue.appendMessage(u8"Das Spielen einer Karte mit dem Wert 8 führt dazu, dass der nächste Spieler ausgelassen wird, es sei denn, er kann ebenfalls eine Karte mit dem Wert 8 spielen.");
 		} else if(gameData.getAmountsOfCardsToDrawForNextPlayer(c) > 0 && shouldDisplayTutorialInterface.shouldDisplayAndClear(TutorialMessage::DRAW_TWO_CARD_EXPLANATION)) {
@@ -69,11 +67,9 @@ namespace card {
 		}
 	}
 	bool MauMauTutorial::canLocalPlayerPlayAnyCard() {
-		int amountsToPlay = 0;
 		for(auto& card : gameData.getLocalPlayer().getCardStack()) {
-			if(accessorFromClient.canPlay(card)) amountsToPlay++;
+			if(accessorFromClient.canPlay(card)) return true;
 		}
-		std::cout << "TO PLAY: " << amountsToPlay << std::endl;
-		return amountsToPlay > 0;
+		return false;
 	}
 }
