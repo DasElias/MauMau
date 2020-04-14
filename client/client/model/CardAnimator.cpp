@@ -3,7 +3,6 @@
 #include <shared/utils/MathUtils.h>
 #include <stdexcept>
 #include <optional>
-#include <iostream>
 
 namespace card {
 	long long CardAnimator::idCounter = 0;
@@ -99,7 +98,6 @@ namespace card {
 			onAnimationEnd();
 			animations.removeAnimation(a);
 			this->addFromPlain(card);
-			std::cout << "ADD DETERMINED" << std::endl;
 		});
 	}
 
@@ -129,7 +127,6 @@ namespace card {
 			onAnimationEnd();
 			animations.removeAnimation(a);
 			this->addFromPlain(mutatesTo);
-			std::cout << "ADD RANDOM" << std::endl;
 		});
 	}
 
