@@ -20,13 +20,12 @@ namespace card {
 		}
 	}
 
-	ProxyMauMauGameData::ProxyMauMauGameData(std::vector<std::shared_ptr<ParticipantOnClient>> allParticipantsInclLocal, std::shared_ptr<ParticipantOnClient> localParticipant, std::vector<int> handCards, int startCard, RoomOptions& roomOptions, std::function<void(ProxyPlayer&)> onTurnEnd) :
+	ProxyMauMauGameData::ProxyMauMauGameData(std::vector<std::shared_ptr<ParticipantOnClient>> allParticipantsInclLocal, std::shared_ptr<ParticipantOnClient> localParticipant, std::vector<int> handCards, int startCard, RoomOptions& roomOptions) :
 			drawCardStack(std::make_unique<CardStack>()),
 			playCardStack(std::make_unique<CardStack>()),
 			indexForNextCard(Card(startCard).getCardIndex()),
 			playerList({}, nullptr),	// will be initialized later correctly
-			roomOptions(roomOptions),
-			onTurnEndCallback(onTurnEnd) {
+			roomOptions(roomOptions) {
 
 		setLocalPlayerAtTheBeginOfVector(allParticipantsInclLocal, localParticipant);
 
@@ -370,7 +369,7 @@ namespace card {
 		auto& nextButOnePlayer = playerList.getNextPlayerOnTurn(direction, nextPlayer);
 		setOnTurnLocal(nextButOnePlayer);
 	}
-	void ProxyMauMauGameData::setOnTurnLocal(ProxyPlayer& player) {	
+	void ProxyMauMauGameData::setOnTurnLocal(ProxyPlayer& newPlayerOnTurn) {	
 		int cardsToDrawDueToPlusTwoAmount = 0;
 
 		// if field_wasCardPlayed would be true, the player on turn would have passed skip to the next player
@@ -398,8 +397,8 @@ namespace card {
 
 		ProxyPlayer& lastUserOnTurn = playerList.getPlayerOnTurn();
 		lastUserOnTurn.onEndTurn();
-		onTurnEndCallback(lastUserOnTurn);
-		playerList.setPlayerOnTurn(player);
+		onTurnEndEventManager.fireEvent(lastUserOnTurn);
+		playerList.setPlayerOnTurn(newPlayerOnTurn);
 
 		clearPermanentMessages();
 		if(! field_wasCardPlayed) {
@@ -408,16 +407,17 @@ namespace card {
 		}
 		field_wasCardDrawnIntoHandCards = false;
 		field_wasCardPlayed = false;
-		threadUtils_invokeIn(delayToSetNextPlayerOnTurn, this, [this, &player, &lastUserOnTurn]() {			
+		threadUtils_invokeIn(delayToSetNextPlayerOnTurn, this, [this, &newPlayerOnTurn, &lastUserOnTurn]() {			
 			lastUserOnTurn.endRemainingTimeAnimation();
-			player.onStartTurn();
+			newPlayerOnTurn.onStartTurn();
+			onTurnStartEventManager.fireEvent(newPlayerOnTurn);
 		});
 		threadUtils_invokeIn(delayToFreezeAnimation, this, [this, &lastUserOnTurn]() {
 			lastUserOnTurn.freezeRemainingTimeAnimation();
 		});
 
 		if(isInDrawTwoState() && !roomOptions.getOption(Options::PASS_DRAW_TWO)) {
-			playerHasToDrawCards(player, cardsToDrawOnPassDueToPlusTwo, delayForDrawDueToPlusTwo);
+			playerHasToDrawCards(newPlayerOnTurn, cardsToDrawOnPassDueToPlusTwo, delayForDrawDueToPlusTwo);
 			cardsToDrawOnPassDueToPlusTwo.clear();
 		}
 	}
@@ -425,6 +425,7 @@ namespace card {
 	void ProxyMauMauGameData::setInitialPlayerOnTurnLocal(ProxyPlayer& player, Card nextCardOnDrawStack) {
 		playerList.setPlayerOnTurn(player);
 		player.onStartTurn();
+		onTurnStartEventManager.fireEvent(player);
 
 		this->drawCardForNextPlayer = Card(nextCardOnDrawStack);
 		field_hasInitialCardsBeenDistributed = true;
@@ -492,6 +493,14 @@ namespace card {
 
 	MessageQueue& ProxyMauMauGameData::getMessageQueue() {
 		return messageQueue;
+	}
+
+	EventManager<ProxyPlayer>& ProxyMauMauGameData::getTurnEndEventManager() {
+		return onTurnEndEventManager;
+	}
+
+	EventManager<ProxyPlayer>& ProxyMauMauGameData::getTurnStartEventManager() {
+		return onTurnStartEventManager;
 	}
 	
 }

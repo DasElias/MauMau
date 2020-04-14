@@ -48,13 +48,12 @@ namespace card {
 			void chooseColor(CardIndex color);
 			void pass();
 
-			void onTurnEnd();
 
 		private:
 			void playPremarkedCardAfterColorChoose(CardIndex newCardIndex);
 			void sendPlayCardPacket(CardIndex newCardIndex = CardIndex::NULLINDEX);
 			
-
+			void onTurnEnd();
 
 	};
 }

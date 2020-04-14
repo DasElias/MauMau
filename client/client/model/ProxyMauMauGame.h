@@ -2,6 +2,7 @@
 #include "ProxyMauMauGameData.h"
 #include "MauMauGameAccessorFromClient.h"
 #include "MauMauGameAccessorFromServer.h"
+#include "MauMauTutorialWrapper.h"
 
 namespace card {
 	class ProxyMauMauGame {
@@ -12,6 +13,7 @@ namespace card {
 			ProxyMauMauGameData gameData;
 			MauMauGameAccessorFromClient accessorFromClient;
 			MauMauGameAccessorFromServer accessorFromServer;
+			MauMauTutorialWrapper tutorialWrapper;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------

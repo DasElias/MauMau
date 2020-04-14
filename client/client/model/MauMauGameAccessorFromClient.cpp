@@ -11,6 +11,10 @@ namespace card {
 	MauMauGameAccessorFromClient::MauMauGameAccessorFromClient(ProxyMauMauGameData& gameData, std::shared_ptr<CTSPacketTransmitter> packetTransmitter) :
 			gameData(gameData),
 			packetTransmitter(packetTransmitter) {
+
+		gameData.getTurnEndEventManager().addEventHandler([this](ProxyPlayer& playerWhichTurnHasEnded) {
+			onTurnEnd();
+		});
 	}
 	bool MauMauGameAccessorFromClient::canMau() const {
 		if(gameData.hasGameEnded() ||

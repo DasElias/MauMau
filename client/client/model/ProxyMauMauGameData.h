@@ -11,6 +11,7 @@
 #include <functional>
 #include <shared/model/IngamePlayerList.h>
 #include <boost/optional.hpp>
+#include "EventManager.h"
 
 namespace card {
 	class ProxyMauMauGameData {
@@ -44,7 +45,8 @@ namespace card {
 
 			bool field_hasInitialCardsBeenDistributed = false;
 
-			std::function<void(ProxyPlayer&)> onTurnEndCallback;
+			EventManager<ProxyPlayer> onTurnStartEventManager;	// will be fired when the particular player is already on turn
+			EventManager<ProxyPlayer> onTurnEndEventManager;	// will be fired when the particular player is still on turn
 
 			// message that the game is in skip state
 			MessageKey skipStateMessageKey;
@@ -57,8 +59,7 @@ namespace card {
 		public:
 			ProxyMauMauGameData(std::vector<std::shared_ptr<ParticipantOnClient>> allParticipantsInclLocal, 
 				std::shared_ptr<ParticipantOnClient> localParticipant,
-				std::vector<int> handCards, int startCard, RoomOptions& roomOptions,
-				std::function<void(ProxyPlayer&)> onTurnEnd);
+				std::vector<int> handCards, int startCard, RoomOptions& roomOptions);
 			ProxyMauMauGameData(const ProxyMauMauGameData&) = delete;
 			ProxyMauMauGameData& operator=(const ProxyMauMauGameData&) = delete;
 			~ProxyMauMauGameData();
@@ -127,6 +128,8 @@ namespace card {
 			void appendMessage(std::string content);
 			const MessageQueue& getMessageQueue() const;
 			MessageQueue& getMessageQueue();
+			EventManager<ProxyPlayer>& getTurnEndEventManager();
+			EventManager<ProxyPlayer>& getTurnStartEventManager();
 
 		private:
 			void initStartCards(const std::vector<int>& handCardNumbersOfLocalPlayer, Card cardOnPlayStack);

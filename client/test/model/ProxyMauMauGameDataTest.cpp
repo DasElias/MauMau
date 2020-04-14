@@ -18,11 +18,10 @@ TEST_CASE("ProxyMauMauGameData", "[ProxyMauMauGameData]") {
 	RoomOptions options;
 
 	bool wasTurnEndCallbackInvoked = false;
-	ProxyMauMauGameData gameData(allParticipants, localParticipant, handCards, lastCardOnPlayStack, options,
-		[&wasTurnEndCallbackInvoked](ProxyPlayer& playerTurnEnd) {
-			wasTurnEndCallbackInvoked = true;
-		}
-	);
+	ProxyMauMauGameData gameData(allParticipants, localParticipant, handCards, lastCardOnPlayStack, options);
+	gameData.getTurnEndEventManager().addEventHandler([&](ProxyPlayer&) {
+		wasTurnEndCallbackInvoked = true;
+	});
 	gameData.setInitialPlayerOnTurnLocal(gameData.lookupPlayer(localParticipant->getUsername()), Card(7));
 
 	SECTION("getPlayStack") {
