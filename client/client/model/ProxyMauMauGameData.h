@@ -133,6 +133,7 @@ namespace card {
 			EventManager<ProxyPlayer>& getTurnEndEventManager();
 			EventManager<ProxyPlayer>& getTurnStartEventManager();
 			EventManager<Card>& getPlayEventManager();
+			void clearPermanentMessages();
 
 		private:
 			void initStartCards(const std::vector<int>& handCardNumbersOfLocalPlayer, Card cardOnPlayStack);
@@ -142,6 +143,5 @@ namespace card {
 			void updateDirection(Card playedCard);
 			void throwIfGameHasEnded();
 			void clearPermanentMessagesIfGameHasEnded();
-			void clearPermanentMessages();
 	};
 }
