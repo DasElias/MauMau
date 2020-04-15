@@ -92,6 +92,14 @@ namespace card {
 		return cardsToDrawOnPassDueToPlusTwo.size();
 	}
 
+	std::size_t ProxyMauMauGameData::getSizeOfCardsToDrawByCurrentPlayerDueToPlusTwo() const {
+		if(!field_wasCardPlayed || !roomOptions.getOption(Options::PASS_DRAW_TWO)) {
+			return cardsToDrawOnPassDueToPlusTwo.size();
+		} else {
+			return 0;
+		}
+	}
+
 	bool ProxyMauMauGameData::isLocalPlayerOnTurn() const {
 		return playerList.isPlayerOnTurn(*localPlayer);
 	}
@@ -342,22 +350,30 @@ namespace card {
 		return field_wasCardPlayed;
 	}
 	void ProxyMauMauGameData::setNextPlayerOnTurnAndUpdateSkipAndDrawTwoState(Card playedCard) {
+		int cardsToDrawByNextPlayer = getSizeOfCardsToDrawByCurrentPlayerDueToPlusTwo();
+		int cardsToDraw = getSizeOfCardsToDrawDueToPlusTwo();
+		int delayToSetNextPlayerOnTurn = getTimeToSetNextPlayerOnTurn(field_wasCardPlayed, field_wasCardDrawnIntoHandCards, cardsToDrawByNextPlayer);
+
 		if(roomOptions.getOption(Options::PASS_SKIP)) {
 			setNextPlayerOnTurnLocal();
-			if(canSkipPlayer(playedCard)) {
-				auto& userOnTurn = playerList.getPlayerOnTurn();
-				userOnTurn.setSkipState();
-				if(checkIfLocalPlayer(userOnTurn)) {
-					messageQueue.appendMessagePermanently("Du wurdest ausgelassen. Spiele eine 8 oder passe.", skipStateMessageKey);
+			threadUtils_invokeIn(delayToSetNextPlayerOnTurn, [this, playedCard]() {
+				if(canSkipPlayer(playedCard)) {
+					auto& userOnTurn = playerList.getPlayerOnTurn();
+					userOnTurn.setSkipState();
+					if(checkIfLocalPlayer(userOnTurn)) {
+						messageQueue.appendMessagePermanently("Du wurdest ausgelassen. Spiele eine 8 oder passe.", skipStateMessageKey);
+					}
 				}
-			}
+			});			
 		} else {
 			if(canSkipPlayer(playedCard)) setNextButOnePlayerOnTurnLocal();
 			else setNextPlayerOnTurnLocal();
 		}
 		
 		if(roomOptions.getOption(Options::PASS_DRAW_TWO) && isInDrawTwoState() && playerList.isPlayerOnTurn(*localPlayer)) {
-			messageQueue.appendMessagePermanently("Spiele eine 7 oder passe, um "+std::to_string(getSizeOfCardsToDrawDueToPlusTwo())+" Karten zu ziehen.", drawTwoMessageKey);
+			threadUtils_invokeIn(delayToSetNextPlayerOnTurn, [this, cardsToDraw]() {
+				messageQueue.appendMessagePermanently("Spiele eine 7 oder passe, um " + std::to_string(cardsToDraw) + " Karten zu ziehen.", drawTwoMessageKey);
+			});
 		}
 
 		clearPermanentMessagesIfGameHasEnded();
@@ -373,7 +389,7 @@ namespace card {
 		setOnTurnLocal(nextButOnePlayer);
 	}
 	void ProxyMauMauGameData::setOnTurnLocal(ProxyPlayer& newPlayerOnTurn) {	
-		int cardsToDrawDueToPlusTwoAmount = 0;
+		int cardsToDrawDueToPlusTwoAmount = getSizeOfCardsToDrawByCurrentPlayerDueToPlusTwo();
 
 		// if field_wasCardPlayed would be true, the player on turn would have passed skip to the next player
 		if(playerList.getPlayerOnTurn().isInSkipState() && !field_wasCardPlayed) {
@@ -381,12 +397,7 @@ namespace card {
 		}
 		if(isInDrawTwoState() && !field_wasCardPlayed) {
 			if(! roomOptions.getOption(Options::PASS_DRAW_TWO)) throw std::runtime_error("It isn't possible that a player has to draw cards due to a plus two, even though no (+2)-card was played when +2 cards can't be passed on.");
-			cardsToDrawDueToPlusTwoAmount = cardsToDrawOnPassDueToPlusTwo.size();
 			playerHasToDrawCards(playerList.getPlayerOnTurn(), cardsToDrawOnPassDueToPlusTwo);
-		}
-		if(isInDrawTwoState() && !roomOptions.getOption(Options::PASS_DRAW_TWO)) {
-			cardsToDrawDueToPlusTwoAmount = cardsToDrawOnPassDueToPlusTwo.size();
-			// we actually draw the cards when the new player was set on turn (at the end of the method)
 		}
 
 		// we don't have to consider this delay if PASS_DRAW_TWO is disabled

@@ -98,6 +98,7 @@ namespace card {
 			void setCardsToDrawOnPassDueToPlusTwo(std::vector<Card> cards);
 			bool isInDrawTwoState() const;
 			std::size_t getSizeOfCardsToDrawDueToPlusTwo() const;
+			std::size_t getSizeOfCardsToDrawByCurrentPlayerDueToPlusTwo() const;
 			bool isLocalPlayerOnTurn() const;
 			bool areAllPreviousCardTransactionsCompleted() const;
 			bool isReadyToPerformLocalPlayerTurn() const;
