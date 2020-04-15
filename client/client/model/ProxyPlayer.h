@@ -35,7 +35,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			ProxyPlayer(std::shared_ptr<ParticipantOnClient> wrappedParticipant);
+			explicit ProxyPlayer(std::shared_ptr<ParticipantOnClient> wrappedParticipant);
 			ProxyPlayer(const ProxyPlayer&) = delete;
 			virtual ~ProxyPlayer() = default;
 

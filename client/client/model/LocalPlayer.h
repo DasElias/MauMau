@@ -36,7 +36,7 @@ namespace card {
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			LocalPlayer(std::shared_ptr<ParticipantOnClient> wrappedLocalPlayer);
+			explicit LocalPlayer(std::shared_ptr<ParticipantOnClient> wrappedLocalPlayer);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
