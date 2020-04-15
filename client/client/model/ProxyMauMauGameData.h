@@ -12,6 +12,7 @@
 #include <shared/model/IngamePlayerList.h>
 #include <boost/optional.hpp>
 #include "EventManager.h"
+#include "ClientPlayerList.h"
 
 namespace card {
 	class ProxyMauMauGameData {
@@ -33,9 +34,8 @@ namespace card {
 			Direction direction = Direction::CW;
 			MessageQueue messageQueue;
 
-			IngamePlayerList<ProxyPlayer> playerList;
-			std::vector<std::shared_ptr<ProxyPlayer>> opponents;
-			std::shared_ptr<LocalPlayer> localPlayer;
+			ClientPlayerList playerList;
+
 
 			// when the player before has played a +2-card, the cards to draw are stored here
 			std::vector<Card> cardsToDrawOnPassDueToPlusTwo;
