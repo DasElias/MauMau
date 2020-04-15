@@ -353,7 +353,8 @@ namespace card {
 		bool hasGameEnded = game.hasGameEnded();
 
 		if(hasGameEnded && !hasGameEndedLastFrame) {
-			threadUtils_invokeIn(DRAW_DURATION_MS, [this]() {
+			threadUtils_invokeIn(DRAW_DURATION_MS, [this, &game]() {
+				game.clearPermanentMessages();
 				fireworkRenderer.startAnimation();
 				shouldRenderGameEndScreen = true;
 			});

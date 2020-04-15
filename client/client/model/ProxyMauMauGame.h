@@ -42,5 +42,6 @@ namespace card {
 			bool hasInitialCardBeenDistributed() const;
 			boost::optional<ProxyPlayer&> getWinnerOrNull();
 			MessageQueue& getMessageQueue();
+			void clearPermanentMessages();
 	};
 }
