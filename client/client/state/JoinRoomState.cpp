@@ -5,6 +5,7 @@
 #include <shared/utils/TimeUtils.h>
 #include "RoomLeaveHandlerImpl.h"
 #include "NetworkReturnBackToMenuHandler.h"
+#include "../model/UsernameAvatarSaver.h"
 
 namespace card {
 	JoinRoomState::JoinRoomState(StateManager& stateManager, AvatarTextures& avatarTextures, egui::MasterRenderer& eguiRenderer, NetworkErrorHandler& networkErrorHandler) :
@@ -44,6 +45,16 @@ namespace card {
 	void JoinRoomState::onStateEnter() {
 		State::onStateEnter();
 		scene.discardMouseEvents();
+
+		auto [username, avatar] = UsernameAvatarSaver::load();
+		element->setUsernameInput(username);
+		element->setSelectedAvatar(avatar);
+	}
+	void JoinRoomState::onStateExit() {
+		State::onStateExit();
+
+		UsernameAvatarSaver::UsernameAvatarData data = std::make_pair(element->getUsernameInput(), element->getSelectedAvatar());
+		UsernameAvatarSaver::save(data);
 	}
 	std::optional<std::string> JoinRoomState::getLocalVerificationErrorMessage() {
 		std::string usernameInput = element->getUsernameInput();

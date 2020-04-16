@@ -31,6 +31,9 @@ namespace card {
 			Avatar getSelectedAvatar() const;
 			RoomOptions getOptions() const;
 
+			void setUsernameInput(std::string username);
+			void setSelectedAvatar(Avatar a);
+
 			void lockInput(bool shouldLock);
 	};
 }

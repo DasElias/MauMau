@@ -4,6 +4,7 @@
 #include <egui/model/nodeComponents/background/TexturedBackground.h>
 #include <egui/model/nodes/HBox.h>
 #include <egui/model/nodes/VBox.h>
+#include "AvatarChoosePopup.h"
 
 namespace card {
 	class AvatarChooser : public egui::VBox {
@@ -14,6 +15,7 @@ namespace card {
             AvatarTextures& avatarTextures;
             Avatar chosenAvatar;
             std::shared_ptr<egui::TexturedBackground> avatarBackground;
+            std::shared_ptr<AvatarChoosePopup> popup;
 
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------
@@ -26,6 +28,7 @@ namespace card {
         // ----------------------------------------------------------------------
         public:
             Avatar getSelectedAvatar() const;
+            void setSelectedAvatar(Avatar a);
 
 	};
 }

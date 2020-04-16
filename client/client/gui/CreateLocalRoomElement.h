@@ -32,5 +32,8 @@ namespace card {
 			int getAmountOfOpponents() const;
 			Avatar getSelectedAvatar() const;
 			RoomOptions getOptions() const;
+			
+			void setUsernameInput(std::string username);
+			void setSelectedAvatar(Avatar avatar);
 	};
 }

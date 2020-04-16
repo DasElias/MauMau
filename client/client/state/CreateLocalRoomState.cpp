@@ -4,6 +4,7 @@
 #include <shared/model/MaxParticipants.h>
 #include "RoomLeaveHandlerImpl.h"
 #include "LocalReturnBackToMenuHandler.h"
+#include "../model/UsernameAvatarSaver.h"
 
 namespace card {
 	int const CreateLocalRoomState::MAX_OPPONENTS = MAX_PARTICIPANTS - 1;
@@ -45,6 +46,16 @@ namespace card {
 	void CreateLocalRoomState::onStateEnter() {
 		State::onStateEnter();
 		scene.discardMouseEvents();
+
+		auto[username, avatar] = UsernameAvatarSaver::load();
+		element->setUsernameInput(username);
+		element->setSelectedAvatar(avatar);
+	}
+	void CreateLocalRoomState::onStateExit() {
+		State::onStateExit();
+
+		UsernameAvatarSaver::UsernameAvatarData data = std::make_pair(element->getUsernameInput(), element->getSelectedAvatar());
+		UsernameAvatarSaver::save(data);
 	}
 	std::optional<std::string> CreateLocalRoomState::getErrorMessage() {
 		std::string usernameInput = element->getUsernameInput();

@@ -24,5 +24,6 @@ namespace card {
         public:
             void setOnCloseFunction(std::function<void(void)>);
             Avatar getSelectedAvatar() const;
+            void setSelectedAvatar(Avatar a);
 	};
 }

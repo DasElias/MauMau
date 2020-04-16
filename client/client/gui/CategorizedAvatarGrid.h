@@ -34,6 +34,7 @@ namespace card {
         // ----------------------------------------------------------------------
         public:
             Avatar getSelectedAvatar() const;
+            void setSelectedAvatar(Avatar a);
 
         private:
             void formatLabel(std::shared_ptr<egui::Label> lbl);

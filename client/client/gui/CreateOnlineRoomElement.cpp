@@ -53,6 +53,14 @@ namespace card {
 		return options;
 	}
 
+	void CreateOnlineRoomElement::setUsernameInput(std::string username) {
+		usernameInputField->setText(username);
+	}
+
+	void CreateOnlineRoomElement::setSelectedAvatar(Avatar a) {
+		avatarChooser->setSelectedAvatar(a);
+	}
+
 	void CreateOnlineRoomElement::lockInput(bool shouldLock) {
 		lockElement->setVisible(shouldLock);
 	}

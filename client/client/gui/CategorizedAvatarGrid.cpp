@@ -57,6 +57,13 @@ namespace card {
 	Avatar CategorizedAvatarGrid::getSelectedAvatar() const {
 		return selectedAvatar;
 	}
+	void CategorizedAvatarGrid::setSelectedAvatar(Avatar a) {
+		selectedAvatar = a;
+		maleGrid->trySetSelectedAvatar(a);
+		femaleGrid->trySetSelectedAvatar(a);
+		uncategorizedGrid->trySetSelectedAvatar(a);
+		
+	}
 	void CategorizedAvatarGrid::formatLabel(std::shared_ptr<egui::Label> lbl) {
 		int const FONT_SIZE_PX = 25;
 		egui::Color const color = {0.62, 0.62, 0.62};

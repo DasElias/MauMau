@@ -35,6 +35,7 @@ namespace card {
 		public:
 			void updateAndRender(float delta) override;
 			void onStateEnter() override;
+			void onStateExit() override;
 
 		private:
 			std::optional<std::string> getErrorMessage();

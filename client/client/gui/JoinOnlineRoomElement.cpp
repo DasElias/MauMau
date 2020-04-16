@@ -41,6 +41,14 @@ namespace card {
 		return avatarChooser->getSelectedAvatar();
 	}
 
+	void JoinOnlineRoomElement::setUsernameInput(std::string username) {
+		usernameInputField->setText(username);
+	}
+
+	void JoinOnlineRoomElement::setSelectedAvatar(Avatar a) {
+		avatarChooser->setSelectedAvatar(a);
+	}
+
 	void JoinOnlineRoomElement::lockInput(bool shouldLock) {
 		lockElement->setVisible(shouldLock);
 	}

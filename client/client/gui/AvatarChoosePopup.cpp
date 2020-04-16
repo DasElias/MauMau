@@ -51,5 +51,9 @@ namespace card {
 	Avatar AvatarChoosePopup::getSelectedAvatar() const {
 		return grid->getSelectedAvatar();
 	}
+
+	void AvatarChoosePopup::setSelectedAvatar(Avatar a) {
+		grid->setSelectedAvatar(a);
+	}
 	
 }

@@ -40,6 +40,7 @@ namespace card {
         public:
             float getHeightPerAvatar() const;
 
+            void trySetSelectedAvatar(Avatar a);
             std::optional<Avatar> getSelectedAvatar() const;
             void clearSelectedAvatar();
             void setOnSelectHandler(std::function<void(Avatar)> handler);

@@ -54,5 +54,13 @@ namespace card {
 	RoomOptions CreateLocalRoomElement::getOptions() const {
 		return options;
 	}
+
+	void CreateLocalRoomElement::setUsernameInput(std::string username) {
+		usernameInputField->setText(username);
+	}
+
+	void CreateLocalRoomElement::setSelectedAvatar(Avatar avatar) {
+		avatarChooser->setSelectedAvatar(avatar);
+	}
 	
 }

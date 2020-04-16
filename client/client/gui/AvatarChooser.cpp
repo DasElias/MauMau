@@ -1,5 +1,4 @@
 #include "AvatarChooser.h"
-#include "AvatarChoosePopup.h"
 #include "ColoredButton.h"
 #include <egui/model/nodes/Label.h>
 #include "../utils/FileUtils.h"
@@ -43,17 +42,17 @@ namespace card {
 		label->getTextComponent()->setColor(egui::Color(0.36f, 0.6f, 0.83f));
 		label->getTextComponent()->setFont(egui::Font::getFont("NotoSans Medium"));
 
-		auto popup = std::make_shared<AvatarChoosePopup>(avatarTextures);
+		popup = std::make_shared<AvatarChoosePopup>(avatarTextures);
 		popup->setZIndex(100);
 		popup->setVisible(false);
 		Node::addChildElement(popup);
 		popup->setPreferredDimension({1, egui::RelativityMode::RELATIVE_ON_SCREEN}, {1, egui::RelativityMode::RELATIVE_ON_SCREEN});
-		egui::FunctionWrapper<egui::MouseEvent> clickHandler = {[popup](egui::MouseEvent&) {
+		egui::FunctionWrapper<egui::MouseEvent> clickHandler = {[this](egui::MouseEvent&) {
 			popup->setVisible(true);
 		}};
 		label->getMouseClickedEventManager().addEventHandler(clickHandler);
 		backgroundElement->getMouseClickedEventManager().addEventHandler(clickHandler);
-		popup->setOnCloseFunction([this, popup]() {
+		popup->setOnCloseFunction([this]() {
 			popup->setVisible(false);
 			chosenAvatar = popup->getSelectedAvatar();
 			avatarBackground->setImage(avatarTextures.getImage(chosenAvatar));
@@ -64,5 +63,10 @@ namespace card {
 	}
 	Avatar AvatarChooser::getSelectedAvatar() const {
 		return chosenAvatar;
+	}
+	void AvatarChooser::setSelectedAvatar(Avatar a) {
+		chosenAvatar = a;
+		avatarBackground->setImage(avatarTextures.getImage(chosenAvatar));
+		popup->setSelectedAvatar(a);
 	}
 }

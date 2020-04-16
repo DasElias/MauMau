@@ -2,7 +2,7 @@
 #include <egui/model/popups/PopupErrorBox.h>
 #include "RoomLeaveHandlerImpl.h"
 #include "NetworkReturnBackToMenuHandler.h"
-
+#include "../model/UsernameAvatarSaver.h"
 
 namespace card {
 	CreateRoomState::CreateRoomState(StateManager& stateManager, AvatarTextures& avatarTextures, egui::MasterRenderer& eguiRenderer, NetworkErrorHandler& networkErrorHandler) :
@@ -43,6 +43,17 @@ namespace card {
 		State::onStateEnter();
 		createdGameFacade.reset();
 		scene.discardMouseEvents();
+
+		auto [username, avatar] = UsernameAvatarSaver::load();
+		element->setUsernameInput(username);
+		element->setSelectedAvatar(avatar);
+	}
+
+	void CreateRoomState::onStateExit() {
+		State::onStateExit();
+
+		UsernameAvatarSaver::UsernameAvatarData data = std::make_pair(element->getUsernameInput(), element->getSelectedAvatar());
+		UsernameAvatarSaver::save(data);
 	}
 	
 	void CreateRoomState::sendRequest(std::string username, Avatar avatar, RoomOptions options) {

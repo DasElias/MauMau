@@ -20,4 +20,7 @@ namespace card {
 	std::string LabeledInputField::getText() const {
 		return inputField->getText();
 	}
+	void LabeledInputField::setText(std::string text) {
+		inputField->setText(text);
+	}
 }

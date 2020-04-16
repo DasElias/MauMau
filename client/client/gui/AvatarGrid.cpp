@@ -73,6 +73,17 @@ namespace card {
 		float singleAvatarWidthInY = egui::y_pixelToPercent(egui::x_percentToPixel(WIDTH_PER_AVATAR));
 		return singleAvatarWidthInY / avatarTextures.getAspectRatio();
 	}
+	void AvatarGrid::trySetSelectedAvatar(Avatar a) {
+		for(auto& img : images) {
+			if(img.first == a) {
+				selectedAvatar = a;
+				updateOverlay(a, selection);
+				return;
+			}
+		}
+
+		clearSelectedAvatar();
+	}
 	std::optional<Avatar> AvatarGrid::getSelectedAvatar() const {
 		return selectedAvatar;
 	}

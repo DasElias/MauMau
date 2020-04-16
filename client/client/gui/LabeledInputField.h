@@ -30,5 +30,6 @@ namespace card {
         public:
             std::shared_ptr<egui::InputField> getInputFieldImpl();
             std::string getText() const;
+            void setText(std::string text);
 	};
 }
