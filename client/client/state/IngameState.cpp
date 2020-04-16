@@ -16,42 +16,22 @@ namespace card {
 			worldToScreenConverter(projectionMatrix, viewport),
 			playerLabelPositionGenerator(projectionMatrix, viewport),
 			eguiRenderer(eguiRenderer),
-			sceneRenderer(projectionMatrix, viewport, avatarTextures, eguiRenderer),
-			sceneRendererWrapper(sceneRenderer),
-			isInPauseState(false),
-			unixTimePauseStateWasToggled(getMilliseconds()) {
+			sceneRenderer(projectionMatrix, viewport, avatarTextures, eguiRenderer) {
 	}
 
 	void IngameState::updateAndRender(float delta) {
-		updateProjection();
-		updatePauseState();
-
-		if(isInPauseState) {
-			sceneRendererWrapper.renderWithGaussianBlur(delta);
-		} else {
-			sceneRendererWrapper.render(delta);
-		}
-
-	}
-
-	void IngameState::updatePauseState() {
-		if(egui::getInputHandler().isKeyDown(KEY_ESCAPE) && unixTimePauseStateWasToggled + PRESS_ESC_DELAY < getMilliseconds()) {
-			isInPauseState = !isInPauseState;
-			unixTimePauseStateWasToggled = getMilliseconds();
-		}
-	}
-
-	void IngameState::updateProjection() {
 		// first we have to reset the z position of the viewport
 		glm::vec3 viewportPosition = viewport.getPosition();
 		viewportPosition.z = START_VIEWPORT_Z;
 		viewport.setPosition(viewportPosition);
-
+		
 		updateViewportY();
 		updateViewportZ();
 		updateViewportY();
 
 		projectionMatrix.update(FOV);
+		sceneRenderer.render(delta);
+
 	}
 
 	void IngameState::updateViewportY() {
