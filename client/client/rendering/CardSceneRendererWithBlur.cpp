@@ -68,6 +68,7 @@ namespace card {
 
 		cardSceneRenderer.render(deltaSeconds);
 
+		multisampleFbo->unbind();
 		if(resolveTo.has_value()) multisampleFbo->resolveToFbo(*resolveTo);
 		else multisampleFbo->resolveToScreen();
 	}
