@@ -1,6 +1,6 @@
 #pragma once
 #include "ShouldDisplayTutorialInterface.h"
-#include "../system/DwordRegistryKey.h"
+#include "../system/RegistryKey.h"
 
 namespace card {
 	class ShouldDisplayTutorial : public ShouldDisplayTutorialInterface {
@@ -14,7 +14,7 @@ namespace card {
         // --------------------------------FIELDS--------------------------------
         // ----------------------------------------------------------------------
         private:
-            DwordRegistryKey registryKey;
+            RegistryKey registryKey;
 
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------

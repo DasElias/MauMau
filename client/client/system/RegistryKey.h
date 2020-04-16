@@ -28,8 +28,13 @@ namespace card {
         // ----------------------------------------------------------------------
         public:
             bool wasCreatedNewKey() const;
+            
+            void setDword(std::wstring valueName, uint32_t value);
+            uint32_t getDword(std::wstring valueName);
+            uint32_t getDwordOrDefault(std::wstring valueName, uint32_t defaultValue);
 
-
-
+            void setString(std::wstring valueName, std::string value);
+            std::string getString(std::wstring valueName);
+            std::string getStringOrDefault(std::wstring valueName, std::string defaultValue);
 	};
 }
