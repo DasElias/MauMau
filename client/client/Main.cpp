@@ -177,7 +177,7 @@ namespace card {
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 		glfwWindowHint(GLFW_DEPTH_BITS, 16);
-		glfwWindowHint(GLFW_SAMPLES, 2);
+	//	glfwWindowHint(GLFW_SAMPLES, 2);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		#ifndef NDEBUG
 			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -204,7 +204,7 @@ namespace card {
 
 
 		glfwShowWindow(p_window);
-		glfwMaximizeWindow(p_window);
+	//	glfwMaximizeWindow(p_window);
 		glfwFocusWindow(p_window);
 
 		glfwSwapInterval(VSYNC);

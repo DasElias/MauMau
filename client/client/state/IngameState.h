@@ -1,6 +1,6 @@
 #pragma once
 #include "State.h"
-#include "../rendering/CardSceneRenderer.h"
+#include "../rendering/CardSceneRendererWithBlur.h"
 #include "../rendering/PlayerLabelPositionGenerator.h"
 #include "../renderingModel/ProjectionMatrix.h"
 #include "../renderingModel/Viewport.h"
@@ -26,6 +26,7 @@ namespace card {
 			PlayerLabelPositionGenerator playerLabelPositionGenerator;
 			egui::MasterRenderer& eguiRenderer;
 			CardSceneRenderer sceneRenderer;
+			CardSceneRendererWithBlur sceneRendererWrapper;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------

@@ -16,7 +16,8 @@ namespace card {
 			worldToScreenConverter(projectionMatrix, viewport),
 			playerLabelPositionGenerator(projectionMatrix, viewport),
 			eguiRenderer(eguiRenderer),
-			sceneRenderer(projectionMatrix, viewport, avatarTextures, eguiRenderer) {
+			sceneRenderer(projectionMatrix, viewport, avatarTextures, eguiRenderer),
+			sceneRendererWrapper(sceneRenderer) {
 	}
 
 	void IngameState::updateAndRender(float delta) {
@@ -30,7 +31,7 @@ namespace card {
 		updateViewportY();
 
 		projectionMatrix.update(FOV);
-		sceneRenderer.render(delta);
+		sceneRendererWrapper.render(delta);
 
 	}
 
