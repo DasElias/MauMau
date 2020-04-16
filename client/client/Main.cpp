@@ -204,8 +204,11 @@ namespace card {
 
 
 		glfwShowWindow(p_window);
-	//	glfwMaximizeWindow(p_window);
+		glfwMaximizeWindow(p_window);
 		glfwFocusWindow(p_window);
+
+		// we update the display handler to use the maximized window's size
+		displayHandler.update();
 
 		glfwSwapInterval(VSYNC);
 
