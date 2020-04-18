@@ -190,7 +190,7 @@ namespace card {
 
 		//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-		p_window = glfwCreateWindow(START_WIDTH, START_HEIGHT, "MauMau", NULL, NULL);
+		p_window = glfwCreateWindow(START_WIDTH, START_HEIGHT, "MauMau 3D", NULL, NULL);
 
 		GlfwDisplayHandler displayHandler(p_window, START_WIDTH, START_HEIGHT);
 		GlfwInputHandler inputHandler(p_window);
@@ -287,7 +287,6 @@ namespace card {
 			egui::update(deltaSeconds);
 			threadUtils_update();
 
-			glfwSetWindowTitle(p_window, std::to_string(int(fps)).c_str());
 			stateManager.updateAndRender(deltaSeconds);
 			glfwSwapInterval(VSYNC);
 			glfwSwapBuffers(p_window);
