@@ -94,13 +94,6 @@ namespace card {
 		viewOptionsBtn->getMouseClickedEventManager().addEventHandler({[this](egui::MouseEvent&) {
 			viewOptionsElement->setVisible(true);
 		}});
-
-
-		blackOverlay = std::make_shared<egui::UnorganizedParentElement>();
-		blackOverlay->setBackground(std::make_shared<egui::ColoredBackground>(egui::Color(0, 0, 0, 0.5f)));
-		addChildElement(blackOverlay);
-		blackOverlay->setVisible(false);
-		blackOverlay->setConsumeAllMouseEvents(true);
 	}
 	std::shared_ptr<egui::AspectRatioElement> ParticipantsOverviewElement::addButton(std::shared_ptr<egui::Image> texImage, std::shared_ptr<egui::Image> hoverImage) {
 		float const BTN_HEIGHT_IN_PARENT = 0.75f;
@@ -119,7 +112,6 @@ namespace card {
 	void ParticipantsOverviewElement::update(ProxyRoom& room) {
 		roomCodeLabel->setText(std::to_string(room.getRoomCode()));
 
-		blackOverlay->setVisible(room.isWaitingForResponse());
 		static std::vector<std::shared_ptr<ParticipantOnClient>> participantsInLastFrame = {};
 		static std::shared_ptr<ParticipantOnClient> roomLeaderInLastFrame = {};
 		static std::map<std::string, int> roomOptionsInLastFrame = {};

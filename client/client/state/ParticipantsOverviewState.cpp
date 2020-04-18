@@ -17,6 +17,8 @@ namespace card {
 
 		element->addGameStartHandler([this]() {
 			auto& room = getRoom();
+			if(room.isWaitingForResponse()) return;
+
 			if(room.canStartGame()) {
 				room.requestGameStart();
 			} else {
@@ -25,6 +27,8 @@ namespace card {
 		});
 		element->addAiPlayerJoinHandler([this]() {
 			auto& room = getRoom();
+			if(room.isWaitingForResponse()) return;
+
 			if(room.canAiPlayerJoin()) {
 				room.requestAiPlayerJoin();
 			} else {
@@ -41,6 +45,8 @@ namespace card {
 		});
 		element->setKickEventHandler([this](std::shared_ptr<ParticipantOnClient> participantToKick) {
 			auto& room = getRoom();
+			if(room.isWaitingForResponse()) return;
+
 			if(room.canBeKicked(participantToKick)) {
 				room.requestKickPlayer(participantToKick);
 			} else {
@@ -49,6 +55,8 @@ namespace card {
 		});
 		element->setPromoteEventHandler([this](std::shared_ptr<ParticipantOnClient> newRoomLeader) {
 			auto& room = getRoom();
+			if(room.isWaitingForResponse()) return;
+
 			if(room.canBeRoomLeader(newRoomLeader)) {
 				room.requestRoomLeaderChange(newRoomLeader);
 			} else {

@@ -18,7 +18,6 @@ namespace card {
         private:
             AvatarTextures& avatarTextures;
 
-            std::shared_ptr<egui::UnorganizedParentElement> blackOverlay;
             std::shared_ptr<EditOptionsElement> editOptionsElement;
             std::shared_ptr<ViewOptionsElement> viewOptionsElement;
 
