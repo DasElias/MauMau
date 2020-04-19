@@ -86,7 +86,13 @@
       "buildCommandArgs": "-v",
       "ctestCommandArgs": "",
       "inheritEnvironments": [ "msvc_x64_x64" ],
-      "variables": []
+      "variables": [
+        {
+          "name": "LINK_RUNTIME_STATICALLY",
+          "value": "False",
+          "type": "BOOL"
+        }
+      ]
     }
   ]
 }

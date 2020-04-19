@@ -11,11 +11,11 @@ if (NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
 endif()
 
-
-if(CMAKE_BUILD_TYPE STREQUAL "Release")   
+option(LINK_RUNTIME_STATICALLY "Link runtime statically" OFF)
+if(LINK_RUNTIME_STATICALLY)   
     message("Link runtime statically.")
-   # set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
-   # set(Boost_USE_STATIC_RUNTIME ON)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    set(Boost_USE_STATIC_RUNTIME ON)
 endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
