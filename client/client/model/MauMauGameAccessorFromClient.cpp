@@ -131,7 +131,8 @@ namespace card {
 		if(! canPlay(card)) throw std::runtime_error("Can't play card!");
 
 		bool canChangeColor = gameData.canChangeColor(card);
-		if(!canChangeColor || gameData.hasGameEnded()) {
+		bool isLastCard = localPlayer.getCardStack().getSize() == 1;	// we don't have to consider the temp card stack, since then would the method playDrawnCard be called
+		if(!canChangeColor || isLastCard) {
 			gameData.playCardFromLocalPlayerHandCards(index);
 			sendPlayCardPacket();
 		} else {
@@ -146,7 +147,7 @@ namespace card {
 		Card card = *localPlayer.getCardInTempStack();
 
 		bool canChangeColor = gameData.canChangeColor(card);
-		if(!canChangeColor || gameData.hasGameEnded()) {
+		if(! canChangeColor) {
 			gameData.playCardFromLocalPlayerTempCards();
 			sendPlayCardPacket();
 		} else {
