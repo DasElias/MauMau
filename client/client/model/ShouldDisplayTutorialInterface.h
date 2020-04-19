@@ -12,7 +12,8 @@ namespace card {
         DRAW_CARD_STATE,
         GAME_START,
         MAU_REMEMBER,
-        TURN_END
+        TURN_END,
+        CHOOSE_COLOR_EXPLANATION,
     };
 
 	class ShouldDisplayTutorialInterface {

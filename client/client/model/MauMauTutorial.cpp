@@ -56,6 +56,8 @@ namespace card {
 			gameMessageQueue.appendMessage(u8"Das Spielen einer Karte mit dem Wert 8 führt dazu, dass der nächste Spieler ausgelassen wird, es sei denn, er kann ebenfalls eine Karte mit dem Wert 8 spielen.");
 		} else if(gameData.getAmountsOfCardsToDrawForNextPlayer(c) > 0 && shouldDisplayTutorialInterface.shouldDisplayAndClear(TutorialMessage::DRAW_TWO_CARD_EXPLANATION)) {
 			gameMessageQueue.appendMessage(u8"Das Spielen einer Karte mit dem Wert 7 führt dazu, dass der nächste Spieler zwei Karten ziehen muss, es sei denn, er kann ebenfalls eine Karte mit dem Wert 7 spielen.");
+		} else if(gameData.canChangeColor(c) && shouldDisplayTutorialInterface.shouldDisplayAndClear(TutorialMessage::CHOOSE_COLOR_EXPLANATION)) {
+			gameMessageQueue.appendMessage(u8"Das Spielen einer Karte mit dem Wert Bube führt dazu, dass der entsprechende Spieler die nun zu spielende Farbe aussuchen darf.");
 		}
 	}
 	void MauMauTutorial::onTurnEnd(ProxyPlayer& playerWhichTurnHasEnded) {
