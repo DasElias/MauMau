@@ -6,6 +6,10 @@ namespace card {
 		return y1 + ((y2 - y1) / (x2 - x1)) * (x - x1);
 	}
 
+	float interpolateLinearAndClamp(float x, float x1, float y1, float x2, float y2) {
+		float y = interpolateLinear(x, x1, y1, x2, y2);
+		return clamp(y, y1, y2);
+	}
 
 	float avg(float a, float b) {
 		return (a + b) / 2;

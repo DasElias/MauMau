@@ -5,6 +5,7 @@ namespace card {
 	float const PI = 3.14159265359f;
 
 	float interpolateLinear(float x, float x1, float y1, float x2, float y2);
+	float interpolateLinearAndClamp(float x, float x1, float y1, float x2, float y2);
 
 	// incl. min and max
 	template<typename T = int>
