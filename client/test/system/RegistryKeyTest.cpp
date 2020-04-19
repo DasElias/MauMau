@@ -1,28 +1,18 @@
 #include <system/RegistryKey.h>
 #include <catch2/catch.hpp>
 #include <Windows.h>
-#include <iostream>
+#include "DeleteRegistryKey.h"
+
 
 using namespace card;
 
-static std::wstring PARENT = L"Software\\MauMau 3D";
-static std::wstring SUBKEY = L"Software\\MauMau 3D\\unittest";
+static std::wstring const PARENT = L"Software\\MauMau 3D";
+static std::wstring const SUBKEY = L"Software\\MauMau 3D\\unittest";
 
-void deleteRegistryKey() {
-	HKEY key;
-	if(RegCreateKeyExW(HKEY_CURRENT_USER, PARENT.c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &key, NULL) != ERROR_SUCCESS) {
-		FAIL();
-	}
-	LSTATUS ec = RegDeleteKeyW(key, L"unittest");
-	if(ec != ERROR_SUCCESS && ec != ERROR_FILE_NOT_FOUND) {
-		FAIL();
-	}
-	RegCloseKey(key);
-}
 
 TEST_CASE("RegistryKey", "[RegistryKey]") {
 	SECTION("non-existing RegistryKey") {
-		deleteRegistryKey();
+		deleteRegistryKey(PARENT, L"unittest");
 		RegistryKey registryKey(SUBKEY);
 
 		SECTION("wasCreatedNewKey") {

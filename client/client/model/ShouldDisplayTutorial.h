@@ -1,6 +1,8 @@
 #pragma once
 #include "ShouldDisplayTutorialInterface.h"
 #include "../system/RegistryKey.h"
+#include <vector>
+#include <set>
 
 namespace card {
 	class ShouldDisplayTutorial : public ShouldDisplayTutorialInterface {
@@ -8,19 +10,20 @@ namespace card {
         // ----------------------------STATIC-FIELDS-----------------------------
         // ----------------------------------------------------------------------
         private:
-            static std::wstring const SUBKEY;
+            static std::wstring const DEFAULT_SUBKEY;
 
         // ----------------------------------------------------------------------
         // --------------------------------FIELDS--------------------------------
         // ----------------------------------------------------------------------
         private:
             RegistryKey registryKey;
+            std::set<TutorialMessage> shouldntDisplayCache;
 
         // ----------------------------------------------------------------------
         // -----------------------------CONSTRUCTORS-----------------------------
         // ----------------------------------------------------------------------
         public:
-            ShouldDisplayTutorial();
+            ShouldDisplayTutorial(std::wstring subkey = DEFAULT_SUBKEY);
 
         // ----------------------------------------------------------------------
         // -------------------------------METHODS--------------------------------
@@ -32,6 +35,8 @@ namespace card {
 
         private:
             std::wstring getKeyValue(TutorialMessage msg);
+            bool isInShouldntDisplayCache(TutorialMessage msg);
+             
 
 	};
 }
