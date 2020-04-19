@@ -52,7 +52,7 @@ namespace card {
 		appendContent("Karten", "svg-cards\nDavid Bellot - www.svg-cards.sourceforge.net\nLGPL-Lizenz (www.gnu.org/licenses/lgpl-3.0.en.html)");
 		appendContent("Avatare", "Pablo Stanley - www.getavataaars.com");
 		appendContent(u8"Textur für Tisch", "Petr Kovar - www.freeimages.com");
-		appendContent("Icons", "Freepik - www.flaticon.com");
+		appendContent("Icons", "Freepik - www.flaticon.com\nThose Icons - www.flaticons.com\nPixel Perfect - www.flaticons.com");
 		appendContent("Verwendete Libraries", "GLFW/GLAD\nNanoVG\nBoost.Asio\nLoguru");
 
 		backButton = std::make_shared<ColoredButton>(ColoredButtonType::BLUE, u8"Zurück");
