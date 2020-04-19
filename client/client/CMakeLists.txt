@@ -20,6 +20,8 @@ else()
 	add_executable(card ${card_source_files})
 endif()
 
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "MauMau3D")
+
 
 
 message("GLFW linked library: \"${GLFW3_LIBRARY}\"")
@@ -39,7 +41,6 @@ target_link_libraries(card
 )
 
 install(TARGETS card DESTINATION .)
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../installer/svg-cards DESTINATION .)
 
 set(CPACK_GENERATOR WIX)
 set(CPACK_PACKAGE_NAME "MauMau 3D")
