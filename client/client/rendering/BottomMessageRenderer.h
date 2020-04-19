@@ -7,6 +7,7 @@
 #include <egui/model/nodes/UnorganizedParentElement.h>
 #include <array>
 #include <egui/model/positioning/RelativePositioningOnScreen.h>
+#include <egui/model/nodeComponents/background/ColoredBackground.h>
 
 namespace card {
     class BottomMessageRenderer {
@@ -17,12 +18,14 @@ namespace card {
 
                 egui::MasterRenderer& eguiRenderer;
                 std::shared_ptr<egui::Label> text;
-                std::shared_ptr<egui::Background> coloredBackground;
+                std::shared_ptr<egui::ColoredBackground> coloredBackground;
                 int fontSizePx;
 
             public:
                 TextToRender(int fontSizePx, egui::MasterRenderer& eguiRenderer);
                 void setText(std::string text);
+                void updateOpacity(long long messageAppendUnixTimeMs);
+                void updateXTranslation(long long messageAppendUnixTimeMs);
         };
 
         typedef std::array<std::shared_ptr<TextToRender>, MessageQueue::MAX_MSG_AMOUNT> TextBoxesArray;
@@ -34,6 +37,7 @@ namespace card {
             static float const MESSAGE_WIDTH_ON_SCREEN;
             static float const MESSAGE_RIGHT_MARGIN_ON_SCREEN;
             static int const PADDING_BETWEEN_MESSAGE_BOXES_PX;
+            static int const MESSAGE_ANIMATION_DURATION_MS;
         
         // ----------------------------------------------------------------------
         // --------------------------------FIELDS--------------------------------

@@ -21,15 +21,19 @@ namespace card {
 	void MessageQueue::appendMessage(std::string message, int displayDuration) {
 		static MessageKey defaultKey = {};
 
-		long long removeTime = getMilliseconds() + displayDuration;
-		Message msgObj = {message, removeTime, defaultKey};
+		long long appendTime = getMilliseconds();
+		long long removeTime = appendTime + displayDuration;
+		Message msgObj = {message, appendTime, removeTime, defaultKey};
 		if(messages.size() >= MAX_MSG_AMOUNT) {
 			messages.pop_front();
 		}
 		messages.push_back(msgObj);
 	}
 	void MessageQueue::appendMessagePermanently(std::string message, const MessageKey& removeKey) {
-		Message msgObj = {message, LLONG_MAX, removeKey};
+		long long appendTime = getMilliseconds();
+		long long removeTime = LLONG_MAX;
+
+		Message msgObj = {message, appendTime, removeTime, removeKey};
 		if(messages.size() >= MAX_MSG_AMOUNT) {
 			messages.pop_front();
 		}

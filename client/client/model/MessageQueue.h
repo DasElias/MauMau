@@ -17,6 +17,7 @@ namespace card {
 
     struct Message {
         std::string content;
+        long long appendUnixTimeMs;
         long long removeUnixTimeMs;
         MessageKey removeKey;
     };

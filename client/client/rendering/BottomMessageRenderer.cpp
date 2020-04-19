@@ -5,11 +5,14 @@
 #include <egui/model/nodes/VBox.h>
 #include <egui/model/positioning/RelativePositioningInParent.h>
 #include <egui/model/positioning/RelativePositioningOnScreen.h>
+#include <shared/utils/MathUtils.h>
+#include <shared/utils/TimeUtils.h>
 
 namespace card {
 	float const BottomMessageRenderer::MESSAGE_WIDTH_ON_SCREEN = 0.2f;
 	float const BottomMessageRenderer::MESSAGE_RIGHT_MARGIN_ON_SCREEN = 0.02f;
 	int const BottomMessageRenderer::PADDING_BETWEEN_MESSAGE_BOXES_PX = 5;
+	int const BottomMessageRenderer::MESSAGE_ANIMATION_DURATION_MS = 100;
 
 	BottomMessageRenderer::TextToRender::TextToRender(int fontSizePx, egui::MasterRenderer& eguiRenderer) :
 			eguiRenderer(eguiRenderer),
@@ -38,6 +41,36 @@ namespace card {
 		this->text->setText(text);
 		int lastCharY = eguiRenderer.getCharPositionInTextBox(this->text->getTextComponent(), text.size() - 1).second - egui::y_percentToPixel(this->text->getAbsYMargin());
 		setPreferredHeight({float(lastCharY + fontSizePx + 2 * Y_TRANSLATION), egui::RelativityMode::ABSOLUTE_VALUE});
+	}
+	void BottomMessageRenderer::TextToRender::updateOpacity(long long messageAppendUnixTimeMs) {
+		const float x1 = 0;
+		const float y1 = 0;
+		const float x2 = MESSAGE_ANIMATION_DURATION_MS;
+		const float y2 = 1;
+		const float x = getMilliseconds() - messageAppendUnixTimeMs;
+		float opacity = interpolateLinearAndClamp(x, x1, y1, x2, y2);
+
+		this->text->getTextComponent()->setColor({1, 1, 1, opacity});
+
+		egui::Color bgColor = coloredBackground->getBackgroundColor();
+		bgColor.setAlpha(opacity);
+		this->coloredBackground->setBackgroundColor(bgColor);
+
+		egui::Color borderColor = getBorder()->getLeftColor();
+		borderColor.setAlpha(opacity);
+		getBorder()->setLeftColor(borderColor);
+	}
+	void BottomMessageRenderer::TextToRender::updateXTranslation(long long messageAppendUnixTimeMs) {
+		const float x1 = 0;
+		const float y1 = -MESSAGE_WIDTH_ON_SCREEN;
+		const float x2 = MESSAGE_ANIMATION_DURATION_MS;
+		const float y2 = 0;
+		const float x = getMilliseconds() - messageAppendUnixTimeMs;
+
+		float xTranslation_onScreen = interpolateLinearAndClamp(x, x1, y1, x2, y2);
+
+		int xTranslation_px = egui::x_percentToPixel(xTranslation_onScreen);
+		this->setXTranslation(xTranslation_px);
 	}
 	BottomMessageRenderer::BottomMessageRenderer(egui::MasterRenderer& eguiRenderer) :
 			eguiRenderer(eguiRenderer),
@@ -69,6 +102,8 @@ namespace card {
 			std::string msgContent = msg.content;
 
 			textBox->setText(msgContent);
+			textBox->updateOpacity(msg.appendUnixTimeMs);
+			textBox->updateXTranslation(msg.appendUnixTimeMs);
 			textBox->setVisible(true);
 
 			height += textBox->getComputedHeight() + egui::y_pixelToPercent(PADDING_BETWEEN_MESSAGE_BOXES_PX);
