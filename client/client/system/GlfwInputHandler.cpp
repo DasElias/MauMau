@@ -3,7 +3,7 @@
 
 #include <map>
 #include <stdexcept>
-#include <boost/log/trivial.hpp>
+#include <shared/utils/Logger.h>
 
 namespace card {
 	namespace {
@@ -209,11 +209,15 @@ namespace card {
 				return "RIGHT SUPER";
 			case KEY_MENU:
 				return "MENU";
+			case KEY_UNKNOWN:
+				return "UNKNOWN KEY (" + std::to_string(key) + ")";
+			default:
+				{
+					const char* stringPtr = glfwGetKeyName(key, scanCode);
+					if(stringPtr == nullptr) return "UNKNOWN KEY! " + key;
+					return std::string(stringPtr);
+				}
 		}
-
-		const char* stringPtr = glfwGetKeyName(key, scanCode);
-		if(stringPtr == nullptr) return "UNKNOWN KEY! " + key;
-		return std::string(stringPtr);
 	}
 
 	std::string GlfwInputHandler::getKeyChar(int key, int scanCode) {
@@ -299,14 +303,17 @@ namespace card {
 				return "8";
 			case KEY_KP_9:
 				return "9";		
+			case KEY_UNKNOWN:
+				return "";
+			default:
+				{
+					const char* stringPtr = glfwGetKeyName(key, scanCode);
+					if(stringPtr == nullptr) return "";
+					return std::string(stringPtr);
+				}
 		}
 
-		const char* stringPtr = glfwGetKeyName(key, scanCode);
-		if(stringPtr == nullptr) {
-			BOOST_LOG_TRIVIAL(warning) << "Warning! Key not found! Key: " << key << " Scan code: " << scanCode;
-			return "";
-		}
-		return std::string(stringPtr);
+
 	}
 
 	egui::EventManager<egui::ScrollEvent>& GlfwInputHandler::getScrollEventManager() {
