@@ -1,5 +1,5 @@
 const char* particle_vertex = R"(
-#version 400 core
+#version 330 core
 
 in vec2 position;
 in vec4 texOffsets;

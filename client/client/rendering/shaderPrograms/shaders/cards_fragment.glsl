@@ -1,5 +1,5 @@
 const char* cards_fragment = R"(
-#version 400 core
+#version 330 core
 
 in vec3 pass_texCoords;
 flat in uint pass_shouldRenderInGrayScale;

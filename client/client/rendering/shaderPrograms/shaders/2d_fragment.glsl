@@ -1,5 +1,5 @@
 const char* twod_fragment = R"(
-#version 400 core
+#version 330 core
 
 in vec2 pass_texCoords;
 
@@ -13,7 +13,7 @@ void main(void) {
 )";
 
 const char* twod_fragment_discardInvisible = R"(
-#version 400 core
+#version 330 core
 
 in vec2 pass_texCoords;
 

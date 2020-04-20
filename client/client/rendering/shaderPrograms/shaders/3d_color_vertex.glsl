@@ -1,5 +1,5 @@
 const char* threed_color_vertex = R"(
-#version 400 core
+#version 330 core
 
 in vec3 position;
 in vec3 color;

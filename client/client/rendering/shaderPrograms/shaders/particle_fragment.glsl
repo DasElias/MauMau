@@ -1,5 +1,5 @@
 const char* particle_fragment = R"(
-#version 400 core
+#version 330 core
 
 in vec2 pass_textureCoords1;
 in vec2 pass_textureCoords2;

@@ -1,5 +1,5 @@
 const char* circleSector_vertex = R"(
-#version 400 core
+#version 330 core
 
 in vec2 position;
 

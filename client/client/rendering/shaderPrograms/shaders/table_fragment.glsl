@@ -1,5 +1,5 @@
 const char* table_fragment = R"(
-#version 400 core
+#version 330 core
 
 uniform vec3 lightPosition = vec3(0, 10, 7);
 uniform float coneAngle = 12.0f;
