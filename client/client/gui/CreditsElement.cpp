@@ -49,10 +49,10 @@ namespace card {
 		title->setPreferredHeight({TITLE_FONT_SIZE_PX, RelativityMode::ABSOLUTE_VALUE});
 		subtitle->setPreferredHeight({SUBTITLE_FONT_SIZE_PX + 20, RelativityMode::ABSOLUTE_VALUE});
 
-		appendContent("Karten", "svg-cards\nDavid Bellot - www.svg-cards.sourceforge.net\nLGPL-Lizenz (www.gnu.org/licenses/lgpl-3.0.en.html)");
+		appendContent("Karten", "svg-cards\nDavid Bellot - www.svg-cards.sourceforge.net\nLGPL-Lizenz 2.1 (https://www.gnu.org/licenses/old-licenses/lgpl-2.1.de.html)");
 		appendContent("Avatare", "Pablo Stanley - www.getavataaars.com");
 		appendContent(u8"Textur für Tisch", "Petr Kovar - www.freeimages.com");
-		appendContent("Icons für Buttons", "Freepik - www.flaticon.com\nThose Icons - www.flaticons.com\nPixel Perfect - www.flaticons.com");
+		appendContent(u8"Icons für Buttons", "Freepik - www.flaticon.com\nThose Icons - www.flaticons.com\nPixel Perfect - www.flaticons.com");
 		appendContent("Verwendete Libraries", "GLFW/GLAD\nNanoVG\nBoost.Asio\nLoguru");
 
 		backButton = std::make_shared<ColoredButton>(ColoredButtonType::BLUE, u8"Zurück");
