@@ -7,6 +7,7 @@
 #include <shared/utils/ThreadUtils.h>
 #include "service/ThreadSynchronizer.h"
 #include "service/RoomManagerAccessorFromClient.h"
+#include "service/ShellAcceptor.h"
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 	// windows
@@ -46,6 +47,9 @@ int main() {
 		ba::io_context ioc;
 		RoomManagerAccessorFromClient roomManager(packetTransmitter);
 		Acceptor acceptor(ioc, packetTransmitter, roomManager);
+
+		ShellCommandParser shellCommandParser(roomManager);
+		ShellAcceptor shellAcceptor(ioc, shellCommandParser);
 
 		std::thread threadUtilsThread(&runThreadUtils);
 

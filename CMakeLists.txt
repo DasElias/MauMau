@@ -63,6 +63,7 @@ if(BUILD_CLIENT)
 endif(BUILD_CLIENT)
 if(BUILD_SERVER)
     add_subdirectory(server)
+    add_subdirectory(serverControl)
 endif(BUILD_SERVER)
 
 set(CTEST_PROJECT_NAME "MauMau")
