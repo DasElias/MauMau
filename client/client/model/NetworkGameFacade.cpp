@@ -73,13 +73,15 @@ namespace card {
 	void NetworkGameFacade::setErrorMsgOnConnectionFail(boost::system::error_code ec) {
 		switch(ec.value()) {
 			case boost::asio::error::host_unreachable:
-				errorMsgInPlainText = "Keine Internetverbindung.";
+			case boost::asio::error::host_not_found:
+			case boost::asio::error::host_not_found_try_again:
+				errorMsgInPlainText = "Keine Internetverbindung. Bitte versuche es später erneut.";
 				break;
 			case boost::asio::error::connection_refused:
 				errorMsgInPlainText = "Der Server ist zurzeit nicht verfügbar. Bitte versuche es später erneut.";
 				break;
 			case boost::asio::error::timed_out:
-				errorMsgInPlainText = "Der Server benötigte zu lange zum Antworten. Bitte versuche es später erneut.";
+				errorMsgInPlainText = "Verbindung zum Server konnte nicht hergestellt werden. Bitte versuche es später erneut.";
 				break;
 			default:
 				errorMsgInPlainText = ec.message();
