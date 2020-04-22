@@ -29,6 +29,12 @@ namespace card {
 	void RoomManagerAccessorFromClient::leave(std::shared_ptr<AbstractConnectionToClient> conn) {
 		roomManager.leave(conn);
 	}
+	std::size_t RoomManagerAccessorFromClient::getAmountOfRooms() const {
+		return roomManager.getAmountOfRooms();
+	}
+	std::size_t RoomManagerAccessorFromClient::getAmountOfUsersInRooms() const {
+		return roomManager.getAmountOfUsersInRooms();
+	}
 	optionalSuccessAnswerPacket RoomManagerAccessorFromClient::listener_onJoinRoom(ClientToServerPacket& p, const std::shared_ptr<AbstractConnectionToClient>& conn) {
 		auto& casted = dynamic_cast<RoomJoinRequest_CTSPacket&>(p);
 

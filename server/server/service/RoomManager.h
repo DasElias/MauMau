@@ -50,6 +50,8 @@ namespace card {
 			ServerRoom& getRoomToConnection(const std::shared_ptr<AbstractConnectionToClient>& conn);
 			std::shared_ptr<ParticipantOnServer> getParticipantToConnection(const std::shared_ptr<AbstractConnectionToClient>& conn);
 			std::shared_ptr<AbstractConnectionToClient> getConnectionToParticipant(const std::shared_ptr<ParticipantOnServer>& participant);
+			std::size_t getAmountOfRooms() const;
+			std::size_t getAmountOfUsersInRooms() const;
 
 		private:
 			void closeRoomIfNecessary(const ServerRoom& room);

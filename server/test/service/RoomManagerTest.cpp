@@ -26,6 +26,8 @@ TEST_CASE("RoomManager", "RoomManager") {
 		REQUIRE(roomManager.getRoomToConnection(leaderConn) == createReturnValue.room);
 		REQUIRE(roomManager.getParticipantToConnection(leaderConn) == createReturnValue.constructedParticipant);
 		REQUIRE(roomManager.getConnectionToParticipant(createReturnValue.constructedParticipant) == leaderConn);
+		REQUIRE(roomManager.getAmountOfRooms() == 1);
+		REQUIRE(roomManager.getAmountOfUsersInRooms() == 1);
 		
 		RoomCode roomCode = createReturnValue.room.getRoomCode();
 
@@ -42,17 +44,25 @@ TEST_CASE("RoomManager", "RoomManager") {
 			REQUIRE(roomManager.getParticipantToConnection(userConn) == joinReturnValue.constructedParticipant);
 			REQUIRE(roomManager.getConnectionToParticipant(joinReturnValue.constructedParticipant) == userConn);
 			REQUIRE(joinReturnValue.room.getRoomCode() == roomCode);
+			REQUIRE(roomManager.getAmountOfRooms() == 1);
+			REQUIRE(roomManager.getAmountOfUsersInRooms() == 2);
 
 			SECTION("kick") {
 				SECTION("user tries to kick leader") {
 					REQUIRE_FALSE(roomManager.kick(leaderName, userConn));
+					REQUIRE(roomManager.getAmountOfRooms() == 1);
+					REQUIRE(roomManager.getAmountOfUsersInRooms() == 2);
 				}
 				SECTION("leader tries to kick non-existing user") {
 					REQUIRE_FALSE(roomManager.kick("AAAAA", leaderConn));
+					REQUIRE(roomManager.getAmountOfRooms() == 1);
+					REQUIRE(roomManager.getAmountOfUsersInRooms() == 2);
 				}
 				SECTION("non-existing conn tries to kick an user") {
 					auto const nonExistingConn = std::make_shared<AbstractConnectionToClientDummy>();
 					REQUIRE_FALSE(roomManager.kick(userName, nonExistingConn));
+					REQUIRE(roomManager.getAmountOfRooms() == 1);
+					REQUIRE(roomManager.getAmountOfUsersInRooms() == 2);
 				}
 				SECTION("successful kick") {
 					REQUIRE(roomManager.kick(userName, leaderConn));
@@ -62,6 +72,8 @@ TEST_CASE("RoomManager", "RoomManager") {
 					REQUIRE_THROWS(roomManager.getRoomToConnection(userConn));
 					REQUIRE_THROWS(roomManager.getParticipantToConnection(userConn));
 					REQUIRE_THROWS(roomManager.getConnectionToParticipant(joinReturnValue.constructedParticipant));
+					REQUIRE(roomManager.getAmountOfRooms() == 1);
+					REQUIRE(roomManager.getAmountOfUsersInRooms() == 1);
 				}
 			}
 			SECTION("leave") {
@@ -77,6 +89,15 @@ TEST_CASE("RoomManager", "RoomManager") {
 					REQUIRE_THROWS(roomManager.getRoomToConnection(userConn));
 					REQUIRE_THROWS(roomManager.getParticipantToConnection(userConn));
 					REQUIRE_THROWS(roomManager.getConnectionToParticipant(joinReturnValue.constructedParticipant));
+					REQUIRE(roomManager.getAmountOfRooms() == 1);
+					REQUIRE(roomManager.getAmountOfUsersInRooms() == 1);
+				}
+				SECTION("all particpants leaves") {
+					roomManager.leave(userConn);
+					roomManager.leave(leaderConn);
+
+					REQUIRE(roomManager.getAmountOfRooms() == 0);
+					REQUIRE(roomManager.getAmountOfUsersInRooms() == 0);
 				}
 			}
 		}

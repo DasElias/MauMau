@@ -26,6 +26,9 @@ namespace card {
         // ----------------------------------------------------------------------
         public:
             void leave(std::shared_ptr<AbstractConnectionToClient> conn);
+            std::size_t getAmountOfRooms() const;
+            std::size_t getAmountOfUsersInRooms() const;
+
 
         private:
             optionalSuccessAnswerPacket listener_onJoinRoom(ClientToServerPacket& p, const std::shared_ptr<AbstractConnectionToClient>& conn);

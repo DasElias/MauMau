@@ -99,6 +99,12 @@ namespace card {
 		}
 		throw std::runtime_error("No connection was registered to participant.");
 	}
+	std::size_t RoomManager::getAmountOfRooms() const {
+		return rooms.size();
+	}
+	std::size_t RoomManager::getAmountOfUsersInRooms() const {
+		return users.size();
+	}
 	void RoomManager::closeRoomIfNecessary(const ServerRoom& room) {
 		if(room.shouldCloseRoom()) closeRoom(room);
 	}
