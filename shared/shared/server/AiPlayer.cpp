@@ -22,7 +22,7 @@ namespace card {
 	void AiPlayer::onStartTurn() {
 		Player::onStartTurn();
 
-		int delay = randomInRange(1150, 1500);
+		int delay = randomInRange(850, 1400);
 		auto& playCardStack = game.getPlayCardStack();
 		delay += getTimeToSetNextPlayerOnTurn(game.wasCardPlayedLastTurn(), game.wasCardDrawnLastTurn(), game.getAmountOfDrawedCardsDueToPlusTwoLastTurn());
 		threadUtils_invokeIn(delay, this, [this]() {
