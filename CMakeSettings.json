@@ -10,7 +10,13 @@
       "cmakeCommandArgs": "-DBOOST_ROOT=\"C:/Users/Elias/visual_studio_dependencies/boost_1_71_0_vs\"",
       "buildCommandArgs": "-v",
       "ctestCommandArgs": "",
-      "variables": []
+      "variables": [
+        {
+          "name": "LINK_RUNTIME_STATICALLY",
+          "value": "True",
+          "type": "BOOL"
+        }
+      ]
     },
     {
       "name": "Linux-Debug",
@@ -49,7 +55,7 @@
       "generator": "Unix Makefiles",
       "configurationType": "Release",
       "cmakeExecutable": "/usr/bin/cmake",
-      "remoteCopySourcesExclusionList": [ ".vs", ".git", "out", "build", "MSIX"],
+      "remoteCopySourcesExclusionList": [ ".vs", ".git", "out", "build", "MSIX" ],
       "cmakeCommandArgs": "-DBOOST_ROOT=\"/home/elias/boost_1_71_0\"",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",

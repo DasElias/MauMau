@@ -42,12 +42,14 @@ FIND_PATH(GLFW3_INCLUDE_DIR "GLFW/glfw3.h"
 PATHS ${_glfw3_HEADER_SEARCH_DIRS} )
 
 # Search for the library
-if(LINK_RUNTIME_STATICALLY)   
+if(GLFW3_LINK_RUNTIME_STATICALLY)
 	message("Search for GLFW version with statically linked runtime...")
 	FIND_LIBRARY(GLFW3_LIBRARY NAMES glfw3_s glfw_s PATHS ${_glfw3_LIB_SEARCH_DIRS})
+	message("Found library: ${GLFW3_LIBRARY}")
 else()
 	message("Search for GLFW version with dynamically linked runtime...")
 	FIND_LIBRARY(GLFW3_LIBRARY NAMES glfw3 glfw PATHS ${_glfw3_LIB_SEARCH_DIRS})
+	message("Found library: ${GLFW3_LIBRARY}")
 endif()
 INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(GLFW3 DEFAULT_MSG

@@ -1,6 +1,9 @@
 add_compile_definitions(WIN32_LEAN_AND_MEAN)
 
 # GLFW
+if(LINK_RUNTIME_STATICALLY) 
+	set(GLFW3_LINK_RUNTIME_STATICALLY 1)
+endif()
 find_package(glfw3 3.3 REQUIRED)
 include_directories(${GLFW3_INCLUDE_DIR})
 
