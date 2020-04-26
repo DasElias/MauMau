@@ -4,7 +4,7 @@
 #include "NetworkErrorMessageGenerator.h"
 
 namespace card {
-	ClientPacketTransmitter::ClientPacketTransmitter(std::shared_ptr<GeneralTCPTransmitter> conn, NetworkErrorHandler& errorHandler) :
+	ClientPacketTransmitter::ClientPacketTransmitter(std::shared_ptr<GeneralTCPTransmitterWithKeepalive> conn, NetworkErrorHandler& errorHandler) :
 			conn(conn),
 			errorHandler(errorHandler) {
 

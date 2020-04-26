@@ -16,7 +16,7 @@ namespace card {
 			room(nullptr),
 			handler_enteringRoomSuccessReport(std::bind(&NetworkGameFacade::listener_enteringRoomSuccessReport, this, std::placeholders::_1)) {
 
-		this->conn = std::make_shared<ConnectionToServer>();
+		this->conn = std::make_shared<ConnectionToServer>(ioContext);
 		this->conn->start([this](boost::system::system_error& e) {
 			setErrorMsgOnConnectionFail(e.code());
 			isWaitingForResponse_field = false;

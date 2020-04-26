@@ -12,4 +12,5 @@ target_link_libraries(server_appl
 	shared_model
 	shared_server
 	server_service
+	shared_network
 )

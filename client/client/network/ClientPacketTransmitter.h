@@ -1,7 +1,7 @@
 #pragma once
 #include <shared/packet/CTSPacketTransmitter.h>
 #include <boost/asio.hpp>
-#include <shared/packet/GeneralTCPTransmitter.h>
+#include <shared/network/GeneralTCPTransmitterWithKeepalive.h>
 #include "NetworkErrorHandler.h"
 
 namespace card {
@@ -10,14 +10,14 @@ namespace card {
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
-			std::shared_ptr<GeneralTCPTransmitter> conn;
+			std::shared_ptr<GeneralTCPTransmitterWithKeepalive> conn;
 			NetworkErrorHandler& errorHandler;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			ClientPacketTransmitter(std::shared_ptr<GeneralTCPTransmitter> conn, NetworkErrorHandler& errorHandler);
+			ClientPacketTransmitter(std::shared_ptr<GeneralTCPTransmitterWithKeepalive> conn, NetworkErrorHandler& errorHandler);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------

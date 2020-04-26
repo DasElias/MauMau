@@ -15,8 +15,8 @@ namespace card {
 	std::string const ConnectionToServer::HOST = "maumau.daselias.io";
 	std::string const ConnectionToServer::PORT = "6767";
 
-	ConnectionToServer::ConnectionToServer() :
-			ioContext(),
+	ConnectionToServer::ConnectionToServer(boost::asio::io_context& ioContext) :
+			GeneralTCPTransmitterWithKeepalive(ioContext),
 			socket(ioContext),
 			resolver(ioContext) {
 
@@ -37,13 +37,11 @@ namespace card {
 			}
 		});
 	}
-	boost::asio::io_context& ConnectionToServer::getIoContext() {
-		return ioContext;
-	}
 	tcp::socket& ConnectionToServer::getSocket() {
 		return socket;
 	}
 	void ConnectionToServer::close() {
+		GeneralTCPTransmitterWithKeepalive::close();
 		ioContext.post([this]() {
 			socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
 			socket.close();

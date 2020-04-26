@@ -19,8 +19,8 @@ using namespace std::string_literals;
 namespace card {
 	char const GeneralTCPTransmitter::DELIMITER = '\n';
 
-	GeneralTCPTransmitter::GeneralTCPTransmitter(receiveFunc onReceiveFunc) :
-			onReceiveFunc(onReceiveFunc),
+	GeneralTCPTransmitter::GeneralTCPTransmitter(boost::asio::io_context& ioContext) :
+			ioContext(ioContext),
 			onErrorFunc([](error_code ec) {
 				throw boost::system::system_error(ec);
 			}) {
@@ -33,14 +33,11 @@ namespace card {
 	}
 	void GeneralTCPTransmitter::send(std::string msg, bool atFront) {
 		FILTER_DELIMITER_IF_DEBUG(msg);
-		ba::post(getIoContext(), [=] {
+		ba::post(ioContext, [=] {
 			if(enqueue(msg + DELIMITER, atFront) && wasConnectionEtablished) {
 				writeLoop();
 			}
 		});
-	}
-	void GeneralTCPTransmitter::setOnReceiveFunc(receiveFunc callback) {
-		this->onReceiveFunc = callback;
 	}
 	void GeneralTCPTransmitter::setOnErrorFunc(errorHandlingFunc callback) {
 		this->onErrorFunc = callback;
@@ -61,7 +58,10 @@ namespace card {
 	}
 	void GeneralTCPTransmitter::writeLoop() {
 		ba::async_write(getSocket(), ba::buffer(tx.front()), [this, self = shared_from_this()](error_code ec, std::size_t n) {
-			if(dequeue() && !ec) writeLoop();
+			if(dequeue() && !ec) {
+				onWrite();
+				writeLoop();
+			}
 		});
 	}
 	void GeneralTCPTransmitter::readLoop() {
@@ -73,7 +73,7 @@ namespace card {
 				};
 				rx.consume(bytesTransferred);
 
-				onReceiveFunc(json);
+				onReceive(json);
 				readLoop();
 			} else {
 				onErrorFunc(ec);
@@ -88,5 +88,8 @@ namespace card {
 		if(sizeBefore != sizeAfter) {
 			log(LogSeverity::WARNING, "Message sent by GeneralTCPTransmitter contains the delimiter char.");
 		}
+	}
+	void card::GeneralTCPTransmitter::onWrite() {
+		// do nothing
 	}
 }

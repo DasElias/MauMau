@@ -13,6 +13,8 @@ namespace card {
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
+			boost::asio::io_context ioContext;
+	
 			Avatar avatar;
 			bool isWaitingForResponse_field;
 			std::optional<std::string> errorMsgInPlainText;

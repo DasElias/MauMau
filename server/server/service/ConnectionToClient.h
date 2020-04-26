@@ -1,7 +1,7 @@
 #pragma once
 #include <boost/asio.hpp>
 #include <memory>
-#include <shared/packet/GeneralTCPTransmitter.h>
+#include <shared/network/GeneralTCPTransmitterWithKeepalive.h>
 #include "AbstractConnectionToClient.h"
 
 namespace ba = boost::asio;
@@ -11,12 +11,11 @@ using namespace std::chrono_literals;
 using namespace std::string_literals;
 
 namespace card {
-	class ConnectionToClient : public GeneralTCPTransmitter, public AbstractConnectionToClient {
+	class ConnectionToClient : public GeneralTCPTransmitterWithKeepalive, public AbstractConnectionToClient {
 	// ----------------------------------------------------------------------
 	// --------------------------------FIELDS--------------------------------
 	// ----------------------------------------------------------------------
 	private:
-		boost::asio::io_context& ioc;
 		tcp::socket socket;
 
 	// ----------------------------------------------------------------------
@@ -31,7 +30,6 @@ namespace card {
 	public:
 		void start();
 		void send(std::string message);
-		boost::asio::io_context& getIoContext() override;
 		tcp::socket& getSocket() override;
 		void close() override;
 	};

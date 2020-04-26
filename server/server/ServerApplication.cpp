@@ -48,7 +48,7 @@ int main() {
 		RoomManagerAccessorFromClient roomManager(packetTransmitter);
 		Acceptor acceptor(ioc, packetTransmitter, roomManager);
 
-		ShellCommandParser shellCommandParser(roomManager);
+		ShellCommandParser shellCommandParser(roomManager, ioc);
 		ShellAcceptor shellAcceptor(ioc, shellCommandParser);
 
 		std::thread threadUtilsThread(&runThreadUtils);

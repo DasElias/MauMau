@@ -1,41 +1,44 @@
 #pragma once
-#include <shared/network/GeneralTCPTransmitterWithKeepalive.h>
+#include <boost/asio.hpp>
+#include <memory>
+#include <shared/packet/GeneralTCPTransmitter.h>
+
+namespace ba = boost::asio;
+using ba::ip::tcp;
+using boost::system::error_code;
+using namespace std::chrono_literals;
+using namespace std::string_literals;
 
 namespace card {
-	class ConnectionToServer : public GeneralTCPTransmitterWithKeepalive {
-		// ----------------------------------------------------------------------
-		// ----------------------------STATIC-FIELDS-----------------------------
-		// ----------------------------------------------------------------------
-		private:
-			static std::string const HOST;
-			static std::string const PORT;
+	class ConnectionToShell : public GeneralTCPTransmitter {
+		typedef std::function<void(std::string&)> receiveFunc;
 
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
 		private:
 			tcp::socket socket;
-			tcp::resolver resolver;
-
-			std::unique_ptr<std::thread> networkThread;
+			receiveFunc onReceiveFunc;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			ConnectionToServer(boost::asio::io_context& ioContext);
+			ConnectionToShell(boost::asio::io_context& ioc, receiveFunc onReceiveFunc = [](std::string& jsonMsg){});
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
-			void start(std::function<void(boost::system::system_error)> errorCallback);
+			void start();
+			void send(std::string message);
 			tcp::socket& getSocket() override;
 			void close() override;
 
-		private:
-			void connectSocket();
-			void connectionCallback(const boost::system::error_code& ec, tcp::resolver::iterator endpointIterator);
+			void setOnReceiveFunc(receiveFunc func);
 
-	};
+
+		private:
+			void onReceive(std::string& msg);
+		};
 }

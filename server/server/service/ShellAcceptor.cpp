@@ -1,5 +1,6 @@
 #include "ShellAcceptor.h"
 #include <shared/utils/Logger.h>
+#include "ConnectionToShell.h"
 
 namespace card {
 	ShellAcceptor::ShellAcceptor(boost::asio::io_context& ioc, ShellCommandParser& commandParser) :
@@ -15,7 +16,7 @@ namespace card {
 	}
 
 	void ShellAcceptor::acceptLoop() {
-		std::shared_ptr<ConnectionToClient> session = std::make_shared<ConnectionToClient>(ioc);
+		std::shared_ptr<ConnectionToShell> session = std::make_shared<ConnectionToShell>(ioc);
 		session->setOnReceiveFunc([this, session](std::string& jsonMsg) {
 			commandParser.parse(*session, jsonMsg);
 		});

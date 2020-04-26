@@ -6,7 +6,6 @@
 using boost::asio::ip::tcp;
 
 namespace card {
-	typedef std::function<void(std::string&)> receiveFunc;
 	typedef std::function<void(boost::system::error_code)> errorHandlingFunc;
 
 	class GeneralTCPTransmitter : public std::enable_shared_from_this<GeneralTCPTransmitter> {
@@ -19,28 +18,28 @@ namespace card {
 		// ----------------------------------------------------------------------
 		// --------------------------------FIELDS--------------------------------
 		// ----------------------------------------------------------------------
+		protected:
+			boost::asio::io_context& ioContext;
+
 		private:
 			boost::asio::streambuf rx;
 			std::list<std::string> tx;
 			bool wasConnectionEtablished = false;
 
-			receiveFunc onReceiveFunc;
 			errorHandlingFunc onErrorFunc;
 
 		// ----------------------------------------------------------------------
 		// -----------------------------CONSTRUCTORS-----------------------------
 		// ----------------------------------------------------------------------
 		public:
-			GeneralTCPTransmitter(receiveFunc onReceiveFunc = [](std::string&) {});
+			GeneralTCPTransmitter(boost::asio::io_context& ioContext);
 
 		// ----------------------------------------------------------------------
 		// -------------------------------METHODS--------------------------------
 		// ----------------------------------------------------------------------
 		public:
 			void send(std::string msg, bool atFront = false);
-			virtual boost::asio::io_context& getIoContext() =0;
 			virtual tcp::socket& getSocket() =0;
-			void setOnReceiveFunc(receiveFunc callback);
 			void setOnErrorFunc(errorHandlingFunc callback);
 			virtual void close() =0;
 
@@ -55,5 +54,7 @@ namespace card {
 
 			void filterDelimiterFromMsg(std::string& msg);
 
+			virtual void onWrite();
+			virtual void onReceive(std::string& msg) =0;
 	};
 }
