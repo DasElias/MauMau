@@ -13,7 +13,7 @@
       "variables": [
         {
           "name": "LINK_RUNTIME_STATICALLY",
-          "value": "True",
+          "value": "False",
           "type": "BOOL"
         }
       ]
