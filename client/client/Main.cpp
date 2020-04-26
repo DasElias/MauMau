@@ -55,6 +55,8 @@
 #include "model/CreateRoomNetworkGameFacade.h"
 #include "state/MainMenuNetworkErrorHandler.h"
 #include "gui/MauMauTheme.h"
+#include <nanovg/stb_image.h>
+
 
 #include <res/font/BoogalooRegular.ttf.h>
 #include <res/font/NotoSansBlack.ttf.h>
@@ -63,6 +65,7 @@
 #include <res/font/NotoSansLight.ttf.h>
 #include <res/font/NotoSansMedium.ttf.h>
 #include <res/font/NotoSansRegular.ttf.h>
+#include <res/menu/windowIcon.png.h>
 
 using namespace std;
 using namespace card;
@@ -206,8 +209,9 @@ namespace card {
 		glfwShowWindow(p_window);
 		glfwMaximizeWindow(p_window);
 		glfwFocusWindow(p_window);
-
 		glfwSwapInterval(VSYNC);
+		
+		setWindowIcon();
 
 		#ifndef NDEBUG
 			glDebugMessageCallback( MessageCallback, 0 );
@@ -270,6 +274,15 @@ namespace card {
 
 	}
 
+
+	void Main::setWindowIcon() {
+		constexpr int amountOfIcons = 1;
+
+		GLFWimage icons[amountOfIcons];
+		icons[0].pixels = stbi_load_from_memory(tex_windowIcon, tex_windowIcon_size, &icons[0].width, &icons[0].height, 0, STBI_rgb_alpha);
+		glfwSetWindowIcon(p_window, amountOfIcons, icons);
+		stbi_image_free(icons[0].pixels);
+	}
 
 	void Main::loop() {
 		long long lastFrameTime = getMilliseconds();		
