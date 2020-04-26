@@ -1,6 +1,7 @@
 #include "ClientPacketTransmitter.h"
 #include <shared/packet/STCPacketConstructorFromJson.h>
 #include <shared/utils/ThreadUtils.h>
+#include "NetworkErrorMessageGenerator.h"
 
 namespace card {
 	ClientPacketTransmitter::ClientPacketTransmitter(std::shared_ptr<GeneralTCPTransmitter> conn, NetworkErrorHandler& errorHandler) :
@@ -31,7 +32,8 @@ namespace card {
 		});
 	}
 	void ClientPacketTransmitter::onErrorHandler(boost::system::error_code ec) {
-		errorHandler.resetAndShowError(ec.message(), "Netzwerkfehler");
+		std::string errorMsg = NetworkErrorMessageGenerator::getMsg(ec);
+		errorHandler.resetAndShowError(errorMsg, "Netzwerkfehler");
 	}
 	void ClientPacketTransmitter::onKickHandler() {
 		errorHandler.onKick();

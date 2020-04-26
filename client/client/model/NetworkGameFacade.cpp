@@ -3,6 +3,7 @@
 #include <shared/packet/stc/EnteringRoomSuccessReport_STCAnswerPacket.h>
 #include <shared/model/EnteringRoomErrorCause.h>
 #include <shared/utils/Logger.h>
+#include "../network/NetworkErrorMessageGenerator.h"
 
 namespace card {
 	NetworkGameFacade::NetworkGameFacade(NetworkErrorHandler& errorHandler, std::unique_ptr<AbstractRoomLeaveHandler> roomLeaveHandler, std::unique_ptr<AbstractReturnBackToMenuHandler> gameEndHandler, std::string username, Avatar avatar) :
@@ -71,21 +72,8 @@ namespace card {
 		}
 	}
 	void NetworkGameFacade::setErrorMsgOnConnectionFail(boost::system::error_code ec) {
-		switch(ec.value()) {
-			case boost::asio::error::host_unreachable:
-			case boost::asio::error::host_not_found:
-			case boost::asio::error::host_not_found_try_again:
-				errorMsgInPlainText = "Keine Internetverbindung. Bitte versuche es später erneut.";
-				break;
-			case boost::asio::error::connection_refused:
-				errorMsgInPlainText = "Der Server ist zurzeit nicht verfügbar. Bitte versuche es später erneut.";
-				break;
-			case boost::asio::error::timed_out:
-				errorMsgInPlainText = "Verbindung zum Server konnte nicht hergestellt werden. Bitte versuche es später erneut.";
-				break;
-			default:
-				errorMsgInPlainText = ec.message();
-		}
+		std::string errorMsg = NetworkErrorMessageGenerator::getMsg(ec);
+		this->errorMsgInPlainText = errorMsg;
 	}
 	void NetworkGameFacade::setErrorMsgForSuccessReport(int statusCode) {
 		switch(statusCode) {	
